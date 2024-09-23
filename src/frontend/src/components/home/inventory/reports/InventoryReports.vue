@@ -125,7 +125,7 @@ export default defineComponent({
         for (const item of response.data.data) {
           console.log('item: ', item)
           this.stockMovements.push({
-            date: item.movementDate,
+            date: new Date(item.movementDate).toLocaleString(),
             type: item.type,
             item: item.inventoryItem.nameOfItem,
             quantity: item.movement,

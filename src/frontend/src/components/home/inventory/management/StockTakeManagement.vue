@@ -44,8 +44,8 @@
               :header-props="{ class: 'bg-secondRowColor h6' }"
               class="bg-cardColor"
             >
-              <template v-slot:[`item.currentStockLevel`]="{ item }">
-                <v-text-field type="number" v-model="item.currentStockLevel"> </v-text-field>
+              <template v-slot:[`item.reorderLevel`]="{ item }">
+                <v-text-field type="number" v-model="item.newReorderLevel" > </v-text-field>
               </template>
             </v-data-table>
 
@@ -199,8 +199,8 @@ export default {
       headers: [
         { title: 'Name', value: 'name' },
 
-        { title: 'Current Stock Level', value:  'reorderLevel'},
-        { title: 'Recorded Stock Level', value: 'currentStockLevel' },
+        { title: 'Current Stock Level', value:  'currentStockLevel'},
+        { title: 'Recorded Stock Level', value: 'reorderLevel' },
         { title: '', value: 'actions', sortable: false }
       ],
       sortOptions: [
@@ -326,12 +326,12 @@ export default {
       this.resetForm()
     },
     async saveAllStockTake() {
-      this.generatePDFPreview()
+      await this.generatePDFPreview()
       this.confirmDialog = true
     },
     async generatePDFPreview() {
       const stockTakeData = {
-        date: new Date(this.currentDate).toISOString(),
+        date: new Date(this.currentDate),
         inventoryItems: this.filteredInventoryItems,
         companyID: localStorage.getItem('currentCompany'),
         currentEmployee: localStorage.getItem('username') || 'John Doe'
@@ -350,14 +350,14 @@ export default {
       doc.text(`Employee: ${stockTakeData.currentEmployee}`, 15, 40)
 
       // Create table headers
-      const headers = ['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level']
+      const headers = ['Item Name', 'Cost Price', 'Current Stock Level', 'Recorded Stock Level']
 
       // Create table body data
       const body = stockTakeData.inventoryItems.map((item) => [
         item.name,
         item.costPrice,
         item.currentStockLevel,
-        item.currentStockLevel + 30
+        item.newReorderLevel === null ? item.currentStockLevel : item.newReorderLevel
       ])
 
       // Add table to the PDF
@@ -396,7 +396,7 @@ export default {
       this.filteredInventoryItems.forEach((item) => {
         data.items.push({
           "inventoryId": item._id,
-          "recordedStockLevel": item.currentStockLevel
+          "recordedStockLevel": item.newReorderLevel === null ? item.currentStockLevel : item.newReorderLevel
         });
       })
       console.log('Data', data)
@@ -603,7 +603,11 @@ export default {
           `${API_URL}inventory/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        this.inventoryItems = response.data.data
+        console.log(response.data.data)
+        this.inventoryItems = response.data.data.map(item => ({
+          ...item,
+          newReorderLevel: null // Initialize newReorderLevel
+        }));
       } catch (error) {
         console.error(error)
       }

@@ -222,6 +222,7 @@ const saveMembers = async () => {
 
     // Update the original selected members
     originalSelectedMembers.value = [...selectedMembers.value]
+    membersDialog.value = false
   } catch (error) {
     console.log(error)
     showAssignEmployeesError()
