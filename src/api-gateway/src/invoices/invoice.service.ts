@@ -75,8 +75,24 @@ export class InvoiceService {
     }
     console.log('checkpoint8');
     const newInvoice = new Invoice(createInvoiceDto);
-    newInvoice.inventoryItems = createInvoiceDto.inventoryItems;
-    newInvoice.laborItems = createInvoiceDto.laborItems;
+    for (const item of createInvoiceDto.inventoryItems) {
+      newInvoice.inventoryItems.push({
+        description: item.description,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        discount: item.discount,
+        total: item.total,
+      });
+    }
+    for (const item of createInvoiceDto.laborItems) {
+      newInvoice.laborItems.push({
+        description: item.description,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        discount: item.discount,
+        total: item.total,
+      });
+    }
     console.log('checkpoint9');
     return await this.invoiceRepository.save(newInvoice);
   }
