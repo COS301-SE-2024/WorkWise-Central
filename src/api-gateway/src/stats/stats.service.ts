@@ -12,7 +12,6 @@ import {
   EmployeeStatsResponseDto,
   InventoryStatsResponseDto,
   InvoiceStatsResponseDto,
-  Job,
   JobsStatsResponseDto,
   teamRating,
   TeamStatsResponseDto,
@@ -57,6 +56,7 @@ export class StatsService {
     result.customerServiceRatingAverage = 0;
     result.numActiveJobs = 0;
     result.numCompletedJobs = 0;
+    result.numInvoicesPaid = 0;
 
     for (const job of jobs) {
       const status = await this.jobService.getStatusByIdWithoutValidation(job.status);
@@ -79,7 +79,7 @@ export class StatsService {
         jobTitle: job.details.heading,
       });
 
-      if (job.clientFeedback.jobRating) {
+      if (job.clientFeedback && job.clientFeedback.jobRating) {
         result.workPerformanceRatingAverage += job.clientFeedback.jobRating;
         numJobRating++;
         result.workPerformanceRating.push({
@@ -89,7 +89,7 @@ export class StatsService {
         });
       }
 
-      if (job.clientFeedback.customerServiceRating) {
+      if (job.clientFeedback && job.clientFeedback.customerServiceRating) {
         result.customerServiceRatingAverage += job.clientFeedback.customerServiceRating;
         numbServiceRating++;
         result.customerServiceRating.push({
@@ -104,6 +104,12 @@ export class StatsService {
 
     for (const invoice of invoices) {
       if (invoice.paid) {
+        console.log('job: ', jobs);
+        console.log('invoice.jobId: ', invoice.jobId);
+        console.log(
+          'Job thing: ',
+          jobs.find((job) => job._id.toString() === invoice.jobId.toString()),
+        );
         result.numInvoicesPaid += invoice.total;
         result.invoicesPaid.push({
           invoiceId: invoice._id,
@@ -111,7 +117,7 @@ export class StatsService {
           total: invoice.total,
           job: {
             jobId: invoice.jobId,
-            jobTitle: jobs.find((job) => job._id === invoice.jobId).details.heading,
+            jobTitle: jobs.find((job) => job._id.toString() === invoice.jobId.toString()).details.heading,
           },
         });
       } else {
@@ -122,7 +128,7 @@ export class StatsService {
           total: invoice.total,
           job: {
             jobId: invoice.jobId,
-            jobTitle: jobs.find((job) => job._id === invoice.jobId).details.heading,
+            jobTitle: jobs.find((job) => job._id.toString() === invoice.jobId.toString()).details.heading,
           },
         });
       }
@@ -131,7 +137,8 @@ export class StatsService {
   }
 
   async getTotalClients(companyId: Types.ObjectId) {
-    const clients = await this.clientService.getAllClientsInCompanyInternal(companyId);
+    const clients = await this.clientService.getAllClientsInCompanyInternal(new Types.ObjectId(companyId));
+    console.log('clients: ', clients);
     return clients.length;
   }
 
@@ -172,7 +179,7 @@ export class StatsService {
         jobTitle: job.details.heading,
       });
 
-      if (job.clientFeedback.jobRating) {
+      if (job.clientFeedback && job.clientFeedback.jobRating) {
         result.workPerformanceRatingAverage += job.clientFeedback.jobRating;
         numJobRating++;
         result.workPerformanceRating.push({
@@ -182,7 +189,7 @@ export class StatsService {
         });
       }
 
-      if (job.clientFeedback.customerServiceRating) {
+      if (job.clientFeedback && job.clientFeedback.customerServiceRating) {
         result.customerServiceRatingAverage += job.clientFeedback.customerServiceRating;
         numbServiceRating++;
         result.customerServiceRating.push({
@@ -240,7 +247,7 @@ export class StatsService {
         });
       }
 
-      if (job.clientFeedback.jobRating) {
+      if (job.clientFeedback && job.clientFeedback.jobRating) {
         result.workPerformanceRatingAverage += job.clientFeedback.jobRating;
         numJobRating++;
         result.workPerformanceRating.push({
@@ -250,7 +257,7 @@ export class StatsService {
         });
       }
 
-      if (job.clientFeedback.customerServiceRating) {
+      if (job.clientFeedback && job.clientFeedback.customerServiceRating) {
         result.customerServiceRatingAverage += job.clientFeedback.customerServiceRating;
         numbServiceRating++;
         result.customerServiceRating.push({
@@ -273,7 +280,7 @@ export class StatsService {
           total: invoice.total,
           job: {
             jobId: invoice.jobId,
-            jobTitle: jobs.find((job) => job._id === invoice.jobId).details.heading,
+            jobTitle: jobs.find((job) => job._id.toString() === invoice.jobId.toString()).details.heading,
           },
         });
         result.amountOutstanding += invoice.total;
@@ -351,7 +358,7 @@ export class StatsService {
           });
         }
 
-        if (job.clientFeedback.customerServiceRating) {
+        if (job.clientFeedback && job.clientFeedback.customerServiceRating) {
           rating.customerServiceRatingAverage += job.clientFeedback.customerServiceRating;
           numbServiceRating++;
           rating.customerServiceRating.push({

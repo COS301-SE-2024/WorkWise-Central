@@ -52,7 +52,7 @@ export class ClientStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  activeJobs: [Job];
+  activeJobs: Job[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -60,7 +60,7 @@ export class ClientStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  allJobs: [Job];
+  allJobs: Job[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -68,11 +68,11 @@ export class ClientStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  completedJobs: [Job];
+  completedJobs: Job[] = [];
 
   @ApiProperty()
   @IsArray()
-  workPerformanceRating: [Ratings];
+  workPerformanceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -80,7 +80,7 @@ export class ClientStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  customerServiceRating: [Ratings];
+  customerServiceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -92,7 +92,7 @@ export class ClientStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  invoicesPaid: [Invoice];
+  invoicesPaid: Invoice[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -100,7 +100,7 @@ export class ClientStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  invoicesUnpaid: [Invoice];
+  invoicesUnpaid: Invoice[] = [];
 }
 
 export class MonthlyHours {
@@ -124,7 +124,7 @@ export class EmployeeStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  activeJobs: [Job];
+  activeJobs: Job[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -132,7 +132,7 @@ export class EmployeeStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  totalJobs: [Job];
+  totalJobs: Job[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -140,7 +140,7 @@ export class EmployeeStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  completedJobs: [Job];
+  completedJobs: Job[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -148,7 +148,7 @@ export class EmployeeStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  jobsCompletedOnTime: [Job];
+  jobsCompletedOnTime: Job[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -156,15 +156,15 @@ export class EmployeeStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  jobsCompletedLate: [Job];
+  jobsCompletedLate: Job[] = [];
 
   @ApiProperty()
   @IsArray()
-  monthlyHours: [MonthlyHours];
+  monthlyHours: MonthlyHours[] = [];
 
   @ApiProperty()
   @IsArray()
-  workPerformanceRating: [Ratings];
+  workPerformanceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -172,7 +172,7 @@ export class EmployeeStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  customerServiceRating: [Ratings];
+  customerServiceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -190,7 +190,7 @@ export class JobsStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  activeJobs: [Job];
+  activeJobs: Job[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -198,7 +198,7 @@ export class JobsStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  completedJobs: [Job];
+  completedJobs: Job[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -206,11 +206,11 @@ export class JobsStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  archivedJobs: [Job];
+  archivedJobs: Job[] = [];
 
   @ApiProperty()
   @IsArray()
-  workPerformanceRating: [Ratings];
+  workPerformanceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -218,7 +218,7 @@ export class JobsStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  customerServiceRating: [Ratings];
+  customerServiceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -230,7 +230,7 @@ export class JobsStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  jobsUnpaidInvoice: [Invoice];
+  jobsUnpaidInvoice: Invoice[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -267,15 +267,15 @@ export class InventoryStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  itemsToReorder: [inventoryItem];
+  itemsToReorder: inventoryItem[] = [];
 
   @ApiProperty()
   @IsArray()
-  highestUsedItems: [inventoryItem];
+  highestUsedItems: inventoryItem[] = [];
 
   @ApiProperty()
   @IsArray()
-  stockLost: [stockLossItem];
+  stockLost: stockLossItem[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -289,7 +289,7 @@ export class averageRatingPerTeam {
 
   @ApiProperty()
   @IsArray()
-  workPerformanceRating: [Ratings];
+  workPerformanceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -297,7 +297,7 @@ export class averageRatingPerTeam {
 
   @ApiProperty()
   @IsArray()
-  customerServiceRating: [Ratings];
+  customerServiceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -325,7 +325,7 @@ export class teamRating {
 
   @ApiProperty()
   @IsArray()
-  workPerformanceRating: [Ratings];
+  workPerformanceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -333,7 +333,7 @@ export class teamRating {
 
   @ApiProperty()
   @IsArray()
-  customerServiceRating: [Ratings];
+  customerServiceRating: Ratings[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -355,7 +355,7 @@ export class TeamStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  ratingPerTeam: [teamRating];
+  ratingPerTeam: teamRating[] = [];
 }
 
 export class InvoiceStatsResponseDto {
@@ -369,7 +369,7 @@ export class InvoiceStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  paidInvoices: [Invoice];
+  paidInvoices: Invoice[] = [];
 
   @ApiProperty()
   @IsNumber()
@@ -377,7 +377,7 @@ export class InvoiceStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  unpaidInvoices: [Invoice];
+  unpaidInvoices: Invoice[] = [];
 
   @ApiProperty()
   @IsNumber()
