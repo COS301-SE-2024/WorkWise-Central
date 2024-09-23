@@ -53,11 +53,11 @@ const invoicesSubItems = ref([
   { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: 'invoice-kanban' }
 ])
 
-const inboxSubItems = ref([
+/*const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
   // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
   { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
-])
+])*/
 
 const supportSubItems = ref([
   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
@@ -68,11 +68,6 @@ const moreSubItems = ref([
     title: 'Company Requests',
     icon: 'fa: fa-solid fa-envelope',
     routeName: 'company-requests'
-  },
-  {
-    title: 'Chats',
-    icon: 'fa: fa-solid fa-comments',
-    routeName: 'chatHome'
   }
 ])
 
