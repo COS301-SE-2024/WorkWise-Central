@@ -102,17 +102,6 @@ export class ClientStatsResponseDto {
   @IsArray()
   invoicesUnpaid: Invoice[] = [];
 }
-
-export class MonthlyHours {
-  @ApiProperty()
-  @IsString()
-  month: string;
-
-  @ApiProperty()
-  @IsNumber()
-  hours: number;
-}
-
 export class EmployeeStatsResponseDto {
   @ApiProperty()
   @IsMongoId()
@@ -157,10 +146,6 @@ export class EmployeeStatsResponseDto {
   @ApiProperty()
   @IsArray()
   jobsCompletedLate: Job[] = [];
-
-  @ApiProperty()
-  @IsArray()
-  monthlyHours: MonthlyHours[] = [];
 
   @ApiProperty()
   @IsArray()

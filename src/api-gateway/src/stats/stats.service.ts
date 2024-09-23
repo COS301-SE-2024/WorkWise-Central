@@ -1,3 +1,4 @@
+import { StockTakeService } from './../stocktake/stocktake.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { EmployeeService } from '../employee/employee.service';
 import { CompanyService } from '../company/company.service';
@@ -37,6 +38,8 @@ export class StatsService {
     private inventoryService: InventoryService,
     @Inject(forwardRef(() => StockMovementsService))
     private stockMovementsService: StockMovementsService,
+    @Inject(forwardRef(() => StockTakeService))
+    private stockTakeService: StockTakeService,
   ) {}
 
   async clientStats(clientId: Types.ObjectId) {
@@ -291,7 +294,6 @@ export class StatsService {
 
   async inventoryStats(companyId: Types.ObjectId) {
     const inventoryItems = await this.inventoryService.findAllInCompany(companyId);
-    const stockMovements = await this.stockMovementsService.findAllInCompany(companyId);
     const listOfUse = [];
 
     const result = new InventoryStatsResponseDto();
@@ -308,13 +310,19 @@ export class StatsService {
       listOfUse.push({ id: item._id, usage: await this.stockMovementsService.getUsageForInventoryItem(item._id) });
     }
     // Finding the highest used items
+    const stockTakes = await this.stockTakeService.findAllInCompany(companyId);
     result.highestUsedItems = listOfUse.reduce((max, item) => (item.usage > max.usage ? item : max)).id;
     result.costDueToStockLoss = 0;
 
-    for (const stockTake of stockMovements) {
-      for (const item of (stockTake as any).items) {
+    for (const stockTake of stockTakes) {
+      for (const item of stockTake.items) {
         if (item.recordedStockLevel - item.currentStockLevel < 0) {
-          result.costDueToStockLoss += (item.recordedStockLevel - item.currentStockLevel) * item.inventoryItem.cost;
+          const inventoryItem = await this.inventoryService.findById(item.inventoryItem.inventoryId);
+          let constPrice = 0;
+          if (inventoryItem && inventoryItem.costPrice) {
+            constPrice = inventoryItem.costPrice;
+          }
+          result.costDueToStockLoss += (item.recordedStockLevel - item.currentStockLevel) * constPrice;
           result.stockLost.push({
             inventoryItem: {
               inventoryId: item.inventoryItem.inventoryId,
@@ -325,6 +333,7 @@ export class StatsService {
         }
       }
     }
+    result.costDueToStockLoss = result.costDueToStockLoss * -1;
     return result;
   }
 
