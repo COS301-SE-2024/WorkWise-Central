@@ -213,7 +213,7 @@ interface Company {
 const toast = useToast()
 const search = ref('')
 const isDarkMode = localStorage.getItem('theme') === 'true'
-const tabs = ['Current Companies', 'Recently Left Companies', 'Company Invites']
+const tabs = ['Current Companies', 'Company Invites']
 const currentTab = ref('Current Companies')
 const newCompanyCode = ref('')
 const companyCodeRules = [(v: string) => !!v || 'Company code is required']
