@@ -41,6 +41,13 @@ export class FleetRepository {
     return this.vehicleModel.find({ $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }] }).lean();
   }
 
+  async findAllInCompany(companyId: Types.ObjectId) {
+    return this.vehicleModel
+      .find({ $and: [{ companyId: companyId }, isNotDeleted] })
+      .lean()
+      .exec();
+  }
+
   async update(vehicleId: Types.ObjectId, updateVehicleDto: UpdateVehicleDto) {
     const vehicle = await this.vehicleModel.findOne({ $and: [{ _id: vehicleId }, isNotDeleted] }).exec();
     if (updateVehicleDto.name) {
@@ -108,3 +115,4 @@ export class FleetRepository {
     );
   }
 }
+// availability.assignedTo is always populated

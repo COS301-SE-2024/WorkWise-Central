@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Headers, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { FleetService } from './fleet.service';
 import { JwtService } from '@nestjs/jwt';
-import { EmployeeService } from '../employee/employee.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { extractUserId, validateObjectId } from '../utils/Utils';
@@ -18,7 +17,7 @@ export class FleetController {
   constructor(
     private readonly fleetService: FleetService,
     private readonly jwtService: JwtService,
-    private readonly employeeService: EmployeeService,
+    //private readonly employeeService: EmployeeService,
   ) {}
 
   @UseGuards(AuthGuard) //Need to add authorization
@@ -43,7 +42,7 @@ export class FleetController {
   }
 
   @ApiOperation({
-    summary: `Get all Vehicle instances in every company's fleet`,
+    summary: `Get all Vehicle instances`,
   })
   @ApiOkResponse({
     type: FleetVehiclesResponseDto,
@@ -54,6 +53,30 @@ export class FleetController {
     try {
       const userId = extractUserId(this.jwtService, headers);
       return { data: await this.fleetService.getAllVehicles(userId) };
+    } catch (Error) {
+      throw Error;
+    }
+  }
+
+  @ApiOperation({
+    summary: `Get all Vehicle instances in a specific company's fleet`,
+  })
+  @ApiOkResponse({
+    type: FleetVehiclesResponseDto,
+    description: `An array of mongodb objects of the Vehicle class`,
+  })
+  @Get('/company/:companyId')
+  async findAllInCompany(
+    @Headers() headers: any,
+    @Param('companyId') companyId: string,
+    @Param('employeeId') employeeId: string,
+  ) {
+    try {
+      validateObjectId(companyId);
+      const userId = extractUserId(this.jwtService, headers);
+      const companyObjectId = new Types.ObjectId(companyId);
+      const employeeObjectId = new Types.ObjectId(employeeId);
+      return { data: await this.fleetService.getAllVehiclesInCompany(userId, companyObjectId, employeeObjectId) };
     } catch (Error) {
       throw Error;
     }
