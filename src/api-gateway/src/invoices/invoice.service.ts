@@ -42,6 +42,7 @@ export class InvoiceService {
   ) {}
 
   async validateCreateInvoice(Invoice: CreateInvoiceDto) {
+    console.log('Invoice: ', Invoice);
     //Checking that the company exists
     if (!(await this.companyService.companyIdExists(Invoice.companyId))) {
       return new ValidationResult(false, `Company not found`);
@@ -66,24 +67,30 @@ export class InvoiceService {
   }
 
   async create(createInvoiceDto: CreateInvoiceDto) {
-    console.log('createInvoiceDto: ', createInvoiceDto);
+    console.log('checkpoint6');
     const validation = await this.validateCreateInvoice(createInvoiceDto);
-    console.log('validation: ', validation);
+    console.log('checkpoint7');
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
+    console.log('checkpoint8');
     const newInvoice = new Invoice(createInvoiceDto);
     newInvoice.inventoryItems = createInvoiceDto.inventoryItems;
     newInvoice.laborItems = createInvoiceDto.laborItems;
+    console.log('checkpoint9');
     return await this.invoiceRepository.save(newInvoice);
   }
 
   async generate(jobId: Types.ObjectId) {
+    console.log('jobId: ', jobId);
     const dto = new CreateInvoiceDto();
+    dto.jobId = jobId;
     const job = await this.jobService.getJobById(jobId);
+    console.log('checkpoint1');
     dto.clientId = job.clientId;
     dto.companyId = job.companyId;
     const number = await this.invoiceRepository.findLastInvoiceNumber(job.companyId);
+    console.log('checkpoint2');
     if (number === null) {
       dto.invoiceNumber = 1;
     } else {
@@ -94,6 +101,8 @@ export class InvoiceService {
     dto.inventoryItems = [];
     dto.laborItems = [];
     let total = 0;
+
+    console.log('checkpoint3');
 
     //Adding the inventory items used for the job
     const inventoryUsedList = await this.inventoryUsedService.findAllForJob(jobId);
@@ -115,7 +124,21 @@ export class InvoiceService {
       dto.inventoryItems.push(item);
     }
 
+    console.log('checkpoint4');
+
     //TODO: add labor to invoice
+    for (const employeeId of job.assignedEmployees.employeeIds) {
+      const employee = await this.employeeService.findById(employeeId);
+      const timeSpent = await this.timeTrackerService.getTotalTimeSpentOnJob(employeeId, jobId);
+      const item = new Items();
+      item.description = employee.userInfo.firstName + ' ' + employee.userInfo.surname;
+      item.quantity = timeSpent.timeWorked / 60;
+      item.unitPrice = employee.hourlyRate;
+      item.discount = 0;
+      item.total = item.unitPrice * item.quantity;
+      total = total + item.total;
+      dto.laborItems.push(item);
+    }
 
     dto.paid = false;
     dto.taxPercentage = 15; //VAT percentage in South Africa
@@ -123,6 +146,8 @@ export class InvoiceService {
     dto.subTotal = total - dto.taxAmount;
 
     dto.total = dto.total + dto.taxAmount;
+
+    console.log('checkpoint5');
 
     return await this.create(dto);
   }

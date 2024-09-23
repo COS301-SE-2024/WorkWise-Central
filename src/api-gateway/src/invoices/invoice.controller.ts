@@ -119,7 +119,7 @@ export class InvoiceController {
     name: 'id',
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
-  @Get('/generate')
+  @Get('/generate/:currentEmployeeId/:jobId')
   async generate(
     @Headers() headers: any,
     @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
@@ -128,19 +128,17 @@ export class InvoiceController {
     if (!currentEmployeeId) {
       throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
     }
-
-    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    // if (currentEmployee.role.permissionSuite.includes('view all Invoice')) {
+    console.log('In generate invoice controller');
+    console.log('jobId: ', jobId);
+    console.log('currentEmployeeId: ', currentEmployeeId);
     let data;
     try {
       data = await this.invoiceService.generate(jobId);
     } catch (e) {
+      console.log('Error: ', e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return { data: data };
-    // } else {
-    //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
-    // }
   }
 
   @UseGuards(AuthGuard)
