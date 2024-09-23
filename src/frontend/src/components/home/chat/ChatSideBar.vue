@@ -23,7 +23,7 @@
           :image="
             chat.image
               ? chat.image
-              : 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000' //TODO: Replace with other image
+              : 'https://img.icons8.com/?size=100&id=14599&format=png&color=000000'
           "
           size="large"
           shape="circle"

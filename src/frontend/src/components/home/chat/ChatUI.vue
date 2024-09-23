@@ -12,6 +12,8 @@
         v-if="selectedChat"
         :chat="selectedChat"
         :participants="selectedChat?.participants"
+        @update-chat="updateChat"
+        @delete-chat="deleteChat"
       >
         <!--        <ChatHeaderPopover v-if="selectedChat"></ChatHeaderPopover>-->
       </ChatHeader>
@@ -116,8 +118,12 @@ export default {
       this.handleDeleteMessage(data)
     })
 
-    socket.on('delete-chat', () => {
+    socket.on('delete-chat', (data) => {
       this.handleDeleteChat(data)
+    })
+
+    socket.on('update-chat', (data) => {
+      this.handleUpdateChat(data)
     })
   },
   methods: {
@@ -352,11 +358,18 @@ export default {
         }
       }
     },
-    handleDeleteChat() {
+    handleDeleteChat(data) {
       console.log('Delete chat received', data)
       const index = this.chats.findIndex((c) => c._id === data.chatId)
       if (index !== -1) {
         this.chats.splice(index, 1)
+      }
+    },
+    handleUpdateChat(data) {
+      console.log('Update chat received', data)
+      const index = this.chats.findIndex((c) => c._id === data.chatId)
+      if (index !== -1) {
+        this.chats[index] = { ...this.chats[index], ...data }
       }
     },
     async editMessage({ messageId, chatId, action, textContent, attachments }) {
@@ -393,6 +406,55 @@ export default {
           // if (data.success === true) {
           //   //show toast
           // }
+        })
+    },
+    async updateChat(updatedChatData) {
+      let args = {
+        jwt: localStorage['access_token'],
+        chatId: updatedChatData._id
+      }
+      if (updatedChatData.name) {
+        args.name = updatedChatData.name
+      }
+      if (updatedChatData.image) {
+        args.image = updatedChatData.image
+      }
+      if (updatedChatData.description) {
+        args.description = updatedChatData.description
+      }
+      if (updatedChatData.admin) {
+        args.admin = updatedChatData.admin
+      }
+      if (updatedChatData.participants) {
+        args.participants = updatedChatData.participants
+      }
+      console.log(args)
+      socket.emitWithAck('update-chat', args).then((data) => {
+        console.log('Edit message success', data)
+        // if (data.success === true) {
+        //   //show toast
+        // }
+      })
+    },
+    async deleteChat(updatedChatData) {
+      socket
+        .emitWithAck('delete-chat', {
+          jwt: localStorage['access_token'],
+          chatId: updatedChatData._id
+        })
+        .then((data) => {
+          console.log('Delete chat success', data)
+          this.chats = this.chats.filter((chat) => chat._id !== updatedChatData._id)
+          this.selectedChat = null
+        })
+        .catch((error) => {
+          console.error('Delete chat error', error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to delete chat',
+            life: 3000
+          })
         })
     }
   }
