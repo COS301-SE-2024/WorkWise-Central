@@ -78,7 +78,9 @@
                               "
                             >
                             </v-icon>
-                            <span class="font-bold h6">{{ notification.message.title }}</span>
+                            <span class="font-bold h6" style="color: #f0984d">{{
+                              notification.message.title
+                            }}</span>
                           </div>
                         </template>
                         <template #footer>

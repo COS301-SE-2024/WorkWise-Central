@@ -54,7 +54,7 @@
                     </v-btn>
                   </v-list-item>
                   <v-list-item>
-                    <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">
+                    <v-dialog :opacity="0.6" v-model="delete_all_jobs_dialog" max-width="500px">
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props">
                           <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>
@@ -103,7 +103,12 @@
                   <v-list-subheader v-if="column.status !== 'No Status'">Column</v-list-subheader>
 
                   <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">
+                    <v-dialog
+                      :opacity="0.6"
+                      max-height="700"
+                      max-width="500"
+                      v-model="edit_column_details_dialog"
+                    >
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props"
                           ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
@@ -184,7 +189,7 @@
                     </v-dialog>
                   </v-list-item>
                   <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog v-model="delete_column_dialog" max-width="500px">
+                    <v-dialog :opacity="0.6" v-model="delete_column_dialog" max-width="500px">
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props"
                           ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
@@ -317,7 +322,7 @@
           </v-card>
         </v-col>
         <v-col cols="auto">
-          <v-dialog max-height="600" max-width="500" v-model="add_column_dialog">
+          <v-dialog :opacity="0.6" max-height="600" max-width="500" v-model="add_column_dialog">
             <template v-slot:activator="{ props }">
               <v-btn icon="fa: fa-solid fa-plus" v-bind="props"></v-btn>
             </template>
@@ -395,7 +400,7 @@
       </VueDraggable>
     </v-row>
   </v-container>
-  <v-dialog v-model="JobCardVisibility" max-width="1000px">
+  <v-dialog :opacity="0.6" v-model="JobCardVisibility" max-width="1000px">
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
@@ -416,6 +421,7 @@ export default {
   },
   data() {
     return {
+      nostatusID: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       delete_all_jobs_dialog: false,
@@ -566,23 +572,23 @@ export default {
           }
         }
 
-        let res = await axios.delete(API_URL + 'job/status', config)
-
-        for (let i = 0; i < col.cards.length; i++) {
-          this.columns[0].cards.push(col.cards[i])
-          col.cards[i].status.status = this.columns[0].status
-          console.log(col.cards[i].status)
-        }
-
-        this.columns[0].cards.sort(
-          (a: JobCardDataFormat, b: JobCardDataFormat) =>
-            a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
-        )
+        await axios.delete(API_URL + 'job/status', config).then(() => {
+          for (let i = 0; i < col.cards.length; i++) {
+            axios.patch(
+              API_URL + `job/update/${col.cards[i].jobId}`,
+              { status: this.nostatusID },
+              config
+            )
+          }
+          for (let i = 0; i < this.columns.length; i++) {
+            if (this.columns[i]._id == this.nostatusID) {
+              this.columns[i].cards.concat(col.cards)
+            }
+          }
+        })
 
         this.columns.splice(this.columns.indexOf(col), 1)
         this.delete_column_dialog = false
-
-        console.log(res)
       } catch (error) {
         console.log(error)
       }
@@ -745,11 +751,9 @@ export default {
             })
             this.add_column_dialog = false
           })
-        this.add_column_dialog = false
       } catch (error) {
         console.log(error)
       }
-      this.add_column_dialog = !this.add_column_dialog
       // this.columns.push(column)
     },
     addColorPickerUpdate() {
@@ -858,6 +862,9 @@ export default {
         for (let i = 0; i < loaded_tags_response.data.data.jobStatuses.length; i++) {
           if (loaded_tags_response.data.data.jobStatuses[i].status === 'Archive') {
             archive_index = i
+          }
+          if (loaded_tags_response.data.data.jobStatuses[i].status === 'No Status') {
+            this.nostatusID = loaded_tags_response.data.data.jobStatuses[i]._id
           }
           loaded_tags_response.data.data.jobStatuses[i]['cards'] = []
         }

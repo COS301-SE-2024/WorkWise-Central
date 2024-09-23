@@ -17,21 +17,15 @@
             <v-col :cols="12">
               <v-sheet rounded class="w-lg-screen" elevation="0">
                 <v-text-field
+                  class="p-0"
                   v-model="searchQuery"
                   placeholder="Search..."
                   prepend-inner-icon="mdi-magnify"
                   clearable
                 />
-                <v-expansion-panels class="my-4" variant="accordion">
-                  <v-expansion-panel
-                    v-for="i in filteredItems"
-                    :key="i.id"
-                    :theme="isDarkMode ? 'dark' : 'light'"
-                    style="font-family: Nunito, sans-serif"
-                  >
-                    <v-expansion-panel-title color="faqQuestion"
-                      ><b>{{ i.question }}</b></v-expansion-panel-title
-                    >
+                <v-expansion-panels class="pt-0">
+                  <v-expansion-panel v-for="i in filteredItems" :key="i.id">
+                    <v-expansion-panel-title>{{ i.question }}</v-expansion-panel-title>
                     <v-expansion-panel-text>{{
                       i.answer
                     }}</v-expansion-panel-text></v-expansion-panel
