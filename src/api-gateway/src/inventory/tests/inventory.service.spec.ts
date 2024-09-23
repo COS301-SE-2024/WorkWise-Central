@@ -10,6 +10,7 @@ import { StockTakeService } from '../../stocktake/stocktake.service';
 import { StockMovementsService } from '../../stockmovements/stockmovements.service';
 import { JobService } from '../../job/job.service';
 import { EmployeeService } from '../../employee/employee.service';
+import { InventoryUsedService } from '../../inventory-used/inventory-used.service';
 
 const mockInventoryRepository = {
   findAll: jest.fn(),
@@ -38,6 +39,8 @@ const mockJobService = {};
 
 const mockEmployeeService = {};
 
+const mockInventoryUsedService = {};
+
 describe('--Inventory Service--', () => {
   let inventoryService: InventoryService;
 
@@ -53,6 +56,7 @@ describe('--Inventory Service--', () => {
         { provide: StockMovementsService, useValue: mockStockMovementsService },
         { provide: JobService, useValue: mockJobService },
         { provide: EmployeeService, useValue: mockEmployeeService },
+        { provide: InventoryUsedService, useValue: mockInventoryUsedService },
       ],
     }).compile();
 
