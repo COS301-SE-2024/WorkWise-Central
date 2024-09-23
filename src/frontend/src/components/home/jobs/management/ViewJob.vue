@@ -2,16 +2,17 @@
   <v-card
       elevation="14"
       rounded="md"
-      :style="{ backgroundColor: cardBackgroundColor }"
+      :style="cardStyle"
       :min-height="900"
   >
-    <v-img
-        :src="imageSrc"
-        aspect-ratio="5.75"
-        @load="() => setCardBackgroundColor(imageSrc)"
-    ></v-img>
-    <v-row class="position-relative">
+
+    <v-row class="position-relative" :style="rowStyle">
       <v-col class="d-flex justify-end">
+        <v-img
+            :src="imageSrc"
+            aspect-ratio="5.75"
+            @load="(src) => onImageLoad(src)"
+        ></v-img>
         <v-btn color="primary" class="position-absolute bottom-right">
           <v-icon left>mdi-image</v-icon>
           <label for="imageInput" class="m-0">Cover</label>
@@ -356,7 +357,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, type Ref, defineEmits, onMounted } from 'vue'
+import { defineProps, ref, type Ref, defineEmits, onMounted, computed } from 'vue'
 import AddComment from './AddComments.vue'
 // import JobNotes from './JobNotes.vue'
 import CheckOffItems from './CheckOffItems.vue'
@@ -367,6 +368,7 @@ import JobStatus from './JobStatus.vue'
 import LogJobInventory from './LogJobInventory.vue'
 import GenerateInvoice from './GenerateInvoice.vue'
 import JobTimeTracker from './JobTimeTracker.vue'
+import ColorThief from 'colorthief'
 import axios from 'axios'
 
 const props = defineProps<{ passedInJob: any }>()
@@ -386,6 +388,38 @@ const jobTimeTrackerSection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
+
+const dominantColor = ref('transparent')
+
+const onImageLoad = (src: string | undefined) => {
+  if (!src) return;
+
+  const img = new Image();
+  img.crossOrigin = 'Anonymous';
+  img.src = src;
+  img.onload = () => setDominantColor(img);
+}
+
+const setDominantColor = async (img: HTMLImageElement) => {
+  const colorThief = new ColorThief()
+  try {
+    const color = colorThief.getColor(img)
+    dominantColor.value = `rgb(${color[0]}, ${color[1]}, ${color[2]})`
+    console.log('Colour:', dominantColor.value)
+  } catch (error) {
+    console.error('Error getting dominant color:', error)
+    dominantColor.value = 'transparent'
+  }
+}
+
+const cardStyle = computed(() => ({
+  backgroundColor: dominantColor.value
+}))
+
+const rowStyle = computed(() => ({
+  backgroundColor: dominantColor.value
+}))
+
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
@@ -462,7 +496,7 @@ const closeView = () => {
 }
 
 const imageSrc = ref('')
-const cardBackgroundColor = ref('')
+const cardBackgroundColor = ref('transparent')
 
 const changeImage = async (event: Event) => {
   const input = event.target as HTMLInputElement
@@ -470,7 +504,7 @@ const changeImage = async (event: Event) => {
     const reader = new FileReader()
     reader.onload = async (e) => {
       imageSrc.value = e.target?.result as string
-      setCardBackgroundColor(imageSrc.value)
+      onImageLoad(imageSrc.value)
       const apiUrl = await getRequestUrl()
       try {
         console.log('Image src value:', imageSrc.value)
@@ -494,6 +528,7 @@ const changeImage = async (event: Event) => {
 
 const setCardBackgroundColor = (src: string) => {
   const img = new Image()
+  img.crossOrigin = "Anonymous"  // This allows loading images from other domains
   img.src = src
   img.onload = () => {
     const canvas = document.createElement('canvas')
@@ -528,19 +563,13 @@ const setCardBackgroundColor = (src: string) => {
 onMounted(() => {
   const setImageAndBackground = () => {
     if (props.passedInJob.coverImage === '') {
-      imageSrc.value =
-          'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
+      imageSrc.value = 'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
     } else {
       imageSrc.value = props.passedInJob.coverImage
     }
-    setCardBackgroundColor(imageSrc.value)
+    onImageLoad(imageSrc.value);
   }
-
-  const img = new Image()
-  img.src =
-      props.passedInJob.coverImage ||
-      'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
-  img.onload = setImageAndBackground
+  setImageAndBackground()
 })
 </script>
 
