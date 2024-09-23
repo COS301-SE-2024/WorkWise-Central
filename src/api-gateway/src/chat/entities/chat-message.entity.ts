@@ -16,17 +16,17 @@ export class ChatMessage {
   // @Prop({ type: Types.ObjectId, required: true, default: new Types.ObjectId() })
   // _id: Types.ObjectId = new Types.ObjectId();
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: Chat.name, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, ref: Chat.name, required: true, index: true })
   chatId: Types.ObjectId;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true, index: true })
   userId: Types.ObjectId;
 
   @Prop({ type: String, required: true })
   textContent: string;
 
-  @Prop({ type: Boolean, required: true, default: false })
-  isRead: boolean = false;
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
+  usersWhoHaveReadMessage: Types.ObjectId[] = [];
 
   @Prop({ type: [String], required: false, default: [] })
   attachments?: string[] = [];

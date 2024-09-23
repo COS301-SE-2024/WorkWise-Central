@@ -80,3 +80,25 @@ export class UpdateChatDto {
   @IsMongoId({ each: true })
   participants?: Types.ObjectId[];
 }
+
+export class MarkChatAsReadDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsJWT()
+  jwt: string;
+
+  @IsMongoId()
+  @IsNotEmpty()
+  chatId: Types.ObjectId;
+}
+
+export class TypingDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsJWT()
+  jwt: string;
+
+  @IsMongoId()
+  @IsNotEmpty()
+  chatId: Types.ObjectId;
+}
