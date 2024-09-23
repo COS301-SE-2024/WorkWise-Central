@@ -251,6 +251,14 @@ export class inventoryItem {
   @IsOptional()
   quantity?: number;
 }
+class stockLossItem {
+  @ApiProperty()
+  inventoryItem: inventoryItem;
+
+  @ApiProperty()
+  @IsMongoId()
+  stockTakeId: Types.ObjectId;
+}
 
 export class InventoryStatsResponseDto {
   @ApiProperty()
@@ -267,7 +275,7 @@ export class InventoryStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  stockLost: [inventoryItem];
+  stockLost: [stockLossItem];
 
   @ApiProperty()
   @IsNumber()
@@ -300,6 +308,10 @@ export class teamJobAverage {
   @ApiProperty()
   @IsMongoId()
   teamId: Types.ObjectId;
+
+  @ApiProperty()
+  @IsString()
+  teamName: string;
 
   @ApiProperty()
   @IsNumber()
@@ -339,25 +351,11 @@ export class TeamStatsResponseDto {
 
   @ApiProperty()
   @IsNumber()
-  averageNumJobsPerTeam: [teamJobAverage];
+  averageNumJobsForTeam: number;
 
   @ApiProperty()
   @IsArray()
   ratingPerTeam: [teamRating];
-}
-
-export class Revenue {
-  @ApiProperty()
-  @IsString()
-  month: string;
-
-  @ApiProperty()
-  @IsNumber()
-  revenue: number;
-
-  @ApiProperty()
-  @IsArray()
-  invoices: [Invoice];
 }
 
 export class InvoiceStatsResponseDto {
@@ -382,6 +380,6 @@ export class InvoiceStatsResponseDto {
   unpaidInvoices: [Invoice];
 
   @ApiProperty()
-  @IsArray()
-  revenue: [Revenue];
+  @IsNumber()
+  revenue: number;
 }

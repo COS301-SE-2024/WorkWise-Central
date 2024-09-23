@@ -13,8 +13,10 @@ import {
   InventoryStatsResponseDto,
   InvoiceStatsResponseDto,
   JobsStatsResponseDto,
+  teamRating,
   TeamStatsResponseDto,
 } from './dto/stats-response.dto';
+import { StockMovementsService } from '../stockmovements/stockmovements.service';
 
 @Injectable()
 export class StatsService {
@@ -33,6 +35,8 @@ export class StatsService {
     private invoiceService: InvoiceService,
     @Inject(forwardRef(() => InventoryService))
     private inventoryService: InventoryService,
+    @Inject(forwardRef(() => StockMovementsService))
+    private stockMovementsService: StockMovementsService,
   ) {}
 
   async clientStats(clientId: Types.ObjectId) {
@@ -279,33 +283,127 @@ export class StatsService {
 
   async inventoryStats(companyId: Types.ObjectId) {
     const inventoryItems = await this.inventoryService.findAllInCompany(companyId);
+    const stockMovements = await this.stockMovementsService.findAllInCompany(companyId);
+    const listOfUse = [];
 
     const result = new InventoryStatsResponseDto();
     result.totalNumItems = inventoryItems.length;
 
     for (const item of inventoryItems) {
-      if(item.reorderLevel >= item.quantity){
+      if (item.reorderLevel >= item.currentStockLevel) {
         result.itemsToReorder.push({
-          itemId: item._id,
+          inventoryId: item._id,
           itemName: item.name,
-          quantity: item.quantity,
-          reorderLevel: item.reorderLevel,
+          quantity: item.currentStockLevel,
         });
       }
+      listOfUse.push({ id: item._id, usage: await this.stockMovementsService.getUsageForInventoryItem(item._id) });
     }
+    // Finding the highest used items
+    result.highestUsedItems = listOfUse.reduce((max, item) => (item.usage > max.usage ? item : max)).id;
+    result.costDueToStockLoss = 0;
 
+    for (const stockTake of stockMovements) {
+      for (const item of (stockTake as any).items) {
+        if (item.recordedStockLevel - item.currentStockLevel < 0) {
+          result.costDueToStockLoss += (item.recordedStockLevel - item.currentStockLevel) * item.inventoryItem.cost;
+          result.stockLost.push({
+            inventoryItem: {
+              inventoryId: item.inventoryItem.inventoryId,
+              itemName: item.inventoryItem.name,
+            },
+            stockTakeId: stockTake._id,
+          });
+        }
+      }
+    }
     return result;
   }
 
   async teamStats(companyId: Types.ObjectId) {
-    const result = new TeamStatsResponseDto();
+    const teams = await this.teamService.findAllInCompany(companyId);
 
+    const result = new TeamStatsResponseDto();
+    result.totalNumTeams = teams.length;
+    result.averageNumMembers = 0;
+    result.averageNumJobsForTeam = 0;
+    let totalTeam = 0;
+
+    for (const team of teams) {
+      result.averageNumMembers += team.teamMembers.length;
+      totalTeam++;
+      result.averageNumJobsForTeam += team.currentJobAssignments.length;
+
+      const rating = new teamRating();
+      rating.teamId = team._id;
+      let numJobRating = 0;
+      let numbServiceRating = 0;
+      for (const jobId of team.currentJobAssignments) {
+        const job = await this.jobService.getJobById(jobId);
+        if (job && job.clientFeedback && job.clientFeedback.jobRating) {
+          rating.workPerformanceRatingAverage += job.clientFeedback.jobRating;
+          numJobRating++;
+          rating.workPerformanceRating.push({
+            jobId: job._id,
+            jobTitle: job.details.heading,
+            rating: job.clientFeedback.jobRating,
+          });
+        }
+
+        if (job.clientFeedback.customerServiceRating) {
+          rating.customerServiceRatingAverage += job.clientFeedback.customerServiceRating;
+          numbServiceRating++;
+          rating.customerServiceRating.push({
+            jobId: job._id,
+            jobTitle: job.details.heading,
+            rating: job.clientFeedback.customerServiceRating,
+          });
+        }
+      }
+      rating.workPerformanceRatingAverage = rating.workPerformanceRatingAverage / numJobRating;
+      rating.customerServiceRatingAverage = rating.customerServiceRatingAverage / numbServiceRating;
+      result.ratingPerTeam.push(rating);
+    }
+    result.averageNumMembers = result.averageNumMembers / totalTeam;
+    result.averageNumJobsForTeam = result.averageNumJobsForTeam / totalTeam;
     return result;
   }
 
   async invoiceStats(companyId: Types.ObjectId) {
-    const result = new InvoiceStatsResponseDto();
+    const invoices = await this.invoiceService.detailedFindAllInCompany(companyId);
 
+    const result = new InvoiceStatsResponseDto();
+    result.totalNumInvoices = invoices.length;
+    result.numPaid = 0;
+    result.numUnpaid = 0;
+
+    for (const invoice of invoices) {
+      if (invoice.paid) {
+        result.numPaid++;
+        result.paidInvoices.push({
+          invoiceId: invoice._id,
+          invoiceNumber: invoice.invoiceNumber.toString(),
+          total: invoice.total,
+          job: {
+            jobId: invoice.jobId._id,
+            jobTitle: (invoice.jobId as any).details.heading,
+          },
+        });
+
+        result.revenue += invoice.total;
+      } else {
+        result.numUnpaid++;
+        result.unpaidInvoices.push({
+          invoiceId: invoice._id,
+          invoiceNumber: invoice.invoiceNumber.toString(),
+          total: invoice.total,
+          job: {
+            jobId: invoice.jobId._id,
+            jobTitle: (invoice.jobId as any).details.heading,
+          },
+        });
+      }
+    }
     return result;
   }
 }

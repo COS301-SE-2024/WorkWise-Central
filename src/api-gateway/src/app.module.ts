@@ -24,6 +24,7 @@ import { InvoiceModule } from './invoices/invoice.module';
 import { PayfastModule } from 'src/payfast/payfast.module';
 import { InventoryUsedModule } from './inventory-used/inventory-used.module';
 import { VideoCallModule } from './video-call/video-call.module';
+import { StatsModule } from './stats/stats.module';
 
 const rootPath = join(__dirname, '..', '../../uploads');
 
@@ -55,6 +56,7 @@ const rootPath = join(__dirname, '..', '../../uploads');
     PayfastModule,
     VideoCallModule,
     InventoryUsedModule,
+    StatsModule,
   ],
 })
 export class AppModule {}

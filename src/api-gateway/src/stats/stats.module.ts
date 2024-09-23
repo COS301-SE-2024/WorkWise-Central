@@ -1,7 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { StatsService } from './stats.service';
 import { StatsController } from './stats.controller';
-import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from '../users/users.module';
 import { CompanyModule } from '../company/company.module';
 import { EmployeeModule } from '../employee/employee.module';
@@ -9,6 +8,11 @@ import { JobModule } from '../job/job.module';
 import { ClientModule } from '../client/client.module';
 import { FileModule } from '../file/file.module';
 import { StockTakeModule } from '../stocktake/stocktake.module';
+import { TeamModule } from '../team/team.module';
+import { InvoiceModule } from '../invoices/invoice.module';
+import { InventoryModule } from 'src/inventory/inventory.module';
+import { StockMovements } from 'src/stockmovements/entities/stockmovements.entity';
+import { StockMovementsModule } from 'src/stockmovements/stockmovements.module';
 
 @Module({
   imports: [
@@ -19,9 +23,13 @@ import { StockTakeModule } from '../stocktake/stocktake.module';
     forwardRef(() => ClientModule),
     forwardRef(() => FileModule),
     forwardRef(() => StockTakeModule),
+    forwardRef(() => TeamModule),
+    forwardRef(() => InvoiceModule),
+    forwardRef(() => InventoryModule),
+    forwardRef(() => StockMovementsModule),
   ],
   controllers: [StatsController],
   providers: [StatsService],
-  exports: [StatsService, MongooseModule],
+  exports: [StatsService],
 })
-export class statsModule {}
+export class StatsModule {}
