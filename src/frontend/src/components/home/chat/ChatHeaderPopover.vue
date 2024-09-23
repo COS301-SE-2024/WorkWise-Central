@@ -1,13 +1,13 @@
 <template>
   <div class="card flex justify-center">
     <!--    <Button type="button" icon="fa: fa-thin fa-square-plus" label="More options" @click="toggle" />-->
-    <Popover ref="op" style="max-height: 800px; overflow-y: auto;">
+    <Popover ref="op" style="max-height: 800px; overflow-y: auto; min-width: 25%; max-width: 40%">
       <div class="card">
         <Tabs value="0">
           <TabList>
             <Tab value="0">{{ options[0].name }}</Tab>
             <Tab value="1">{{ options[1].name }}</Tab>
-            <Tab value="2">{{ options[2].name }}</Tab>
+            <Tab v-if="isAdmin === true" value="2">{{ options[2].name }}</Tab>
           </TabList>
           <TabPanels>
             <TabPanel value="0">
@@ -23,7 +23,6 @@
                 <template #title
                   ><h1>{{ chat?.name }}</h1></template
                 >
-                <template #subtitle>Created by {{}}</template>
                 <template #content>
                   <Panel header="Description" toggleable>
                     <p class="m-0">
@@ -58,25 +57,28 @@
                       'p-2 hover:bg-emphasis rounded border border-transparent transition-all duration-200 flex items-center justify-content-between',
                       { 'border-primary': selectedUser?._id === participant._id }
                     ]"
-                    @contextmenu="onRightClick($event, participant)"
                   >
-                    <div class="flex flex-1 items-center gap-2">
+                    <div class="flex flex-1 items-center gap-2" style="margin-left: 5%">
                       <Avatar
                         :alt="participant?.profile.displayName"
                         :image="
                           participant?.profile?.displayImage
                             ? participant?.profile?.displayImage
-                            : 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000'
+                            : 'https://img.icons8.com/?size=100&id=14599&format=png&color=000000'
                         "
-                        class="w-8 h-8"
-                        size="medium"
+                        class="w-10 h-10"
+                        size="large"
                         shape="circle"
                       />
                       {{ participant?.profile.displayName }}
-                      <Tag
-                        :value="participant?._id === chat?.admin ? 'Admin' : 'Member'"
-                        :severity="participant?._id === chat?.admin ? 'info' : null"
-                      />
+
+                      <div style="display: flex; flex-direction: row; justify-content: flex-end">
+                        <Tag
+                          :value="participant?._id === chat?.admin ? 'Admin' : 'Member'"
+                          :severity="participant?._id === chat?.admin ? 'info' : null"
+                          style="font-size: large"
+                        />
+                      </div>
                     </div>
                   </li>
                 </ul>
@@ -92,7 +94,9 @@
                 <!-- Chat Name -->
                 <v-row>
                   <v-col>
-                    <label for="chatName" class="block text-sm font-medium text-gray-700 mb-1">Chat Name</label>
+                    <label for="chatName" class="block text-sm font-medium text-gray-700 mb-1"
+                      >Chat Name</label
+                    >
                   </v-col>
                   <v-col>
                     <InputText id="chatName" v-model="editedChat.name" class="w-full" />
@@ -100,29 +104,39 @@
                 </v-row>
 
                 <!-- Chat Description -->
-                  <v-row>
-                    <v-col>
-                      <label for="chatDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    </v-col>
-                    <v-col>
-                      <Textarea id="chatDescription" v-model="editedChat.description" rows="3" class="w-full" />
-                    </v-col>
-                  </v-row>
+                <v-row>
+                  <v-col>
+                    <label
+                      for="chatDescription"
+                      class="block text-sm font-medium text-gray-700 mb-1"
+                      >Description</label
+                    >
+                  </v-col>
+                  <v-col>
+                    <Textarea
+                      id="chatDescription"
+                      v-model="editedChat.description"
+                      rows="3"
+                      class="w-full"
+                    />
+                  </v-col>
+                </v-row>
 
                 <!-- Chat Logo -->
                 <v-row>
                   <v-col cols="12">
-                    <label for="chatLogo" class="block text-sm font-medium text-gray-700 mb-1">Chat Logo</label>
+                    <label for="chatLogo" class="block text-sm font-medium text-gray-700 mb-1"
+                      >Chat Logo</label
+                    >
                   </v-col>
                   <v-col>
                     <FileUpload
-                        mode="basic"
-                        name="chatLogo[]"
-                        url="/api/upload"
-                        accept="image/*"
-                        :maxFileSize="1000000"
-                        @upload="onLogoUpload"
-                        :auto="true"
+                      mode="basic"
+                      accept="image/*"
+                      :maxFileSize="10000000"
+                      @select="handleFileChange"
+                      :auto="true"
+                      :customUpload="true"
                     />
                   </v-col>
                 </v-row>
@@ -130,19 +144,25 @@
                 <!-- Chat Admin -->
                 <v-row>
                   <v-col>
-                    <label for="chatAdmin" class="block text-sm font-medium text-gray-700 mb-1">Chat Admin</label>
+                    <label for="chatAdmin" class="block text-sm font-medium text-gray-700 mb-1"
+                      >Chat Admin</label
+                    >
                   </v-col>
                   <v-col cols="12">
                     <Listbox
-                        v-model="editedChat.adminId"
-                        :options="participants"
-                        optionLabel="profile.displayName"
-                        optionValue="_id"
-                        class="w-full"
+                      v-model="editedChat.admin"
+                      :options="participants"
+                      optionLabel="profile.displayName"
+                      optionValue="_id"
+                      class="w-full"
                     >
                       <template #option="slotProps">
                         <div class="flex align-items-center">
-                          <Avatar :image="slotProps.option.profile.avatar" shape="circle" class="mr-2" />
+                          <Avatar
+                            :image="slotProps.option.profile.displayImage"
+                            shape="circle"
+                            class="mr-2"
+                          />
                           <div>{{ slotProps.option.profile.displayName }}</div>
                         </div>
                       </template>
@@ -150,23 +170,37 @@
                   </v-col>
                 </v-row>
 
-
-                <!-- Participants Management -->
+                <!--                &lt;!&ndash; Participants Management &ndash;&gt;
                 <v-row>
                   <v-col>
                     <h3 class="text-lg font-semibold mb-2">Manage Participants</h3>
                   </v-col>
                   <v-col cols="12">
-                    <DataTable :value="editedChat.participants" :paginator="true" :rows="5" :rowsPerPageOptions="[5, 10, 20]">
+                    <DataTable
+                      :value="editedChat.participants"
+                      :paginator="true"
+                      :rows="5"
+                      :rowsPerPageOptions="[5, 10, 20]"
+                    >
                       <Column field="profile.displayName" header="Name"></Column>
                       <Column header="Role" :body="roleBodyTemplate"></Column>
                       <Column header="Actions" :body="actionBodyTemplate"></Column>
                     </DataTable>
                   </v-col>
-                </v-row>
-
+                </v-row>-->
                 <v-row class="justify-center">
-                  <Button label="Save Changes" icon="pi pi-check" @click="saveChanges" class="p-button-primary" />
+                  <Button
+                    label="Delete Chat"
+                    icon="fa fa-solid fa-warning"
+                    @click="deleteChat"
+                    style="background-color: #bd0707; margin-right: 10%; color: white"
+                  />
+                  <Button
+                    label="Save Changes"
+                    icon="pi pi-check"
+                    @click="saveChanges"
+                    class="p-button-primary"
+                  />
                 </v-row>
                 <!-- Save Changes Button -->
               </div>
@@ -179,7 +213,7 @@
 </template>
 
 <script setup>
-import { defineEmits, defineProps, ref, computed, reactive } from 'vue'
+import { defineEmits, defineProps, reactive, ref } from 'vue'
 import Popover from 'primevue/popover'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
@@ -197,34 +231,28 @@ import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import FileUpload from 'primevue/fileupload'
 import Listbox from 'primevue/listbox'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
 import Button from 'primevue/button'
+import { API_URL } from '@/main'
+import axios from 'axios'
 
 const toast = useToast()
 const selectedUser = ref()
 const menu = ref()
 
-const users = ref([
-  { id: 0, name: 'Amy Elsner', image: 'amyelsner.png', role: 'Admin' },
-  { id: 1, name: 'Anna Fali', image: 'annafali.png', role: 'Member' },
-  { id: 2, name: 'Asiya Javayant', image: 'asiyajavayant.png', role: 'Member' },
-  { id: 3, name: 'Bernardo Dominic', image: 'bernardodominic.png', role: 'Guest' },
-  { id: 4, name: 'Elwin Sharvill', image: 'elwinsharvill.png', role: 'Member' }
-])
-
 const props = defineProps(['chat', 'participants'])
 //const defaultChatPic = 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000'
-const emit = defineEmits(['edit-chat', 'delete-chat'])
+const emit = defineEmits(['update-chat-popover', 'delete-chat-popover'])
 
-const editedChat = reactive({
+let editedChat = reactive({
+  _id: props.chat._id,
   name: props.chat.name,
   description: props.chat.description,
-  adminId: props.chat.adminId,
+  admin: props.chat.admin,
   participants: [...props.chat.participants],
+  image: props.chat.image
 })
 
-const formattedParticipants = computed(() =>
+/*const formattedParticipants = computed(() =>
     editedChat.participants.map(p => ({
       _id: p._id,
       profile: {
@@ -232,20 +260,62 @@ const formattedParticipants = computed(() =>
         avatar: p.profile.avatar || 'path/to/default/avatar.png'
       }
     }))
-)
+)*/
 
-const onLogoUpload = (event) => {
-  // Handle logo upload
+const handleFileChange = async (event) => {
+  const files = event.files
+  if (files && files.length > 0) {
+    const formData = new FormData()
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i])
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    }
+
+    const url = `${API_URL}chat/add/attachments`
+
+    try {
+      const response = await axios.put(url, formData, config)
+      if (response.status === 200) {
+        console.log(response)
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Files uploaded successfully',
+          life: 3000
+        })
+        console.log(response)
+        editedChat.image = response.data.data[0]
+
+        //return response.data.data
+      }
+    } catch (error) {
+      console.error(error)
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to upload File(s)',
+        life: 3000
+      })
+      console.log(url)
+    }
+  }
 }
 
 const roleBodyTemplate = (rowData) => {
-  return rowData._id === editedChat.adminId ? 'Admin' : 'Member'
+  return rowData._id === editedChat.admin ? 'Admin' : 'Member'
 }
 
 const actionBodyTemplate = (rowData) => {
   return h('div', [
     h(Button, {
-      label: rowData._id === editedChat.adminId ? 'Remove Admin' : 'Make Admin',
+      label: rowData._id === editedChat.admin ? 'Remove Admin' : 'Make Admin',
       class: 'p-button-text',
       onClick: () => toggleAdmin(rowData)
     }),
@@ -258,22 +328,28 @@ const actionBodyTemplate = (rowData) => {
 }
 
 const toggleAdmin = (participant) => {
-  editedChat.adminId = participant._id === editedChat.adminId ? null : participant._id
+  editedChat.admin = participant._id === editedChat.admin ? null : participant._id
 }
 
 const removeParticipant = (participant) => {
-  const index = editedChat.participants.findIndex(p => p._id === participant._id)
+  const index = editedChat.participants.findIndex((p) => p._id === participant._id)
   if (index > -1) {
     editedChat.participants.splice(index, 1)
-    if (participant._id === editedChat.adminId) {
-      editedChat.adminId = null
+    if (participant._id === editedChat.admin) {
+      editedChat.admin = null
     }
   }
 }
 
 const saveChanges = () => {
   // Emit updated chat data to parent component
-  emit('update-chat', editedChat)
+  emit('update-chat-popover', editedChat)
+  console.log('delete-chat-popover', editedChat)
+}
+
+const deleteChat = () => {
+  emit('delete-chat-popover', editedChat)
+  console.log('Delete-chat', editedChat)
 }
 
 const items = ref([
@@ -321,26 +397,21 @@ const getBadge = (user) => {
   else return null
 }
 
+let isAdmin = false
 const op = ref()
 const toggle = (event) => {
+  isAdmin = localStorage.getItem('id') === props.chat.admin
+  editedChat = props.chat
   op.value.toggle(event)
 }
 
 const tempImage = 'http://www.gravatar.com/avatar/?d=mp'
-const selectedOption = ref()
+// const selectedOption = ref()
 const options = ref([
   { name: 'Overview', code: 'NY' },
   { name: 'Members', code: 'RM' },
   { name: 'Settings', code: 'NL' }
 ])
-
-const deleteChat = () => {
-  emit('delete-chat', props.chat)
-}
-
-const editChatDetails = () => {
-  emit('edot-chat', props.chat)
-}
 
 defineExpose({
   toggle

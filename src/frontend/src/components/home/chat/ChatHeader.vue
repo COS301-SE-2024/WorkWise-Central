@@ -35,6 +35,8 @@
         :chat="chat"
         :participants="participants"
         ref="childComponentRef"
+        @update-chat-popover="passOnChatUpdate"
+        @delete-chat-popover="passOnChatDelete"
       ></ChatHeaderPopover>
     </v-col>
   </div>
@@ -47,16 +49,18 @@ import AvatarGroup from 'primevue/avatargroup'
 import ChatHeaderPopover from '@/components/home/chat/ChatHeaderPopover.vue'
 
 let hover = false
-const defaultChatPic = 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000'
+const defaultChatPic = 'https://img.icons8.com/?size=100&id=14599&format=png&color=000000'
 const props = defineProps(['chat', 'participants'])
-const emit = defineEmits(['edit-chat', 'delete-chat'])
+const emit = defineEmits(['update-chat', 'delete-chat'])
 
-const deleteChat = () => {
-  emit('delete-chat', props.chat)
+const passOnChatUpdate = (editedChat) => {
+  emit('update-chat', editedChat)
+  console.log('header', editedChat)
 }
 
-const editChatDetails = () => {
-  emit('delete-chat', props.chat)
+const passOnChatDelete = (editedChat) => {
+  emit('delete-chat', editedChat)
+  console.log('header', editedChat)
 }
 
 const childComponentRef = ref()
