@@ -167,6 +167,7 @@ import axios from 'axios'
 import Chart from 'primevue/chart'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import { API_URL } from '@/main'
 
 export default {
   data() {
@@ -252,9 +253,8 @@ export default {
         companyID: localStorage.getItem('currentCompany'),
         currentEmployee: localStorage.getItem('employeeId')
       }
-      const apiURL = await this.getRequestUrl()
       try {
-        await axios.patch(`${apiURL}inventory/${item._id}`, data, config).then(() => {
+        await axios.patch(`${API_URL}inventory/${item._id}`, data, config).then(() => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
@@ -488,10 +488,9 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
 
       try {
-        await axios.post(`${apiURL}stocktake`, stockTakeData, config).then(() => {
+        await axios.post(`${API_URL}stocktake`, stockTakeData, config).then(() => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
@@ -526,10 +525,9 @@ export default {
           currentEmployee: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}inventory/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}inventory/all/${localStorage.getItem('employeeId')}`,
           config
         )
         this.inventoryItems = response.data.data

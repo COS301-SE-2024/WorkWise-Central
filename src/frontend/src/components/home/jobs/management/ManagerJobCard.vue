@@ -220,6 +220,8 @@ import SelectMembers from './SelectMembers.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
+
 // import ChangeDueDate from './UpdateDateDialog.vue'
 
 // Props and Emits
@@ -342,7 +344,6 @@ const patchJobDetails = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   try {
     // Validate and set startDate
     if (startDate.value && startTime.value) {
@@ -377,7 +378,7 @@ const patchJobDetails = async () => {
 
     // Make patch request
     const response = await axios.patch(
-      `${apiUrl}job/update/${props.passedInJob._id}`,
+      `${API_URL}job/update/${props.passedInJob._id}`,
       { details: job.value.details },
       config
     )

@@ -1,5 +1,11 @@
 <template>
   <v-container>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Employee Center</h2>
+      </v-col>
+      <v-divider></v-divider>
+    </v-row>
     <v-row>
       <v-col cols="12">
         <v-card class="bg-cardColor">
@@ -166,6 +172,7 @@ import Chart from 'primevue/chart'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'EmployeeCenter',
@@ -313,10 +320,9 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data[0].role)
@@ -339,11 +345,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
-      const user_id = localStorage.getItem('id')
+
       try {
         const res = await axios.get(
-          `${apiURL}job/status/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/status/all/${localStorage.getItem('currentCompany')}`,
           config
         )
         this.items = res.data.data
@@ -376,9 +381,8 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
-        const res = await axios.get(`${apiURL}job/id/${id}`, config)
+        const res = await axios.get(`${API_URL}job/id/${id}`, config)
         return res.data.data.jobName
       } catch (error) {
         console.error(error)

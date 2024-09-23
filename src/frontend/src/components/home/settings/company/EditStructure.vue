@@ -197,6 +197,7 @@ import { defineComponent, reactive } from 'vue'
 import * as vNG from 'v-network-graph'
 import dagre from 'dagre/dist/dagre.min.js'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 const nodeSize = 40
 
@@ -393,11 +394,11 @@ export default defineComponent({
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+
+      console.log(API_URL)
       try {
         const response = await axios.get(
-          `${apiURL}employee/graphViewData/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/graphViewData/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response)
@@ -418,11 +419,11 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+
+      console.log(API_URL)
       try {
         const response = await axios.get(
-          `${apiURL}employee/detailed/id/${this.selectedItem.id}`,
+          `${API_URL}employee/detailed/id/${this.selectedItem.id}`,
           config
         )
         console.log(response)
@@ -468,11 +469,11 @@ export default defineComponent({
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
         params: { currentEmployeeId: localStorage['employeeId'] }
       }
-      const apiURL = await this.getRequestUrl()
+
       console.log(this.selectedEmployee._id)
       try {
         const sub_res = await axios.get(
-          apiURL + `employee/listPotentialSubordinates/${this.selectedEmployee._id}`,
+          API_URL + `employee/listPotentialSubordinates/${this.selectedEmployee.employeeId}`,
           config
         )
         console.log(sub_res)
@@ -486,11 +487,11 @@ export default defineComponent({
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
         params: { currentEmployeeId: localStorage['employeeId'] }
       }
-      const apiURL = await this.getRequestUrl()
+
       console.log(this.selectedEmployee._id)
       try {
         const sup_res = await axios.get(
-          apiURL + `employee/listPotentialSuperiors/${this.selectedEmployee._id}`,
+          API_URL + `employee/listPotentialSuperiors/${this.selectedEmployee._id}`,
           config
         )
         console.log(sup_res)
@@ -501,11 +502,11 @@ export default defineComponent({
     },
     async loadRoles() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+
+      console.log(API_URL)
       try {
         let roles_response = await axios.get(
-          apiURL + `role/all/${localStorage['currentCompany']}`,
+          API_URL + `role/all/${localStorage['currentCompany']}`,
           config
         )
         let roles_data = roles_response.data.data
@@ -531,10 +532,10 @@ export default defineComponent({
       this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      let apiURL = await this.getRequestUrl()
+      let API_URL = await this.getRequestUrl()
       console.log(this.this.selectedItem.id)
       axios
-        .patch(apiURL + `employee/${this.this.selectedItem.id}`, this.req_obj, config)
+        .patch(API_URL + `employee/${this.this.selectedItem.id}`, this.req_obj, config)
         .then((res) => {
           this.$toast.add({
             severity: 'success',

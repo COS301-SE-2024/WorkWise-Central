@@ -54,6 +54,7 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import type { JobCardDataFormat } from '@/components/home/jobs/types'
 import type { Person } from '@/components/home/employees/types'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'ArchiveComponent',
@@ -90,10 +91,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       axios
         .patch(
-          apiURL + `job/update/${this.selectedItem?.jobId}`,
+          API_URL + `job/update/${this.selectedItem?.jobId}`,
           { status: this.nostatusID },
           config
         )
@@ -110,9 +111,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       axios
-        .delete(apiURL + `job/full/${this.selectedItem?.jobId}`, config)
+        .delete(API_URL + `job/full/${this.selectedItem?.jobId}`, config)
         .then((res) => {
           console.log(res.data.data)
           window.location.reload()
@@ -130,10 +131,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `job/status/all/${localStorage['currentCompany']}`,
+          API_URL + `job/status/all/${localStorage['currentCompany']}`,
           config
         )
         console.log(loaded_tags_response.data.data)
@@ -153,10 +154,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `job/all/company/detailed/${localStorage['currentCompany']}`,
+          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}`,
           config
         )
 

@@ -132,6 +132,8 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'EditCompany',
 
@@ -299,7 +301,6 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      // const apiURL = await this.getRequestUrl()
       const company_id = localStorage.getItem('currentCompany')
       await axios
         .get(`http://localhost:3000/company/id/${company_id}`, config)
@@ -319,8 +320,6 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
       const data = {
         currentEmployeeId: localStorage.getItem('employeeId'),
         updateCompanyDto: this.company
@@ -328,7 +327,7 @@ export default defineComponent({
       this.company.logo = ''
       console.log(JSON.stringify(data))
       await axios
-        .patch(`${apiURL}company/update/${localStorage.getItem('currentCompany')}`, data, config)
+        .patch(`${API_URL}company/update/${localStorage.getItem('currentCompany')}`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -380,12 +379,11 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       const formData = new FormData()
       formData.append('logo', file)
       axios
         .patch(
-          `${apiURL}company/update/${localStorage.getItem('currentCompany')}/logo`,
+          `${API_URL}company/update/${localStorage.getItem('currentCompany')}/logo`,
           formData,
           config
         )

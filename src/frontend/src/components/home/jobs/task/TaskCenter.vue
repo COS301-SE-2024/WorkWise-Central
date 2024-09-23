@@ -8,6 +8,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import ReportForm from './ReportForm.vue'
+import { API_URL } from '@/main'
 
 interface Job {
   companyId: {}
@@ -84,10 +85,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiUrl = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
           config
         )
         console.log(response.data.data)

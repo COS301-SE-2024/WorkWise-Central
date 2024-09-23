@@ -184,6 +184,7 @@ import { defineProps, ref } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 // import Editor from 'primevue/editor'
 
 const toast = useToast()
@@ -249,7 +250,6 @@ const patchJobDetails = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   try {
     if (startDate.value != null && startTime.value != null) {
       const startDateTime = new Date(`${startDate.value}T${startTime.value}`)
@@ -261,7 +261,7 @@ const patchJobDetails = async () => {
     }
     console.log(job.value.details)
     const response = await axios.patch(
-      `${apiUrl}job/update/${props.jobID}`,
+      `${API_URL}job/update/${props.jobID}`,
       { details: job.value.details },
       config
     )

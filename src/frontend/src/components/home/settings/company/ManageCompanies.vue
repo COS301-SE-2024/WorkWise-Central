@@ -125,6 +125,7 @@ import InvitePage from '../user/InvitePage.vue'
 import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 // Interfaces
 interface Company {
@@ -196,9 +197,8 @@ const changeTab = (tab: string) => {
 
 // Company management actions
 const setUserCompanies = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
+    const response = await axios.get(`${API_URL}users/id/${localStorage.getItem('id')}`, config)
     if (response.status >= 200 && response.status < 300) {
       const companiesData = response.data.data.joinedCompanies
       console.log('Company data:', companiesData)
@@ -238,14 +238,13 @@ const leaveCompany = async (company: Company) => {
     leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
   }, 30000)
 
-  const apiUrl = await getRequestUrl()
   try {
     const body = {
       currentEmployee: company.employeeId,
       companyToLeaveId: company.companyId,
       reason: ''
     }
-    const response = await axios.patch(`${apiUrl}company/leave/`, body, config)
+    const response = await axios.patch(`${API_URL}company/leave/`, body, config)
     if (response.status >= 200 && response.status < 300) {
       leaveCompanyToast(company.name)
       if (joinedCompanies.value.length > 0) {
@@ -308,9 +307,9 @@ const switchCompany = async (company: Company) => {
   localStorage.setItem('currentCompany', company.companyId)
   localStorage.setItem('employeeId', company.employeeId)
   localStorage.setItem('currentCompanyName', company.name)
-  const apiUrl = getRequestUrl()
+  const API_URL = getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}employee/id/${company.employeeId}`, config)
+    const response = await axios.get(`${API_URL}employee/id/${company.employeeId}`, config)
     console.log('Returned employee', response)
     // const roleId = response.data.data.role.roleId
     // localStorage.setItem('roleId', roleId)
