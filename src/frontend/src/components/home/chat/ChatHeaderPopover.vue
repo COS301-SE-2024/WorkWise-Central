@@ -1,7 +1,7 @@
 <template>
   <div class="card flex justify-center">
     <!--    <Button type="button" icon="fa: fa-thin fa-square-plus" label="More options" @click="toggle" />-->
-    <Popover ref="op">
+    <Popover ref="op" style="max-height: 800px; overflow-y: auto;">
       <div class="card">
         <Tabs value="0">
           <TabList>
@@ -90,62 +90,85 @@
                 <h2 class="text-xl font-bold mb-4">Chat Settings</h2>
 
                 <!-- Chat Name -->
-                <div class="mb-4">
-                  <label for="chatName" class="block text-sm font-medium text-gray-700 mb-1">Chat Name</label>
-                  <InputText id="chatName" v-model="editedChat.name" class="w-full" />
-                </div>
+                <v-row>
+                  <v-col>
+                    <label for="chatName" class="block text-sm font-medium text-gray-700 mb-1">Chat Name</label>
+                  </v-col>
+                  <v-col>
+                    <InputText id="chatName" v-model="editedChat.name" class="w-full" />
+                  </v-col>
+                </v-row>
 
                 <!-- Chat Description -->
-                <div class="mb-4">
-                  <label for="chatDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                  <Textarea id="chatDescription" v-model="editedChat.description" rows="3" class="w-full" />
-                </div>
+                  <v-row>
+                    <v-col>
+                      <label for="chatDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    </v-col>
+                    <v-col>
+                      <Textarea id="chatDescription" v-model="editedChat.description" rows="3" class="w-full" />
+                    </v-col>
+                  </v-row>
 
                 <!-- Chat Logo -->
-                <div class="mb-4">
-                  <label for="chatLogo" class="block text-sm font-medium text-gray-700 mb-1">Chat Logo</label>
-                  <FileUpload
-                      mode="basic"
-                      name="chatLogo[]"
-                      url="/api/upload"
-                      accept="image/*"
-                      :maxFileSize="1000000"
-                      @upload="onLogoUpload"
-                      :auto="true"
-                  />
-                </div>
+                <v-row>
+                  <v-col cols="12">
+                    <label for="chatLogo" class="block text-sm font-medium text-gray-700 mb-1">Chat Logo</label>
+                  </v-col>
+                  <v-col>
+                    <FileUpload
+                        mode="basic"
+                        name="chatLogo[]"
+                        url="/api/upload"
+                        accept="image/*"
+                        :maxFileSize="1000000"
+                        @upload="onLogoUpload"
+                        :auto="true"
+                    />
+                  </v-col>
+                </v-row>
 
                 <!-- Chat Admin -->
-                <div class="mb-4">
-                  <label for="chatAdmin" class="block text-sm font-medium text-gray-700 mb-1">Chat Admin</label>
-                  <Listbox
-                      v-model="editedChat.adminId"
-                      :options="participants"
-                      optionLabel="profile.displayName"
-                      optionValue="_id"
-                      class="w-full"
-                  >
-                    <template #option="slotProps">
-                      <div class="flex align-items-center">
-                        <Avatar :image="slotProps.option.profile.avatar" shape="circle" class="mr-2" />
-                        <div>{{ slotProps.option.profile.displayName }}</div>
-                      </div>
-                    </template>
-                  </Listbox>
-                </div>
+                <v-row>
+                  <v-col>
+                    <label for="chatAdmin" class="block text-sm font-medium text-gray-700 mb-1">Chat Admin</label>
+                  </v-col>
+                  <v-col cols="12">
+                    <Listbox
+                        v-model="editedChat.adminId"
+                        :options="participants"
+                        optionLabel="profile.displayName"
+                        optionValue="_id"
+                        class="w-full"
+                    >
+                      <template #option="slotProps">
+                        <div class="flex align-items-center">
+                          <Avatar :image="slotProps.option.profile.avatar" shape="circle" class="mr-2" />
+                          <div>{{ slotProps.option.profile.displayName }}</div>
+                        </div>
+                      </template>
+                    </Listbox>
+                  </v-col>
+                </v-row>
+
 
                 <!-- Participants Management -->
-                <div class="mb-4">
-                  <h3 class="text-lg font-semibold mb-2">Manage Participants</h3>
-                  <DataTable :value="editedChat.participants" :paginator="true" :rows="5" :rowsPerPageOptions="[5, 10, 20]">
-                    <Column field="profile.displayName" header="Name"></Column>
-                    <Column header="Role" :body="roleBodyTemplate"></Column>
-                    <Column header="Actions" :body="actionBodyTemplate"></Column>
-                  </DataTable>
-                </div>
+                <v-row>
+                  <v-col>
+                    <h3 class="text-lg font-semibold mb-2">Manage Participants</h3>
+                  </v-col>
+                  <v-col cols="12">
+                    <DataTable :value="editedChat.participants" :paginator="true" :rows="5" :rowsPerPageOptions="[5, 10, 20]">
+                      <Column field="profile.displayName" header="Name"></Column>
+                      <Column header="Role" :body="roleBodyTemplate"></Column>
+                      <Column header="Actions" :body="actionBodyTemplate"></Column>
+                    </DataTable>
+                  </v-col>
+                </v-row>
 
+                <v-row class="justify-center">
+                  <Button label="Save Changes" icon="pi pi-check" @click="saveChanges" class="p-button-primary" />
+                </v-row>
                 <!-- Save Changes Button -->
-                <Button label="Save Changes" icon="pi pi-check" @click="saveChanges" class="p-button-primary" />
               </div>
             </TabPanel>
           </TabPanels>
