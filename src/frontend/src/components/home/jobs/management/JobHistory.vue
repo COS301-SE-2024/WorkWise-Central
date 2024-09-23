@@ -2,12 +2,17 @@
   <div>
     <v-row>
       <v-col class="d-flex justify-center">
-        <v-btn @click="toggleHistory" color="success" :icon="true">
-          <v-icon>
-            {{ showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye' }}
-          </v-icon>
-          {{ showHistory ? 'Hide History' : 'Show History' }}
-        </v-btn>
+<!--        <v-btn @click="toggleHistory" color="success" :icon="true">-->
+<!--          <v-icon>-->
+<!--            {{ showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye' }}-->
+<!--          </v-icon>-->
+<!--          {{ showHistory ? 'Hide History' : 'Show History' }}-->
+<!--        </v-btn>-->
+        <div class="pb-2">
+          <Button @click="toggleHistory" label="Show History" :icon="showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye'" :class="showHistory ? 'p-button-danger' : 'p-button-success'">
+          </Button>
+        </div>
+
       </v-col>
     </v-row>
     <v-card v-if="showHistory" height="auto" elevation="0">
@@ -44,7 +49,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
 import axios from 'axios'
-import { API_URL } from '@/main'
+import Button from 'primevue/button'
 
 // Define the type for an event
 interface Event {
@@ -102,8 +107,9 @@ const paginatedEvents = computed(() => {
 })
 
 const refreshHistory = async () => {
+  const apiUrl = await getRequestUrl()
   try {
-    const res = await axios.get(`${API_URL}job/id/${props.jobID}`)
+    const res = await axios.get(`${apiUrl}job/id/${props.jobID}`)
     events.value = res.data.data.history
     console.log('History updated:', res)
   } catch (error) {
