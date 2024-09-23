@@ -112,6 +112,8 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'AddInventory',
   components: {
@@ -167,7 +169,6 @@ export default defineComponent({
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
-      const apiURL = await this.getRequestUrl()
 
       const data = {
         createInventoryDto: {
@@ -182,7 +183,7 @@ export default defineComponent({
       }
       try {
         console.log(data)
-        const response = await axios.post(`${apiURL}inventory/create`, data, config)
+        const response = await axios.post(`${API_URL}inventory/create`, data, config)
         console.log(response)
         this.$toast.add({
           severity: 'success',

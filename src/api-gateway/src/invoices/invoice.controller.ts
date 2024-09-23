@@ -322,20 +322,12 @@ export class InvoiceController {
   })
   @ApiBody({ type: UpdateInvoiceDto })
   @Patch(':id')
-  async update(
-    @Headers() headers: any,
-    @Param('id') id: Types.ObjectId,
-    @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      updateInvoiceDto: UpdateInvoiceDto;
-    },
-  ) {
+  async update(@Headers() headers: any, @Param('id') id: Types.ObjectId, @Body() updateInvoiceDto: UpdateInvoiceDto) {
     // const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
     // if (currentEmployee.role.permissionSuite.includes('edit all Invoice')) {
     let data;
     try {
-      data = await this.invoiceService.update(id, body.updateInvoiceDto);
+      data = await this.invoiceService.update(id, updateInvoiceDto);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }

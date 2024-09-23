@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-height="800" max-width="600">
+  <v-dialog v-model="dialog" max-height="800" opacity="0.6" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"

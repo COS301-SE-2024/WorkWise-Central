@@ -146,6 +146,8 @@ import axios from 'axios'
 import DeleteStatus from './DeleteStatus.vue'
 import Toast from 'primevue/toast'
 import CreateStatus from './CreateStatus.vue'
+import { API_URL } from '@/main'
+
 interface Status {
   status: string
   colour: string
@@ -250,11 +252,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(
-          `${apiURL}job/status/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/status/all/${localStorage.getItem('currentCompany')}`,
           config
         )
         this.items = res.data.data
@@ -298,9 +299,8 @@ export default defineComponent({
         }
       }
       console.log(this.selectedItem)
-      const apiURL = await this.getRequestUrl()
       await axios
-        .patch(`${apiURL}job/status`, this.selectedItem, config)
+        .patch(`${API_URL}job/status`, this.selectedItem, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

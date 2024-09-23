@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { TimeInterval, TimeTracker } from './entities/time-tracker.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -35,9 +35,24 @@ export class TimeTrackerRepository {
     const checkIn = await this.timeTrackerModel
       .findOne({ $and: [{ employeeId: employeeId }, { jobId: jobId }, { checkOutTime: null }] })
       .exec();
-    checkIn.pauses.push(new TimeInterval(currentDate()));
-    checkIn.markModified('pauses');
-    return (await checkIn.save()).toObject();
+
+    if (checkIn.pauses.length > 0) {
+      const lastPause = checkIn.pauses[checkIn.pauses.length - 1];
+      if (lastPause.end == null) {
+        // lastPause.end = currentDate();
+        // checkIn.markModified('pauses');
+        //return (await checkIn.save()).toObject();
+        throw new ConflictException('Job is Already on Pause');
+      } else {
+        checkIn.pauses.push(new TimeInterval(currentDate()));
+        checkIn.markModified('pauses');
+        return (await checkIn.save()).toObject();
+      }
+    } else {
+      checkIn.pauses.push(new TimeInterval(currentDate()));
+      checkIn.markModified('pauses');
+      return (await checkIn.save()).toObject();
+    }
   }
 
   async resume(employeeId: Types.ObjectId, jobId: Types.ObjectId) {

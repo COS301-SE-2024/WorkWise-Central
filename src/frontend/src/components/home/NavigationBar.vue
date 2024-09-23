@@ -20,8 +20,7 @@ const clientSubItems = ref([
 
 const employeeSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
-  { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' },
-  { title: 'Employee Center', icon: 'fa: fa-solid fa-circle-user', routeName: 'employee-center' }
+  { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' }
 ])
 const teamSubItems = ref([{ title: 'Management' }])
 const jobSubItems = ref([
@@ -33,19 +32,18 @@ const jobSubItems = ref([
 const inventorySubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'inventory' },
   {
-    title: 'Inventory Center',
-    icon: 'fa: fa-solid fa-bars-progress',
-    routeName: 'report-view'
-  },
-  {
     title: 'Stock Take',
     icon: 'fa: fa-solid fa-chart-line',
     routeName: 'stock-take'
+  },
+  {
+    title: 'Movements',
+    icon: 'fa: fa-solid fa-bars-progress',
+    routeName: 'report-view'
   }
 ])
 const invoicesSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'invoices' },
-  { title: 'Invoice Center', icon: 'fa: fa-solid fa-file-invoice', routeName: 'invoice-center' },
   { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: '404' }
 ])
 
@@ -82,6 +80,7 @@ import ProfilePage from './settings/profile/ProfilePage.vue'
 import DarkModeToggleVue from './settings/DarkModeToggle.vue'
 import CompanyMain from './settings/company/CompanyMain.vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'NavigationBar',
@@ -131,9 +130,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
           console.log(response)
           console.log(response.data.data)
@@ -213,6 +211,7 @@ export default defineComponent({
           ></v-list-item>
         </v-list-group>
       </v-list>
+
       <v-list
         v-model:open="open"
         v-show="checkPermission('view all clients') || checkPermission('view clients under me')"

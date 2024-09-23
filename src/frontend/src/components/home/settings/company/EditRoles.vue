@@ -133,6 +133,8 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import DeleteRole from './DeleteRole.vue'
 import CreateRoles from './CreateRoles.vue'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   props: {
     Company: Object,
@@ -307,9 +309,8 @@ export default defineComponent({
         bulkUpdateRoleDto: this.bulkRoleUpdateDto
       }
       console.log(JSON.stringify(data))
-      const apiURL = await this.getRequestUrl()
       await axios
-        .patch(`${apiURL}role/bulkUpdate/${this.companyID}`, config, data)
+        .patch(`${API_URL}role/bulkUpdate/${this.companyID}`, config, data)
         .then((response) => {
           console.log(response)
           this.$toast.add({

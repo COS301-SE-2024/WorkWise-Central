@@ -36,7 +36,7 @@
 
             <v-row>
               <v-col>
-                <h6>Team Leaderav</h6>
+                <h6>Team Leader</h6>
                 <v-select
                   v-model="teamLeaderName"
                   color="secondary"
