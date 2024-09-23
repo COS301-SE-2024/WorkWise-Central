@@ -1,5 +1,5 @@
 <template>
-  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'" class="pl-5 pr-5">
     <v-container fluid fill-height>
       <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
