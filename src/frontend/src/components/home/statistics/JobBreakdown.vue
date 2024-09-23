@@ -8,19 +8,19 @@
     <!-- Total Jobs Information -->
     <v-card-subtitle
       ><v-chip color="primary"
-        ><h5>Total Jobs: {{ totalJobs }}</h5></v-chip
+        ><h5>Total Jobs: {{ jobStats.totalNumJobs }}</h5></v-chip
       ></v-card-subtitle
     >
 
     <!-- Job Categories Breakdown -->
     <v-card-text>
       <div>
-        <strong>Active Jobs: {{ activeJobs.length }}</strong>
+        <strong>Active Jobs: {{ jobStats.numActiveJobs }}</strong>
 
         <!-- Pie Chart for Active Jobs Breakdown -->
         <Chart type="pie" :data="activeJobsChartData" :options="chartOptions" height="300px" />
 
-        <p><strong>Archived Jobs:</strong> {{ archivedJobs.length }}</p>
+        <p><strong>Archived Jobs:</strong> {{ jobStats.numArchivedJobs }}</p>
 
         <!-- Overall Rating Card -->
         <v-container>
@@ -36,7 +36,7 @@
 
                 <div class="d-flex align-center flex-column my-auto">
                   <div class="text-h2 mt-5">
-                    {{ overallRating }}
+                    {{ jobStats.workPerformanceRatingAverage }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
 
@@ -83,7 +83,7 @@
 
                 <div class="d-flex align-center flex-column my-auto">
                   <div class="text-h2 mt-5">
-                    {{ overallRating }}
+                    {{ jobStats.customerServiceRatingAverage }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
 
@@ -123,37 +123,56 @@
         >
 
         <!-- Outstanding Invoices -->
-        <p>
-          <strong>Jobs with Outstanding Invoices:</strong> {{ jobsWithOutstandingInvoices.length }}
-        </p>
+        <p><strong>Jobs with Outstanding Invoices:</strong> {{ jobStats.amountOutstanding }}</p>
       </div>
 
       <!-- Line Chart for Hours Worked -->
-      <Chart type="line" :data="hoursWorkedChartData" :options="chartOptions" height="600px" />
+      <!-- <Chart type="line" :data="hoursWorkedChartData" :options="chartOptions" height="600px" /> -->
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 import Chart from 'primevue/chart'
-
+import axios from 'axios'
 export default {
   components: { Chart },
   data() {
     return {
       currentTab: 'Job Breakdown', // Tab name
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       totalJobs: 100, // Example total jobs
       activeJobs: [], // Array of active jobs
       archivedJobs: [], // Array of archived jobs
       jobsWithOutstandingInvoices: [], // Array of jobs with outstanding invoices
-
+      jobStats: {
+        totalNumJobs: 0,
+        numActiveJobs: 0,
+        activeJobs: [],
+        numCompletedJobs: 0,
+        completedJobs: [],
+        numArchivedJobs: 0,
+        archivedJobs: [],
+        workPerformanceRating: [],
+        workPerformanceRatingAverage: 0,
+        customerServiceRating: [],
+        customerServiceRatingAverage: 0,
+        numJobsUnpaidInvoice: 0,
+        jobsUnpaidInvoice: [],
+        amountOutstanding: 0
+      },
       // Chart data for active jobs
       activeJobsChartData: {
-        labels: ['Currently Busy', 'Completed'],
+        labels: ['Active', 'Archived', 'Completed'],
         datasets: [
           {
-            data: [], // Will be populated in mounted
-            backgroundColor: ['#FF6384', '#36A2EB']
+            data: [
+              this.jobStats?.numActiveJobs,
+              this.jobStats?.numArchivedJobs,
+              this.jobStats?.numCompletedJobs
+            ], // Will be populated in mounted
+            backgroundColor: ['#FF6384', '#36A2EB', '#42A5F5']
           }
         ]
       },
@@ -195,25 +214,63 @@ export default {
       }
     }
   },
+  methods: {
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async getJobStats() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      axios
+        .get(`${apiURL}stats/jobStats/${localStorage.getItem('currentCompany')}`, config)
+        .then((response) => {
+          console.log(response)
+          this.jobStats = response.data.data
+         
+        })
+        .catch((error) => {
+          console.error('Failed to fetch job stats:', error)
+        })
+    }
+  },
   mounted() {
     // Example data, replace with actual job data
-    this.activeJobs = [
-      { id: 1, name: 'Job A', status: 'busy' },
-      { id: 2, name: 'Job B', status: 'completed' }
-    ]
+    // this.activeJobs = [
+    //   { id: 1, name: 'Job A', status: 'busy' },
+    //   { id: 2, name: 'Job B', status: 'completed' }
+    // ]
 
-    const busyJobs = this.activeJobs.filter((job) => job.status === 'busy')
-    const completedJobs = this.activeJobs.filter((job) => job.status === 'completed')
+    // const busyJobs = this.activeJobs.filter((job) => job.status === 'busy')
+    // const completedJobs = this.activeJobs.filter((job) => job.status === 'completed')
 
-    this.archivedJobs = [{ id: 3, name: 'Job C' }]
+    // this.archivedJobs = [{ id: 3, name: 'Job C' }]
 
-    this.jobsWithOutstandingInvoices = [{ id: 4, name: 'Job D', invoiceStatus: 'outstanding' }]
+    // this.jobsWithOutstandingInvoices = [{ id: 4, name: 'Job D', invoiceStatus: 'outstanding' }]
 
-    // Update active jobs chart data
-    this.activeJobsChartData.datasets[0].data = [busyJobs.length, completedJobs.length]
+    // // Update active jobs chart data
+    // this.activeJobsChartData.datasets[0].data = [busyJobs.length, completedJobs.length]
 
-    // Update rating chart data
-    this.ratingChartData.datasets[0].data = [4.5, 4.7] // Example ratings, replace with actual data
+    // // Update rating chart data
+    // this.ratingChartData.datasets[0].data = [4.5, 4.7] // Example ratings, replace with actual data
+    this.getJobStats()
   }
 }
 </script>

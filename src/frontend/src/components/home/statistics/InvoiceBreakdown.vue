@@ -6,9 +6,9 @@
     </v-card-title>
 
     <!-- Invoice Breakdown Summary -->
-    <v-card-subtitle 
-      ><v-chip color="primary" 
-        ><h5>Total Invoices: {{ totalInvoices }}</h5></v-chip
+    <v-card-subtitle
+      ><v-chip color="primary"
+        ><h5>Total Invoices: {{ invoiceStats.totalNumInvoices }}</h5></v-chip
       ></v-card-subtitle
     >
 
@@ -36,7 +36,7 @@
 
 <script>
 import Chart from 'primevue/chart'
-import { ref } from 'vue'
+import axios from 'axios'
 
 export default {
   components: { Chart },
@@ -44,7 +44,10 @@ export default {
     return {
       currentTab: 'Invoice Breakdown', // Example tab name
       totalInvoices: 120, // Example total invoices, replace with actual data
-      selectedMonth: null, // Selected month for revenue breakdown
+      selectedMonth: null, // Selected month for revenue breakdown,
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      invoiceStats: '',
       months: [
         'January',
         'February',
@@ -73,16 +76,29 @@ export default {
       labels: ['Paid', 'Unpaid'],
       datasets: [
         {
-          data: [90, 30], // Example data: 90 paid, 30 unpaid invoices
+          data: [this.invoiceStats.numPaid, this.invoiceStats.numUnpaid], // Example data: 90 paid, 30 unpaid invoices
           backgroundColor: ['#42A5F5', '#FF6384']
         }
       ]
     }
+    this.getInvoiceStats()
 
     // Fetch initial revenue data for the current month (replace with actual logic)
     this.fetchRevenueForMonth('January')
   },
   methods: {
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
     fetchRevenueForMonth(month) {
       // Example data fetching logic for revenue per month
       // Replace with actual data fetching logic based on `month`
@@ -104,6 +120,28 @@ export default {
           }
         ]
       }
+    },
+    async getInvoiceStats() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      axios
+        .get(`${apiURL}stats/invoiceStats/${localStorage.getItem('currentCompany')}`, config)
+        .then((response) => {
+          console.log(response)
+          this.invoiceStats = response.data.data
+        })
+        .catch((error) => {
+          console.error('Failed to fetch invoice stats:', error)
+        })
     }
   }
 }

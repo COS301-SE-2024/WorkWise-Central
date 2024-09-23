@@ -8,7 +8,7 @@
     <!-- Total Number of Items Display -->
     <v-card-subtitle
       ><v-chip color="primary"
-        ><h5>Total Number of Items: {{ totalItems }}</h5></v-chip
+        ><h5>Total Number of Items: {{ inventoryStats.totalNumItems }}</h5></v-chip
       ></v-card-subtitle
     >
 
@@ -47,12 +47,15 @@
 
 <script>
 import Chart from 'primevue/chart'
+import axios from 'axios'
 
 export default {
   components: { Chart },
   data() {
     return {
       currentTab: 'Inventory Breakdown',
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       totalItems: 500,
       highestUsageItemsChartData: {},
       itemsToReorder: [
@@ -71,7 +74,44 @@ export default {
       }
     }
   },
+  methods: {
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async getInventoryStats() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      axios
+        .get(`${apiURL}stats/inventoryStats/${localStorage.getItem('currentCompany')}`, config)
+        .then((response) => {
+          console.log(response)
+          this.inventoryStats = response.data.data
+        })
+        .catch((error) => {
+          console.error('Failed to fetch inventory stats:', error)
+        })
+    }
+  },
   mounted() {
+    this.getInventoryStats()
     // Doughnut chart data for highest usage items
     this.highestUsageItemsChartData = {
       labels: ['Item 1', 'Item 2', 'Item 3'],

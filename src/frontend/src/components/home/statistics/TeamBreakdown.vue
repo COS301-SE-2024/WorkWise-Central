@@ -8,7 +8,7 @@
     <!-- Team Breakdown Summary -->
     <v-card-subtitle
       ><v-chip color="primary"
-        ><h5>Total Teams: {{ totalTeams }}</h5></v-chip
+        ><h5>Total Teams: {{ }}</h5></v-chip
       ></v-card-subtitle
     >
     <v-card-text>
@@ -79,11 +79,13 @@
 
 <script>
 import Chart from 'primevue/chart'
-
+import axios from 'axios'
 export default {
   components: { Chart },
   data() {
     return {
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       currentTab: 'Team Breakdown', // Tab name
       totalTeams: 10, // Example total number of teams
       teamBreakdownChartData: {}, // Data for polar area chart
@@ -118,7 +120,7 @@ export default {
       datasets: [
         {
           label: 'Team Members',
-          data: [this.calculateAverage([6, 8, 7, 5])], // Average number of team members
+          data: [], // Average number of team members
           backgroundColor: '#42A5F5'
         }
       ]
@@ -151,10 +153,45 @@ export default {
 
     // Calculate total teams
     this.totalTeams = this.teamBreakdownChartData.labels.length
+    this.getTeamStats()
   },
   methods: {
     calculateAverage(arr) {
       return (arr.reduce((sum, val) => sum + val, 0) / arr.length).toFixed(2)
+    },
+    async isLocalAvailable(localUrl) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    async getTeamStats() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      axios
+        .get(`${apiURL}stats/teamStats/${localStorage.getItem('currentCompany')}`, config)
+        .then((response) => {
+          console.log(response)
+          this.teamStats = response.data.data
+        })
+        .catch((error) => {
+          console.error('Failed to fetch team stats:', error)
+        })
     }
   }
 }

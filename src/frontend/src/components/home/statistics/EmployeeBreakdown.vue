@@ -185,6 +185,7 @@ export default {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       employees: [],
+      employeeStats: '',
       employeeHeaders: [
         { title: 'First Name', value: 'userInfo.firstName' },
         { title: 'Last Name', value: 'userInfo.surname' },
@@ -274,6 +275,49 @@ export default {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
+    async getEmployeeStats() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      axios
+        .get(`${apiURL}stats/employeeStats/${localStorage.getItem('employeeId')}`, config)
+        .then((response) => {
+          this.employeeStats = response.data.data
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employee stats:', error)
+        })
+    },
+    async getNumEmployees() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      axios
+        .get(`${apiURL}stats/numEmployees/${localStorage.getItem('currentCompany')}`, config)
+        .then((response) => {
+          console.log(response)
+          this.totalEmployees = response.data.data
+        })
+        .catch((error) => {
+          console.error('Failed to fetch number of employees:', error)
+        })
+    },
     async getEmployees() {
       const config = {
         headers: {
@@ -299,6 +343,7 @@ export default {
   },
   mounted() {
     this.getEmployees()
+    this.getNumEmployees()
   }
 }
 </script>

@@ -182,7 +182,7 @@ export default {
   components: { Chart },
   data() {
     return {
-      totalClients: 50, // Example data, replace with actual
+      totalClients: 0, // Example data, replace with actual
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       search: '',
@@ -328,6 +328,38 @@ export default {
       // Returns the 'selected-client' class for the selected client
       return client === this.selectedClient ? 'selected-client' : ''
     },
+    async getStats() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      axios
+        .get(`${apiURL}stats/numClients/${localStorage.getItem('currentCompany')}`, config)
+        .then((response) => {
+          this.totalClients = response.data.data
+        })
+        .catch((error) => {
+          console.error('Failed to fetch clients:', error)
+        })
+    },
+    async getClientStats() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+    },
     async getClients() {
       const config = {
         headers: {
@@ -387,6 +419,7 @@ export default {
   },
   mounted() {
     this.getClients()
+    this.getStats()
   }
 }
 </script>
