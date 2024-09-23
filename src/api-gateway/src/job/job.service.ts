@@ -117,6 +117,24 @@ export class JobService {
     }
   }
 
+  async findAllJobsForEmployee(employeeId: Types.ObjectId) {
+    try {
+      return await this.jobRepository.findAllForEmployee(employeeId);
+    } catch (error) {
+      console.log(error);
+      throw new ServiceUnavailableException(error);
+    }
+  }
+
+  async findAllJobsForClient(clientId: Types.ObjectId) {
+    try {
+      return await this.jobRepository.findAllForClient(clientId);
+    } catch (error) {
+      console.log(error);
+      throw new ServiceUnavailableException(error);
+    }
+  }
+
   async jobExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } = await this.jobRepository.existsInCompany(id, companyId);
 
@@ -862,16 +880,24 @@ export class JobService {
     return this.jobTagRepository.findStatusById(statusId);
   }
 
+  async getStatusByIdInternal(statusId: Types.ObjectId) {
+    return this.jobTagRepository.findStatusById(statusId);
+  }
+
   async getStatusByLabel(companyId: Types.ObjectId, lbl: string) {
     return this.jobTagRepository.findStatusByLabel(companyId, lbl);
   }
 
-  private async getStatusByIdWithoutValidation(statusId: Types.ObjectId) {
+  async getStatusByIdWithoutValidation(statusId: Types.ObjectId) {
     return this.jobTagRepository.findStatusById(statusId);
   }
 
   async findAllStatusesInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
     if (!(await this.usersService.userIdExists(userId))) throw new NotFoundException('User not found');
+    return this.jobTagRepository.findAllStatusesInCompany(companyId);
+  }
+
+  async findAllStatusesInCompanyInternal(companyId: Types.ObjectId) {
     return this.jobTagRepository.findAllStatusesInCompany(companyId);
   }
 
