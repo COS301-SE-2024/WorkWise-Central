@@ -12,6 +12,7 @@ import {
   EmployeeStatsResponseDto,
   InventoryStatsResponseDto,
   InvoiceStatsResponseDto,
+  Job,
   JobsStatsResponseDto,
   teamRating,
   TeamStatsResponseDto,

@@ -11,7 +11,6 @@ import { StockTakeModule } from '../stocktake/stocktake.module';
 import { TeamModule } from '../team/team.module';
 import { InvoiceModule } from '../invoices/invoice.module';
 import { InventoryModule } from 'src/inventory/inventory.module';
-import { StockMovements } from 'src/stockmovements/entities/stockmovements.entity';
 import { StockMovementsModule } from 'src/stockmovements/stockmovements.module';
 
 @Module({
