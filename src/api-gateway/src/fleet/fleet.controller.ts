@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { FleetService } from './fleet.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '../auth/auth.guard';
@@ -65,11 +65,11 @@ export class FleetController {
     type: FleetVehiclesResponseDto,
     description: `An array of mongodb objects of the Vehicle class`,
   })
-  @Get('/company/:companyId')
+  @Get('all/company')
   async findAllInCompany(
     @Headers() headers: any,
-    @Param('companyId') companyId: string,
-    @Param('employeeId') employeeId: string,
+    @Query('companyId') companyId: string,
+    @Query('employeeId') employeeId: string,
   ) {
     try {
       validateObjectId(companyId);
