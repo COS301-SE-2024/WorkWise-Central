@@ -1,177 +1,210 @@
+<!--<template>-->
+<!--  <v-container>-->
+<!--    <Toast position="top-center" />-->
+<!--    <v-row class="justify-center align-center">-->
+<!--      <v-col cols="12" class="text-center">-->
+<!--        <h2 class="text-xl font-semibold">Notifications</h2>-->
+<!--      </v-col>-->
+<!--    </v-row>-->
+<!--    <v-card rounded="md" class="bg-background" border="md">-->
+<!--      <v-row>-->
+<!--        <v-col cols="12" lg="10">-->
+<!--          <v-row>-->
+<!--            <v-col cols="12" lg="2">-->
+<!--              <v-row-->
+<!--                ><v-col cols="12"-->
+<!--                  ><v-btn-->
+<!--                    @click="setInbox('All')"-->
+<!--                    :class="{ 'bg-secondary': currentInbox === 'All' }"-->
+<!--                    color=""-->
+<!--                    variant="text"-->
+<!--                    ><v-icon icon="fa: fa-solid fa-inbox" color="primary"></v-icon>All</v-btn-->
+<!--                  ></v-col-->
+<!--                >-->
+<!--                <v-col cols="12">-->
+<!--                  <v-btn-->
+<!--                    @click="setInbox('Read')"-->
+<!--                    :class="{ 'bg-secondary': currentInbox === 'Read' }"-->
+<!--                    color=""-->
+<!--                    variant="text"-->
+<!--                    ><v-icon icon="fa: fa-regular fa-bell" color="primary"></v-icon>Read</v-btn-->
+<!--                  ></v-col-->
+<!--                >-->
+<!--                <v-col cols="12"-->
+<!--                  ><v-btn-->
+<!--                    @click="setInbox('Unread')"-->
+<!--                    :class="{ 'bg-secondary': currentInbox === 'Unread' }"-->
+<!--                    color=""-->
+<!--                    variant="text"-->
+<!--                    ><v-icon icon="fa: fa-solid fa-bell" color="primary"></v-icon>Unread</v-btn-->
+<!--                  ></v-col-->
+<!--                >-->
+<!--              </v-row>-->
+<!--            </v-col>-->
+<!--            <v-col cols="12" lg="10">-->
+<!--              <v-text-field-->
+<!--                v-model="search"-->
+<!--                label="Search"-->
+<!--                elevation="1"-->
+<!--                variant="outlined"-->
+<!--                dense-->
+<!--                color="primary"-->
+<!--                hide-details-->
+<!--                class="pa-0 ma-2"-->
+<!--                @input="searchEmails"-->
+<!--              ></v-text-field>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
+<!--          <v-row>-->
+<!--            <v-col cols="12" order="last" justify="center">-->
+<!--              <v-card class="pa-0 ma-3 bg-background" elevation="0">-->
+<!--                <v-card-title class="text-h4 bg-background">{{ currentInbox }}</v-card-title>-->
+<!--                <v-divider></v-divider>-->
+<!--                <v-card-text class="bg-background">-->
+<!--                  <v-list class="bg-background" rounded="md">-->
+<!--                    <v-list-item-->
+<!--                      v-for="(notification, i) in notifications"-->
+<!--                      :key="i"-->
+<!--                      @click="handleNotificationClick(notification._id)"-->
+<!--                    >-->
+<!--                      <Panel :class="'bg-background'">-->
+<!--                        <template #header>-->
+<!--                          <div class="flex items-center gap-2">-->
+<!--                            <v-icon-->
+<!--                              :icon="-->
+<!--                                !notification.isRead-->
+<!--                                  ? 'fa: fa-regular fa-bell'-->
+<!--                                  : 'fa: fa-solid fa-bell'-->
+<!--                              "-->
+<!--                            >-->
+<!--                            </v-icon>-->
+<!--                            <span class="font-bold h6">{{ notification.message.title }}</span>-->
+<!--                          </div>-->
+<!--                        </template>-->
+<!--                        <template #footer>-->
+<!--                          <div class="flex flex-wrap items-center justify-between gap-4">-->
+<!--                            <div class="flex items-center gap-2"></div>-->
+<!--                            <span class="text-surface-500 dark:text-surface-400">-->
+<!--                              {{ format(new Date(notification.createdAt), 'dd MMMM yyyy') }}</span-->
+<!--                            >-->
+<!--                          </div>-->
+<!--                        </template>-->
+<!--                        <template #icons>-->
+<!--                          <v-menu>-->
+<!--                            <template #activator="{ props }">-->
+<!--                              <v-btn icon v-bind="props">-->
+<!--                                <v-icon icon="fa: fa-solid fa-ellipsis-v" color="primary"></v-icon>-->
+<!--                              </v-btn>-->
+<!--                            </template>-->
+<!--                            <v-list>-->
+<!--                              <v-list-item @click="handleAction('mark as read', notification._id)">-->
+<!--                                <v-btn color="success" block>-->
+<!--                                  <v-icon-->
+<!--                                    icon="fa:fa-solid fa-envelope-open"-->
+<!--                                    color="success"-->
+<!--                                  ></v-icon>-->
+<!--                                  Mark as Read-->
+<!--                                </v-btn>-->
+<!--                              </v-list-item>-->
+<!--                              <v-list-item @click="handleAction('delete', notification._id)">-->
+<!--                                <v-btn color="error" block>-->
+<!--                                  <v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>-->
+<!--                                  Delete-->
+<!--                                </v-btn>-->
+<!--                              </v-list-item>-->
+<!--                            </v-list>-->
+<!--                          </v-menu>-->
+<!--                        </template>-->
+<!--                        <p class="m-0" :theme="true">-->
+<!--                          {{ notification.message.body }}-->
+<!--                        </p>-->
+<!--                      </Panel>-->
+<!--                    </v-list-item>-->
+<!--                  </v-list>-->
+<!--                </v-card-text>-->
+<!--              </v-card>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
+<!--        </v-col>-->
+<!--        <v-col cols="12" lg="2">-->
+<!--          <v-card class="pa-0 ma-2 bg-background" elevation="0" border="sm">-->
+<!--            <v-list class="bg-background">-->
+<!--              <v-list-item-->
+<!--                v-for="(item, index) in items"-->
+<!--                :key="index"-->
+<!--                :value="index"-->
+<!--                @click="setInbox(item.title)"-->
+<!--                :class="{ 'bg-secondary': currentInbox === item.title }"-->
+<!--              >-->
+<!--                <v-list-item-title-->
+<!--                  ><v-icon :icon="item.icon" start color="primary"></v-icon-->
+<!--                  >{{ item.title }}</v-list-item-title-->
+<!--                >-->
+<!--              </v-list-item>-->
+<!--            </v-list>-->
+<!--            <v-divider></v-divider>-->
+<!--            <v-list class="bg-background">-->
+<!--              <v-label>Filters</v-label>-->
+<!--              <v-list-item-->
+<!--                v-for="(item, index) in filters"-->
+<!--                :key="index"-->
+<!--                :value="index"-->
+<!--                @click="filterOn ? filter(item.title) : filter(item.title)"-->
+<!--                :class="{ 'bg-secondary': currentFilter === item.title }"-->
+<!--              >-->
+<!--                <v-list-item-title>{{ item.title }}</v-list-item-title>-->
+<!--              </v-list-item>-->
+<!--            </v-list>-->
+<!--            <v-divider></v-divider>-->
+<!--            <v-list class="bg-background">-->
+<!--              <v-label>Companies</v-label>-->
+<!--              <v-list-item-->
+<!--                v-for="(item, index) in companies"-->
+<!--                :key="index"-->
+<!--                :value="index"-->
+<!--                @click="switchCompany(item.title)"-->
+<!--              >-->
+<!--                <v-list-item-title>{{ item.title }}</v-list-item-title>-->
+<!--              </v-list-item>-->
+<!--            </v-list>-->
+<!--          </v-card>-->
+<!--        </v-col>-->
+<!--      </v-row>-->
+<!--    </v-card>-->
+<!--  </v-container>-->
+<!--</template>-->
+
 <template>
-  <v-container>
-    <Toast position="top-center" />
-    <v-row class="justify-center align-center">
-      <v-col cols="12" class="text-center">
-        <h2 class="text-xl font-semibold">Notifications</h2>
-      </v-col>
-    </v-row>
-    <v-card rounded="md" class="bg-background" border="md">
-      <v-row>
-        <v-col cols="12" lg="10">
-          <v-row>
-            <v-col cols="12" lg="2">
-              <v-row
-                ><v-col cols="12"
-                  ><v-btn
-                    @click="setInbox('All')"
-                    :class="{ 'bg-secondary': currentInbox === 'All' }"
-                    color=""
-                    variant="text"
-                    ><v-icon icon="fa: fa-solid fa-inbox" color="primary"></v-icon>All</v-btn
-                  ></v-col
-                >
-                <v-col cols="12">
-                  <v-btn
-                    @click="setInbox('Read')"
-                    :class="{ 'bg-secondary': currentInbox === 'Read' }"
-                    color=""
-                    variant="text"
-                    ><v-icon icon="fa: fa-regular fa-bell" color="primary"></v-icon>Read</v-btn
-                  ></v-col
-                >
-                <v-col cols="12"
-                  ><v-btn
-                    @click="setInbox('Unread')"
-                    :class="{ 'bg-secondary': currentInbox === 'Unread' }"
-                    color=""
-                    variant="text"
-                    ><v-icon icon="fa: fa-solid fa-bell" color="primary"></v-icon>Unread</v-btn
-                  ></v-col
-                >
-              </v-row>
-            </v-col>
-            <v-col cols="12" lg="10">
-              <v-text-field
-                v-model="search"
-                label="Search"
-                elevation="1"
-                variant="outlined"
-                dense
-                color="primary"
-                hide-details
-                class="pa-0 ma-2"
-                @input="searchEmails"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" order="last" justify="center">
-              <v-card class="pa-0 ma-3 bg-background" elevation="0">
-                <v-card-title class="text-h4 bg-background">{{ currentInbox }}</v-card-title>
-                <v-divider></v-divider>
-                <v-card-text class="bg-background">
-                  <v-list class="bg-background" rounded="md">
-                    <v-list-item
-                      v-for="(notification, i) in notifications"
-                      :key="i"
-                      @click="handleNotificationClick(notification._id)"
-                    >
-                      <Panel :class="'bg-background'">
-                        <template #header>
-                          <div class="flex items-center gap-2">
-                            <v-icon
-                              :icon="
-                                !notification.isRead
-                                  ? 'fa: fa-regular fa-bell'
-                                  : 'fa: fa-solid fa-bell'
-                              "
-                            >
-                            </v-icon>
-                            <span class="font-bold h6">{{ notification.message.title }}</span>
-                          </div>
-                        </template>
-                        <template #footer>
-                          <div class="flex flex-wrap items-center justify-between gap-4">
-                            <div class="flex items-center gap-2"></div>
-                            <span class="text-surface-500 dark:text-surface-400">
-                              {{ format(new Date(notification.createdAt), 'dd MMMM yyyy') }}</span
-                            >
-                          </div>
-                        </template>
-                        <template #icons>
-                          <v-menu>
-                            <template #activator="{ props }">
-                              <v-btn icon v-bind="props">
-                                <v-icon icon="fa: fa-solid fa-ellipsis-v" color="primary"></v-icon>
-                              </v-btn>
-                            </template>
-                            <v-list>
-                              <v-list-item @click="handleAction('mark as read', notification._id)">
-                                <v-btn color="success" block>
-                                  <v-icon
-                                    icon="fa:fa-solid fa-envelope-open"
-                                    color="success"
-                                  ></v-icon>
-                                  Mark as Read
-                                </v-btn>
-                              </v-list-item>
-                              <v-list-item @click="handleAction('delete', notification._id)">
-                                <v-btn color="error" block>
-                                  <v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>
-                                  Delete
-                                </v-btn>
-                              </v-list-item>
-                            </v-list>
-                          </v-menu>
-                        </template>
-                        <p class="m-0" :theme="true">
-                          {{ notification.message.body }}
-                        </p>
-                      </Panel>
-                    </v-list-item>
-                  </v-list>
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col cols="12" lg="2">
-          <v-card class="pa-0 ma-2 bg-background" elevation="0" border="sm">
-            <v-list class="bg-background">
-              <v-list-item
-                v-for="(item, index) in items"
-                :key="index"
-                :value="index"
-                @click="setInbox(item.title)"
-                :class="{ 'bg-secondary': currentInbox === item.title }"
-              >
-                <v-list-item-title
-                  ><v-icon :icon="item.icon" start color="primary"></v-icon
-                  >{{ item.title }}</v-list-item-title
-                >
-              </v-list-item>
-            </v-list>
-            <v-divider></v-divider>
-            <v-list class="bg-background">
-              <v-label>Filters</v-label>
-              <v-list-item
-                v-for="(item, index) in filters"
-                :key="index"
-                :value="index"
-                @click="filterOn ? filter(item.title) : filter(item.title)"
-                :class="{ 'bg-secondary': currentFilter === item.title }"
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-            <v-divider></v-divider>
-            <v-list class="bg-background">
-              <v-label>Companies</v-label>
-              <v-list-item
-                v-for="(item, index) in companies"
-                :key="index"
-                :value="index"
-                @click="switchCompany(item.title)"
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-container>
+  <v-card>
+    <v-toolbar color="primary" title="Notifications"> </v-toolbar>
+
+    <div class="d-flex flex-row">
+      <v-tabs v-model="tab" color="primary" direction="vertical">
+        <v-tab prepend-icon="fa: fa-solid fa-inbox" text="Inbox" value="option-1"></v-tab>
+        <v-tab prepend-icon="fa: fa-solid fa-inbox" text="All" value="option-2"></v-tab>
+        <v-tab prepend-icon="fa: fa-solid fa-bell" text="Read" value="option-3"></v-tab>
+        <v-tab prepend-icon="fa: fa-regular fa-bell" text="Unread" value="option-4"></v-tab>
+      </v-tabs>
+
+      <v-tabs-window v-model="tab">
+        <v-tabs-window-item value="option-1">
+          <v-card flat> </v-card>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item value="option-2">
+          <v-card flat> </v-card>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item value="option-3">
+          <v-card flat> </v-card>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item value="option-4">
+          <v-card flat> </v-card>
+        </v-tabs-window-item>
+      </v-tabs-window>
+    </div>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -184,6 +217,7 @@ import { API_URL } from '@/main'
 export default {
   data() {
     return {
+      tab: 'option-1',
       menu: false,
       notifications: [] as any[],
       allNotifications: [] as any[],
