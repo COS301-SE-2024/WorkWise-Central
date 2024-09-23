@@ -16,6 +16,7 @@ import { StockTakeModule } from '../stocktake/stocktake.module';
 import { TimeTrackerModule } from '../time-tracker/time-tracker.module';
 import { StockMovementsModule } from '../stockmovements/stockmovements.module';
 import { InvoiceModule } from '../invoices/invoice.module';
+import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
 @Module({
   imports: [
     forwardRef(() => InvoiceModule),
@@ -31,6 +32,7 @@ import { InvoiceModule } from '../invoices/invoice.module';
     forwardRef(() => InventoryModule),
     forwardRef(() => TimeTrackerModule),
     forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryUsedModule),
   ],
   controllers: [PayfastController],
   providers: [PayfastService, CompanyService, InvoiceService],

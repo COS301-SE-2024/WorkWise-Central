@@ -1,36 +1,34 @@
 <template>
   <v-combobox
-    v-model="selectedTags"
-    :items="companyLabels"
-    item-value="_id"
-    item-title="label"
-    label="Select some tags you would like to assign to this job"
-    multiple
-    required
-    color="primary"
-    variant="solo"
-    clearable
-    data-testid="tags-multi-select"
-    searchable
+      v-model="selectedTags"
+      :items="companyLabels"
+      item-value="_id"
+      item-title="label"
+      label="Select some tags you would like to assign to this job"
+      multiple
+      required
+      color="primary"
+      variant="solo"
+      clearable
+      data-testid="tags-multi-select"
+      searchable
+      @update:modelValue="saveTags"
   >
     <template #selection="{ item }">
       <v-chip
-        :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
-        @click="openEditDialog(item)"
+          :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
+          @click="openEditDialog(item)"
       >
         {{ item.title }}
       </v-chip>
     </template>
   </v-combobox>
 
-  <v-btn color="success" width="100%" @click="saveTags">
-    <v-icon class="fas fa-save"></v-icon>
-    Save Tags
-  </v-btn>
-  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>
-    <v-icon class="fas fa-plus"></v-icon>
-    Create Tag
-  </v-btn>
+<!--  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>-->
+<!--    <v-icon class="fas fa-plus"></v-icon>-->
+<!--    Create Tag-->
+<!--  </v-btn>-->
+  <Button label="Create Tag" icon="fa: fa-solid fa-plus" class="mt-4 p-button-success" @click="openCreateDialog" />
   <!-- Label Creation/Edit Dialog -->
   <v-dialog v-model="dialog" max-width="400px">
     <v-card class="bg-cardColor">
@@ -40,13 +38,13 @@
         <!-- Title Input -->
         <v-label class="pb-0">Title</v-label>
         <v-text-field
-          v-model="labelTitle"
-          label="Label Title"
-          outlined
-          dense
-          class="mt-4 pt-0"
-          hint="Enter the title for the label"
-          persistent-hint
+            v-model="labelTitle"
+            label="Label Title"
+            outlined
+            dense
+            class="mt-4 pt-0"
+            hint="Enter the title for the label"
+            persistent-hint
         ></v-text-field>
 
         <!-- Color Palette -->
@@ -59,9 +57,9 @@
 
         <!-- Selected Color Block with Label Title -->
         <div
-          v-if="labelTitle"
-          class="d-flex justify-center align-center mt-4"
-          :style="{
+            v-if="labelTitle"
+            class="d-flex justify-center align-center mt-4"
+            :style="{
             backgroundColor: selectedColor,
             color: getContrastingColor(selectedColor),
             width: '100%',
@@ -91,7 +89,7 @@
 import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
-import { API_URL } from '@/main'
+import Button from 'primevue/button'
 
 const toast = useToast()
 
@@ -134,9 +132,10 @@ const getRequestUrl = async (): Promise<string> => {
 }
 
 const getJobTags = async () => {
+  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(
-      `${API_URL}job/tags/${localStorage.getItem('currentCompany')}`,
+      `${apiUrl}job/tags/${localStorage.getItem('currentCompany')}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
@@ -154,11 +153,12 @@ const getJobTags = async () => {
 }
 
 const saveTags = async () => {
+  const apiUrl = await getRequestUrl()
   try {
     const updatedTags = selectedTags.value.map((tag) => tag._id)
     console.log('Selected tags:', updatedTags)
     const response = await axios.patch(
-      `${API_URL}job/update/${props.jobID}`,
+      `${apiUrl}job/update/${props.jobID}`,
       { tags: updatedTags },
       {
         headers: {
@@ -183,6 +183,7 @@ const handleClick = () => {
 }
 
 const editLabel = async () => {
+  const apiUrl = await getRequestUrl()
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -196,7 +197,7 @@ const editLabel = async () => {
       colour: selectedColor.value,
       tagId: selectedTagId.value
     }
-    const response = await axios.patch(`${API_URL}job/tags`, body, config)
+    const response = await axios.patch(`${apiUrl}job/tags`, body, config)
     editTagSuccess()
     console.log('Edit tag:', response)
     // Update the selectedTags array with the new values
@@ -238,6 +239,7 @@ const saveLabel = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
+  const apiUrl = await getRequestUrl()
 
   if (dialogTitle.value === 'Create Label') {
     try {
@@ -246,7 +248,7 @@ const saveLabel = async () => {
         label: labelTitle.value,
         colour: selectedColor.value
       }
-      const response = await axios.post(`${API_URL}job/tags/add`, tag, config)
+      const response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
       const updatedTags = [...props.tags.map((tag) => tag._id), response.data.data._id]
       console.log(response)
       if (response.status > 199 && response.status < 300) {
@@ -255,7 +257,7 @@ const saveLabel = async () => {
           console.log('Job id', props.jobID)
           console.log('Tag body', tag)
           let response = await axios.patch(
-            `${API_URL}job/update/${props.jobID}`,
+            `${apiUrl}job/update/${props.jobID}`,
             { tags: updatedTags },
             config
           )
@@ -293,6 +295,7 @@ const saveLabel = async () => {
 }
 
 const deleteLabel = async () => {
+  const apiUrl = await getRequestUrl()
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -304,7 +307,7 @@ const deleteLabel = async () => {
       tagId: selectedTagId.value,
       companyId: localStorage.getItem('currentCompany')
     }
-    const response = await axios.delete(`${API_URL}job/tags`, {
+    const response = await axios.delete(`${apiUrl}job/tags`, {
       data: body,
       headers: config.headers
     })
