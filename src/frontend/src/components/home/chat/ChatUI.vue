@@ -69,7 +69,8 @@ export default {
       chats: [],
       selectedChat: null,
       messages: ref([]),
-      server_url: API_URL
+      server_url: API_URL,
+      unreadCount: []
     }
   },
   computed: {

@@ -13,8 +13,6 @@ export class ChatMessage {
     this.textContent = textContent;
     if (attachments) this.attachments = attachments;
   }
-  // @Prop({ type: Types.ObjectId, required: true, default: new Types.ObjectId() })
-  // _id: Types.ObjectId = new Types.ObjectId();
 
   @Prop({ type: SchemaTypes.ObjectId, ref: Chat.name, required: true, index: true })
   chatId: Types.ObjectId;
