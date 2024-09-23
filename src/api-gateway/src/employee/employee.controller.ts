@@ -39,7 +39,6 @@ import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
 import { AddSubordinatesDto, RemoveSubordinatesDto, UpdateEmployeeDto } from './dto/update-employee.dto';
 import { ExternalCreateEmployeeDto } from './dto/create-employee.dto';
 import { UsersService } from '../users/users.service';
@@ -770,12 +769,12 @@ export class EmployeeController {
   async remove(
     @Headers() headers: any,
     @Param('employeeId') employeeId: Types.ObjectId,
-    @Body() currentEmployeeDto: CurrentEmployeeDto,
+    @Query() currentEmployeeId: Types.ObjectId,
   ) {
     const userId = await extractUserId(this.jwtService, headers);
-    await this.validateRequestWithEmployeeId(userId, currentEmployeeDto.currentEmployeeId);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
-    const currentEmployee = await this.employeeService.findById(currentEmployeeDto.currentEmployeeId);
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('delete employees')) {
       let data;
       try {
