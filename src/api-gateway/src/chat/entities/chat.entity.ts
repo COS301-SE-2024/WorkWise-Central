@@ -5,9 +5,6 @@ import { randomStringGenerator } from '@nestjs/common/utils/random-string-genera
 
 @Schema()
 export class Chat {
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
-  _id: Types.ObjectId = new Types.ObjectId();
-
   @Prop({ type: String, required: true, default: randomStringGenerator() })
   name: string;
 
