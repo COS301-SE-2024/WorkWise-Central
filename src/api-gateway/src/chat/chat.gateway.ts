@@ -17,7 +17,7 @@ import { CompanyService } from '../company/company.service';
 import { UsersService } from '../users/users.service';
 import { Types } from 'mongoose';
 import { DeleteChatDto } from './dto/delete-chat.dto';
-import { UpdateChatDto } from './dto/create-chat.dto';
+import { MarkChatAsReadDto, TypingDto, UpdateChatDto } from './dto/create-chat.dto';
 //import { AsyncApiSub } from 'nestjs-asyncapi';
 
 //TODO: Check JWT expiration
@@ -184,5 +184,45 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     const result = await this.chatService.updateChat(userId, payload);
     this.server.to(payload.chatId.toString()).emit('update-chat', result);
+  }
+
+  @SubscribeMessage('reading-chat')
+  async markChatAsRead(
+    @ConnectedSocket() client: Socket,
+    @MessageBody(new ValidationPipe()) payload: MarkChatAsReadDto,
+  ) {
+    const userId: Types.ObjectId = this.jwtService.decode(payload.jwt).sub;
+    const chat = await this.chatService.getChat(payload.chatId);
+    if (!chat) {
+      client.emit('update-chat', { Error: 'Chat not found' });
+      return;
+    }
+    this.chatService.markMessagesAsRead(userId, payload.chatId);
+  }
+
+  @SubscribeMessage('typing')
+  async userTyping(@ConnectedSocket() client: Socket, @MessageBody(new ValidationPipe()) payload: TypingDto) {
+    const userId: Types.ObjectId = this.jwtService.decode(payload.jwt).sub;
+    const chat = await this.chatService.getChat(payload.chatId);
+    const user = await this.userService.getUserById(userId);
+    if (!chat || !user) {
+      client.emit('update-chat', { Error: 'Chat not found' });
+      return;
+    }
+    this.server.to(payload.chatId.toString()).emit('typing', { name: user.profile.displayName });
+  }
+
+  @SubscribeMessage('unread-messages')
+  async getUnreadMessages(
+    @ConnectedSocket() client: Socket,
+    @MessageBody(new ValidationPipe()) payload: MarkChatAsReadDto,
+  ) {
+    const userId: Types.ObjectId = this.jwtService.decode(payload.jwt).sub;
+    const chat = await this.chatService.getChat(payload.chatId);
+    if (!chat) {
+      client.emit('update-chat', { Error: 'Quantity could not be retrieved' });
+      return;
+    }
+    client.emit('unread-messages', { data: await this.chatService.getUnreadMessageCounts(userId) });
   }
 }

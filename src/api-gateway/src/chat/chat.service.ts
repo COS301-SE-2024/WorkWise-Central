@@ -185,14 +185,6 @@ export class ChatService {
     return (await chat.save()).toObject();
   }
 
-  // Mark a message as read
-  async markMessageAsRead(messageId: Types.ObjectId) {
-    return this.chatMessageModel
-      .findByIdAndUpdate(messageId, { $set: { isRead: true } }, { new: true })
-      .lean()
-      .exec();
-  }
-
   // Get unread messages count for a user
   async getUnreadMessagesCount(userId: Types.ObjectId): Promise<number> {
     const chats = await this.getUserChats(userId);
@@ -234,5 +226,50 @@ export class ChatService {
       message.markModified('attachments');
     }
     return (await (await message.save()).populate('userId')).toObject();
+  }
+
+  async markMessagesAsRead(userId: Types.ObjectId, chatId: Types.ObjectId): Promise<void> {
+    const currentTime = new Date();
+
+    await this.chatMessageModel.updateMany(
+      {
+        chatId: chatId,
+        createdAt: { $lte: currentTime },
+        usersWhoHaveReadMessage: { $ne: userId },
+      },
+      {
+        $addToSet: { usersWhoHaveReadMessage: userId },
+      },
+      {
+        sort: { createdAt: -1 },
+        multi: true,
+      },
+    );
+  }
+
+  async getUnreadMessageCounts(
+    userId: Types.ObjectId,
+  ): Promise<Array<{ chatId: Types.ObjectId; unreadCount: number }>> {
+    const userChats = await this.chatModel.find({ participants: userId }, '_id').lean();
+
+    const unreadCounts = await this.chatMessageModel.aggregate([
+      {
+        $match: {
+          chatId: { $in: userChats.map((chat) => chat._id) },
+          usersWhoHaveReadMessage: { $ne: userId },
+        },
+      },
+      {
+        $group: {
+          _id: '$chatId',
+          unreadCount: { $sum: 1 },
+        },
+      },
+    ]);
+
+    return unreadCounts.map((count) => ({
+      chatId: count._id,
+      unreadCount: count.unreadCount,
+    }));
   }
 }
