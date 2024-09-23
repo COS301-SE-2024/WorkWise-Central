@@ -458,6 +458,13 @@ export default {
           config
         )
         console.log(payload)
+        if (payload.laborItems.length != 0) {
+          payload.inventoryItems.push(['', '', '', ''])
+          payload.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Total'])
+          payload.inventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Total'])
+          payload.inventoryItems = payload.inventoryItems.concat(payload.laborItems)
+          payload.inventoryItems.push(['', '', '', ''])
+        }
         const data = {
           outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
           fileName: 'Invoice_2021',
@@ -505,12 +512,12 @@ export default {
             invGenDate: `Invoice Date:  ${this.formatDate(payload.invoiceDate)}`,
             headerBorder: false,
             tableBodyBorder: false,
-            header: [{ title: 'Paid' }, { title: 'Total' }],
-            table: [[payload.paid, payload.total]],
+            header: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }],
+            table: payload.inventoryItems,
             additionalRows: [
               {
                 col1: 'Total:',
-                col2: `${payload.total}`,
+                col2: payload.total,
                 col3: 'R',
                 style: {
                   fontSize: 14
@@ -518,7 +525,7 @@ export default {
               },
               {
                 col1: 'VAT:',
-                col2: '20',
+                col2: payload.taxPercentage,
                 col3: '%',
                 style: {
                   fontSize: 10
@@ -526,7 +533,7 @@ export default {
               },
               {
                 col1: 'SubTotal:',
-                col2: `${payload.subTotal}`,
+                col2: payload.subTotal,
                 col3: 'R',
                 style: {
                   fontSize: 10
@@ -542,7 +549,7 @@ export default {
           pageEnable: true,
           pageLabel: 'Page '
         }
-        this.pdfSrc = URL.createObjectURL(jsPDFInvoiceTemplate(data).blob)
+        jsPDFInvoiceTemplate(data)
       } catch (error) {
         console.log('Error fetching data: ' + error)
       }
@@ -554,25 +561,7 @@ export default {
     loading(cards) {
       console.log(cards.length)
       let hit = false
-      // for (let i = 0; i < cards.length; i++) {
-      //   this.columns.forEach((value: Column) => {
-      //     if (value.status === cards[i].status.status) {
-      //       console.log('hit')
-      //       hit = true
-      //       this.loadCardsInRespectiveColumns(cards[i], value)
-      //     }
-      //   })
-      //   if (!hit) this.loadCardsInRespectiveColumns(cards[i], this.columns[0])
-      //
-      //   hit = false
-      // }
-      // this.columns.forEach((col: Column) => {
-      //   // this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
-      //   col.cards.sort(
-      //     (a: InvoiceCardDataFormat, b: InvoiceCardDataFormat) =>
-      //       a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
-      //   )
-      // })
+
       console.log(this.columns[0].cards.length)
     },
     async loadData() {
@@ -632,7 +621,19 @@ export default {
                 card.companyId.address.postalCode,
               companyEmail: card.companyId.contactDetails.email,
               companyPhoneNumber: card.companyId.contactDetails.phoneNumber,
-              companyLogo: card.companyId.logo
+              companyLogo: card.companyId.logo,
+              inventoryItems: card.inventoryItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.untiPrice,
+                obj.total
+              ]),
+              laborItems: card.laborItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.untiPrice,
+                obj.total
+              ])
             })
           else
             unpaid_cards.push({
@@ -673,8 +674,22 @@ export default {
                 card.companyId.address.postalCode,
               companyEmail: card.companyId.contactDetails.email,
               companyPhoneNumber: card.companyId.contactDetails.phoneNumber,
-              companyLogo: card.companyId.logo
+              companyLogo: card.companyId.logo,
+              inventoryItems: card.inventoryItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.unitPrice,
+                obj.total
+              ]),
+              laborItems: card.laborItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.unitPrice,
+                obj.total
+              ])
             })
+
+          console.log()
         })
         this.columns[0].cards = unpaid_cards
         this.columns[1].cards = paid_cards
