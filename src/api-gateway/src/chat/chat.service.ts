@@ -87,7 +87,7 @@ export class ChatService {
 
   // Get all chats for a user
   async getUserChats(userId: Types.ObjectId) {
-    return this.chatModel.find({ participants: userId }).sort({ updatedAt: 1 }).populate('participants').lean().exec();
+    return this.chatModel.find({ participants: userId }).sort({ updatedAt: -1 }).populate('participants').lean().exec();
   }
 
   // Add a user to a chat
