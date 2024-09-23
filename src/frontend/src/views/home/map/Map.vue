@@ -206,7 +206,7 @@ import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import Image from 'primevue/image'
+// import Image from 'primevue/image'
 import { VehicleAvailabilityEnum, FuelType } from './models/vehicles'
 
 export default {
@@ -225,9 +225,8 @@ export default {
     DataTable,
     Column,
     // eslint-disable-next-line vue/no-reserved-component-names
-    Button,
-    // eslint-disable-next-line vue/no-reserved-component-names
-    Image
+    Button
+    //Image
   },
   data() {
     return {
@@ -256,8 +255,8 @@ export default {
   created() {
     this.getCurrentLocation()
     this.getCompanyData()
-    this.getVehiclesData()
-    this.loadFleetData()
+    this.getVehiclesData().then(() => this.loadFleetData())
+    //this.loadFleetData()
   },
   mounted() {
     //VehicleService.getVehicles().then((data) => (this.vehicles = data))
@@ -295,13 +294,17 @@ export default {
     },
     async getVehiclesData() {
       try {
-        const response = await axios.get(`${this.apiUrl}fleet/all`, this.getAuthConfig())
+        const response = await axios.get(
+          `${this.apiUrl}fleet/all/${localStorage['currentCompany']}`,
+          this.getAuthConfig()
+        )
         this.vehicles = await Promise.all(
           response.data.data.map(async (vehicle) => ({
             ...vehicle,
-            location: await this.getGeocode(vehicle.location)
+            location: vehicle?.location
           }))
         )
+        console.log(vehicles)
       } catch (error) {
         console.error('Error fetching vehicles data:', error)
       }
@@ -334,11 +337,8 @@ export default {
     },
     onRowEditSave(event) {
       let { newData, index } = event
-      // Here you would typically send an update request to your backend
-      // For now, we'll just update the local data
       this.vehicles[index] = newData
-      // Optionally, you can call a method to update the backend
-      // this.updateVehicle(newData);
+      this.updateVehicle(newData)
     },
     getStatusSeverity(status) {
       switch (status) {
@@ -356,14 +356,17 @@ export default {
     },
     async loadFleetData() {
       try {
-        const data = await VehicleService.getFleetData()
-        this.vehicles = data.vehicles
-        this.currentDrivers = data.currentDrivers
-        this.recentAlerts = data.recentAlerts
-        this.totalDistanceToday = data.totalDistanceToday
-        this.averageFuelConsumption = data.averageFuelConsumption
-        this.vehiclesDueForService = data.vehiclesDueForService
-        this.updateMapCenter()
+        // const data = await VehicleService.getFleetData()
+        // this.vehicles = data.vehicles
+        for (const v of this.vehicles) {
+          this.currentDrivers.push(v.availability.assignedTo)
+        }
+        //this.currentDrivers = data.currentDrivers
+        //this.recentAlerts = data.recentAlerts //TODO: remove
+        //this.totalDistanceToday = data.totalDistanceToday
+        //this.averageFuelConsumption = data.averageFuelConsumption
+        //this.vehiclesDueForService = data.vehiclesDueForService
+        //this.updateMapCenter()
       } catch (error) {
         console.error('Error loading fleet data:', error)
       }
@@ -379,14 +382,19 @@ export default {
         default:
           return '❓'
       }
+    },
+    async updateVehicle(vehicle) {
+      vehicle['currentEmployeeId'] = localStorage['currentCompany']
+      vehicle['vehicleId'] = vehicle._id
+      axios
+        .post(`${this.apiUrl}fleet/update`, vehicle, this.getAuthConfig())
+        .then((res) => {
+          console.log(res.data.data)
+        })
+        .catch((error) => {
+          console.error('Error updating vehicle:', error)
+        })
     }
-    // updateVehicle(vehicle) {
-    //     VehicleService.updateVehicle(vehicle).then(() => {
-    //         // Handle successful update
-    //     }).catch(error => {
-    //         // Handle error
-    //     });
-    // }
   }
 }
 </script>
