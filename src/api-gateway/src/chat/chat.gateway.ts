@@ -17,6 +17,7 @@ import { CompanyService } from '../company/company.service';
 import { UsersService } from '../users/users.service';
 import { Types } from 'mongoose';
 import { DeleteChatDto } from './dto/delete-chat.dto';
+import { UpdateChatDto } from './dto/create-chat.dto';
 //import { AsyncApiSub } from 'nestjs-asyncapi';
 
 //TODO: Check JWT expiration
@@ -167,5 +168,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     const result = await this.chatService.updateMessage(userId, payload);
     this.server.to(payload.chatId.toString()).emit('update-message', result);
+  }
+
+  @SubscribeMessage('update-chat')
+  async handleUpdateChat(
+    @ConnectedSocket() client: Socket,
+    @MessageBody(/*new ValidationPipe()*/) payload: UpdateChatDto,
+  ) {
+    const userId: Types.ObjectId = this.jwtService.decode(payload.jwt).sub;
+    const chat = await this.chatService.getChat(payload.chatId);
+    if (!chat) {
+      client.emit('update-chat', { Error: 'Chat not found' });
+      console.log('Error');
+      return;
+    }
+    const result = await this.chatService.updateChat(userId, payload);
+    this.server.to(payload.chatId.toString()).emit('update-chat', result);
   }
 }

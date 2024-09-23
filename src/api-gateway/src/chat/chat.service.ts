@@ -8,7 +8,7 @@ import { currentDate } from '../utils/Utils';
 import { NotificationService } from '../notification/notification.service';
 import { Message } from '../notification/entities/notification.entity';
 import { UsersService } from '../users/users.service';
-import { AddUsersToChatDto } from './dto/create-chat.dto';
+import { AddUsersToChatDto, UpdateChatDto } from './dto/create-chat.dto';
 import { DeleteChatDto } from './dto/delete-chat.dto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { SendMessageDto } from './dto/send-message.dto';
@@ -29,7 +29,7 @@ export class ChatService {
   // Create a new chat
   async createChat(userId: Types.ObjectId, chatName: string, participants: Types.ObjectId[], chatImage?: string) {
     const creator: Types.ObjectId = userId;
-
+    participants = [...new Set(participants)];
     if (chatName.length == 0) chatName = randomStringGenerator();
     const imgUrl = chatImage ? chatImage : 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000';
     const chat = new Chat(chatName, participants, creator, imgUrl);
@@ -47,7 +47,7 @@ export class ChatService {
     );
     const newMessage = new this.chatMessageModel(chatMessage);
     const result = await newMessage.save();
-    this.updateChat(await result.populate('userId'));
+    this.updateChatB(await result.populate('userId'));
     return result;
   }
 
@@ -66,7 +66,7 @@ export class ChatService {
     return (await message.save()).toObject();
   }
 
-  private updateChat(newMessage: ChatMessage & Required<{ _id: Types.ObjectId }>) {
+  private updateChatB(newMessage: ChatMessage & Required<{ _id: Types.ObjectId }>) {
     this.chatModel.updateOne(
       { _id: newMessage.chatId },
       {
@@ -146,6 +146,43 @@ export class ChatService {
   // Get a chat
   async getChat(chatId: Types.ObjectId) {
     return this.chatModel.findOne({ _id: chatId }).populate('participants').lean().exec();
+  }
+
+  // Update a chat
+  async updateChat(userId: Types.ObjectId, payload: UpdateChatDto) {
+    const user = await this.userService.getUserById(userId);
+    if (!user) throw new NotFoundException();
+
+    const chat = await this.chatModel.findById(payload.chatId).exec();
+    if (!chat) throw new NotFoundException('Chat not found');
+
+    if (payload.name) {
+      chat.name = payload.name;
+      chat.markModified('name');
+    }
+
+    if (payload.description) {
+      chat.description = payload.description;
+      chat.markModified('description');
+    }
+    if (payload.admin) {
+      chat.admin = payload.admin;
+      chat.markModified('admin');
+    }
+    if (payload.participants) {
+      payload.participants = [...new Set(payload.participants)];
+      chat.participants = payload.participants;
+      chat.markModified('participants');
+    }
+
+    if (payload.image) {
+      chat.image = payload.image;
+      chat.markModified('image');
+    }
+    chat.updatedAt = currentDate();
+    chat.markModified('updatedAt');
+
+    return (await chat.save()).toObject();
   }
 
   // Mark a message as read
