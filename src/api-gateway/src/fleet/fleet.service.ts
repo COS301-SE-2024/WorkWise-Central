@@ -9,7 +9,7 @@ import { TeamService } from '../team/team.service';
 import { NotificationService } from '../notification/notification.service';
 import { FleetRepository } from './fleet.repository';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
-import { Vehicle } from './entities/vehicle.entity';
+import { FuelType, Vehicle } from './entities/vehicle.entity';
 import { Types } from 'mongoose';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
@@ -47,7 +47,18 @@ export class FleetService {
     //TODO: add logo upload
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new UnauthorizedException('User not found');
+    const employee = await this.employeeService.findById(new Types.ObjectId(createVehicleDto.employeeId));
+    if (!employee) throw new UnauthorizedException('Employee not found');
 
+    const isValid = user.joinedCompanies.some(
+      (j) =>
+        j.employeeId.toString() === employee._id.toString() && j.companyId.toString() === employee.companyId.toString(),
+    );
+    if (!isValid) throw new UnauthorizedException('validation failed');
+    if ((<any>Object).values(FuelType).includes(createVehicleDto.fuelType) == false) {
+      throw new UnauthorizedException(`Invalid fuel type`);
+    }
+    console.log(createVehicleDto);
     const createdVehicle = new Vehicle(createVehicleDto);
     return await this.fleetRepository.save(createdVehicle);
   }
@@ -56,6 +67,20 @@ export class FleetService {
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new UnauthorizedException('User not found');
     return await this.fleetRepository.findAll();
+  }
+
+  async getAllVehiclesInCompany(userId: Types.ObjectId, companyId: Types.ObjectId, employeeId: Types.ObjectId) {
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new UnauthorizedException('User not found');
+    const employee = await this.employeeService.findById(new Types.ObjectId(employeeId));
+    if (!employee) throw new UnauthorizedException('Employee not found');
+
+    const isValid = user.joinedCompanies.some(
+      (j) =>
+        j.employeeId.toString() === employee._id.toString() && j.companyId.toString() === employee.companyId.toString(),
+    );
+    if (!isValid) throw new UnauthorizedException('validation failed');
+    return await this.fleetRepository.findAllInCompany(companyId);
   }
 
   async getById(userId: Types.ObjectId, id: Types.ObjectId) {
@@ -73,6 +98,14 @@ export class FleetService {
   async updateVehicle(userId: Types.ObjectId, updateVehicleDto: UpdateVehicleDto) {
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new UnauthorizedException('User not found');
+    const employee = await this.employeeService.findById(new Types.ObjectId(updateVehicleDto.currentEmployeeId));
+    if (!employee) throw new UnauthorizedException('Employee not found');
+
+    const isValid = user.joinedCompanies.some(
+      (j) =>
+        j.employeeId.toString() === employee._id.toString() && j.companyId.toString() === employee.companyId.toString(),
+    );
+    if (!isValid) throw new UnauthorizedException('validation failed');
     return await this.fleetRepository.update(updateVehicleDto.vehicleId, updateVehicleDto);
   }
 }

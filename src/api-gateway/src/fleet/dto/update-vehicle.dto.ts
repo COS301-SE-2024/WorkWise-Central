@@ -76,9 +76,9 @@ export class VehicleLocationData {
 }
 
 export class UpdateVehicleDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsMongoId()
-  currentEmployeeId?: Types.ObjectId;
+  currentEmployeeId: Types.ObjectId;
 
   @IsNotEmpty()
   @IsMongoId()

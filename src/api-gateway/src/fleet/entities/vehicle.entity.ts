@@ -75,7 +75,7 @@ export class Vehicle {
   _id: Types.ObjectId = new Types.ObjectId();
 
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Company.name })
-  companyId: string;
+  companyId: Types.ObjectId;
 
   @Prop({ required: false })
   vin?: string; // Is it needed?
@@ -98,8 +98,8 @@ export class Vehicle {
   @Prop({ type: Number, required: true })
   mileage: number = 0;
 
-  @Prop({ type: String, required: true, enum: FuelType })
-  fuelType: FuelType;
+  @Prop({ type: String, required: true, default: FuelType.PETROL })
+  fuelType: string = FuelType.PETROL;
 
   @Prop({ type: ServiceDetails, required: false })
   serviceDetails?: ServiceDetails;
@@ -139,3 +139,13 @@ export class Vehicle {
 }
 
 export const VehicleSchema = SchemaFactory.createForClass(Vehicle);
+
+const autoPopulatedFields = function (next: any) {
+  if (this.availability.assignedTo != null) this.populate('availability.assignedTo');
+  next();
+};
+
+VehicleSchema.pre('findOne', autoPopulatedFields)
+  .pre('find', autoPopulatedFields)
+  .pre('save', autoPopulatedFields)
+  .pre('findOneAndUpdate', autoPopulatedFields);

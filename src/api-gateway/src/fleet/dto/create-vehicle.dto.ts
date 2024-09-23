@@ -57,19 +57,21 @@ export class VehicleStats {
 export class VehicleLocationData {
   @IsOptional()
   @IsNumber()
-  @Min(0)
   latitude: number;
 
   @IsOptional()
   @IsNumber()
-  @Min(0)
   longitude: number;
 }
 
 export class CreateVehicleDto {
   @IsMongoId()
   @IsNotEmpty()
-  companyId: string;
+  employeeId: Types.ObjectId;
+
+  @IsMongoId()
+  @IsNotEmpty()
+  companyId: Types.ObjectId;
 
   @IsOptional()
   @IsString()
@@ -100,7 +102,10 @@ export class CreateVehicleDto {
   mileage: number = 0;
 
   //@IsEnum(FuelType)
-  fuelType: FuelType;
+  //fuelType: FuelType;
+  @IsString()
+  @IsNotEmpty()
+  fuelType: string;
 
   @IsOptional()
   @ValidateNested()
