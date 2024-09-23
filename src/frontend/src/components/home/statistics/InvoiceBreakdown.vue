@@ -6,7 +6,11 @@
     </v-card-title>
 
     <!-- Invoice Breakdown Summary -->
-    <v-card-subtitle>Total Invoices: {{ totalInvoices }}</v-card-subtitle>
+    <v-card-subtitle 
+      ><v-chip color="primary" 
+        ><h5>Total Invoices: {{ totalInvoices }}</h5></v-chip
+      ></v-card-subtitle
+    >
 
     <v-card-text>
       <div>

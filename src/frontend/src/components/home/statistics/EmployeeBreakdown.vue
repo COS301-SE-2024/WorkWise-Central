@@ -7,7 +7,11 @@
     </v-card-title>
 
     <!-- Total Number of Employees Display -->
-    <v-card-subtitle>Total Employees: {{ totalEmployees }}</v-card-subtitle>
+    <v-card-subtitle
+      ><v-chip color="primary"
+        ><h5>Total Employees: {{ totalEmployees }}</h5></v-chip
+      ></v-card-subtitle
+    >
 
     <v-card-text>
       <v-text-field
@@ -186,7 +190,7 @@ export default {
         { title: 'Last Name', value: 'userInfo.surname' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
-      showStats: false,
+      showStats: true,
       selectedMonth: null,
       months: [
         'January',
@@ -204,12 +208,12 @@ export default {
       ],
       // Mock Chart Data
       combinedChartData: {
-        labels: ['Total Employees', 'Active Jobs', 'Total Jobs', 'Completed Jobs'],
+        labels: ['Active Jobs', 'Total Jobs', 'Completed Jobs'],
         datasets: [
           {
             label: 'Count',
-            data: [80, 25, 150, 100], // Replace with actual values
-            backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC']
+            data: [25, 150, 100], // Replace with actual values
+            backgroundColor: ['#66BB6A', '#FFA726', '#AB47BC']
           }
         ]
       },

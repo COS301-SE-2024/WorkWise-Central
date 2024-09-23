@@ -6,7 +6,11 @@
     </v-card-title>
 
     <!-- Total Clients Information -->
-    <v-card-subtitle>Total Clients in the Company: {{ totalClients }}</v-card-subtitle>
+    <v-card-subtitle>
+      <v-chip color="primary"
+        ><h5>Total Number of Clients: {{ totalClients }}</h5></v-chip
+      >
+    </v-card-subtitle>
 
     <!-- Search bar for v-data-table -->
     <v-card-text>
@@ -25,7 +29,7 @@
         :headers="headers"
         class="bg-background"
         :search="search"
-       :item-class="getItemClass"
+        :item-class="getItemClass"
       >
         <!-- Actions Column -->
         <template v-slot:[`item.actions`]="{ item }">
@@ -52,47 +56,118 @@
         <v-card-title>Client Breakdown for {{ selectedClient.firstName }}</v-card-title>
         <v-card-text>
           <!-- Bar chart for number of jobs -->
-          <Chart type="bar" :data="jobsData" :options="jobsChartOptions" />
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6">
+                <Chart
+                  type="pie"
+                  :data="jobsData"
+                  :options="jobsChartOptions"
+                  @chart-click="onChartClick" /></v-col
+              ><v-col cols="12" lg="6"
+                ><Chart
+                  type="pie"
+                  :data="invoiceData"
+                  :options="invoiceChartOptions"
+                  @chart-click="onChartClick" /></v-col></v-row
+          ></v-container>
+
           <!-- Customer Service Rating Section -->
-          <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
-            <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
-            <div class="d-flex align-center flex-column my-auto">
-              <div class="text-h2 mt-5">
-                {{ overallRating }}
-                <span class="text-h6 ml-n3">/5</span>
-              </div>
-              <v-rating
-                :model-value="overallRating"
-                color="yellow-darken-3"
-                half-increments
-              ></v-rating>
-              <div class="px-3">{{ totalRatings }} ratings</div>
-            </div>
-            <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
-              <v-list-item v-for="(rating, i) in 5" :key="i">
-                <v-progress-linear
-                  :model-value="rating * ratingValueFactor"
-                  class="mx-n5"
-                  color="yellow-darken-3"
-                  height="20"
-                  rounded
-                ></v-progress-linear>
-                <template v-slot:prepend>
-                  <span>{{ rating }}</span>
-                  <v-icon class="mx-3" icon="mdi-star"></v-icon>
-                </template>
-                <template v-slot:append>
-                  <div class="rating-values">
-                    <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6"
+                ><v-card
+                  class="d-flex flex-column mx-auto py-4"
+                  elevation="10"
+                  height="auto"
+                  width="360"
+                >
+                  <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
+                  <div class="d-flex align-center flex-column my-auto">
+                    <div class="text-h2 mt-5">
+                      {{ overallRating }}
+                      <span class="text-h6 ml-n3">/5</span>
+                    </div>
+                    <v-rating
+                      :model-value="overallRating"
+                      color="yellow-darken-3"
+                      half-increments
+                    ></v-rating>
+                    <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-card>
-          <!-- PrimeVue Chart.js for Ratings per Job -->
-          <Chart type="bar" :data="jobRatingData" />
-          <!-- PrimeVue Chart.js for Invoices (Paid on time vs not on time) -->
-          <Chart type="pie" :data="invoiceData" />
+                  <v-list
+                    bg-color="transparent"
+                    class="d-flex flex-column-reverse"
+                    density="compact"
+                  >
+                    <v-list-item v-for="(rating, i) in 5" :key="i">
+                      <v-progress-linear
+                        :model-value="rating * ratingValueFactor"
+                        class="mx-n5"
+                        color="yellow-darken-3"
+                        height="20"
+                        rounded
+                      ></v-progress-linear>
+                      <template v-slot:prepend>
+                        <span>{{ rating }}</span>
+                        <v-icon class="mx-3" icon="mdi-star"></v-icon>
+                      </template>
+                      <template v-slot:append>
+                        <div class="rating-values">
+                          <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
+                        </div>
+                      </template>
+                    </v-list-item>
+                  </v-list>
+                </v-card></v-col
+              ><v-col cols="12" lg="6">
+                <v-card
+                  class="d-flex flex-column mx-auto py-4"
+                  elevation="10"
+                  height="auto"
+                  width="360"
+                >
+                  <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
+                  <div class="d-flex align-center flex-column my-auto">
+                    <div class="text-h2 mt-5">
+                      {{ overallRating }}
+                      <span class="text-h6 ml-n3">/5</span>
+                    </div>
+                    <v-rating
+                      :model-value="overallRating"
+                      color="yellow-darken-3"
+                      half-increments
+                    ></v-rating>
+                    <div class="px-3">{{ totalRatings }} ratings</div>
+                  </div>
+                  <v-list
+                    bg-color="transparent"
+                    class="d-flex flex-column-reverse"
+                    density="compact"
+                  >
+                    <v-list-item v-for="(rating, i) in 5" :key="i">
+                      <v-progress-linear
+                        :model-value="rating * ratingValueFactor"
+                        class="mx-n5"
+                        color="yellow-darken-3"
+                        height="20"
+                        rounded
+                      ></v-progress-linear>
+                      <template v-slot:prepend>
+                        <span>{{ rating }}</span>
+                        <v-icon class="mx-3" icon="mdi-star"></v-icon>
+                      </template>
+                      <template v-slot:append>
+                        <div class="rating-values">
+                          <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
+                        </div>
+                      </template>
+                    </v-list-item>
+                  </v-list>
+                </v-card></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-text>
       </v-card>
     </v-card-text>
@@ -142,10 +217,19 @@ export default {
         { title: 'Address', value: 'address.street', key: 'address.street', class: 'h3' },
         { title: '', value: 'actions', key: 'actions', sortable: false, class: 'h3' }
       ],
-      showStats: false,
+      showStats: true,
       selectedClient: {},
       jobRatingData: {},
-      invoiceData: {},
+      invoiceData: {
+        labels: ['Paid on time', 'Paid Late'],
+        datasets: [
+          {
+            label: 'Payment time of Invoices',
+            backgroundColor: ['#FFCE56', '#EF5350'],
+            data: [5, 10] // Mock data: Current Jobs: 5, Total Jobs: 10
+          }
+        ]
+      },
       overallRating: 4.2, // Mock overall rating value
       totalRatings: 150, // Mock total number of ratings
       ratingCounts: [100, 30, 10, 5, 5], // Mock counts for 5-star, 4-star, 3-star, etc.
@@ -171,6 +255,34 @@ export default {
           y: {
             beginAtZero: true,
             max: 12
+          }
+        },
+        onClick: (event, elements) => {
+          if (elements.length > 0) {
+            // Get the clicked dataset and index
+            const datasetIndex = elements[0].datasetIndex
+            const index = elements[0].index
+            this.onChartClick('jobsData', datasetIndex, index)
+          }
+        }
+      },
+      jobRatingChartOptions: {
+        responsive: true,
+        onClick: (event, elements) => {
+          if (elements.length > 0) {
+            const datasetIndex = elements[0].datasetIndex
+            const index = elements[0].index
+            this.onChartClick('jobRatingData', datasetIndex, index)
+          }
+        }
+      },
+      invoiceChartOptions: {
+        responsive: true,
+        onClick: (event, elements) => {
+          if (elements.length > 0) {
+            const datasetIndex = elements[0].datasetIndex
+            const index = elements[0].index
+            this.onChartClick('invoiceData', datasetIndex, index)
           }
         }
       }
@@ -258,6 +370,19 @@ export default {
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    onChartClick(chartType, datasetIndex, index) {
+      // Handle the chart click event based on chart type and the clicked item
+      if (chartType === 'jobsData') {
+        console.log(`Clicked on Job dataset: ${datasetIndex}, index: ${index}`)
+        // You can trigger a modal or a detailed view for the clicked job
+      } else if (chartType === 'jobRatingData') {
+        console.log(`Clicked on Job Rating dataset: ${datasetIndex}, index: ${index}`)
+        // Show job rating breakdown or other details
+      } else if (chartType === 'invoiceData') {
+        console.log(`Clicked on Invoice dataset: ${datasetIndex}, index: ${index}`)
+        // Show invoice details, such as payment info
+      }
     }
   },
   mounted() {

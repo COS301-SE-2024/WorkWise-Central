@@ -6,7 +6,11 @@
     </v-card-title>
 
     <!-- Team Breakdown Summary -->
-    <v-card-subtitle>Total Teams: {{ totalTeams }}</v-card-subtitle>
+    <v-card-subtitle
+      ><v-chip color="primary"
+        ><h5>Total Teams: {{ totalTeams }}</h5></v-chip
+      ></v-card-subtitle
+    >
     <v-card-text>
       <div>
         <!-- Bar Chart for Average Number of Team Members per Team -->
@@ -28,15 +32,8 @@
         />
         <p><strong>Average Rating per Team:</strong></p>
         <!-- Overall Average Ratings Card -->
-        <v-card
-          class="d-flex flex-column mx-auto py-4"
-          elevation="10"
-          height="auto"
-          width="360"
-        >
-          <div class="d-flex justify-center mt-auto text-h5">
-            Average Ratings
-          </div>
+        <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+          <div class="d-flex justify-center mt-auto text-h5">Average Ratings</div>
 
           <div class="d-flex align-center flex-column my-auto">
             <div class="text-h2 mt-5">
@@ -52,11 +49,7 @@
             <div class="px-3">{{ totalRatings }} ratings</div>
           </div>
 
-          <v-list
-            bg-color="transparent"
-            class="d-flex flex-column-reverse"
-            density="compact"
-          >
+          <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
             <v-list-item v-for="(rating, i) in 5" :key="i">
               <v-progress-linear
                 :model-value="ratingCounts[i] * ratingValueFactor"
@@ -85,7 +78,7 @@
 </template>
 
 <script>
-import Chart from 'primevue/chart';
+import Chart from 'primevue/chart'
 
 export default {
   components: { Chart },
@@ -103,21 +96,21 @@ export default {
       ratingValueFactor: 0.05, // Factor for progress bar values
       chartOptions: {
         responsive: true,
-        maintainAspectRatio: false,
-      },
-    };
+        maintainAspectRatio: false
+      }
+    }
   },
   mounted() {
     // Example data for the polar area chart, replace with actual team breakdown data
     this.teamBreakdownChartData = {
-      labels: ["Team A", "Team B", "Team C", "Team D"],
+      labels: ['Team A', 'Team B', 'Team C', 'Team D'],
       datasets: [
         {
           data: [6, 8, 7, 5], // Example data for team members in each team
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-        },
-      ],
-    };
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+        }
+      ]
+    }
 
     // Average team members chart data
     this.averageTeamMembersChartData = {
@@ -126,10 +119,10 @@ export default {
         {
           label: 'Team Members',
           data: [this.calculateAverage([6, 8, 7, 5])], // Average number of team members
-          backgroundColor: '#42A5F5',
-        },
-      ],
-    };
+          backgroundColor: '#42A5F5'
+        }
+      ]
+    }
 
     // Average jobs per team chart data
     this.averageJobsPerTeamChartData = {
@@ -139,10 +132,10 @@ export default {
           label: 'Jobs Per Team',
           data: [14, 16, 13, 17], // Example data for jobs per team
           borderColor: '#FFA726',
-          fill: false,
-        },
-      ],
-    };
+          fill: false
+        }
+      ]
+    }
 
     // Average ratings chart data
     this.averageTeamRatingsChartData = {
@@ -151,20 +144,20 @@ export default {
         {
           label: 'Ratings',
           data: [4.6, 4.4, 4.5, 4.7], // Example ratings
-          backgroundColor: '#66BB6A',
-        },
-      ],
-    };
+          backgroundColor: '#66BB6A'
+        }
+      ]
+    }
 
     // Calculate total teams
-    this.totalTeams = this.teamBreakdownChartData.labels.length;
+    this.totalTeams = this.teamBreakdownChartData.labels.length
   },
   methods: {
     calculateAverage(arr) {
-      return (arr.reduce((sum, val) => sum + val, 0) / arr.length).toFixed(2);
-    },
-  },
-};
+      return (arr.reduce((sum, val) => sum + val, 0) / arr.length).toFixed(2)
+    }
+  }
+}
 </script>
 
 <style scoped>

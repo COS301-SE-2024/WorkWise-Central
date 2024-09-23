@@ -6,7 +6,11 @@
     </v-card-title>
 
     <!-- Total Jobs Information -->
-    <v-card-subtitle>Total Jobs: {{ totalJobs }}</v-card-subtitle>
+    <v-card-subtitle
+      ><v-chip color="primary"
+        ><h5>Total Jobs: {{ totalJobs }}</h5></v-chip
+      ></v-card-subtitle
+    >
 
     <!-- Job Categories Breakdown -->
     <v-card-text>
