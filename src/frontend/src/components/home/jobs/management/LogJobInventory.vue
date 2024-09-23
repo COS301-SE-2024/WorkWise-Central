@@ -102,6 +102,20 @@ const isLocalAvailable = async (url: string): Promise<boolean> => {
   }
 }
 
+const getInventoryInCompany = async() => {
+  const baseUrl = await getRequestUrl()
+  try {
+    const response = await axios.get(`${baseUrl}inventory/all/${localStorage.getItem('employeeId')}`)
+    inventoryOptions.value = response.data.data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      quantity: item.currentStockLevel
+    }))
+  } catch (error) {
+    console.error('Error fetching inventory data:', error)
+  }
+}
+
 const getRequestUrl = async (): Promise<string> => {
   const localAvailable = await isLocalAvailable(localUrl)
   return localAvailable ? localUrl : remoteUrl
@@ -139,6 +153,8 @@ const paginatedInventory = computed(() => {
 // Fetch inventory data on component mount
 onMounted(async () => {
   await fetchInventoryData()
+  await getInventoryInCompany()
+  console.log('Inventory Options:', inventoryOptions.value)
 })
 
 async function fetchInventoryData() {
