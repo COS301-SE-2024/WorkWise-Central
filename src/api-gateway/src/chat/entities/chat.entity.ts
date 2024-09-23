@@ -11,6 +11,9 @@ export class Chat {
   @Prop({ type: String, required: true, default: randomStringGenerator() })
   name: string;
 
+  @Prop({ type: String, required: true, default: '' })
+  description: string = '';
+
   @Prop({
     type: String,
     required: true,
