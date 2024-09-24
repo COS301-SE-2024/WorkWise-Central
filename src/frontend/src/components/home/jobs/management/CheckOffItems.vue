@@ -38,7 +38,9 @@
         <!-- Only show the rest of the components if the title is set -->
         <template v-if="task.title.trim() !== ''">
           <v-row>
-            <v-col>
+            <v-col
+                v-if="!isSaveButtonVisible"
+            >
               <div class="mb-3">{{ getTaskProgress(task).toFixed(0) }}%</div>
               <v-progress-linear
                 :model-value="getTaskProgress(task)"
@@ -167,7 +169,10 @@
 
           <!-- Add Item to Task -->
           <v-row>
-            <v-col color="success">
+            <v-col
+                color="success"
+                v-if="!isSaveButtonVisible"
+            >
               <v-textarea
                 v-model="task.newItemText"
                 label="Add an item"
@@ -198,9 +203,10 @@
 <!--                Save Task-->
 <!--              </v-btn>-->
               <Button
+                  v-if="isSaveButtonVisible"
                   label="Save Task"
                   icon="fa: fa-solid fa-save"
-                  @click="saveTask(taskIndex)"
+                  @click="handleSaveTask(taskIndex)"
                   class="p-button-success"
               />
             </v-row>
@@ -253,6 +259,12 @@ const assignableEmployees = ref<string[]>([])
 const selectedMembers = ref<Member[]>([])
 const members = ref<Member[]>([]) // Populate with your states data
 const originalSelectedMembers = ref<Member[]>([])
+const isSaveButtonVisible = ref()
+
+function handleSaveTask(taskIndex: number) {
+  saveTask(taskIndex);
+  isSaveButtonVisible.value = taskList.value.length === 0;
+}
 
 //API URLS
 const localUrl: string = 'http://localhost:3000/'
@@ -549,7 +561,6 @@ function openCheckActionsDialog(itemIndex: number) {
 }
 
 const deleteTask = async (taskIndex: number) => {
-  const API_URL = getRequestUrl()
   try {
     const body = {
       employeeId: localStorage.getItem('employeeId') || '',
@@ -557,8 +568,8 @@ const deleteTask = async (taskIndex: number) => {
       taskId: taskList.value[taskIndex]._id
     }
     const response = await axios.delete(`${API_URL}job/task`, {
-      data: body,
-      headers: config.headers
+      headers: config.headers,
+      data: body
     })
     console.log('Delete successful', response)
     if (response.status > 199 && response.status < 300) {
@@ -570,7 +581,13 @@ const deleteTask = async (taskIndex: number) => {
 }
 
 onMounted(() => {
-  getJobTasks()
+  getJobTasks().then(() => {
+    taskList.value.forEach(task => {
+      if (task.items.length > 0) {
+        isSaveButtonVisible.value = false
+      }
+    })
+  })
   getTeamMembers()
   getAssignedEmployees().then(() => {
     originalSelectedMembers.value = [...selectedMembers.value]
