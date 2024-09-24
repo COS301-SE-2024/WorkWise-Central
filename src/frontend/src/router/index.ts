@@ -50,6 +50,7 @@ import HourlyRate from '@/components/home/settings/company/HourlyRate.vue'
 import SetupPaymentGateway from '@/components/home/settings/company/SetupPaymentGateway.vue'
 import SuccessfulPayment from '@/components/home/clients/client_portal/SuccessfulPayment.vue'
 import VideoMeetings from '@/views/notfications/VideoMeetings.vue'
+import GoogleMapsView from '@/views/home/map/GoogleMapsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -399,6 +400,11 @@ const router = createRouter({
       path: '/inv-kanban',
       name: 'invoice-kanban',
       component: () => import('@/views/home/invoices/InvoiceBacklog.vue')
+    },
+    {
+      path: '/map',
+      name: 'map',
+      component: GoogleMapsView
     }
   ]
 })
