@@ -108,7 +108,7 @@
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ item }">
-                        {{ new Date(item?.details?.endDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
+                        {{ new Date(item?.details?.endDate || '').toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
                       </template>
 
                       <!-- Actions slot -->
