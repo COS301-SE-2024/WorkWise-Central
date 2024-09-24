@@ -15,70 +15,72 @@
     <v-card-text>
       <div>
         <!-- Bar Chart for Average Number of Team Members per Team -->
-        <p><strong>Average Number of Team Members per Team:</strong></p>
-        <Chart
-          type="bar"
-          :data="averageTeamMembersChartData"
-          :options="chartOptions"
-          height="300px"
-        />
+
+        <v-container><v-row><v-col cols="12" lg="6">
+              <p><strong>Average Number of Team Members per Team:</strong></p>
+              <Chart type="bar" :data="averageTeamMembersChartData" :options="chartOptions" height="300px" />
+            </v-col><v-col cols="12" lg="6">
+              <p><strong>Average Number of Jobs per Team:</strong></p>
+              <Chart type="line" :data="averageJobsPerTeamChartData" :options="chartOptions" height="300px" />
+            </v-col></v-row></v-container>
+
 
         <!-- Line Chart for Average Number of Jobs per Team -->
-        <p><strong>Average Number of Jobs per Team:</strong></p>
-        <Chart
-          type="line"
-          :data="averageJobsPerTeamChartData"
-          :options="chartOptions"
-          height="300px"
-        />
+
 
         <!-- Average Rating per Team -->
         <p><strong>Average Rating per Team:</strong></p>
-        <v-card
-          class="d-flex flex-column mx-auto py-4"
-          elevation="10"
-          height="auto"
-          width="360"
-        >
-          <div class="d-flex justify-center mt-auto text-h5">Average Ratings</div>
+        <v-container><v-row><v-col cols="12" lg="3" v-for="(team, index) in teamStats.ratingPerTeam"
+              :key="team.teamId"><v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto"
+                width="360">
+                <div class="d-flex justify-center mt-auto text-h5">Team {{ index + 1 }} Ratings</div>
 
-          <div class="d-flex align-center flex-column my-auto">
-            <div class="text-h2 mt-5">
-              {{ averageTeamRatingsValue }}
-              <span class="text-h6 ml-n3">/5</span>
-            </div>
+                <div class="d-flex align-center flex-column my-auto">
+                  <div class="text-h2 mt-5">
+                    {{ team.workPerformanceRatingAverage ?? 0 }}
+                    <span class="text-h6 ml-n3">/5</span>
+                  </div>
 
-            <v-rating
-              :model-value="averageTeamRatingsValue"
-              color="yellow-darken-3"
-              half-increments
-            ></v-rating>
-            <div class="px-3">{{ totalRatings }} ratings</div>
-          </div>
+                  <v-rating :model-value="team.workPerformanceRatingAverage ?? 0" color="yellow-darken-3"
+                    half-increments></v-rating>
 
-          <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
-            <v-list-item v-for="(rating, i) in 5" :key="i">
-              <v-progress-linear
-                :model-value="ratingCounts[i] * ratingValueFactor"
-                class="mx-n5"
-                color="yellow-darken-3"
-                height="20"
-                rounded
-              ></v-progress-linear>
+                  <div class="px-3">
+                    {{ team.workPerformanceRating.length }} work performance ratings
+                  </div>
 
-              <template v-slot:prepend>
-                <span>{{ rating }}</span>
-                <v-icon class="mx-3" icon="mdi-star"></v-icon>
-              </template>
+                  <div class="text-h2 mt-5">
+                    {{ team.customerServiceRatingAverage ?? 0 }}
+                    <span class="text-h6 ml-n3">/5</span>
+                  </div>
 
-              <template v-slot:append>
-                <div class="rating-values">
-                  <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
+                  <v-rating :model-value="team.customerServiceRatingAverage ?? 0" color="yellow-darken-3"
+                    half-increments></v-rating>
+
+                  <div class="px-3">
+                    {{ team.customerServiceRating.length }} customer service ratings
+                  </div>
                 </div>
-              </template>
-            </v-list-item>
-          </v-list>
-        </v-card>
+
+                <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
+                  <v-list-item v-for="(rating, i) in 5" :key="i">
+                    <v-progress-linear :model-value="calculateProgress(team.workPerformanceRating, i + 1)" class="mx-n5"
+                      color="yellow-darken-3" height="20" rounded></v-progress-linear>
+
+                    <template v-slot:prepend>
+                      <span>{{ i + 1 }}</span>
+                      <v-icon class="mx-3" icon="mdi-star"></v-icon>
+                    </template>
+
+                    <template v-slot:append>
+                      <div class="rating-values">
+                        <span class="d-flex justify-end">{{ calculateRatingCount(team.workPerformanceRating, i + 1)
+                          }}</span>
+                      </div>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </v-card></v-col></v-row></v-container>
+
       </div>
     </v-card-text>
   </v-card>
@@ -119,13 +121,13 @@ export default {
         ]
       },
       averageJobsPerTeamChartData: {
-        labels: ['Team A', 'Team B', 'Team C', 'Team D'], // Example team labels
+        labels: ['Average Jobs'], // Example team labels
         datasets: [
           {
-            label: 'Jobs Per Team',
+            label: 'Jobs',
             data: [], // Average jobs per team
             borderColor: '#FFA726',
-            fill: false
+            fill: true
           }
         ]
       }
@@ -142,6 +144,14 @@ export default {
       } catch (error) {
         return false
       }
+    },
+    calculateProgress(ratings, starValue) {
+      const totalRatings = ratings.length;
+      const starCount = ratings.filter((r) => r === starValue).length;
+      return totalRatings ? (starCount / totalRatings) * 100 : 0;
+    },
+    calculateRatingCount(ratings, starValue) {
+      return ratings.filter((r) => r === starValue).length;
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
@@ -162,7 +172,7 @@ export default {
         .get(`${apiURL}stats/teamStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           this.teamStats = response.data.data
-console.log(this.teamStats)
+          console.log(this.teamStats)
           // Update chart data with API response
           this.averageTeamMembersChartData.datasets[0].data = [this.teamStats.averageNumMembers]
           this.averageJobsPerTeamChartData.datasets[0].data = [this.teamStats.averageNumJobsForTeam]
