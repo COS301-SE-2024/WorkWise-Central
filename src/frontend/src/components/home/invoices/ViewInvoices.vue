@@ -68,8 +68,7 @@
                 ><v-icon icon="fa: fa-solid fa-file" color="success"></v-icon>Download PDF</v-btn
               ></v-col
             ></v-row
-          ></v-container
-        >
+          ></v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>

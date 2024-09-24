@@ -20,6 +20,7 @@ import { InventoryService } from '../inventory/inventory.service';
 import { InventoryModule } from '../inventory/inventory.module';
 import { StockTakeModule } from '../stocktake/stocktake.module';
 import { StockMovementsModule } from '../stockmovements/stockmovements.module';
+import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
 import { EmailModule } from '../email/email.module';
 import { TeamModule } from '../team/team.module';
 
@@ -39,6 +40,7 @@ import { TeamModule } from '../team/team.module';
     forwardRef(() => InventoryModule),
     forwardRef(() => StockTakeModule),
     forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryUsedModule),
     forwardRef(() => EmailModule),
     forwardRef(() => TeamModule),
   ],

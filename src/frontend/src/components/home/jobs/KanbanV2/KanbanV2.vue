@@ -28,7 +28,7 @@
           :sm="6"
           :cols="12"
         >
-          <v-card variant="flat" elevation="1" color="red">
+          <v-card variant="flat" elevation="1" color="red" :min-width="350">
             <v-card-item
               class="font-weight-black text-h5"
               style="font-family: 'Nunito', sans-serif"
@@ -144,6 +144,8 @@
                                   v-model="column_color"
                                   hide-inputs
                                   show-swatches
+                                  :hide-sliders="true"
+                                  :hide-canvas="true"
                                   @update:modelValue="addColorPickerUpdate"
                                 ></v-color-picker>
                               </v-col>
@@ -349,6 +351,8 @@
                       <label style="font-size: 14px; font-weight: lighter">Color</label>
                       <v-color-picker
                         v-model="column_color"
+                        :hide-sliders="true"
+                        :hide-canvas="true"
                         hide-inputs
                         show-swatches
                         @update:modelValue="addColorPickerUpdate"
@@ -622,7 +626,7 @@ export default {
 
           this.new_column_name = ''
           this.column_color = ''
-          this.add_column_dialog = false
+          this.edit_column_details_dialog = false
         } catch (error) {
           console.log(error)
         }
@@ -716,20 +720,31 @@ export default {
           }
         }
 
-        let res = await axios.post(
-          API_URL + 'job/status',
-          {
-            status: this.new_column_name,
-            colour: this.column_color,
-            companyId: localStorage['currentCompany'],
-            employeeId: localStorage['employeeId']
-          },
-          config
-        )
-        console.log(res)
-
-        this.new_column_name = ''
-        this.column_color = ''
+        let res = await axios
+          .post(
+            API_URL + 'job/status',
+            {
+              status: this.new_column_name,
+              colour: this.column_color,
+              companyId: localStorage['currentCompany'],
+              employeeId: localStorage['employeeId']
+            },
+            config
+          )
+          .then((res) => {
+            console.log(res)
+            this.new_column_name = ''
+            this.column_color = ''
+            this.columns.push({
+              _id: res.data.data._id,
+              __v: res.data.data.__v,
+              status: res.data.data.status,
+              colour: res.data.data.colour,
+              companyId: res.data.data.companyId,
+              cards: [] as JobCardDataFormat[]
+            })
+            this.add_column_dialog = false
+          })
         this.add_column_dialog = false
       } catch (error) {
         console.log(error)

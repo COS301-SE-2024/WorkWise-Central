@@ -38,11 +38,11 @@ export class TimeTracker {
   checkInTime: Date;
 
   @ApiProperty()
-  @Prop({ type: Date, required: true, default: null })
+  @Prop({ type: Date, required: false, default: null })
   checkOutTime?: Date = null;
 
   @ApiProperty()
-  @Prop({ type: TimeInterval, required: true, default: [] })
+  @Prop({ type: TimeInterval, required: false, default: [] })
   pauses: TimeInterval[] = [];
 
   @ApiProperty()
