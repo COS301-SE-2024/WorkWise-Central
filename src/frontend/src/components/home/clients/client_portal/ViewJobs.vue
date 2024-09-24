@@ -184,7 +184,7 @@ export default {
 
       //getting the job statuses
       await axios
-        .get(`${APP_URL}job/status/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}job/status/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log('response.data.data: ', response.data.data)
           for (const status of response.data.data) {
