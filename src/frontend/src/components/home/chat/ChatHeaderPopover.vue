@@ -1,7 +1,15 @@
 <template>
   <div class="card flex justify-center">
     <!--    <Button type="button" icon="fa: fa-thin fa-square-plus" label="More options" @click="toggle" />-->
-    <Popover ref="op" :style="{ backgroundColor: 'var(--card-color)', maxHeight: '800px', overflowY: 'auto' }">
+    <Popover
+      ref="op"
+      :style="{
+        backgroundColor: 'var(--card-color)',
+        maxWidth: '800px',
+        maxHeight: '800px',
+        overflowY: 'auto'
+      }"
+    >
       <div class="card">
         <Tabs value="0">
           <TabList>
@@ -11,7 +19,9 @@
           </TabList>
           <TabPanels>
             <TabPanel value="0">
-              <Card :style="{ width: '100%', overflow: 'hidden', backgroundColor: 'var(--card-color)' }">
+              <Card
+                :style="{ width: '100%', overflow: 'hidden', backgroundColor: 'var(--card-color)' }"
+              >
                 <template #header>
                   <Image
                     :src="chat.image ? chat.image : tempImage"
@@ -21,10 +31,16 @@
                   />
                 </template>
                 <template #title
-                  ><h1 :style="{ color: 'var(--heading-text-color)' }">{{ chat?.name }}></h1></template
+                  ><h1 :style="{ color: 'var(--heading-text-color)' }">
+                    {{ chat?.name }}
+                  </h1></template
                 >
                 <template #content>
-                  <Panel header="Description" toggleable :style="{ color: 'var(--element-text-color)' }">
+                  <Panel
+                    header="Description"
+                    toggleable
+                    :style="{ color: 'var(--element-text-color)' }"
+                  >
                     <p class="m-0">
                       {{ chat?.description ? chat?.description : 'None' }}
                     </p>
@@ -77,8 +93,12 @@
                         <Tag
                           :value="participant?._id === chat?.admin ? 'Admin' : 'Member'"
                           :severity="participant?._id === chat?.admin ? 'info' : null"
-                          :style="{ backgroundColor: participant?._id === chat?.admin ? 'var(--primary-color)' : 'var(--secondary-color)' }"
-
+                          :style="{
+                            backgroundColor:
+                              participant?._id === chat?.admin
+                                ? 'var(--primary-color)'
+                                : 'var(--secondary-color)'
+                          }"
                           style="font-size: large"
                         />
                       </div>
