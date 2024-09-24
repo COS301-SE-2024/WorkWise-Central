@@ -207,6 +207,8 @@ export default defineComponent({
           }
 
           console.log(this.roleUpdates)
+          //removing the first element of the array
+          this.roleUpdates.shift()
         })
         .catch((error) => {
           console.log(error)
