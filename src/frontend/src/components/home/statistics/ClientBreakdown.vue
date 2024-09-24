@@ -37,6 +37,9 @@
             </v-list>
           </v-menu>
         </template>
+        <template v-slot:[`item.firstName`]="{ item }">
+          <v-chip :color="selectedClient === item ? 'success' : 'secondary'">{{ item.firstName }}</v-chip>
+        </template>
       </v-data-table>
 
       <!-- Breakdown Section (Appears after clicking View Breakdown) -->

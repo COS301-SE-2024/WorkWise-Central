@@ -38,6 +38,9 @@
             </v-list>
           </v-menu>
         </template>
+        <template v-slot:[`item.userInfo.firstName`]="{ item }">
+          <v-chip :color="selectedEmployee === item ? 'success' : 'secondary'">{{ item.userInfo.firstName }}</v-chip>
+        </template>
       </v-data-table>
 
       <!-- Employee Breakdown Charts -->
