@@ -768,6 +768,10 @@ export class EmployeeService {
     return await this.employeeRepository.findAllInCompanyWithRoleName(companyId, name);
   }
 
+  async findAllInCompanyWithPermission(companyId: Types.ObjectId, name: string) {
+    return await this.employeeRepository.findAllInCompanyWithPermission(companyId, name);
+  }
+
   // async roleUpdate(roleId: Types.ObjectId, companyId: Types.ObjectId) {
   //   //finding all employees in a company
   //   const list = await this.findAllInCompanyWithRole(companyId, roleId);

@@ -72,6 +72,26 @@ export class EmployeeRepository {
     return result;
   }
 
+  async findAllInCompanyWithPermission(identifier: Types.ObjectId, hehehe: string) {
+    const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] = await this.employeeModel
+      .find({
+        $and: [
+          {
+            companyId: identifier,
+          },
+          {
+            'role.permissionSuite': hehehe,
+          },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+
+    return result;
+  }
+
   async findAllInCompanyWithRoleId(identifier: Types.ObjectId, roleId: Types.ObjectId) {
     const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] = await this.employeeModel
       .find({

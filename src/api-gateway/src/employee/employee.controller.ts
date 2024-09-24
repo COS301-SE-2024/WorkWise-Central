@@ -90,6 +90,17 @@ export class EmployeeController {
   @ApiOperation({
     summary: `Used for testing. DO NOT USE IN PRODUCTION`,
   })
+  @Get('/withPermission/:companyId')
+  async withPermission(@Body('permission') permission: string, @Param('companyId') companyId: Types.ObjectId) {
+    // console.log('hi');
+    console.log('permission:', permission);
+    const data = await this.employeeService.findAllInCompanyWithPermission(companyId, permission);
+    return { data: data };
+  }
+
+  @ApiOperation({
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
+  })
   @Post('/create')
   async create(
     @Headers() headers: any,
