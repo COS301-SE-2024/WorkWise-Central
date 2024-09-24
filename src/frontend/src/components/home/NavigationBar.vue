@@ -113,35 +113,17 @@ export default defineComponent({
   //   ...mapGetters(['isDarkMode'])
   // },
   methods: {
-    $vuetify: undefined,
     toggleDarkMode() {
       console.log(this.isdarkmode)
-
       if (this.isdarkmode) {
         this.isdarkmode = false
         console.log(this.isdarkmode)
-
-        // Remove dark-mode class for PrimeVue
-        document.body.classList.remove('dark-mode')
-
-        // Update Vuetify theme
-        this.$vuetify.theme.global.dark = false
-
       } else {
         this.isdarkmode = true
         console.log(this.isdarkmode)
-
-        // Add dark-mode class for PrimeVue
-        document.body.classList.add('dark-mode')
-
-        // Update Vuetify theme
-        this.$vuetify.theme.global.dark = true
       }
-
-      // Save the theme preference to localStorage
-      localStorage.setItem('theme', this.isdarkmode.toString())
-    }
-,
+      localStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage
+    },
     setInbox(inbox: string) {
       this.selected = inbox
     },
