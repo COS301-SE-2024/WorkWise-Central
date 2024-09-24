@@ -391,6 +391,7 @@ const patchJobDetails = async () => {
     console.error('Error getting editing job details', error)
     showEditError()
   }
+  emits('close')
 }
 
 // Event Handlers

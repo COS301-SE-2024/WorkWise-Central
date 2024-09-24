@@ -136,9 +136,9 @@
                           </v-card>
                         </v-dialog>
                         <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
-                          <v-btn color="success" class="mb-2">
-                            <v-icon>{{ 'fa: fa-solid fa-save' }}</v-icon>
-                            Save
+                          <v-btn color="success" class="mb-2" @click="convertCard(taskIndex, itemIndex)">
+                            <v-icon>{{ 'fa: fa-solid fa-exchange-alt' }}</v-icon>
+                            Convert Card
                           </v-btn>
                         </v-defaults-provider>
                         <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
@@ -396,6 +396,25 @@ const saveTask = async (taskIndex: number) => {
     }
   } catch (error) {
     console.log(error)
+  }
+}
+
+const convertCard = async (taskIndex: number, itemIndex: number) => {
+  try {
+    const body = {
+      currentEmployeeId: localStorage.getItem('employeeId') || '',
+      jobId: props.jobID,
+      taskId: taskList.value[taskIndex]._id,
+      taskItemId: taskList.value[taskIndex].items[itemIndex]._id
+    }
+    const response = await axios.patch(`${API_URL}job/convert`, body, config)
+    if (response.status > 199 && response.status < 300) {
+      console.log('Card converted successfully', response.data)
+    } else {
+      console.log('Failed to convert card', response)
+    }
+  } catch (error) {
+    console.log('Error converting card', error)
   }
 }
 
