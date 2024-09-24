@@ -1,11 +1,23 @@
-import { IsArray, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsJWT, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateChatDto {
+  @IsString()
+  @IsNotEmpty()
+  chatName: string;
+
   @IsMongoId({ each: true })
   @IsArray()
   @IsNotEmpty()
   participants: Types.ObjectId[];
+
+  @IsOptional()
+  @IsString()
+  description?: string = '';
+
+  @IsOptional()
+  @IsString()
+  chatImage?: string;
 }
 
 export class AddUsersToChatDto {
@@ -35,4 +47,58 @@ export class CreateChatMessageDto {
   @IsArray()
   @IsOptional()
   attachments?: string[];
+}
+
+export class UpdateChatDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsJWT()
+  jwt: string;
+
+  @IsMongoId()
+  @IsNotEmpty()
+  chatId: Types.ObjectId;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsArray()
+  @IsOptional()
+  image?: string;
+
+  @IsArray()
+  @IsOptional()
+  admin?: Types.ObjectId;
+
+  @IsArray()
+  @IsOptional()
+  @IsMongoId({ each: true })
+  participants?: Types.ObjectId[];
+}
+
+export class MarkChatAsReadDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsJWT()
+  jwt: string;
+
+  @IsMongoId()
+  @IsNotEmpty()
+  chatId: Types.ObjectId;
+}
+
+export class TypingDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsJWT()
+  jwt: string;
+
+  @IsMongoId()
+  @IsNotEmpty()
+  chatId: Types.ObjectId;
 }
