@@ -216,6 +216,7 @@ function editInventory(index: number) {
   editingIndex.value = actualIndex
   isEditing.value = true
   validateForm()
+  saveInventory()
 }
 
 async function removeInventory(index: number) {
