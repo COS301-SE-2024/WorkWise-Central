@@ -57,6 +57,8 @@ const rootPath = join(__dirname, '..', '../../uploads');
     PayfastModule,
     VideoCallModule,
     InventoryUsedModule,
+    FleetModule,
+    StatsModule,
   ],
 })
 export class AppModule {}
