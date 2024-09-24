@@ -405,6 +405,11 @@ const router = createRouter({
       path: '/map',
       name: 'map',
       component: GoogleMapsView
+    },
+    {
+      path: '/chatHome',
+      name: 'chatHome',
+      component: () => import('@/views/home/chat/ChatHome.vue'),
     }
   ]
 })

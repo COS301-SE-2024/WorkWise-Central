@@ -31,7 +31,11 @@
           <p><strong>Status:</strong> {{ selectedJob.status.status }}</p>
 
           <v-timeline align="start">
-            <v-timeline-item v-for="status in jobStatuses" :key="status" :dot-color="status === selectedJob.status.status ? 'primary' : 'grey'">
+            <v-timeline-item
+              v-for="status in jobStatuses"
+              :key="status"
+              :dot-color="status === selectedJob.status.status ? 'primary' : 'grey'"
+            >
               <div>
                 <div class="text-h6">{{ status }}</div>
               </div>
@@ -49,6 +53,7 @@
 
 <script lang="ts">
 import axios from 'axios'
+import { APP_URL, API_URL } from '@/main'
 
 interface Job {
   _id: string
@@ -135,10 +140,10 @@ export default {
         return false
       }
     },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
+    // async getRequestUrl() {
+    //   const localAvailable = await this.isLocalAvailable(this.localUrl)
+    //   return localAvailable ? this.localUrl : this.remoteUrl
+    // },
     async getRequests() {
       if (localStorage.getItem('clientId') !== null) {
         this.clientId = localStorage.getItem('clientId') as string
@@ -151,9 +156,8 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
       await axios
-        .get(`${url}client/clientPortal/id/${this.clientId}`, config)
+        .get(`${API_URL}client/clientPortal/id/${this.clientId}`, config)
         .then((response) => {
           this.client = response.data.data
         })
@@ -163,7 +167,7 @@ export default {
 
       // Getting the client jobs
       await axios
-        .get(`${url}client/portal/view-jobs?clientId=${this.clientId}`, config)
+        .get(`${API_URL}client/portal/view-jobs?clientId=${this.clientId}`, config)
         .then((response) => {
           //pushing each of the jobs in the response to the jobs array
           this.jobs = response.data.data
@@ -180,7 +184,7 @@ export default {
 
       //getting the job statuses
       await axios
-        .get(`${url}job/status/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${APP_URL}job/status/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log('response.data.data: ', response.data.data)
           for (const status of response.data.data) {

@@ -61,6 +61,7 @@
 
 <script lang="ts">
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
   data() {
@@ -116,7 +117,7 @@ export default {
         }
       ],
       reviewDialog: false,
-      currentJobId:'',
+      currentJobId: '',
       jobRating: 0,
       feedback: '',
       customerServiceRating: 0,
@@ -133,10 +134,6 @@ export default {
         return false
       }
     },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
     async getRequests() {
       if (localStorage.getItem('clientId') !== null) {
         this.clientId = localStorage.getItem('clientId') as string
@@ -149,9 +146,8 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
       await axios
-        .get(`${url}client/clientPortal/id/${this.clientId}`, config)
+        .get(`${API_URL}client/clientPortal/id/${this.clientId}`, config)
         .then((response) => {
           this.client = response.data.data
         })
@@ -161,7 +157,7 @@ export default {
 
       // Getting the client jobs
       await axios
-        .get(`${url}client/portal/view-jobs/complete?clientId=${this.clientId}`, config)
+        .get(`${API_URL}client/portal/view-jobs/complete?clientId=${this.clientId}`, config)
         .then((response) => {
           this.completedJobs = response.data.data
           console.log('response.data.data: ', response.data.data)
@@ -195,8 +191,7 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
-      await axios.post(`${url}client/portal/feedback`, data, config).then((response) => {
+      await axios.post(`${API_URL}client/portal/feedback`, data, config).then((response) => {
         console.log(response)
         this.$toast.add({
           severity: 'success',
