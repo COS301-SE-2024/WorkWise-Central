@@ -7,11 +7,11 @@
     </v-card-title>
 
     <!-- Total Number of Employees Display -->
-    <v-card-subtitle
-      ><v-chip color="primary"
-        ><h5>Total Employees: {{ totalEmployees }}</h5></v-chip
-      ></v-card-subtitle
-    >
+    <v-card-subtitle>
+      <v-chip color="primary">
+        <h5>Total Employees: {{ totalEmployees }}</h5>
+      </v-chip>
+    </v-card-subtitle>
 
     <v-card-text>
       <v-text-field
@@ -25,7 +25,6 @@
 
       <!-- Employee Stats Table -->
       <v-data-table :items="employees" :headers="employeeHeaders" class="bg-background">
-        <!-- Stats for Each Employee -->
         <template v-slot:[`item.actions`]="{ item }">
           <v-menu max-width="500px">
             <template v-slot:activator="{ props }">
@@ -49,37 +48,31 @@
 
       <!-- Employee Breakdown Charts -->
       <div v-if="showStats">
+        <v-card-title>Employee Breakdown for {{ selectedEmployee.firstName }}</v-card-title>
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6"
-              ><p>Combined Employee and Job Stats:</p>
-              <Chart type="bar" :data="combinedChartData" :options="chartOptions" height="300px"
-            /></v-col>
-            <v-col cols="12" lg="6"
-              ><p>Jobs Completed On Time vs Not:</p>
-              <Chart type="pie" :data="onTimeJobsChartData" :options="chartOptions" height="300px"
-            /></v-col>
+            <v-col cols="12" lg="6">
+              <h5>Jobs for {{ selectedEmployee.firstName }}</h5>
+              <Chart type="pie" :data="combinedChartData" :options="chartOptions" height="300px" />
+            </v-col>
+            <v-col cols="12" lg="6">
+              <h5>
+                Jobs completed on time vs jobs completed late for {{ selectedEmployee.firstName }}
+              </h5>
+              <Chart
+                type="pie"
+                :data="onTimeJobsChartData"
+                :options="chartOptions"
+                height="300px"
+              />
+            </v-col>
           </v-row>
-          <v-row>
-            <v-col>
-              <p>Monthly Hours:</p>
-              <v-select
-                v-model="selectedMonth"
-                :items="months"
-                variant="outlined"
-                color="primary"
-                label="Select Month"
-                @change="fetchMonthlyHours"
-            /></v-col>
-          </v-row>
-
-          <Chart type="bar" :data="monthlyHoursChartData" :options="chartOptions" height="300px"
-        /></v-container>
+        </v-container>
 
         <v-container>
           <v-row>
-            <p>Average Ratings:</p>
-            <v-col>
+            <v-col cols="12" lg="6">
+              <h5>Average Customer Service ratings given by</h5>
               <v-card
                 class="d-flex flex-column mx-auto py-4"
                 elevation="10"
@@ -89,20 +82,20 @@
                 <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
                 <div class="d-flex align-center flex-column my-auto">
                   <div class="text-h2 mt-5">
-                    {{ overallRating }}
+                    {{ customerServiceRatingAverage }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
                   <v-rating
-                    :model-value="overallRating"
+                    :model-value="customerServiceRatingAverage"
                     color="yellow-darken-3"
                     half-increments
                   ></v-rating>
-                  <div class="px-3">{{ totalRatings }} ratings</div>
+                  <div class="px-3">{{ totalCustomerRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
                     <v-progress-linear
-                      :model-value="rating * ratingValueFactor"
+                      :model-value="ratingCounts[i] * ratingValueFactor"
                       class="mx-n5"
                       color="yellow-darken-3"
                       height="20"
@@ -121,30 +114,31 @@
                 </v-list>
               </v-card>
             </v-col>
-            <v-col>
+            <v-col cols="12" lg="6">
+              <h5>Average Job Performance ratings given by</h5>
               <v-card
                 class="d-flex flex-column mx-auto py-4"
                 elevation="10"
                 height="auto"
                 width="360"
               >
-                <div class="d-flex justify-center mt-auto text-h5">Work Performance Rating</div>
+                <div class="d-flex justify-center mt-auto text-h5">Job Performance Rating</div>
                 <div class="d-flex align-center flex-column my-auto">
                   <div class="text-h2 mt-5">
-                    {{ overallRating }}
+                    {{ jobPerformanceRatingAverage }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
                   <v-rating
-                    :model-value="overallRating"
+                    :model-value="jobPerformanceRatingAverage"
                     color="yellow-darken-3"
                     half-increments
                   ></v-rating>
-                  <div class="px-3">{{ totalRatings }} ratings</div>
+                  <div class="px-3">{{ totalJobRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
                     <v-progress-linear
-                      :model-value="rating * ratingValueFactor"
+                      :model-value="jobRatingCounts[i] * ratingValueFactor"
                       class="mx-n5"
                       color="yellow-darken-3"
                       height="20"
@@ -156,7 +150,7 @@
                     </template>
                     <template v-slot:append>
                       <div class="rating-values">
-                        <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
+                        <span class="d-flex justify-end">{{ jobRatingCounts[i] }}</span>
                       </div>
                     </template>
                   </v-list-item>
@@ -181,7 +175,7 @@ export default {
   data() {
     return {
       currentTab: 'Employee Breakdown',
-      totalEmployees: 100,
+      totalEmployees: 0,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       employees: [],
@@ -191,30 +185,26 @@ export default {
         { title: 'Last Name', value: 'userInfo.surname' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
-      showStats: true,
-      selectedMonth: null,
-      months: [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ],
+      showStats: false,
+      selectedEmployee: {},
       // Mock Chart Data
       combinedChartData: {
-        labels: ['Active Jobs', 'Total Jobs', 'Completed Jobs'],
+        labels: ['Active Jobs', 'Completed Jobs'],
         datasets: [
           {
             label: 'Count',
-            data: [25, 150, 100], // Replace with actual values
-            backgroundColor: ['#66BB6A', '#FFA726', '#AB47BC']
+            data: [0, 0], // Updated values from API
+            backgroundColor: ['#FFA726', '#AB47BC']
+          }
+        ]
+      },
+      onTimeJobsChartData: {
+        labels: ['On Time', 'Late'],
+        datasets: [
+          {
+            label: 'On Time vs Late',
+            data: [0, 0], // Updated values from API
+            backgroundColor: ['#66BB6A', '#EF5350']
           }
         ]
       },
@@ -225,38 +215,16 @@ export default {
           }
         }
       },
-      onTimeJobsChartData: {
-        labels: ['On Time', 'Late'],
-        datasets: [
-          {
-            label: 'Jobs Completed On Time vs Not',
-            data: [70, 30], // 70 On Time, 30 Late
-            backgroundColor: ['#66BB6A', '#EF5350']
-          }
-        ]
-      },
-      monthlyHoursChartData: {
-        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-        datasets: [
-          {
-            label: 'Hours Worked',
-            data: [40, 35, 45, 50], // Example hours for each week
-            backgroundColor: ['#42A5F5']
-          }
-        ]
-      },
-      overallRating: 4.5, // Example overall rating
-      totalRatings: 120, // Example total ratings
-      ratingCounts: [10, 30, 50, 20, 10], // Example counts for each rating
+      customerServiceRatingAverage: 0, // Fetched from API
+      jobPerformanceRatingAverage: 0,
+      totalJobRatings: 0,
+      totalCustomerRatings: 0, // Calculated from customerServiceRating
+      ratingCounts: [0, 0, 0, 0, 0], // Fetched from API
+      jobRatingCounts: [0, 0, 0, 0, 0],
       ratingValueFactor: 20 // Example factor to scale the rating
     }
   },
   methods: {
-    showBreakdown(employee) {
-      this.selectedEmployee = employee
-      this.showStats = true
-      //this.fetchChartsData() // Fetch data for charts here
-    },
     async fetchMonthlyHours() {
       // Fetch monthly hours data based on selectedMonth
       this.monthlyHoursChartData = {
@@ -275,7 +243,13 @@ export default {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    async getEmployeeStats() {
+    showBreakdown(employee) {
+      this.selectedEmployee = employee
+
+      this.getEmployeeStats(employee)
+    },
+    async getEmployeeStats(employee) {
+      this.showStats = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -286,15 +260,33 @@ export default {
         }
       }
       const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
-      axios
-        .get(`${apiURL}stats/employeeStats/${localStorage.getItem('employeeId')}`, config)
-        .then((response) => {
-          this.employeeStats = response.data.data
-        })
-        .catch((error) => {
-          console.error('Failed to fetch employee stats:', error)
-        })
+      try {
+        const response = await axios.get(`${apiURL}stats/employeeStats/${employee._id}`, config)
+        const data = response.data.data
+
+        // Update stats with response data
+        this.combinedChartData.datasets[0].data = [data.numActiveJobs, data.numCompletedJobs]
+        this.onTimeJobsChartData.datasets[0].data = [
+          data.numJobsCompletedOnTime,
+          data.numJobsCompletedLate
+        ]
+        this.customerServiceRatingAverage = data.customerServiceRatingAverage
+        this.totalCustomerRatings = data.customerServiceRating.length
+        this.jobPerformanceRatingAverage = data.workPerformanceRatingAverage
+        this.totalJobRatings = data.workPerformanceRating.length
+
+        // Assuming `ratingCounts` is calculated from `customerServiceRating`
+        this.ratingCounts = this.calculateRatingCounts(data.customerServiceRating)
+      } catch (error) {
+        console.error('Failed to fetch employee stats:', error)
+      }
+    },
+    calculateRatingCounts(ratings) {
+      const counts = [0, 0, 0, 0, 0]
+      ratings.forEach((rating) => {
+        counts[Math.floor(rating) - 1]++
+      })
+      return counts
     },
     async getNumEmployees() {
       const config = {
@@ -336,6 +328,8 @@ export default {
         )
         console.log(response)
         this.employees = response.data.data
+        this.selectedEmployee = this.employees[0].userInfo.firstName
+        await this.getEmployeeStats(this.employees[0])
       } catch (error) {
         console.error(error)
       }

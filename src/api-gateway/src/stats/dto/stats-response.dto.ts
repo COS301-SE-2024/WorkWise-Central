@@ -342,6 +342,15 @@ export class TeamStatsResponseDto {
   @IsArray()
   ratingPerTeam: teamRating[] = [];
 }
+export class Revenue {
+  @ApiProperty()
+  @IsNumber()
+  numUnpaid: number;
+
+  @ApiProperty()
+  @IsString()
+  month: string;
+}
 
 export class InvoiceStatsResponseDto {
   @ApiProperty()
@@ -365,6 +374,7 @@ export class InvoiceStatsResponseDto {
   unpaidInvoices: Invoice[] = [];
 
   @ApiProperty()
+  @IsArray()
   @IsNumber()
-  revenue: number;
+  revenue: Revenue[] = [];
 }

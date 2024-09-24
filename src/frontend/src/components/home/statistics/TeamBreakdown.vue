@@ -6,11 +6,12 @@
     </v-card-title>
 
     <!-- Team Breakdown Summary -->
-    <v-card-subtitle
-      ><v-chip color="primary"
-        ><h5>Total Teams: {{ }}</h5></v-chip
-      ></v-card-subtitle
-    >
+    <v-card-subtitle>
+      <v-chip color="primary">
+        <h5>Total Teams: {{ teamStats.totalNumTeams }}</h5>
+      </v-chip>
+    </v-card-subtitle>
+
     <v-card-text>
       <div>
         <!-- Bar Chart for Average Number of Team Members per Team -->
@@ -30,9 +31,15 @@
           :options="chartOptions"
           height="300px"
         />
+
+        <!-- Average Rating per Team -->
         <p><strong>Average Rating per Team:</strong></p>
-        <!-- Overall Average Ratings Card -->
-        <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+        <v-card
+          class="d-flex flex-column mx-auto py-4"
+          elevation="10"
+          height="auto"
+          width="360"
+        >
           <div class="d-flex justify-center mt-auto text-h5">Average Ratings</div>
 
           <div class="d-flex align-center flex-column my-auto">
@@ -87,78 +94,47 @@ export default {
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       currentTab: 'Team Breakdown', // Tab name
-      totalTeams: 10, // Example total number of teams
-      teamBreakdownChartData: {}, // Data for polar area chart
-      averageTeamMembersChartData: {}, // Data for average team members bar chart
-      averageJobsPerTeamChartData: {}, // Data for average jobs per team line chart
-      averageTeamRatingsChartData: {}, // Data for average ratings radar chart
-      averageTeamRatingsValue: 4.5, // Example overall average rating
+      teamStats: {
+        totalNumTeams: 0,
+        averageNumMembers: 0,
+        averageNumJobsForTeam: 0,
+        ratingPerTeam: []
+      },
+      averageTeamRatingsValue: 4.5, // Example average rating value
       totalRatings: 3360, // Example total ratings count
-      ratingCounts: [0, 224, 448, 672, 896], // Example counts for each star rating
+      ratingCounts: [0, 224, 448, 672, 896], // Example rating counts
       ratingValueFactor: 0.05, // Factor for progress bar values
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false
+      },
+      averageTeamMembersChartData: {
+        labels: ['Average Members'],
+        datasets: [
+          {
+            label: 'Team Members',
+            data: [], // Average number of team members
+            backgroundColor: '#42A5F5'
+          }
+        ]
+      },
+      averageJobsPerTeamChartData: {
+        labels: ['Team A', 'Team B', 'Team C', 'Team D'], // Example team labels
+        datasets: [
+          {
+            label: 'Jobs Per Team',
+            data: [], // Average jobs per team
+            borderColor: '#FFA726',
+            fill: false
+          }
+        ]
       }
     }
   },
   mounted() {
-    // Example data for the polar area chart, replace with actual team breakdown data
-    this.teamBreakdownChartData = {
-      labels: ['Team A', 'Team B', 'Team C', 'Team D'],
-      datasets: [
-        {
-          data: [6, 8, 7, 5], // Example data for team members in each team
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
-        }
-      ]
-    }
-
-    // Average team members chart data
-    this.averageTeamMembersChartData = {
-      labels: ['Average Members'],
-      datasets: [
-        {
-          label: 'Team Members',
-          data: [], // Average number of team members
-          backgroundColor: '#42A5F5'
-        }
-      ]
-    }
-
-    // Average jobs per team chart data
-    this.averageJobsPerTeamChartData = {
-      labels: ['Team A', 'Team B', 'Team C', 'Team D'],
-      datasets: [
-        {
-          label: 'Jobs Per Team',
-          data: [14, 16, 13, 17], // Example data for jobs per team
-          borderColor: '#FFA726',
-          fill: false
-        }
-      ]
-    }
-
-    // Average ratings chart data
-    this.averageTeamRatingsChartData = {
-      labels: ['Team A', 'Team B', 'Team C', 'Team D'],
-      datasets: [
-        {
-          label: 'Ratings',
-          data: [4.6, 4.4, 4.5, 4.7], // Example ratings
-          backgroundColor: '#66BB6A'
-        }
-      ]
-    }
-
-    // Calculate total teams
-    this.totalTeams = this.teamBreakdownChartData.labels.length
     this.getTeamStats()
   },
   methods: {
-    calculateAverage(arr) {
-      return (arr.reduce((sum, val) => sum + val, 0) / arr.length).toFixed(2)
-    },
     async isLocalAvailable(localUrl) {
       try {
         const res = await axios.get(localUrl)
@@ -182,12 +158,14 @@ export default {
         }
       }
       const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
       axios
         .get(`${apiURL}stats/teamStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          console.log(response)
           this.teamStats = response.data.data
+console.log(this.teamStats)
+          // Update chart data with API response
+          this.averageTeamMembersChartData.datasets[0].data = [this.teamStats.averageNumMembers]
+          this.averageJobsPerTeamChartData.datasets[0].data = [this.teamStats.averageNumJobsForTeam]
         })
         .catch((error) => {
           console.error('Failed to fetch team stats:', error)

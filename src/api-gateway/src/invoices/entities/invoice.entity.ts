@@ -74,6 +74,10 @@ export class Invoice {
   paid: boolean;
 
   @ApiProperty()
+  @Prop({ required: true, default: new Date() })
+  paymentReceivedDate: Date;
+
+  @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Client' })
   clientId: Types.ObjectId;
 

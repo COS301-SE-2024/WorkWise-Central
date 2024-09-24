@@ -394,6 +394,20 @@ export class StatsService {
     result.totalNumInvoices = invoices.length;
     result.numPaid = 0;
     result.numUnpaid = 0;
+    result.revenue = [
+      { month: 'January', numUnpaid: 0 },
+      { month: 'February', numUnpaid: 0 },
+      { month: 'March', numUnpaid: 0 },
+      { month: 'April', numUnpaid: 0 },
+      { month: 'May', numUnpaid: 0 },
+      { month: 'June', numUnpaid: 0 },
+      { month: 'July', numUnpaid: 0 },
+      { month: 'August', numUnpaid: 0 },
+      { month: 'September', numUnpaid: 0 },
+      { month: 'October', numUnpaid: 0 },
+      { month: 'November', numUnpaid: 0 },
+      { month: 'December', numUnpaid: 0 },
+    ];
 
     for (const invoice of invoices) {
       if (invoice.paid) {
@@ -407,8 +421,8 @@ export class StatsService {
             jobTitle: (invoice.jobId as any).details.heading,
           },
         });
-
-        result.revenue += invoice.total;
+        const dateIndex = invoice.paymentReceivedDate.getMonth();
+        result.revenue[dateIndex].numUnpaid += invoice.total;
       } else {
         result.numUnpaid++;
         result.unpaidInvoices.push({

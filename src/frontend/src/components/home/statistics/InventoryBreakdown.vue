@@ -1,46 +1,72 @@
+To make the small cards completely red (with red backgrounds, borders, and text), you can adjust the
+card's color and text styles. Here's an updated version of the component where the entire card,
+including the text, appears red: vue Copy code
 <template>
   <v-card border="md" rounded="md" height="auto">
+    <!-- Items to Reorder Section -->
+    <v-card-title>
+      <v-icon icon="fa: fa-solid fa-exclamation-circle mr-2" color="red"></v-icon>
+      <strong style="color: red">Items to Reorder</strong>
+    </v-card-title>
+
+    <v-card-text>
+      <v-container>
+        <v-row>
+          <!-- Each item in a small red card -->
+          <v-col cols="12" sm="6" md="4" v-for="item in itemsToReorder" :key="item.name">
+            <v-card
+              class="colourCard1"
+              elevation="2"
+              rounded="md"
+              height="auto"
+              color="red important"
+            >
+              <v-card-title class="colourCard2" colour="black">
+                {{ item.name }}
+              </v-card-title>
+              <v-card-subtitle>
+                <strong>Stock Level: {{ item.stock }}</strong>
+              </v-card-subtitle>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+
+    <!-- Original Content -->
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-calendar-alt mr-2"></v-icon>
       {{ currentTab }}
     </v-card-title>
 
     <!-- Total Number of Items Display -->
-    <v-card-subtitle
-      ><v-chip color="primary"
-        ><h5>Total Number of Items: {{ inventoryStats.totalNumItems }}</h5></v-chip
-      ></v-card-subtitle
-    >
+    <v-card-subtitle>
+      <v-chip color="primary">
+        <h5>Total Number of Items: {{ inventoryStats.totalNumItems }}</h5>
+      </v-chip>
+    </v-card-subtitle>
 
     <v-card-text>
       <!-- Doughnut Chart for Highest Usage Items -->
-      <v-container
-        ><v-row
-          ><v-col cols="12" lg="4">
+      <v-container>
+        <v-row>
+          <v-col cols="12" lg="4">
             <p><strong>Highest Usage Items:</strong></p>
             <Chart
               type="doughnut"
               :data="highestUsageItemsChartData"
               :options="chartOptions"
               height="600px"
-          /></v-col>
-          <!-- Bar Chart for Items to Reorder -->
+            />
+          </v-col>
+
+          <!-- Bar Chart for Loss of Stock -->
           <v-col cols="12" lg="4">
-            <p><strong>Items to Reorder:</strong></p>
-            <Chart
-              type="pie"
-              :data="itemsToReorderChartData"
-              :options="chartOptions"
-              height="400px" /></v-col
-          ><v-col cols="12" lg="4">
-            <!-- Bar Chart for Loss of Stock -->
             <p><strong>Loss of Stock:</strong></p>
-            <Chart
-              type="pie"
-              :data="lossOfStockChartData"
-              :options="chartOptions"
-              height="400px" /></v-col></v-row
-      ></v-container>
+            <Chart type="pie" :data="lossOfStockChartData" :options="chartOptions" height="400px" />
+          </v-col>
+        </v-row>
+      </v-container>
     </v-card-text>
   </v-card>
 </template>
@@ -71,7 +97,8 @@ export default {
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false
-      }
+      },
+      inventoryStats: {}
     }
   },
   methods: {
@@ -102,7 +129,7 @@ export default {
       axios
         .get(`${apiURL}stats/inventoryStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          console.log(response)
+          console.log('Inventory Stats: ', response)
           this.inventoryStats = response.data.data
         })
         .catch((error) => {
@@ -151,5 +178,12 @@ export default {
 </script>
 
 <style scoped>
-/* Add any custom styles if needed */
+.colourCard1 {
+  background-color: rgb(255, 193, 193) !important;
+  color:black;
+}
+.colourCard2 {
+  background-color: rgb(255, 131, 131) !important;
+  color:black;
+}
 </style>

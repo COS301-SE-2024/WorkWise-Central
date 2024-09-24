@@ -7,30 +7,18 @@
 
     <!-- Total Clients Information -->
     <v-card-subtitle>
-      <v-chip color="primary"
-        ></v-chip
-      >
+      <v-chip color="primary">
+        <h5>Total Number of Clients: {{ totalClients }}</h5>
+      </v-chip>
     </v-card-subtitle>
 
     <!-- Search bar for v-data-table -->
     <v-card-text>
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        variant="outlined"
-        color="primary"
-        label="Search Clients"
-        class="mb-4"
-        @keyup="applyFilter"
-      />
+      <v-text-field v-model="search" append-icon="mdi-magnify" variant="outlined" color="primary" label="Search Clients"
+        class="mb-4" @keyup="applyFilter" />
       <!-- Client Data Table -->
-      <v-data-table
-        :items="clientDetails"
-        :headers="headers"
-        class="bg-background"
-        :search="search"
-        :item-class="getItemClass"
-      >
+      <v-data-table :items="clientDetails" :headers="headers" class="bg-background" :search="search"
+        :item-class="getItemClass">
         <!-- Actions Column -->
         <template v-slot:[`item.actions`]="{ item }">
           <v-menu max-width="500px">
@@ -57,61 +45,33 @@
         <v-card-text>
           <!-- Bar chart for number of jobs -->
           <v-container>
-            <v-row
-              ><v-col cols="12" lg="6">
+            <v-row><v-col cols="12" lg="6">
                 <h5>Breakdown of the Jobs for {{ selectedClient.firstName }}</h5>
-                <Chart
-                  type="pie"
-                  :data="jobsData"
-                  :options="jobsChartOptions"
-                  @chart-click="onChartClick" /></v-col
-              ><v-col cols="12" lg="6">
+                <Chart type="pie" :data="jobsData" :options="jobsChartOptions" @chart-click="onChartClick" />
+              </v-col><v-col cols="12" lg="6">
                 <h5>Breakdown of the Invoices for {{ selectedClient.firstName }}</h5>
-                <Chart
-                  type="pie"
-                  :data="invoiceData"
-                  :options="invoiceChartOptions"
-                  @chart-click="onChartClick" /></v-col></v-row
-          ></v-container>
+                <Chart type="pie" :data="invoiceData" :options="invoiceChartOptions" @chart-click="onChartClick" />
+              </v-col></v-row></v-container>
 
           <!-- Customer Service Rating Section -->
           <v-container>
             <v-row>
-              <v-col cols="12" lg="6"
-                >
-                <h5>Customer Service ratings given by {{ selectedClient.firstName }}</h5>
-                <v-card
-                  class="d-flex flex-column mx-auto py-4"
-                  elevation="10"
-                  height="auto"
-                  width="360"
-                >
+              <v-col cols="12" lg="6">
+                <h5>Average Customer Service ratings given by {{ selectedClient.firstName }}</h5>
+                <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
                   <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
                   <div class="d-flex align-center flex-column my-auto">
                     <div class="text-h2 mt-5">
-                      {{ overallRating }}
+                      {{ overallCustomerRating }}
                       <span class="text-h6 ml-n3">/5</span>
                     </div>
-                    <v-rating
-                      :model-value="overallRating"
-                      color="yellow-darken-3"
-                      half-increments
-                    ></v-rating>
+                    <v-rating :model-value="overallRating" color="yellow-darken-3" half-increments></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
-                  <v-list
-                    bg-color="transparent"
-                    class="d-flex flex-column-reverse"
-                    density="compact"
-                  >
+                  <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                     <v-list-item v-for="(rating, i) in 5" :key="i">
-                      <v-progress-linear
-                        :model-value="rating * ratingValueFactor"
-                        class="mx-n5"
-                        color="yellow-darken-3"
-                        height="20"
-                        rounded
-                      ></v-progress-linear>
+                      <v-progress-linear :model-value="rating * ratingValueFactor" class="mx-n5" color="yellow-darken-3"
+                        height="20" rounded></v-progress-linear>
                       <template v-slot:prepend>
                         <span>{{ rating }}</span>
                         <v-icon class="mx-3" icon="mdi-star"></v-icon>
@@ -123,41 +83,23 @@
                       </template>
                     </v-list-item>
                   </v-list>
-                </v-card></v-col
-              ><v-col cols="12" lg="6">
-                <h5>Job Quality ratings given by {{ selectedClient.firstName }}</h5>
-                <v-card
-                  class="d-flex flex-column mx-auto py-4"
-                  elevation="10"
-                  height="auto"
-                  width="360"
-                >
+                </v-card>
+              </v-col><v-col cols="12" lg="6">
+                <h5>Average Job quality ratings given by {{ selectedClient.firstName }}</h5>
+                <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
                   <div class="d-flex justify-center mt-auto text-h5">Job Quality Rating</div>
                   <div class="d-flex align-center flex-column my-auto">
                     <div class="text-h2 mt-5">
                       {{ overallRating }}
                       <span class="text-h6 ml-n3">/5</span>
                     </div>
-                    <v-rating
-                      :model-value="overallRating"
-                      color="yellow-darken-3"
-                      half-increments
-                    ></v-rating>
+                    <v-rating :model-value="overallRating" color="yellow-darken-3" half-increments></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
-                  <v-list
-                    bg-color="transparent"
-                    class="d-flex flex-column-reverse"
-                    density="compact"
-                  >
+                  <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                     <v-list-item v-for="(rating, i) in 5" :key="i">
-                      <v-progress-linear
-                        :model-value="rating * ratingValueFactor"
-                        class="mx-n5"
-                        color="yellow-darken-3"
-                        height="20"
-                        rounded
-                      ></v-progress-linear>
+                      <v-progress-linear :model-value="rating * ratingValueFactor" class="mx-n5" color="yellow-darken-3"
+                        height="20" rounded></v-progress-linear>
                       <template v-slot:prepend>
                         <span>{{ rating }}</span>
                         <v-icon class="mx-3" icon="mdi-star"></v-icon>
@@ -169,10 +111,8 @@
                       </template>
                     </v-list-item>
                   </v-list>
-                </v-card></v-col
-              ></v-row
-            ></v-container
-          >
+                </v-card>
+              </v-col></v-row></v-container>
         </v-card-text>
       </v-card>
     </v-card-text>
@@ -190,7 +130,9 @@ export default {
       totalClients: 0, // Example data, replace with actual
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      selectedItemId: '',
       search: '',
+      clientStats: '',
       clientDetails: [], // Bind actual client data here
       clientIds: [],
       filteredClientDetails: [],
@@ -222,7 +164,7 @@ export default {
         { title: 'Address', value: 'address.street', key: 'address.street', class: 'h3' },
         { title: '', value: 'actions', key: 'actions', sortable: false, class: 'h3' }
       ],
-      showStats: true,
+      showStats: false,
       selectedClient: {},
       jobRatingData: {},
       invoiceData: {
@@ -231,11 +173,12 @@ export default {
           {
             label: 'Payment time of Invoices',
             backgroundColor: ['#FFCE56', '#EF5350'],
-            data: [5, 10] // Mock data: Current Jobs: 5, Total Jobs: 10
+            data: [] // Mock data: Current Jobs: 5, Total Jobs: 10
           }
         ]
       },
-      overallRating: 4.2, // Mock overall rating value
+      overallRating: 0, // Mock overall rating value
+      overallCustomerRating: 0,
       totalRatings: 150, // Mock total number of ratings
       ratingCounts: [100, 30, 10, 5, 5], // Mock counts for 5-star, 4-star, 3-star, etc.
       ratingValueFactor: 2, // Factor for progress bar width calculation
@@ -245,7 +188,7 @@ export default {
           {
             label: 'Job Breakdown',
             backgroundColor: ['#42A5F5', '#66BB6A'],
-            data: [5, 10] // Mock data: Current Jobs: 5, Total Jobs: 10
+            data: [] // Mock data: Current Jobs: 5, Total Jobs: 10
           }
         ]
       },
@@ -299,37 +242,18 @@ export default {
         client.name.toLowerCase().includes(this.search.toLowerCase())
       )
     },
-    showBreakdown(client) {
+    async showBreakdown(client) {
       this.selectedClient = client
-      this.showStats = true
-      this.loadBreakdownData(client)
-    },
-    loadBreakdownData() {
-      this.getClientStats()
-      // Example job rating data, replace with actual logic
-      this.jobRatingData = {
-        labels: ['Job 1', 'Job 2', 'Job 3'],
-        datasets: [
-          {
-            label: 'Ratings per Job',
-            backgroundColor: '#42A5F5',
-            data: [4, 5, 3]
-          }
-        ]
+      for (let i = 0; i < this.clientDetails.length; i++) {
+        if (this.clientDetails[i] === this.selectedClient) {
+          this.selectedItemId = this.clientIds[i]
+        }
       }
+      console.log('Deleting client' + this.selectedItemId)
 
-      // Example invoice data, replace with actual logic
-      this.invoiceData = {
-        labels: ['Paid On Time', 'Paid Late'],
-        datasets: [
-          {
-            label: 'Invoices',
-            backgroundColor: ['#66BB6A', '#FF7043'],
-            data: [80, 20] // Percentage of paid on time vs late
-          }
-        ]
-      }
+      await this.getClientStats()
     },
+
     getItemClass(client) {
       // Returns the 'selected-client' class for the selected client
       return client === this.selectedClient ? 'selected-client' : ''
@@ -356,29 +280,87 @@ export default {
           console.error('Failed to fetch clients:', error)
         })
     },
-    async getClientStats() {
+    selectItem(item) {
+      for (let i = 0; i < this.clientDetails.length; i++) {
+        if (this.clientDetails[i] === item) {
+          this.selectedItemId = this.clientIds[i]
+        }
+      }
+      console.log('Deleting client' + this.selectedItemId)
+      console.log('Selected item:', this.selectedItem) // Corrected console.log
+    },
+    async getClientStats(id) {
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
+        }
       }
 
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
       console.log(this.selectedClient)
-      //finding the index of the selected client in the clientDetails array
-      const index = this.clientDetails.findIndex((client) => client._id === this.selectedClient._id)
-      const id = this.clientIds[index]
-      console.log(id)
+
       axios
         .get(`${apiURL}stats/clientStats/${id}`, config)
         .then((response) => {
-          console.log(response)
+          this.clientStats = response.data.data
+          console.log('Client stats response: ', response)
+
+          // Update the jobsData chart
+          this.jobsData = {
+            labels: ['Active Jobs', 'Completed Jobs', 'Total Jobs'],
+            datasets: [
+              {
+                label: 'Job Breakdown',
+                backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726'],
+                data: [
+                  this.clientStats.numActiveJobs,
+                  this.clientStats.numCompletedJobs,
+                  this.clientStats.numTotalJobs
+                ]
+              }
+            ]
+          }
+
+          // Update the invoiceData chart
+          this.invoiceData = {
+            labels: ['Paid On Time', 'Unpaid Invoices'],
+            datasets: [
+              {
+                label: 'Invoices',
+                backgroundColor: ['#66BB6A', '#FF7043'],
+                data: [this.clientStats.numInvoicesPaid, this.clientStats.numInvoicesUnpaid]
+              }
+            ]
+          }
+
+          // Update the customer service rating data
+          this.overallCustomerRating = this.clientStats.customerServiceRatingAverage || 0
+          this.totalRatings = this.clientStats.customerServiceRating.length || 0
+          this.overallRating = this.clientStats.workPerformanceRatingAverage || 0
+          // Update the rating counts (for 5-star, 4-star, etc.)
+          this.ratingCounts = this.calculateRatingCounts(this.clientStats.customerServiceRating)
+
+          // Similar updates can be done for the job performance rating if needed
+          this.showStats = true
         })
         .catch((error) => {
           console.error('Failed to fetch clients:', error)
         })
+    },
+
+    calculateRatingCounts(ratingsArray) {
+      // Calculate the number of 5-star, 4-star, etc. ratings from the customerServiceRating array
+      const ratingCounts = [0, 0, 0, 0, 0] // Initialize counts for 5, 4, 3, 2, 1 stars
+
+      ratingsArray.forEach((rating) => {
+        if (rating >= 1 && rating <= 5) {
+          ratingCounts[5 - rating]++
+        }
+      })
+
+      return ratingCounts
     },
     async getClients() {
       const config = {
@@ -406,6 +388,8 @@ export default {
             console.log(this.clientDetails[i])
           }
           console.log(this.clientDetails)
+          this.selectedItemId = this.clientIds[1]
+          this.getClientStats(this.selectedItemId)
         })
         .catch((error) => {
           console.error('Failed to fetch clients:', error)
@@ -437,15 +421,16 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getClients()
-    this.getStats()
+  async mounted() {
+    await this.getClients()
+    await this.getStats()
   }
 }
 </script>
 
 <style scoped>
 .selected-client {
-  background-color: #f0f8ff !important; /* Highlight color for selected client */
+  background-color: #f0f8ff !important;
+  /* Highlight color for selected client */
 }
 </style>
