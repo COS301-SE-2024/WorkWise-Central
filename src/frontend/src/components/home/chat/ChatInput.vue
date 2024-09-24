@@ -9,31 +9,32 @@
       class="w-full"
     />
 
-    <!--    <FileUpload-->
-    <!--      mode="basic"-->
-    <!--      :maxFileSize="1000000"-->
-    <!--      @select="onFileSelect"-->
-    <!--      :disabled="disabled"-->
-    <!--      :auto="true"-->
-    <!--      chooseLabel="Attach"-->
-    <!--      class="p-button-rounded p-button-outlined"-->
-    <!--    />-->
+<!--        <FileUpload-->
+<!--          mode="basic"-->
+<!--          :maxFileSize="1000000"-->
+<!--          @select="onFileSelect"-->
+<!--          :disabled="disabled"-->
+<!--          :auto="true"-->
+<!--          chooseLabel="Attach"-->
+<!--          class="p-button-rounded p-button-outlined"-->
+<!--        />-->
+      <FileUpload
+          mode="basic"
+          :multiple="true"
+          @select="handleFileChange"
+          @clear="clearFiles"
+          :auto="true"
+          chooseLabel="Attach Files"
+          :customUpload="true"
+          :showCancelButton="false"
+          :showUploadButton="false"
+          :class="{ 'p-button-rounded p-button-outlined': true }"
+      >
+        <template #chooseicon>
+          <i class="fas fa-file"></i>
+        </template>
+      </FileUpload>
 
-    <FileUpload
-      :multiple="true"
-      @select="handleFileChange"
-      @clear="clearFiles"
-      :auto="true"
-      chooseLabel="Attach Files"
-      :customUpload="true"
-      :showCancelButton="false"
-      :showUploadButton="false"
-      :class="{ 'p-button-rounded p-button-outlined': true }"
-    >
-      <template #chooseicon>
-        <i class="fas fa-file"></i>
-      </template>
-    </FileUpload>
     <v-col cols="1">
       <Button
         icon="fa: fa-solid fa-paper-plane"
@@ -159,8 +160,8 @@ const clearFiles = () => {
   display: flex;
   align-items: center;
   padding: 1rem;
-  background-color: #f0f0f0;
-  border-top: 1px solid #e0e0e0;
+  background-color: var(--background); /* Use theme background */
+  border-top: 1px solid var(--highlighter-color); /* Theme border */
   position: sticky;
   bottom: 0;
 }
@@ -171,22 +172,22 @@ const clearFiles = () => {
 }
 
 :deep(.p-inputtext) {
-  background-color: #ffffff;
-  color: #495057;
+  background-color: var(--card-color); /* Theme card color */
+  color: var(--element-text-color); /* Theme element text color */
 }
 
 .p-button {
-  background-color: #25d366;
-  color: #ffffff;
+  background-color: var(--primary-color); /* Theme primary color */
+  color: var(--button-text-color); /* Theme button text color */
 }
 
 .p-button:enabled:hover {
-  background-color: #128c7e;
+  background-color: var(--secondary-color); /* Theme secondary color on hover */
 }
 
 .p-button:disabled {
-  background-color: #a0a0a0;
-  color: #ffffff;
+  background-color: var(--n-element-text-color); /* Theme disabled background color */
+  color: var(--button-text-color); /* Maintain button text color */
 }
 
 :deep(.p-fileupload-choose) {

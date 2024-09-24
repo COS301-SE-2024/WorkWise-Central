@@ -17,6 +17,7 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import './index.css'
 import ConfirmationService from 'primevue/confirmationservice'
+import '@/assets/theme.css'
 
 //To refer to API in Dev and Prod
 export const API_URL: string =
