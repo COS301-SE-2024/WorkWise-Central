@@ -109,7 +109,7 @@ export class InvoiceController {
   })
   @ApiOperation({
     summary: `Get all ${className} instances for a given Company`,
-    description: `Returns all ${className} instances in the database for a given Company.`,
+    description: `Generates an invoice for a given job.`,
   })
   @ApiOkResponse({
     type: InvoiceListResponseDto,
@@ -119,7 +119,7 @@ export class InvoiceController {
     name: 'id',
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
-  @Get('/generate/:currentEmployeeId/:jobId')
+  @Post('/generate/:currentEmployeeId/:jobId')
   async generate(
     @Headers() headers: any,
     @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
