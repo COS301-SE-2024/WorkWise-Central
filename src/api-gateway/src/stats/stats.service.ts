@@ -294,8 +294,6 @@ export class StatsService {
 
   async inventoryStats(companyId: Types.ObjectId) {
     const inventoryItems = await this.inventoryService.findAllInCompany(companyId);
-    const listOfUse = [];
-
     const result = new InventoryStatsResponseDto();
     result.totalNumItems = inventoryItems.length;
 
@@ -307,33 +305,36 @@ export class StatsService {
           quantity: item.currentStockLevel,
         });
       }
-      listOfUse.push({ id: item._id, usage: await this.stockMovementsService.getUsageForInventoryItem(item._id) });
+      result.itemUsage.push({
+        inventoryId: item._id,
+        itemName: item.name,
+        quantity: await this.stockMovementsService.getUsageForInventoryItem(item._id),
+      });
     }
-    // Finding the highest used items
-    const stockTakes = await this.stockTakeService.findAllInCompany(companyId);
-    result.highestUsedItems = listOfUse.reduce((max, item) => (item.usage > max.usage ? item : max)).id;
     result.costDueToStockLoss = 0;
 
+    const stockTakes = await this.stockTakeService.findAllInCompany(companyId);
     for (const stockTake of stockTakes) {
       for (const item of stockTake.items) {
         if (item.recordedStockLevel - item.currentStockLevel < 0) {
           const inventoryItem = await this.inventoryService.findById(item.inventoryItem.inventoryId);
-          let constPrice = 0;
+          let costPrice = 0;
           if (inventoryItem && inventoryItem.costPrice) {
-            constPrice = inventoryItem.costPrice;
+            costPrice = inventoryItem.costPrice;
           }
-          result.costDueToStockLoss += (item.recordedStockLevel - item.currentStockLevel) * constPrice;
+          result.costDueToStockLoss += (item.recordedStockLevel - item.currentStockLevel) * costPrice;
           result.stockLost.push({
             inventoryItem: {
               inventoryId: item.inventoryItem.inventoryId,
               itemName: item.inventoryItem.name,
+              quantity: (item.recordedStockLevel - item.currentStockLevel) * costPrice,
             },
             stockTakeId: stockTake._id,
           });
         }
       }
     }
-    result.costDueToStockLoss = result.costDueToStockLoss * -1;
+    result.costDueToStockLoss = result.costDueToStockLoss;
     return result;
   }
 

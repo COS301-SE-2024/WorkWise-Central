@@ -222,7 +222,7 @@ export class JobsStatsResponseDto {
   amountOutstanding: number;
 }
 
-export class inventoryItem {
+export class InventoryItem {
   @ApiProperty()
   @IsMongoId()
   inventoryId: Types.ObjectId;
@@ -238,7 +238,7 @@ export class inventoryItem {
 }
 class stockLossItem {
   @ApiProperty()
-  inventoryItem: inventoryItem;
+  inventoryItem: InventoryItem;
 
   @ApiProperty()
   @IsMongoId()
@@ -252,11 +252,11 @@ export class InventoryStatsResponseDto {
 
   @ApiProperty()
   @IsArray()
-  itemsToReorder: inventoryItem[] = [];
+  itemsToReorder: InventoryItem[] = [];
 
   @ApiProperty()
   @IsArray()
-  highestUsedItems: inventoryItem[] = [];
+  itemUsage: InventoryItem[] = [];
 
   @ApiProperty()
   @IsArray()

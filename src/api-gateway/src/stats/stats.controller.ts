@@ -298,6 +298,7 @@ export class StatsController {
   })
   @Get('inventoryStats/:companyId')
   async inventoryStats(@Headers() headers: any, @Param('companyId') companyId: Types.ObjectId) {
+    console.log('inventoryStats', companyId);
     const data = await this.statsService.inventoryStats(companyId);
     return { data: data };
   }
