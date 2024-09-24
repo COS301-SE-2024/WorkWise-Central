@@ -156,12 +156,7 @@ export default defineComponent({
     rolePermissions: [],
     permissions: [],
     value: [],
-    roleUpdates: [
-      {
-        permissionSuite: [],
-        roleName: ''
-      }
-    ],
+    roleUpdates: [],
     roleIds: [{}],
     headers: [
       { title: 'Role', key: 'roleName' },
@@ -195,20 +190,20 @@ export default defineComponent({
         .then((response) => {
           console.log(response.data.data.length)
 
-          for (let i = 0; i < response.data.data.length; i++) {
-            if (response.data.data[i].roleName) {
+          for(const data of response.data.data) {
+            if (data.roleName) {
               this.roleUpdates.push({
-                _id: response.data.data[i]._id,
-                roleName: response.data.data[i].roleName,
-                permissionSuite: response.data.data[i].permissionSuite
+                _id: data._id,
+                roleName: data.roleName,
+                permissionSuite: data.permissionSuite
               })
-              this.roleIds.push(response.data.data[i]._id)
+              this.roleIds.push(data._id)
             }
           }
 
           console.log(this.roleUpdates)
           //removing the first element of the array
-          this.roleUpdates.shift()
+          // this.roleUpdates.shift();
         })
         .catch((error) => {
           console.log(error)
@@ -232,8 +227,8 @@ export default defineComponent({
         .get(`http://localhost:3000/role/allPermissions`, config)
         .then((response) => {
           console.log(response.data.data)
-          for (let i = 0; i < response.data.data.length; i++) {
-            this.permissions.push(response.data.data[i])
+          for(const data of response.data.data) {
+            this.permissions.push(data)
           }
         })
         .catch((error) => {
