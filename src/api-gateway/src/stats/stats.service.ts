@@ -430,7 +430,7 @@ export class StatsService {
             jobTitle: (invoice.jobId as any).details.heading,
           },
         });
-        const dateIndex = invoice.paymentReceivedDate.getMonth();
+        const dateIndex = invoice.receiptOfPaymentDate.getMonth();
         result.revenue[dateIndex].numUnpaid += invoice.total;
       } else {
         result.numUnpaid++;
