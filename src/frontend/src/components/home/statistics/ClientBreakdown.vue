@@ -56,6 +56,7 @@
         <v-card-title>Client Breakdown for {{ selectedClient.firstName }}</v-card-title>
         <v-card-text>
           <!-- Bar chart for number of jobs -->
+           <h5>Breakdown of the jobs for {{ selectedClient.firstName }}</h5>
           <v-container
             ><v-row
               ><v-col cols="12" lg="6">
@@ -73,8 +74,9 @@
           ></v-container>
 
           <!-- Customer Service Rating Section -->
-          <v-container
-            ><v-row
+          <v-container>
+            <h5>Breakdown of the invoices for {{ selectedClient.firstName }}</h5>
+            <v-row
               ><v-col cols="12" lg="6"
                 ><v-card
                   class="d-flex flex-column mx-auto py-4"
@@ -300,6 +302,7 @@ export default {
       this.loadBreakdownData(client)
     },
     loadBreakdownData() {
+      this.getClientStats()
       // Example job rating data, replace with actual logic
       this.jobRatingData = {
         labels: ['Job 1', 'Job 2', 'Job 3'],
@@ -343,6 +346,7 @@ export default {
       axios
         .get(`${apiURL}stats/numClients/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
+          console.log(response)
           this.totalClients = response.data.data
         })
         .catch((error) => {
@@ -355,10 +359,23 @@ export default {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
       }
+
+      const apiURL = await this.getRequestUrl()
+      console.log(apiURL)
+      console.log(this.selectedClient)
+      //finding the index of the selected client in the clientDetails array
+      const index = this.clientDetails.findIndex((client) => client._id === this.selectedClient._id)
+      const id = this.clientIds[index]
+      console.log(id)
+      axios
+        .get(`${apiURL}stats/clientStats/${id}`, config)
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => {
+          console.error('Failed to fetch clients:', error)
+        })
     },
     async getClients() {
       const config = {
