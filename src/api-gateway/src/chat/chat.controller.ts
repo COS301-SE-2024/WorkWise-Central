@@ -140,10 +140,10 @@ export class ChatController {
     console.log(files);
     try {
       const userId = extractUserId(this.jwtService, headers);
-      //console.log(userId);
-      return {
-        data: await this.fileService.saveAttachments(files.files),
-      };
+      if (userId)
+        return {
+          data: await this.fileService.saveAttachments(files.files),
+        };
     } catch (e) {
       throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
