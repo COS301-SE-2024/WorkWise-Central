@@ -12,52 +12,21 @@
             <v-btn @click="updateLayout('LR')" block> Left to Right </v-btn>
           </v-col>
           <v-col cols="12" lg="4">
-            <v-btn
-              color="primary"
-              block
-              @click="getEmployeeDetails"
-              :disabled="!selectedItem"
-              :loading="isLoading"
-            >
-              <v-icon icon="fa: fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
-            >
+            <v-btn color="primary" block @click="getEmployeeDetails" :disabled="!selectedItem" :loading="isLoading">
+              <v-icon icon="fa: fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn>
           </v-col>
         </v-row>
       </v-container>
       <v-card-text>
         <Toast position="top-center" />
-        <v-network-graph
-          v-model="graph"
-          v-model:selected-nodes="selectedNodes"
-          v-model:selected-edges="selectedEdges"
-          class="graph"
-          :nodes="data.nodes"
-          :edges="data.edges"
-          :layouts="data.layouts"
-          :configs="configs"
-          :event-handlers="configs.eventsHandlers"
-        >
-          <template
-            #override-node-label="{ scale, text, x, y, config, textAnchor, dominantBaseline }"
-          >
-            <text
-              x="0"
-              y="0"
-              :font-size="12 * scale"
-              text-anchor="middle"
-              dominant-baseline="central"
-              fill="#ffffff"
-              >{{ text }}</text
-            >
-            <text
-              x="0"
-              y="0"
-              :font-size="config.fontSize * scale"
-              :text-anchor="textAnchor"
-              :dominant-baseline="dominantBaseline"
-              :fill="config.color"
-              :transform="`translate(${x} ${y})`"
-            ></text>
+        <v-network-graph v-model="graph" v-model:selected-nodes="selectedNodes" v-model:selected-edges="selectedEdges"
+          class="graph" :nodes="data.nodes" :edges="data.edges" :layouts="data.layouts" :configs="configs"
+          :event-handlers="configs.eventsHandlers">
+          <template #override-node-label="{ scale, text, x, y, config, textAnchor, dominantBaseline }">
+            <text x="0" y="0" :font-size="12 * scale" text-anchor="middle" dominant-baseline="central" fill="#ffffff">{{
+              text }}</text>
+            <text x="0" y="0" :font-size="config.fontSize * scale" :text-anchor="textAnchor"
+              :dominant-baseline="dominantBaseline" :fill="config.color" :transform="`translate(${x} ${y})`"></text>
           </template>
         </v-network-graph>
       </v-card-text>
@@ -86,104 +55,49 @@
           <v-card-title class="text-center">Edit Employee</v-card-title>
           <v-divider></v-divider>
           <v-card-item>
-            <v-row
-              ><v-col>
+            <v-row><v-col>
                 <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
                   {{ selectedEmployee?.userInfo.firstName }}
                   {{ selectedEmployee?.userInfo.surname }}
                 </h4>
                 <h3 class="text-center">Role: {{ selectedEmployee?.role.roleName }}</h3>
-              </v-col></v-row
-            >
-            <v-row
-              ><v-col :cols="12">
-                <v-select
-                  clearable
-                  label="Company Role"
-                  hint="Select the role you'd like to change this employee to"
-                  persistent-hint
-                  @update:modelValue="change_roles"
-                  :items="roleItems"
-                  item-value="roleId"
-                  item-title="roleName"
-                  v-model="req_obj.updateEmployeeDto.roleId"
-                  bg-color="background"
-                  variant="solo"
-                  :loading="loading"
-                ></v-select>
+              </v-col></v-row>
+            <v-row><v-col :cols="12">
+                <v-select clearable label="Company Role" hint="Select the role you'd like to change this employee to"
+                  persistent-hint @update:modelValue="change_roles" :items="roleItems" item-value="roleId"
+                  item-title="roleName" v-model="req_obj.updateEmployeeDto.roleId" bg-color="background" variant="solo"
+                  :loading="loading"></v-select>
               </v-col>
               <v-col :cols="12">
-                <v-select
-                  clearable
-                  label="Subordinates"
-                  hint="Select the employees you'd like to be subordinates of this employee"
-                  persistent-hint
-                  @update:model-value="selected_subordiates"
-                  :items="filteredSubordinateNames"
-                  v-model="req_obj.updateEmployeeDto.subordinates"
-                  item-value="employeeId"
-                  item-title="name"
-                  bg-color="background"
-                  variant="solo"
-                  multiple
-                  :loading="loading"
-                ></v-select> </v-col
-              ><v-col :cols="12">
-                <v-select
-                  clearable
-                  label="Superior"
-                  hint="Select the employee you'd like to be superior of this employee"
-                  persistent-hint
-                  @update:modelValue="selected_supirior"
-                  :items="filteredSupriorNames"
-                  v-model="req_obj.updateEmployeeDto.superiorId"
-                  item-value="employeeId"
-                  item-title="name"
-                  bg-color="background"
-                  variant="solo"
-                ></v-select> </v-col
-            ></v-row>
+                <v-select clearable label="Subordinates"
+                  hint="Select the employees you'd like to be subordinates of this employee" persistent-hint
+                  @update:model-value="selected_subordiates" :items="filteredSubordinateNames"
+                  v-model="req_obj.updateEmployeeDto.subordinates" item-value="employeeId" item-title="name"
+                  bg-color="background" variant="solo" multiple :loading="loading"></v-select> </v-col><v-col
+                :cols="12">
+                <v-select clearable label="Superior"
+                  hint="Select the employee you'd like to be superior of this employee" persistent-hint
+                  @update:modelValue="selected_supirior" :items="filteredSupriorNames"
+                  v-model="req_obj.updateEmployeeDto.superiorId" item-value="employeeId" item-title="name"
+                  bg-color="background" variant="solo"></v-select> </v-col></v-row>
           </v-card-item>
           <v-card-actions>
             <v-container>
               <v-row>
                 <v-col cols="12" lg="6" order="first" order-lg="last">
-                  <v-btn
-                    color="success"
-                    rounded="md"
-                    width="100%"
-                    height="35"
-                    variant="text"
-                    type="submit"
-                    block
-                    :loading="isDeleting"
-                  >
-                    <v-icon
-                      icon="fa:fa-solid fa-floppy-disk"
-                      start
-                      color="success"
-                      size="small"
-                    ></v-icon>
+                  <v-btn color="success" rounded="md" width="100%" height="35" variant="text" type="submit" block
+                    :loading="isDeleting">
+                    <v-icon icon="fa:fa-solid fa-floppy-disk" start color="success" size="small"></v-icon>
                     Save
                   </v-btn>
                 </v-col>
                 <v-col cols="12" lg="6" order="last" order-lg="first">
-                  <v-btn
-                    color="error"
-                    rounded="md"
-                    width="100%"
-                    height="35"
-                    variant="text"
-                    block
-                    @click="close"
-                    :loading="isDeleting"
-                  >
+                  <v-btn color="error" rounded="md" width="100%" height="35" variant="text" block @click="close"
+                    :loading="isDeleting">
                     <Toast position="top-center" />
-                    <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
-                    >Cancel
+                    <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon>Cancel
                   </v-btn>
-                </v-col></v-row
-              >
+                </v-col></v-row>
             </v-container>
           </v-card-actions>
         </v-form>
@@ -580,9 +494,53 @@ export default defineComponent({
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       let API_URL = await this.getRequestUrl()
-      console.log(this.this.selectedItem.id)
+
+      let add_object = {
+        currentEmployeeId: localStorage['employeeId'],
+        subordinatesToBeAdded: this.req_obj.updateEmployeeDto.subordinates
+      }
+      console.log(add_object)
+
       axios
-        .patch(API_URL + `employee/${this.selectedItem.id}`, this.req_obj, config)
+        .patch(
+          API_URL + `employee/${this.selectedItem.id}`,
+          {
+            currentEmployeeId: localStorage['employeeId'],
+            superiorId: this.req_obj.updateEmployeeDto.superiorId,
+            roleId: this.req_obj.updateEmployeeDto.roleId
+          },
+          config
+        )
+        .then(() => { })
+        .catch((error) => {
+          console.log(error)
+          this.isDeleting = false
+        })
+
+      axios
+        .patch(
+          API_URL + `employee/addSubordinate/${this.selectedItem.id}`,
+          add_object,
+          config
+        )
+        .then((res) => { })
+        .catch((error) => {
+          console.log(error)
+          this.isDeleting = false
+        })
+
+      const to_be_removed = this.req_obj.updateEmployeeDto.subordinates?.filter(
+        (item) => !this.currentSubordinates.includes(item)
+      )
+      axios
+        .patch(
+          API_URL + `employee/removeSubordinate/${this.selectedItem.id}`,
+          {
+            currentEmployeeId: localStorage['employeeId'],
+            subordinatesToBeRemoved: to_be_removed
+          },
+          config
+        )
         .then((res) => {
           this.$toast.add({
             severity: 'success',
@@ -590,6 +548,13 @@ export default defineComponent({
             detail: 'Employee updated successfully',
             life: 3000
           })
+          console.log(res)
+          this.employeeDialog = false
+          setTimeout(() => {
+            this.isDeleting = false
+            this.employeeDialog = false
+          }, 1500)
+
           console.log(res)
           this.employeeDialog = false
           setTimeout(() => {
@@ -605,6 +570,7 @@ export default defineComponent({
             life: 3000
           })
           console.log(error)
+          this.isDeleting = false
         })
     },
     async getRequestUrl() {
@@ -642,9 +608,11 @@ export default defineComponent({
 .graph {
   height: 700px;
 }
+
 .darkModeText {
   color: white;
 }
+
 .lightModeText {
   color: black;
 }
