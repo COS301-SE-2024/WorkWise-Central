@@ -40,6 +40,8 @@ export class RoleService {
     this.permissionsArray.push('edit clients');
     this.permissionsArray.push('add new clients');
     this.permissionsArray.push('delete clients');
+    this.permissionsArray.push('view statistics');
+    this.permissionsArray.push('view customer feedback');
     this.permissionsArray.push('view all inventory');
     this.permissionsArray.push('edit all inventory');
     this.permissionsArray.push('add new inventory item');
@@ -48,8 +50,6 @@ export class RoleService {
     this.permissionsArray.push('view movements');
     this.permissionsArray.push('company settings');
     this.permissionsArray.push('company requests');
-    this.permissionsArray.push('view statistics');
-    this.permissionsArray.push('view customer feedback');
     this.permissionsArray.push('view teams');
     this.permissionsArray.push('edit teams');
     this.permissionsArray.push('delete teams');
