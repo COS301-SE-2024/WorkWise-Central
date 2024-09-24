@@ -315,13 +315,6 @@ export default {
       const index = this.teamMemberNames.indexOf(name)
       return this.teamMemberIds[index]
     },
-    populateTeamLeaderName() {
-      const teamLeader = this.localEditedItem.teamMembers.find(
-        (member) => member === this.localEditedItem.teamLeaderId
-      )
-      this.selectedTeamLeader =
-        this.teamMemberNames[this.localEditedItem.teamMembers.indexOf(teamLeader)]
-    },
     populateCurrentTeamMembers() {
       for (let i = 0; i < this.localEditedItem.teamMembers.length; i++) {
         this.selectedTeamMembers.push(this.editedItem.teamMembers[i].userInfo.displayName)
