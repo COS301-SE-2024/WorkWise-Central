@@ -30,13 +30,17 @@
 
         <!-- Average Rating per Team -->
         <p><strong>Average Rating per Team:</strong></p>
-        <v-container><v-row><v-col cols="12" lg="3" v-for="(team, index) in teamStats.ratingPerTeam"
-              :key="team.teamId"><v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto"
-                width="360">
-                <div class="d-flex justify-center mt-auto text-h5">Team {{ index + 1 }} Ratings</div>
+        <v-container>
+          <v-row>
+            <v-col cols="12" md="6" lg="3" v-for="(team, index) in teamStats.ratingPerTeam" :key="team.teamId">
+              <v-card class="d-flex flex-column mx-auto py-4" elevation="10">
+                <div class="d-flex justify-center text-h5 mb-2">
+                  Team {{ index + 1 }} Ratings
+                </div>
 
                 <div class="d-flex align-center flex-column my-auto">
-                  <div class="text-h2 mt-5">
+                  <!-- Work Performance Rating -->
+                  <div class="text-h2 mt-4">
                     {{ team.workPerformanceRatingAverage ?? 0 }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
@@ -44,11 +48,12 @@
                   <v-rating :model-value="team.workPerformanceRatingAverage ?? 0" color="yellow-darken-3"
                     half-increments></v-rating>
 
-                  <div class="px-3">
+                  <div class="px-3 mb-4">
                     {{ team.workPerformanceRating.length }} work performance ratings
                   </div>
 
-                  <div class="text-h2 mt-5">
+                  <!-- Customer Service Rating -->
+                  <div class="text-h2 mt-4">
                     {{ team.customerServiceRatingAverage ?? 0 }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
@@ -56,13 +61,14 @@
                   <v-rating :model-value="team.customerServiceRatingAverage ?? 0" color="yellow-darken-3"
                     half-increments></v-rating>
 
-                  <div class="px-3">
+                  <div class="px-3 mb-4">
                     {{ team.customerServiceRating.length }} customer service ratings
                   </div>
                 </div>
 
+                <!-- Progress Linear for Ratings -->
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
-                  <v-list-item v-for="(rating, i) in 5" :key="i">
+                  <v-list-item v-for="(rating, i) in 5" :key="i" class="mb-2">
                     <v-progress-linear :model-value="calculateProgress(team.workPerformanceRating, i + 1)" class="mx-n5"
                       color="yellow-darken-3" height="20" rounded></v-progress-linear>
 
@@ -79,7 +85,11 @@
                     </template>
                   </v-list-item>
                 </v-list>
-              </v-card></v-col></v-row></v-container>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+
 
       </div>
     </v-card-text>
