@@ -26,6 +26,12 @@ export const API_URL: string =
   import.meta.env.ENVIRONMENT == 'prod'
     ? import.meta.env.VITE_SERVER_API_PROD
     : import.meta.env.VITE_SERVER_API_DEV
+
+export const APP_URL: string =
+  import.meta.env.ENVIRONMENT == 'prod'
+    ? import.meta.env.VITE_ROOT_APPLICATION_PROD
+    : import.meta.env.VITE_ROOT_APPLICATION_DEV
+
 export const GOOGLE_MAPS_API_KEY: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
 const pinia = createPinia()
