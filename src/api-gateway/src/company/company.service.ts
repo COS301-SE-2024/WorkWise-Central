@@ -560,7 +560,7 @@ export class CompanyService {
       throw new UnauthorizedException('Only the owner can perform this action');
     }
 
-    const usersInCompany = await this.usersService.getAllUsersInCompany(deleteCompanyDto.companyId);
+    const usersInCompany = await this.usersService.getAllUsersInCompanyInternal(deleteCompanyDto.companyId);
 
     for (const user of usersInCompany) {
       const newJoinedCompanies: JoinedCompany[] = [];
