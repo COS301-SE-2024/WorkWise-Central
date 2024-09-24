@@ -234,6 +234,18 @@ export class CompanyRepository {
       .exec();
   }
 
+  // I want a function that will return the company name of a company with a given id
+  async findCompanyNameById(id: Types.ObjectId): Promise<string> {
+    const comp = await this.companyModel
+      .findOne({
+        $and: [{ _id: id }, isNotDeleted],
+      })
+      .select('name')
+      .lean()
+      .exec();
+    return comp.name;
+  }
+
   async updateStatuses(
     companyId: Types.ObjectId,
     jobStatuses: Types.ObjectId[],

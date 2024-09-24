@@ -1,0 +1,20 @@
+make,model,modelYear,fuelType,serviceInterval,avgFuelConsumption
+Toyota,Hilux,2024,Diesel,10000,7.6
+Ford,Ranger,2024,Diesel,15000,8.0
+Isuzu,D-Max,2024,Diesel,15000,7.8
+Nissan,NP200,2024,Petrol,15000,8.1
+Nissan,Navara,2024,Diesel,15000,8.3
+Mahindra,Pik Up,2024,Diesel,10000,8.5
+GWM,P-Series,2024,Diesel,10000,9.4
+Toyota,Land Cruiser 79,2024,Diesel,10000,11.5
+Volkswagen,Amarok,2024,Diesel,15000,8.9
+GWM,Steed,2024,Diesel,10000,9.7
+Ford,Transit,2024,Diesel,20000,9.0
+Chevrolet,Express,2024,Petrol,15000,12.0
+Ram,ProMaster,2024,Diesel,20000,10.5
+Mercedes-Benz,Sprinter,2024,Diesel,20000,9.5
+Renault,Kangoo,2024,Diesel,15000,6.5
+Fiat,Ducato,2024,Diesel,20000,8.7
+Hyundai,H-100,2024,Diesel,10000,9.2
+Peugeot,Boxer,2024,Diesel,20000,8.8
+Iveco,Daily,2024,Diesel,20000,9.3
