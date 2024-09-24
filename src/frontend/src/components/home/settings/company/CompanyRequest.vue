@@ -92,6 +92,7 @@
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
+import { API_URL } from '@/main'
 
 interface Request {
   companyId: number
@@ -109,8 +110,8 @@ export default defineComponent({
     return {
       search: '' as string,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      localUrl: API_URL,
+      remoteUrl: API_URL,
       headers: [
         { title: 'Company Name', value: 'companyName' },
         { title: 'User to Join', value: 'userToJoin' },
@@ -241,8 +242,7 @@ export default defineComponent({
       }
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      return this.remoteUrl
     }
   },
   mounted() {
