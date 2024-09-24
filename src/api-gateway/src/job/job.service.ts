@@ -36,6 +36,7 @@ import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-
 import { ConvertItemToJobDto } from './dto/convert-item-to-job.dto';
 import { NotificationService } from '../notification/notification.service';
 import { Message } from '../notification/entities/notification.entity';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class JobService {
@@ -60,6 +61,9 @@ export class JobService {
 
     @Inject(forwardRef(() => NotificationService))
     private readonly notificationService: NotificationService,
+
+    @Inject(forwardRef(() => EmailService))
+    private readonly emailService: EmailService,
   ) {}
 
   async create(userId: Types.ObjectId, createJobDto: CreateJobDto) {
@@ -96,6 +100,20 @@ export class JobService {
     console.log('createdJob', createdJob);
     const result = await this.jobRepository.save(createdJob);
     await this.assignEmployeesWithoutValidation(result._id, createJobDto.assignedEmployees.employeeIds);
+    if (result.clientId) {
+      const client = await this.clientService.getClientByIdInternal(result.clientId);
+      const companyName = await this.companyService.getCompanyNameById(client.details.companyId);
+      if (client.details.contactInfo.email != null) {
+        this.emailService.sendClientPortalLink(
+          client._id,
+          client.details.contactInfo.email,
+          client.details.firstName,
+          client.details.lastName,
+          companyName,
+          result.details.heading,
+        );
+      }
+    }
     return result;
   }
 
@@ -161,6 +179,20 @@ export class JobService {
         }
       }
       const updated = await this.jobRepository.update(id, updateJobDto);
+      if (updateJobDto.clientId) {
+        const client = await this.clientService.getClientByIdInternal(updated.clientId);
+        const companyName = await this.companyService.getCompanyNameById(client.details.companyId);
+        if (client.details.contactInfo.email != null) {
+          this.emailService.sendClientPortalLink(
+            client._id,
+            client.details.contactInfo.email,
+            client.details.firstName,
+            client.details.lastName,
+            companyName,
+            updated.details.heading,
+          );
+        }
+      }
       return await this.jobRepository.findById(updated._id);
     } catch (e) {
       throw new Error(e);
@@ -409,7 +441,7 @@ export class JobService {
     console.log(job);
 
     if (!job.taskList) {
-      throw new ConflictException('Tasklist is Empty');
+      throw new ConflictException('TaskList is Empty');
     }
 
     if (job.taskList) {
@@ -467,7 +499,7 @@ export class JobService {
     console.log(job);
 
     if (!job.taskList) {
-      throw new ConflictException('Tasklist is Empty');
+      throw new ConflictException('TaskList is Empty');
     }
 
     if (job.taskList) {

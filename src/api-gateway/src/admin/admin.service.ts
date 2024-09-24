@@ -170,6 +170,13 @@ export class AdminService {
         ? await this.roleService.findOneInCompany('Worker', company._id)
         : await this.roleService.findById(userInviteRequestDto.roleId);
 
+    let superior: Types.ObjectId;
+    if (userInviteRequestDto.superiorId == null) {
+      superior = (await this.employeeService.findAllInCompanyWithRoleName(company._id, 'Owner'))[0]._id;
+    } else {
+      superior = userInviteRequestDto.superiorId;
+    }
+
     //
     const newInvite = new InviteToJoin(
       company._id,
@@ -177,12 +184,12 @@ export class AdminService {
       role._id,
       role.roleName,
       userInviteRequestDto.emailToInvite,
-      userInviteRequestDto.superiorId,
+      superior,
     );
     const result = await this.adminRepository.saveInvite(newInvite);
 
     const hasAccount = await this.usersService.emailExists(userInviteRequestDto.emailToInvite);
-    await this.emailService.sendInvite(newInvite, result._id, hasAccount);
+    await this.emailService.sendInvite(newInvite, result._id, hasAccount, userId);
 
     return result;
   }

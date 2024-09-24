@@ -47,6 +47,8 @@ const invoicesSubItems = ref([
   { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: 'invoice-kanban' }
 ])
 
+const FleetSubItems = ref([{ title: 'Map', icon: 'fa: fa-solid fa-map', routeName: 'map' }])
+
 const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
   // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
@@ -318,6 +320,27 @@ export default defineComponent({
             v-for="(item, i) in checkPermission('view all inventory')
               ? inventorySubItems
               : filterInventorySubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-list v-model:open="open">
+        <v-list-group fluid value="Fleet">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-truck"
+              title="Fleet"
+              class="list-item-large"
+            ></v-list-item>
+          </template>
+          <v-list-item
+            v-for="(item, i) in FleetSubItems"
             :key="i"
             :to="{ name: item.routeName }"
             :value="item.title"
