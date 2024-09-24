@@ -136,4 +136,3 @@ function toggleTheme() {
   color: var(--element-text-color); /* Tooltip text color */
 }
 </style>
-
