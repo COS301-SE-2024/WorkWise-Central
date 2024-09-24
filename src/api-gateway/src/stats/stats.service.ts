@@ -43,11 +43,17 @@ export class StatsService {
   ) {}
 
   async clientStats(clientId: Types.ObjectId) {
+    console.log('clientId: ', clientId);
+    console.log('checkpoint1');
     const client = await this.clientService.getClientByIdInternal(clientId);
+    console.log('checkpoint1.2');
     const jobs = await this.jobService.findAllJobsForClient(clientId);
+    console.log('checkpoint1.3');
     const statuses = await this.jobService.findAllStatusesInCompanyInternal(client.details.companyId);
+    console.log('checkpoint1.4');
     const lastStatus = statuses[statuses.length - 1].status;
     const invoices = await this.invoiceService.findAllForClient(clientId);
+    console.log('checkpoint2');
 
     const result = new ClientStatsResponseDto();
     result.clientId = clientId;
@@ -60,6 +66,7 @@ export class StatsService {
     result.numActiveJobs = 0;
     result.numCompletedJobs = 0;
     result.numInvoicesPaid = 0;
+    console.log('checkpoint3');
 
     for (const job of jobs) {
       const status = await this.jobService.getStatusByIdWithoutValidation(job.status);
@@ -104,6 +111,7 @@ export class StatsService {
     }
     result.workPerformanceRatingAverage = result.workPerformanceRatingAverage / numJobRating;
     result.customerServiceRatingAverage = result.customerServiceRatingAverage / numbServiceRating;
+    console.log('checkpoint4');
 
     for (const invoice of invoices) {
       if (invoice.paid) {
@@ -136,6 +144,7 @@ export class StatsService {
         });
       }
     }
+    console.log('checkpoint5');
     return result;
   }
 

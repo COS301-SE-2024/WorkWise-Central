@@ -14,11 +14,23 @@
 
     <!-- Search bar for v-data-table -->
     <v-card-text>
-      <v-text-field v-model="search" append-icon="mdi-magnify" variant="outlined" color="primary" label="Search Clients"
-        class="mb-4" @keyup="applyFilter" />
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        variant="outlined"
+        color="primary"
+        label="Search Clients"
+        class="mb-4"
+        @keyup="applyFilter"
+      />
       <!-- Client Data Table -->
-      <v-data-table :items="clientDetails" :headers="headers" class="bg-background" :search="search"
-        :item-class="getItemClass">
+      <v-data-table
+        :items="clientDetails"
+        :headers="headers"
+        class="bg-background"
+        :search="search"
+        :item-class="getItemClass"
+      >
         <!-- Actions Column -->
         <template v-slot:[`item.actions`]="{ item }">
           <v-menu max-width="500px">
@@ -40,38 +52,71 @@
       </v-data-table>
 
       <!-- Breakdown Section (Appears after clicking View Breakdown) -->
-      <v-card v-if="showStats">
+      <v-card
+        v-if="
+          showStats || !(!jobsData && !invoiceData && totalRatings !== 0 && totalJobRatings !== 0)
+        "
+      >
         <v-card-title>Client Breakdown for {{ selectedClient.firstName }}</v-card-title>
         <v-card-text>
           <!-- Bar chart for number of jobs -->
           <v-container>
-            <v-row><v-col cols="12" lg="6">
+            <v-row
+              ><v-col cols="12" lg="6" v-if="!jobsData">
                 <h5>Breakdown of the Jobs for {{ selectedClient.firstName }}</h5>
-                <Chart type="pie" :data="jobsData" :options="jobsChartOptions" @chart-click="onChartClick" />
-              </v-col><v-col cols="12" lg="6">
+                <Chart
+                  type="pie"
+                  :data="jobsData"
+                  :options="jobsChartOptions"
+                  @chart-click="onChartClick"
+                /> </v-col
+              ><v-col cols="12" lg="6" v-if="!invoiceData">
                 <h5>Breakdown of the Invoices for {{ selectedClient.firstName }}</h5>
-                <Chart type="pie" :data="invoiceData" :options="invoiceChartOptions" @chart-click="onChartClick" />
-              </v-col></v-row></v-container>
+                <Chart
+                  type="pie"
+                  :data="invoiceData"
+                  :options="invoiceChartOptions"
+                  @chart-click="onChartClick"
+                /> </v-col></v-row
+          ></v-container>
 
           <!-- Customer Service Rating Section -->
           <v-container>
             <v-row>
-              <v-col cols="12" lg="6">
+              <v-col cols="12" lg="6" v-if="totalRatings !== 0">
                 <h5>Average Customer Service ratings given by {{ selectedClient.firstName }}</h5>
-                <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+                <v-card
+                  class="d-flex flex-column mx-auto py-4"
+                  elevation="10"
+                  height="auto"
+                  width="360"
+                >
                   <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
                   <div class="d-flex align-center flex-column my-auto">
                     <div class="text-h2 mt-5">
                       {{ overallCustomerRating }}
                       <span class="text-h6 ml-n3">/5</span>
                     </div>
-                    <v-rating :model-value="overallRating" color="yellow-darken-3" half-increments></v-rating>
+                    <v-rating
+                      :model-value="overallRating"
+                      color="yellow-darken-3"
+                      half-increments
+                    ></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
-                  <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
+                  <v-list
+                    bg-color="transparent"
+                    class="d-flex flex-column-reverse"
+                    density="compact"
+                  >
                     <v-list-item v-for="(rating, i) in 5" :key="i">
-                      <v-progress-linear :model-value="rating * ratingValueFactor" class="mx-n5" color="yellow-darken-3"
-                        height="20" rounded></v-progress-linear>
+                      <v-progress-linear
+                        :model-value="rating * ratingValueFactor"
+                        class="mx-n5"
+                        color="yellow-darken-3"
+                        height="20"
+                        rounded
+                      ></v-progress-linear>
                       <template v-slot:prepend>
                         <span>{{ rating }}</span>
                         <v-icon class="mx-3" icon="mdi-star"></v-icon>
@@ -83,23 +128,41 @@
                       </template>
                     </v-list-item>
                   </v-list>
-                </v-card>
-              </v-col><v-col cols="12" lg="6">
+                </v-card> </v-col
+              ><v-col cols="12" lg="6" v-if="totalJobRatings !== 0">
                 <h5>Average Job quality ratings given by {{ selectedClient.firstName }}</h5>
-                <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+                <v-card
+                  class="d-flex flex-column mx-auto py-4"
+                  elevation="10"
+                  height="auto"
+                  width="360"
+                >
                   <div class="d-flex justify-center mt-auto text-h5">Job Quality Rating</div>
                   <div class="d-flex align-center flex-column my-auto">
                     <div class="text-h2 mt-5">
                       {{ overallRating }}
                       <span class="text-h6 ml-n3">/5</span>
                     </div>
-                    <v-rating :model-value="overallRating" color="yellow-darken-3" half-increments></v-rating>
+                    <v-rating
+                      :model-value="overallRating"
+                      color="yellow-darken-3"
+                      half-increments
+                    ></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
-                  <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
+                  <v-list
+                    bg-color="transparent"
+                    class="d-flex flex-column-reverse"
+                    density="compact"
+                  >
                     <v-list-item v-for="(rating, i) in 5" :key="i">
-                      <v-progress-linear :model-value="rating * ratingValueFactor" class="mx-n5" color="yellow-darken-3"
-                        height="20" rounded></v-progress-linear>
+                      <v-progress-linear
+                        :model-value="rating * ratingValueFactor"
+                        class="mx-n5"
+                        color="yellow-darken-3"
+                        height="20"
+                        rounded
+                      ></v-progress-linear>
                       <template v-slot:prepend>
                         <span>{{ rating }}</span>
                         <v-icon class="mx-3" icon="mdi-star"></v-icon>
@@ -112,7 +175,9 @@
                     </v-list-item>
                   </v-list>
                 </v-card>
-              </v-col></v-row></v-container>
+              </v-col></v-row
+            ></v-container
+          >
         </v-card-text>
       </v-card>
     </v-card-text>
@@ -180,6 +245,7 @@ export default {
       overallRating: 0, // Mock overall rating value
       overallCustomerRating: 0,
       totalRatings: 150, // Mock total number of ratings
+      totalJobRatings: 0,
       ratingCounts: [100, 30, 10, 5, 5], // Mock counts for 5-star, 4-star, 3-star, etc.
       ratingValueFactor: 2, // Factor for progress bar width calculation
       jobsData: {
@@ -251,7 +317,7 @@ export default {
       }
       console.log('Deleting client' + this.selectedItemId)
 
-      await this.getClientStats()
+      await this.getClientStats(this.selectedItemId)
     },
 
     getItemClass(client) {
@@ -300,7 +366,7 @@ export default {
       const apiURL = await this.getRequestUrl()
       console.log(apiURL)
       console.log(this.selectedClient)
-
+      console.log
       axios
         .get(`${apiURL}stats/clientStats/${id}`, config)
         .then((response) => {
@@ -388,7 +454,8 @@ export default {
             console.log(this.clientDetails[i])
           }
           console.log(this.clientDetails)
-          this.selectedItemId = this.clientIds[1]
+          this.selectedClient = this.clientDetails[0]
+          this.selectedItemId = this.clientIds[0]
           this.getClientStats(this.selectedItemId)
         })
         .catch((error) => {

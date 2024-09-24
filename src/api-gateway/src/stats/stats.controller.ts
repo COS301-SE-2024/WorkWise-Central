@@ -97,6 +97,7 @@ export class StatsController {
   })
   @Get('clientStats/:clientId')
   async clientStats(@Headers() headers: any, @Param('clientId') clientId: Types.ObjectId) {
+    console.log('clientStats', clientId);
     const data = await this.statsService.clientStats(clientId);
     return { data: data };
   }
