@@ -170,6 +170,61 @@
                   </v-col>
                 </v-row>
 
+                <!-- Participants Management -->
+                <!--                <v-row>-->
+                <!--                  <v-col>-->
+                <!--                    <label for="participants" class="block text-sm font-medium text-gray-700 mb-1">-->
+                <!--                      Participants-->
+                <!--                    </label>-->
+                <!--                  </v-col>-->
+                <!--                  <v-col cols="12">-->
+                <!--                    <MultiSelect-->
+                <!--                      v-model="selectedParticipants"-->
+                <!--                      :options="chat.participants"-->
+                <!--                      optionLabel="profile.displayName"-->
+                <!--                      placeholder="Select participants"-->
+                <!--                      :filter="true"-->
+                <!--                      class="w-full mb-3"-->
+                <!--                      style="max-width: 80%; overflow: scroll"-->
+                <!--                    >-->
+                <!--                      <template #option="slotProps">-->
+                <!--                        <div class="flex align-items-center">-->
+                <!--                          <Avatar-->
+                <!--                            :image="slotProps.option.profile.displayImage"-->
+                <!--                            shape="circle"-->
+                <!--                            class="mr-2"-->
+                <!--                          />-->
+                <!--                          <div>{{ slotProps.option.profile.displayName }}</div>-->
+                <!--                        </div>-->
+                <!--                      </template>-->
+                <!--                    </MultiSelect>-->
+
+                <!--                    <DataTable :value="editedChat.participants" class="p-datatable-sm">-->
+                <!--                      <Column field="profile.displayName" header="Name">-->
+                <!--                        <template #body="slotProps">-->
+                <!--                          <div class="flex align-items-center">-->
+                <!--                            <Avatar-->
+                <!--                              :image="slotProps.data.profile.displayImage"-->
+                <!--                              shape="circle"-->
+                <!--                              class="mr-2"-->
+                <!--                            />-->
+                <!--                            <span>{{ slotProps.data.profile.displayName }}</span>-->
+                <!--                          </div>-->
+                <!--                        </template>-->
+                <!--                      </Column>-->
+                <!--                      <Column header="Actions" style="width: 100px">-->
+                <!--                        <template #body="slotProps">-->
+                <!--                          <Button-->
+                <!--                            icon="pi pi-trash"-->
+                <!--                            class="p-button-rounded p-button-danger p-button-text"-->
+                <!--                            @click="removeParticipant(slotProps.data)"-->
+                <!--                          />-->
+                <!--                        </template>-->
+                <!--                      </Column>-->
+                <!--                    </DataTable>-->
+                <!--                  </v-col>-->
+                <!--                </v-row>-->
+
                 <!--                &lt;!&ndash; Participants Management &ndash;&gt;
                 <v-row>
                   <v-col>
@@ -213,7 +268,7 @@
 </template>
 
 <script setup>
-import { defineEmits, defineProps, reactive, ref } from 'vue'
+import { defineEmits, defineProps, h, onMounted, reactive, ref } from 'vue'
 import Popover from 'primevue/popover'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
@@ -234,7 +289,7 @@ import Listbox from 'primevue/listbox'
 import Button from 'primevue/button'
 import { API_URL } from '@/main'
 import axios from 'axios'
-
+import MultiSelect from 'primevue/multiselect'
 const toast = useToast()
 const selectedUser = ref()
 const menu = ref()
@@ -283,14 +338,14 @@ const handleFileChange = async (event) => {
     try {
       const response = await axios.put(url, formData, config)
       if (response.status === 200) {
-        console.log(response)
+        //console.log(response)
         toast.add({
           severity: 'success',
           summary: 'Success',
           detail: 'Files uploaded successfully',
           life: 3000
         })
-        console.log(response)
+        //console.log(response)
         editedChat.image = response.data.data[0]
 
         //return response.data.data
@@ -303,7 +358,7 @@ const handleFileChange = async (event) => {
         detail: 'Failed to upload File(s)',
         life: 3000
       })
-      console.log(url)
+      //console.log(url)
     }
   }
 }
@@ -344,13 +399,29 @@ const removeParticipant = (participant) => {
 const saveChanges = () => {
   // Emit updated chat data to parent component
   emit('update-chat-popover', editedChat)
-  console.log('delete-chat-popover', editedChat)
+  //console.log('delete-chat-popover', editedChat)
 }
 
 const deleteChat = () => {
   emit('delete-chat-popover', editedChat)
-  console.log('Delete-chat', editedChat)
+  //console.log('Delete-chat', editedChat)
 }
+
+const selectedParticipants = ref([])
+const availableParticipants = ref([])
+
+onMounted(async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    }
+  }
+  const currentCompanyId = localStorage.getItem('currentCompany')
+  const temp = await axios.get(`${API_URL}users/all/company/${currentCompanyId}`, config)
+  availableParticipants.value = props.participants.filter((p) => p._id !== editedChat.admin)
+  //availableParticipants.value.push(temp.data.data)
+})
 
 const items = ref([
   {

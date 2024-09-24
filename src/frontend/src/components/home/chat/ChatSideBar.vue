@@ -170,11 +170,11 @@ const createNewChat = () => {
       participants.push(vElement._id)
     }
     if (chatName.length === 0) {
-      console.log('No empty chat names allowed')
+      //console.log('No empty chat names allowed')
       //TOOO: Error toast
       return
     }
-    //console.log('Test', participants)
+    ////console.log('Test', participants)
     emit('create-chat', {
       name: newChatName.value,
       participants: participants,
@@ -186,12 +186,12 @@ const createNewChat = () => {
 
 watch(props.typingUsers, () => updateTypingUsers())
 const updateTypingUsers = () => {
-  console.log('Typing users', props.typingUsers)
+  //console.log('Typing users', props.typingUsers)
 
   const len = props.typingUsers.length - 1
   if (len > 0) {
     currentlyTyping.value = props.typingUsers[len]
-    console.log(currentlyTyping.value)
+    //console.log(currentlyTyping.value)
     setTimeout(() => {
       currentlyTyping.value = {}
     }, 7000)

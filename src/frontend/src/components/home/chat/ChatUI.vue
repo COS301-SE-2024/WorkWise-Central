@@ -93,23 +93,23 @@ export default {
         }
       })
       .then(() => {
-        console.log('All messages fetched')
+        //console.log('All messages fetched')
       })
     this.getAllUsers()
 
     socket.connect()
 
     socket.on('connect', async () => {
-      console.log('Socket connected')
+      //console.log('Socket connected')
       await this.setupSockets()
     })
 
     socket.on('disconnect', () => {
-      console.log('Socket disconnected')
+      //console.log('Socket disconnected')
     })
 
     socket.on('init-chat', (data) => {
-      console.log('User Joined rooms', data)
+      //console.log('User Joined rooms', data)
     })
 
     socket.on('new-message', (data) => {
@@ -148,18 +148,19 @@ export default {
   },
   methods: {
     getAllUsers() {
-      console.log('Get all Users')
+      //console.log('Get all Users')
       //console.log(API_URL)
+      const companyId = localStorage['currentCompany']
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       axios
-        .get(`${this.server_url}users/all`, config)
+        .get(`${this.server_url}users/all/company/${companyId}`, config) //All in company
         .then((res) => {
           if (res.data.status >= 200 && res.data.status < 300) {
             console.error('Failed to get all users')
             //TODO: Display Toast for error
             return
           }
-          console.log('All users', res)
+          //console.log('All users', res)
           for (const datum of res.data.data) {
             this.users.push(datum)
           }
@@ -177,7 +178,7 @@ export default {
       this.createNewChatHelper(newChat.name, newChat.participants, newChat.chatImage)
     },
     async createNewChatHelper(chatName, userIdsForChat, chatImage) {
-      console.log(chatImage)
+      //console.log(chatImage)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       userIdsForChat.push(localStorage['id'])
 
@@ -193,10 +194,10 @@ export default {
         { ...spreadElements },
         config
       )
-      console.log(result)
+      //console.log(result)
 
       if (result.status >= 200 && result.status < 300) {
-        console.log('new chat', result.data.data)
+        //console.log('new chat', result.data.data)
         if (result.data.data._id) {
           this.chats.push(result.data.data)
           this.$toast.add({
@@ -212,7 +213,7 @@ export default {
           // this.selectChat(chat)
         }
       } else {
-        console.log('Error creating chat')
+        //console.log('Error creating chat')
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
@@ -232,7 +233,7 @@ export default {
         },
         config
       )
-      console.log(result)
+      //console.log(result)
 
       if (result.status >= 200 && result.status < 300) {
         //console.log('new chat', result.data.data)
@@ -246,7 +247,7 @@ export default {
           })
         }
       } else {
-        console.log('Error adding users')
+        //console.log('Error adding users')
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
@@ -258,9 +259,9 @@ export default {
     async getUserChats() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const result = await axios.get(`${this.server_url}chat/user-chats`, config)
-      console.log('Get All User Chats', result)
+      //console.log('Get All User Chats', result)
       if (result.status >= 200 && result.status < 300) {
-        console.log('new chat', result.data.data)
+        //console.log('new chat', result.data.data)
         if (result.data.data) {
           const chats = result.data.data
           for (const chat of chats) {
@@ -274,7 +275,7 @@ export default {
           })*/
         }
       } else {
-        console.log('Error Retrieving chats')
+        //console.log('Error Retrieving chats')
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
@@ -306,7 +307,7 @@ export default {
           })*/
         }
       } else {
-        console.log('Error Retrieving Messages')
+        //console.log('Error Retrieving Messages')
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
@@ -326,47 +327,47 @@ export default {
             attachments: attachments
           })
           .then((data) => {
-            console.log('Message success', data)
+            //console.log('Message success', data)
           })
       }
     },
     // async sendMessageHelper(content, attachments) {}
     async setupSockets() {
-      console.log('Init chat')
+      //console.log('Init chat')
       socket.emitWithAck('init-chat', { jwt: localStorage['access_token'] }).then((data) => {
-        console.log('Init chat data', data)
+        //console.log('Init chat data', data)
       })
     },
     handleNewMessage(data) {
-      console.log('New message received', data)
+      //console.log('New message received', data)
       if (!this.messages[data.chatId]) {
         //chat not found
-        console.log('Chat not found')
+        //console.log('Chat not found')
         this.messages[data.chatId] = []
       }
       this.messages[data.chatId].push(data)
     },
     handleDeleteMessage(data) {
-      // window.console.log('Delete message received', JSON.stringify(data))
-      // window.console.log('messages is', this.messages)
-      // window.console.log('data is', JSON.stringify(data))
+      // window.//console.log('Delete message received', JSON.stringify(data))
+      // window.//console.log('messages is', this.messages)
+      // window.//console.log('data is', JSON.stringify(data))
       if (!this.messages[data.chatId]) {
         //chat not found
-        console.log('Message not found')
+        //console.log('Message not found')
         this.messages[data.chatId] = []
         return
       }
       const index = this.messages[data.chatId].findIndex((m) => m._id === data.messageId)
       if (index !== -1) {
         this.messages[data.chatId].splice(index, 1)
-        console.log('Done filtering')
+        //console.log('Done filtering')
       } else {
-        console.log('Could not locate in array')
-        console.log(data)
+        //console.log('Could not locate in array')
+        //console.log(data)
       }
     },
     handleUpdateMessage(data) {
-      console.log('Update message received', data)
+      //console.log('Update message received', data)
       if (!this.messages[data.chatId]) {
         return
       }
@@ -380,22 +381,22 @@ export default {
       }
     },
     handleDeleteChat(data) {
-      console.log('Delete chat received', data)
+      //console.log('Delete chat received', data)
       const index = this.chats.findIndex((c) => c._id === data.chatId)
       if (index !== -1) {
         this.chats.splice(index, 1)
       }
     },
     handleUpdateChat(data) {
-      console.log('Update chat received', data)
+      //console.log('Update chat received', data)
       const index = this.chats.findIndex((c) => c._id === data.chatId)
       if (index !== -1) {
         this.chats[index] = { ...this.chats[index], ...data }
       }
     },
     async editMessage({ messageId, chatId, action, textContent, attachments }) {
-      console.log(messageId)
-      console.log(action)
+      //console.log(messageId)
+      //console.log(action)
       socket
         .emitWithAck('update-message', {
           jwt: localStorage['access_token'],
@@ -405,15 +406,15 @@ export default {
           attachments: attachments
         })
         .then((data) => {
-          console.log('Edit message success', data)
+          //console.log('Edit message success', data)
           // if (data.success === true) {
           //   //show toast
           // }
         })
     },
     async deleteMessage({ messageId, chatId, action }) {
-      console.log(messageId)
-      console.log(action)
+      //console.log(messageId)
+      //console.log(action)
       socket
         .emitWithAck('delete-message', {
           jwt: localStorage['access_token'],
@@ -421,8 +422,8 @@ export default {
           messageId: messageId
         })
         .then((data) => {
-          console.log('Delete message success', data)
-          console.log(this.messages)
+          //console.log('Delete message success', data)
+          //console.log(this.messages)
           //this.messages = this.messages.filter((m) => m._id === data?.messageId)
           // if (data.success === true) {
           //   //show toast
@@ -449,9 +450,9 @@ export default {
       if (updatedChatData.participants) {
         args.participants = updatedChatData.participants
       }
-      console.log(args)
+      //console.log(args)
       socket.emitWithAck('update-chat', args).then((data) => {
-        console.log('Edit message success', data)
+        //console.log('Edit message success', data)
         // if (data.success === true) {
         //   //show toast
         // }
@@ -464,7 +465,7 @@ export default {
           chatId: updatedChatData._id
         })
         .then((data) => {
-          console.log('Delete chat success', data)
+          //console.log('Delete chat success', data)
           this.chats = this.chats.filter((chat) => chat._id !== updatedChatData._id)
           this.selectedChat = null
         })
@@ -495,14 +496,14 @@ export default {
       }
     },
     handleTyping(data) {
-      console.log('handlingTyping ', data)
+      //console.log('handlingTyping ', data)
       this.typingUsers.push(data)
       if (this.typingUsers.length > 50) {
         this.typingUsers.splice(1, 47)
       }
     },
     handleUnreadMessages(data) {
-      console.log('unread-messages', data)
+      //console.log('unread-messages', data)
       for (const datum of data.data) {
         this.chatMessageCount[datum.chatId] = datum.unreadCount
         this.chats['unreadCount'] = datum.unreadCount
