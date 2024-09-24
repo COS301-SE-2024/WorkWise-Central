@@ -4,6 +4,7 @@
       :chats="chats"
       :selectedChat="selectedChat"
       :users="users"
+      :typing-users="typingUsers"
       @select-chat="selectChat"
       @create-chat="createChat"
     />
@@ -26,6 +27,7 @@
       />
       <ChatInput
         @send-message="sendMessageWithSockets"
+        @typing="sendTyping"
         :disabled="!selectedChat"
         v-if="selectedChat"
       />
@@ -66,11 +68,14 @@ export default {
       defaultProfilePic: 'http://www.gravatar.com/avatar/?d=mp',
       //currentUser: { id: 1, name: 'You', avatar: '@/assets/images/avatars/you.jpg' },
       users: [],
+      typingUsers: [],
       chats: [],
+      chatMessageCount: [],
       selectedChat: null,
       messages: ref([]),
       server_url: API_URL,
-      unreadCount: []
+      unreadCount: [],
+      intervalId: null
     }
   },
   computed: {
@@ -126,6 +131,20 @@ export default {
     socket.on('update-chat', (data) => {
       this.handleUpdateChat(data)
     })
+
+    socket.on('typing', (data) => {
+      this.handleTyping(data)
+    })
+
+    socket.on('unread-messages', (data) => {
+      this.handleUnreadMessages(data)
+    })
+
+    this.getNumberUnreadMessages()
+    this.startInterval()
+  },
+  beforeUnmount() {
+    this.clearInterval()
   },
   methods: {
     getAllUsers() {
@@ -152,6 +171,7 @@ export default {
     },
     selectChat(chat) {
       this.selectedChat = chat
+      socket.emit('reading-chat', { jwt: localStorage['access_token'], chatId: chat._id })
     },
     createChat(newChat) {
       this.createNewChatHelper(newChat.name, newChat.participants, newChat.chatImage)
@@ -457,6 +477,42 @@ export default {
             life: 3000
           })
         })
+    },
+    async sendTyping() {
+      if (this.selectedChat) {
+        socket.emit('typing', {
+          jwt: localStorage['access_token'],
+          chatId: this.selectedChat._id
+        })
+      }
+    },
+    async getNumberUnreadMessages() {
+      for (const chat of this.chats) {
+        socket.emit('unread-messages', {
+          jwt: localStorage['access_token'],
+          chatId: chat._id
+        })
+      }
+    },
+    handleTyping(data) {
+      console.log('handlingTyping ', data)
+      this.typingUsers.push(data)
+      if (this.typingUsers.length > 50) {
+        this.typingUsers.splice(1, 47)
+      }
+    },
+    handleUnreadMessages(data) {
+      console.log('unread-messages', data)
+      for (const datum of data.data) {
+        this.chatMessageCount[datum.chatId] = datum.unreadCount
+        this.chats['unreadCount'] = datum.unreadCount
+      }
+    },
+    startInterval() {
+      this.intervalId = setInterval(this.getNumberUnreadMessages, 5000)
+    },
+    clearInterval() {
+      clearInterval(this.intervalId)
     }
   }
 }

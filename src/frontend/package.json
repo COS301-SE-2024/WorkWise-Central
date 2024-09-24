@@ -40,6 +40,7 @@
     "jspdf-autotable": "^3.8.2",
     "jspdf-invoice-template": "^1.4.4",
     "jspdf-invoice-template-nodejs": "^1.4.40",
+    "lodash": "^4.17.21",
     "mdi": "^2.2.43",
     "mongoose": "^8.5.2",
     "pinia": "^2.2.2",
