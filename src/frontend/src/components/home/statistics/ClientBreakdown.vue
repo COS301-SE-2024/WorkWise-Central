@@ -8,7 +8,7 @@
     <!-- Total Clients Information -->
     <v-card-subtitle>
       <v-chip color="primary"
-        ><h5>Total Number of Clients: {{ totalClients }}</h5></v-chip
+        ></v-chip
       >
     </v-card-subtitle>
 
@@ -56,17 +56,18 @@
         <v-card-title>Client Breakdown for {{ selectedClient.firstName }}</v-card-title>
         <v-card-text>
           <!-- Bar chart for number of jobs -->
-           <h5>Breakdown of the jobs for {{ selectedClient.firstName }}</h5>
-          <v-container
-            ><v-row
+          <v-container>
+            <v-row
               ><v-col cols="12" lg="6">
+                <h5>Breakdown of the Jobs for {{ selectedClient.firstName }}</h5>
                 <Chart
                   type="pie"
                   :data="jobsData"
                   :options="jobsChartOptions"
                   @chart-click="onChartClick" /></v-col
-              ><v-col cols="12" lg="6"
-                ><Chart
+              ><v-col cols="12" lg="6">
+                <h5>Breakdown of the Invoices for {{ selectedClient.firstName }}</h5>
+                <Chart
                   type="pie"
                   :data="invoiceData"
                   :options="invoiceChartOptions"
@@ -75,10 +76,11 @@
 
           <!-- Customer Service Rating Section -->
           <v-container>
-            <h5>Breakdown of the invoices for {{ selectedClient.firstName }}</h5>
-            <v-row
-              ><v-col cols="12" lg="6"
-                ><v-card
+            <v-row>
+              <v-col cols="12" lg="6"
+                >
+                <h5>Customer Service ratings given by {{ selectedClient.firstName }}</h5>
+                <v-card
                   class="d-flex flex-column mx-auto py-4"
                   elevation="10"
                   height="auto"
@@ -123,13 +125,14 @@
                   </v-list>
                 </v-card></v-col
               ><v-col cols="12" lg="6">
+                <h5>Job Quality ratings given by {{ selectedClient.firstName }}</h5>
                 <v-card
                   class="d-flex flex-column mx-auto py-4"
                   elevation="10"
                   height="auto"
                   width="360"
                 >
-                  <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
+                  <div class="d-flex justify-center mt-auto text-h5">Job Quality Rating</div>
                   <div class="d-flex align-center flex-column my-auto">
                     <div class="text-h2 mt-5">
                       {{ overallRating }}
