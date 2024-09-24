@@ -65,7 +65,9 @@
                 class="pt-0 pb-0"
                 dense
                 hide-details
-              ></v-checkbox>
+                @change="handleCheckboxChange(taskIndex, itemIndex)"
+              >
+              </v-checkbox>
             </v-col>
             <v-col md="2" cols="2">
               <v-row>
@@ -259,7 +261,7 @@ const assignableEmployees = ref<string[]>([])
 const selectedMembers = ref<Member[]>([])
 const members = ref<Member[]>([]) // Populate with your states data
 const originalSelectedMembers = ref<Member[]>([])
-const isSaveButtonVisible = ref()
+const isSaveButtonVisible = ref(true)
 
 function handleSaveTask(taskIndex: number) {
   saveTask(taskIndex);
@@ -429,6 +431,30 @@ const convertCard = async (taskIndex: number, itemIndex: number) => {
     console.log('Error converting card', error)
   }
 }
+
+const handleCheckboxChange = async (taskIndex: number, itemIndex: number) => {
+  const task = taskList.value[taskIndex];
+  const item = task.items[itemIndex];
+  const body = {
+    employeeId: localStorage.getItem('employeeId') || '',
+    jobId: props.jobID,
+    taskId: task._id,
+    itemId: item._id,
+    description: item.description,
+    dueDate: new Date().toISOString(),
+    done: item.done
+  };
+  try {
+    const response = await axios.patch(`${API_URL}job/taskItem`, body, config);
+    if (response.status > 199 && response.status < 300) {
+      console.log('Item updated successfully', response.data);
+    } else {
+      console.log('Failed to update item', response);
+    }
+  } catch (error) {
+    console.log('Error updating item', error);
+  }
+};
 
 const getTeamMembers = async () => {
   try {
