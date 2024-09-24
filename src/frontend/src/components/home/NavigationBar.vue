@@ -58,10 +58,10 @@ const inboxSubItems = ref([
 const supportSubItems = ref([
   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
 ])
-const moreSubItems = ref([
-  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
+const companySubItems = ref([
+  { title: 'Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
   {
-    title: 'Company Requests',
+    title: 'Requests',
     icon: 'fa: fa-solid fa-envelope',
     routeName: 'company-requests'
   }
@@ -394,17 +394,17 @@ export default defineComponent({
       </v-list>
 
       <v-list v-model:open="open" v-show="checkPermission('company settings') === true">
-        <v-list-group fluid value="More">
+        <v-list-group fluid value="company">
           <template v-slot:activator="{ props }">
             <v-list-item
               v-bind="props"
-              prepend-icon="fa: fa-solid fa-ellipsis-h"
-              title="More"
+              prepend-icon="fa: fa-solid fa-building"
+              title="Company"
               class="list-item-large"
             ></v-list-item>
           </template>
           <v-list-item
-            v-for="(item, i) in moreSubItems"
+            v-for="(item, i) in companySubItems"
             :key="i"
             :to="{ name: item.routeName }"
             :value="item.title"
