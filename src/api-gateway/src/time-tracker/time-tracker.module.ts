@@ -16,6 +16,7 @@ import { TimeTrackerRepository } from './time-tracker.repository';
 import { TimeTracker, TimeTrackerSchema } from './entities/time-tracker.entity';
 import { JobService } from '../job/job.service';
 import { JobModule } from '../job/job.module';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { JobModule } from '../job/job.module';
     forwardRef(() => InventoryModule),
     forwardRef(() => StockTakeModule),
     forwardRef(() => JobModule),
+    forwardRef(() => EmailModule),
   ],
   controllers: [TimeTrackerController],
   providers: [TimeTrackerService, TimeTrackerRepository, JobService],

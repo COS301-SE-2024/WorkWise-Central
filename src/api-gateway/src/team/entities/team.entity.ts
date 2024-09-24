@@ -21,8 +21,8 @@ export class Team {
   teamName: string;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], required: true, ref: 'Employee' })
-  teamMembers: Types.ObjectId[];
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, ref: 'Employee', default: [] })
+  teamMembers: Types.ObjectId[] = [];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
@@ -30,7 +30,7 @@ export class Team {
 
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
-  currentJobAssignments: Types.ObjectId[];
+  currentJobAssignments: Types.ObjectId[] = [];
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
