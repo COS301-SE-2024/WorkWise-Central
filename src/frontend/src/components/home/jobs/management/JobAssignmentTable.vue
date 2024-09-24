@@ -104,11 +104,11 @@
                       </template>
 
                       <template v-slot:[`item.startDate`]="{ item }">
-                        {{ formatDate(item?.details?.startDate) }}
+                        {{ new Date(item?.details?.startDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ item }">
-                        {{ item?.details?.endDate }}
+                        {{ new Date(item?.details?.endDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
                       </template>
 
                       <!-- Actions slot -->
