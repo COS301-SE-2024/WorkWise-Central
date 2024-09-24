@@ -26,6 +26,7 @@
 
 <script lang="ts">
 import axios from 'axios'
+import { APP_URL } from '@/main'
 
 export default {
   data() {
@@ -120,10 +121,10 @@ export default {
         return false
       }
     },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
+    // async getRequestUrl() {
+    //   const localAvailable = await this.isLocalAvailable(this.localUrl)
+    //   return localAvailable ? this.localUrl : this.remoteUrl
+    // },
     async getRequests() {
       if (localStorage.getItem('clientId') !== null) {
         this.clientId = localStorage.getItem('clientId') as string
@@ -136,9 +137,8 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
       await axios
-        .get(`${url}client/clientPortal/id/${this.clientId}`, config)
+        .get(`${APP_URL}client/clientPortal/id/${this.clientId}`, config)
         .then((response) => {
           this.client = response.data.data
         })
@@ -148,7 +148,7 @@ export default {
 
       // Getting the client jobs
       await axios
-        .get(`${url}client/portal/view-jobs?clientId=${this.clientId}`, config)
+        .get(`${APP_URL}client/portal/view-jobs?clientId=${this.clientId}`, config)
         .then((response) => {
           this.jobs = response.data.data
           console.log('response.data.data: ', response.data.data)
@@ -156,7 +156,7 @@ export default {
         .catch((error) => {
           console.error(error)
         })
-    },
+    }
   },
   mounted() {
     if (sessionStorage.getItem('clientId') !== null) {

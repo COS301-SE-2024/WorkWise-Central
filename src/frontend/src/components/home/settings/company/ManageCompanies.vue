@@ -163,8 +163,8 @@ const leftCompanyHeaders = [
 const companies = ref<Company[]>([])
 
 // API URLs and configs
-const localUrl = 'http://localhost:3000/'
-const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
+// const localUrl = API_URL
+// const remoteUrl = API_URL
 const config = {
   headers: {
     'Content-Type': 'application/json',
@@ -173,19 +173,19 @@ const config = {
 }
 
 // Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status >= 200 && res.status < 300
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
+// const isLocalAvailable = async (url: string): Promise<boolean> => {
+//   try {
+//     const res = await axios.get(url)
+//     return res.status >= 200 && res.status < 300
+//   } catch (error) {
+//     return false
+//   }
+// }
+//
+// const getRequestUrl = async (): Promise<string> => {
+//   const localAvailable = await isLocalAvailable(localUrl)
+//   return localAvailable ? localUrl : remoteUrl
+// }
 
 const getRowProps = ({ index }: any) => ({
   class: index % 2 ? 'bg-secondRowColor' : ''
@@ -307,7 +307,6 @@ const switchCompany = async (company: Company) => {
   localStorage.setItem('currentCompany', company.companyId)
   localStorage.setItem('employeeId', company.employeeId)
   localStorage.setItem('currentCompanyName', company.name)
-  const API_URL = getRequestUrl()
   try {
     const response = await axios.get(`${API_URL}employee/id/${company.employeeId}`, config)
     console.log('Returned employee', response)
