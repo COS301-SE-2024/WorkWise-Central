@@ -95,7 +95,7 @@
                       </v-card-title>
                       <v-card-actions class="d-flex flex-column">
                         <v-defaults-provider :defaults="{ VIcon: { color: 'info' } }">
-                          <v-btn color="info" @click="assignDialog = true">
+                          <v-btn color="info" @click="openAssignDialog(taskIndex, itemIndex)">
                             <v-icon>{{ 'fa: fa-solid fa-user-plus' }}</v-icon>
                             Assign
                           </v-btn>
@@ -107,14 +107,17 @@
                               <v-label>Assigned Employees</v-label>
                               <v-select
                                 label="Select"
-                                :items="assignableEmployees"
-                                item-title="text"
-                                item-value="value"
+                                :items="members"
+                                :item-title="member => getMemberFullName(member)"
+                                item-value="_id"
                                 item-class="custom-item-class"
                                 multiple
                                 variant="solo"
                                 hide-details
-                                v-model="selectedEmployees"
+                                v-model="selectedMembers"
+                                return-object
+                                color="primary"
+                                background-color="#f5f5f5"
                               ></v-select>
                             </v-card-text>
                             <v-card-actions class="d-flex flex-column">
@@ -157,8 +160,8 @@
                         </v-defaults-provider>
                         <v-defaults-provider :defaults="{ VIcon: { color: 'warning' } }">
                           <v-btn color="warning" @click="isActive.value = false">
-                            <v-icon>{{ 'fa: fa-solid fa-times' }}</v-icon>
-                            Cancel
+                            <v-icon>{{ 'fa: fa-solid fa-cancel' }}</v-icon>
+                            Close
                           </v-btn>
                         </v-defaults-provider>
                       </v-card-actions>
@@ -257,7 +260,6 @@ const itemsPerPage = ref(1)
 const currentPage = ref(1)
 const assignDialog = ref(false)
 const selectedEmployees = ref<string[]>([])
-const assignableEmployees = ref<string[]>([])
 const selectedMembers = ref<Member[]>([])
 const members = ref<Member[]>([]) // Populate with your states data
 const originalSelectedMembers = ref<Member[]>([])
@@ -313,6 +315,16 @@ function createNewTask() {
 function getTaskProgress(task: Task) {
   const completedItems = task.items.filter((item) => item.done).length
   return (completedItems / task.items.length) * 100 || 0
+}
+
+function getMemberFullName(member: Member): string {
+  return `${member.userInfo.firstName} ${member.userInfo.surname}`
+}
+
+const openAssignDialog = async (taskIndex: number, itemIndex: number) => {
+  assignDialog.value = true
+  await getAssignedEmployees(taskIndex, itemIndex)
+  originalSelectedMembers.value = [...selectedMembers.value]
 }
 
 const addItem = async (taskIndex: number) => {
@@ -430,6 +442,7 @@ const convertCard = async (taskIndex: number, itemIndex: number) => {
   } catch (error) {
     console.log('Error converting card', error)
   }
+  assignDialog.value = false
 }
 
 const handleCheckboxChange = async (taskIndex: number, itemIndex: number) => {
@@ -485,89 +498,95 @@ const saveMembers = async (taskIndex: number, itemIndex: number) => {
   try {
     // Find members to remove
     const membersToRemove = originalSelectedMembers.value.filter(
-      (originalMember) =>
-        !selectedMembers.value.some((selectedMember) => selectedMember._id === originalMember._id)
-    )
+        (originalMember) =>
+            !selectedMembers.value.some((selectedMember) => selectedMember._id === originalMember._id)
+    );
 
     // Remove unselected members
     for (const member of membersToRemove) {
-      const response = await axios.patch(
-        `${API_URL}job/employee/taskItem`,
-        {
-          employeeId: localStorage.getItem('employeeId'),
-          employeeToAssignId: member._id,
-          jobId: props.jobID,
-          taskId: taskList.value[taskIndex]._id,
-          itemId: taskList.value[taskIndex].items[itemIndex]._id
-        },
-        config
-      )
-      if (response.status > 199 && response.status < 300) {
-        console.log(`Removed member: ${member._id}`)
-      } else {
-        console.log('Failed to remove member', response)
+      try {
+        const response = await axios.patch(
+            `${API_URL}job/employee/taskItem`,
+            {
+              employeeId: localStorage.getItem('employeeId'),
+              employeeToAssignId: member._id,
+              jobId: props.jobID,
+              taskId: taskList.value[taskIndex]._id,
+              itemId: taskList.value[taskIndex].items[itemIndex]._id
+            },
+            config
+        );
+        if (response.status >= 200 && response.status < 300) {
+          console.log(`Removed member: ${member._id}`);
+        } else {
+          console.log('Failed to remove member', response);
+        }
+      } catch (error) {
+        console.error(`Error removing member ${member._id}:`, error);
       }
     }
 
     // Add new selected members
     for (const member of selectedMembers.value) {
       if (
-        !originalSelectedMembers.value.some((originalMember) => originalMember._id === member._id)
+          !originalSelectedMembers.value.some((originalMember) => originalMember._id === member._id)
       ) {
-        console.log('Add new member option')
-        console.log('Now in selected members', selectedMembers.value)
-        console.log('member', member)
-        const membervia = {
-          employeeId: localStorage.getItem('employeeId'),
-          employeeToAssignId: member._id,
-          jobId: props.jobID
-        }
-        console.log('Member view', membervia)
-        const response = await axios.put(
-          `${API_URL}job/employee`,
-          {
-            employeeId: localStorage.getItem('employeeId'),
-            employeeToAssignId: member,
-            jobId: props.jobID
-          },
-          config
-        )
-        if (response.status > 199 && response.status < 300) {
-          console.log('Member change', response)
-          console.log(`Added member: ${member._id}`)
-        } else {
-          console.log('Failed to add member', response)
+        try {
+          const response = await axios.put(
+              `${API_URL}job/employee/taskItem`,
+              {
+                employeeId: localStorage.getItem('employeeId'),
+                employeeToAssignId: member._id,
+                jobId: props.jobID,
+                taskId: taskList.value[taskIndex]._id,
+                itemId: taskList.value[taskIndex].items[itemIndex]._id
+              },
+              config
+          );
+          if (response.status >= 200 && response.status < 300) {
+            console.log(`Added member: ${member._id}`);
+          } else {
+            console.log('Failed to add member', response);
+          }
+        } catch (error) {
+          console.error(`Error adding member ${member._id}:`, error);
         }
       }
     }
 
     // Update the original selected members
-    originalSelectedMembers.value = [...selectedMembers.value]
+    originalSelectedMembers.value = [...selectedMembers.value];
   } catch (error) {
-    console.log(error)
+    console.error('Error in saveMembers function:', error);
   }
-}
+  assignDialog.value = false;
+};
 
-const getAssignedEmployees = async () => {
+const getAssignedEmployees = async (taskIndex: number, itemIndex: number) => {
   try {
-    const response = await axios.get(`${API_URL}job/id/${props.jobID}`, config)
-    if (response.status > 199 && response.status < 300) {
-      console.log(response)
-      const employees = response.data.data.assignedEmployees.employeeIds
+    const response = await axios.get(`${API_URL}job/id/${props.jobID}`, config);
+    if (response.status >= 200 && response.status < 300) {
+      console.log(response);
+      const task = response.data.data.taskList[taskIndex];
+      console.log('Task', task)
+      const item = task.items[itemIndex];
+      console.log('Item', item)
+      const employees = item.assignedEmployees || [];
+      console.log('Employees', employees)
       selectedMembers.value = employees.map((employee: any) => ({
         _id: employee._id,
         userInfo: {
           firstName: employee.userInfo.firstName,
           surname: employee.userInfo.surname
         }
-      }))
-      console.log('Assigned Employees', selectedMembers.value)
+      }));
+      console.log('Assigned Employees', selectedMembers.value);
     } else {
-      console.log('failed')
+      console.log('Failed to retrieve assigned employees', response);
     }
   } catch (error) {
-    console.log(error)
-    console.error('Error updating job:', error)
+    console.log(error);
+    console.error('Error retrieving assigned employees:', error);
   }
 }
 
@@ -610,15 +629,12 @@ onMounted(() => {
   getJobTasks().then(() => {
     taskList.value.forEach(task => {
       if (task.items.length > 0) {
-        isSaveButtonVisible.value = false
+        isSaveButtonVisible.value = false;
       }
-    })
-  })
+    });
+  });
   getTeamMembers()
-  getAssignedEmployees().then(() => {
-    originalSelectedMembers.value = [...selectedMembers.value]
-  })
-})
+});
 </script>
 
 <style scoped>
