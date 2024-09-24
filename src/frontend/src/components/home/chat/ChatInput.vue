@@ -4,6 +4,7 @@
       v-model="message"
       placeholder="Type a message"
       @keyup.enter="sendMessage"
+      @input="handleInput"
       :disabled="disabled"
       class="w-full"
     />
@@ -45,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import axios from 'axios'
@@ -53,15 +54,17 @@ import { API_URL } from '@/main'
 import { useToast } from 'primevue/usetoast'
 import FileUpload from 'primevue/fileupload'
 import { defineProps, defineEmits } from 'vue'
+import debounce from 'lodash/debounce'
 
 const props = defineProps({
   disabled: {
     type: Boolean,
     default: false
-  }
+  },
+  chatId: String
 })
 
-const emit = defineEmits(['send-message'])
+const emit = defineEmits(['send-message', 'typing'])
 const toast = useToast()
 const message = ref('')
 //const attachment = ref(null)
@@ -79,6 +82,18 @@ const sendMessage = () => {
     message.value = ''
     attachments.value = []
   }
+}
+
+const emitTyping = debounce(() => {
+  emit('typing')
+}, 400)
+
+onUnmounted(() => {
+  emitTyping.cancel()
+})
+
+const handleInput = () => {
+  emitTyping()
 }
 
 const handleFileChange = async (event) => {

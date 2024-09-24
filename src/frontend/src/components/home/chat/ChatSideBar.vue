@@ -29,9 +29,22 @@
           shape="circle"
         />
         <span>{{ chat.name }}</span>
+        <!-- New typing indicator -->
+        <span
+          v-if="currentlyTyping.chatId === chat._id && theKidIsNotMySon(currentlyTyping.userId)"
+          class="typing-text"
+        >
+          {{ currentlyTyping.name }} is typing...
+        </span>
         <div class="card flex justify-center">
           <Menu :model="items" />
         </div>
+        <v-row v-if="chat.unreadCount > 0"
+          ><OverlayBadge severity="danger">
+            <i class="pi pi-envelope" style="font-size: 2rem" />
+            {{ chat.unreadCount }}</OverlayBadge
+          ></v-row
+        >
       </li>
     </ul>
 
@@ -79,15 +92,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Avatar from 'primevue/avatar'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import MultiSelect from 'primevue/multiselect'
 //import FileUpload from 'primevue/fileupload'
+import OverlayBadge from 'primevue/overlaybadge'
 
-const props = defineProps(['chats', 'selectedChat', 'users'])
+const props = defineProps(['chats', 'selectedChat', 'users', 'typingUsers'])
 const emit = defineEmits(['select-chat', 'create-chat'])
 
 const searchQuery = ref('')
@@ -99,7 +113,7 @@ const currentUserId = localStorage['id']
 const fileInput = ref(null)
 const selectedImage = ref(null)
 const base64Image = ref(null)
-
+let currentlyTyping = ref({})
 const items = ref([
   { label: 'Delete', icon: 'pi pi-plus' },
   { label: 'Search', icon: 'pi pi-search' }
@@ -169,6 +183,25 @@ const createNewChat = () => {
     closeNewChatDialog()
   }
 }
+
+watch(props.typingUsers, () => updateTypingUsers())
+const updateTypingUsers = () => {
+  console.log('Typing users', props.typingUsers)
+
+  const len = props.typingUsers.length - 1
+  if (len > 0) {
+    currentlyTyping.value = props.typingUsers[len]
+    console.log(currentlyTyping.value)
+    setTimeout(() => {
+      currentlyTyping.value = {}
+    }, 7000)
+  }
+}
+
+const theKidIsNotMySon = (userId) => {
+  //HeeHee
+  return userId !== currentUserId
+}
 </script>
 
 <style scoped>
@@ -220,5 +253,11 @@ const createNewChat = () => {
 .p-inputtext {
   margin-bottom: 12px;
   margin-left: 7px;
+}
+
+.typing-text {
+  color: #31864d; /*TODO: Make into dynamic/visible colour*/
+  font-style: italic;
+  font-size: smaller;
 }
 </style>
