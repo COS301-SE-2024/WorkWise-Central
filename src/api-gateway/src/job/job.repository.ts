@@ -254,6 +254,29 @@ export class JobRepository {
       .exec();
   }
 
+  async assignEmployees(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
+    return await this.jobModel
+      .findOneAndUpdate(
+        {
+          $and: [
+            {
+              _id: jobId,
+            },
+            isNotDeleted,
+          ],
+        },
+        {
+          $addToSet: { 'assignedEmployees.employeeIds': { $each: employeeIds } },
+          updatedAt: currentDate(),
+        },
+        {
+          new: true,
+        },
+      )
+      .lean()
+      .exec();
+  }
+
   async assignEmployeeToTaskItem(
     employeeId: Types.ObjectId,
     jobId: Types.ObjectId,
@@ -343,7 +366,7 @@ export class JobRepository {
     return (await job.save()).toObject();
   }
 
-  async assignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
+  async assignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId, teamMemberIds: Types.ObjectId[]) {
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -355,7 +378,7 @@ export class JobRepository {
           ],
         },
         {
-          $addToSet: { 'assignedEmployees.teamIds': teamId },
+          $addToSet: { 'assignedEmployees.teamIds': teamId, 'assignedEmployees.employeeIds': { $each: teamMemberIds } },
           updatedAt: new Date(),
         },
         {
@@ -366,9 +389,15 @@ export class JobRepository {
       .exec();
   }
 
-  async unassignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId) {
+  async unassignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId, teamMemberIds: Types.ObjectId[]) {
     const job = await this.findOneInternal(jobId);
     job.assignedEmployees.teamIds = job.assignedEmployees.teamIds.filter((a) => a.toString() !== teamId.toString());
+
+    for (const teamMemberId of teamMemberIds) {
+      job.assignedEmployees.employeeIds = job.assignedEmployees.employeeIds.filter(
+        (a) => a.toString() !== teamMemberId.toString(),
+      );
+    }
     job.markModified('assignedEmployees');
     return (await job.save()).toObject();
   }
