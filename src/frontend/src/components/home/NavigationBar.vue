@@ -17,7 +17,14 @@ const clientSubItems = ref([
 
   { title: 'Customer Feedback', icon: 'fa: fa-solid fa-comment', routeName: 'client-feedback' }
 ])
-
+const CommunicationSubItems = ref([
+  {
+    title: 'Chats',
+    icon: 'fa: fa-solid fa-comments',
+    routeName: 'chatHome'
+  },
+  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
+])
 const employeeSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
   { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' }
@@ -25,7 +32,6 @@ const employeeSubItems = ref([
 const teamSubItems = ref([{ title: 'Management' }])
 const jobSubItems = ref([
   { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
-
   { title: 'Job Board', icon: 'fa: fa-solid fa-table', routeName: 'backlog' }
 ])
 
@@ -49,11 +55,11 @@ const invoicesSubItems = ref([
 
 const FleetSubItems = ref([{ title: 'Map', icon: 'fa: fa-solid fa-map', routeName: 'map' }])
 
-const inboxSubItems = ref([
+/*const inboxSubItems = ref([
   { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
   // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
   { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
-])
+])*/
 
 const supportSubItems = ref([
   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
@@ -286,6 +292,27 @@ export default defineComponent({
         </v-list-group>
       </v-list>
       <v-list v-model:open="open">
+        <v-list-group fluid value="Communication">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              prepend-icon="fa: fa-solid fa-address-book"
+              title="Social"
+              class="list-item-large"
+            ></v-list-item>
+          </template>
+          <v-list-item
+            v-for="(item, i) in CommunicationSubItems"
+            :key="i"
+            :to="{ name: item.routeName }"
+            :value="item.title"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            @click="setInbox(item.title)"
+          ></v-list-item>
+        </v-list-group>
+      </v-list>
+      <v-list v-model:open="open">
         <v-list-group fluid value="Invoices">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -350,27 +377,14 @@ export default defineComponent({
           ></v-list-item>
         </v-list-group>
       </v-list>
-      <v-list v-model:open="open">
-        <v-list-group fluid value="Inbox">
-          <template v-slot:activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              prepend-icon="fa: fa-solid fa-envelope"
-              title="Inbox"
-              class="list-item-large"
-            ></v-list-item>
-          </template>
-          <v-list-item
-            v-for="(item, i) in inboxSubItems"
-            :key="i"
-            :to="{ name: item.routeName }"
-            :value="item.title"
-            :title="item.title"
-            :prepend-icon="item.icon"
-            @click="setInbox(item.title)"
-          ></v-list-item>
-        </v-list-group>
-      </v-list>
+      <v-list-item
+        to="notifications"
+        value="Notifications"
+        title="Notifications"
+        prepend-icon="fa: fa-solid fa-bell"
+        :style="{ height: '70px' }"
+      >
+      </v-list-item>
       <v-list v-model:open="open">
         <v-list-group fluid value="Help">
           <template v-slot:activator="{ props }">

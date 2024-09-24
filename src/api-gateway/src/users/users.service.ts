@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
 import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
@@ -124,7 +125,18 @@ export class UsersService {
     return this.userRepository.findAll(populatedFields);
   }
 
-  async getAllUsersInCompany(companyId: Types.ObjectId): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async getAllUsersInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    if (!(await this.userIsInCompany(userId, companyId)))
+      throw new UnauthorizedException('You must be a member of the company');
+    return this.userRepository.findAllInCompany(companyId);
+  }
+
+  async getAllUsersInCompanyInternal(
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     return this.userRepository.findAllInCompany(companyId);
   }
 
