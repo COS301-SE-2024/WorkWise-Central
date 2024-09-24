@@ -170,15 +170,38 @@ export class JobRepository {
   //Specific endpoints
 
   async findAllForEmployee(employeeId: Types.ObjectId) {
-    const result = await this.jobModel.find({ $and: [{ 'assignedEmployees.employeeIds': employeeId }, isNotDeleted] });
+    const result = await this.jobModel.find({
+      $and: [
+        { $or: [{ 'assignedEmployees.employeeIds': employeeId }, { 'taskList.items.assignedEmployees': employeeId }] },
+        isNotDeleted,
+      ],
+    });
     console.log(result);
     return result;
+  }
+
+  async findAllForEmployees(employeeIds: Types.ObjectId[]) {
+    const filter = {
+      $and: [
+        {
+          $or: [
+            { 'assignedEmployees.employeeIds': { $in: employeeIds } },
+            { 'taskList.items.assignedEmployees': { $in: employeeIds } },
+          ],
+        },
+        isNotDeleted,
+      ],
+    };
+    return await this.jobModel.find(filter).lean().exec();
   }
 
   async findAllForEmployeeDetailed(employeeId: Types.ObjectId) {
     const fieldsToPopulate = ['assignedEmployees', 'assignedBy', 'clientId', 'comments'];
     const filter = {
-      $and: [{ 'assignedEmployees.employeeIds': employeeId }, isNotDeleted],
+      $and: [
+        { $or: [{ 'assignedEmployees.employeeIds': employeeId }, { 'taskList.items.assignedEmployees': employeeId }] },
+        isNotDeleted,
+      ],
     };
     return await this.jobModel.find(filter).populate(fieldsToPopulate).lean().exec();
   }
