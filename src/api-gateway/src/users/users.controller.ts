@@ -157,6 +157,25 @@ export class UsersController {
     }
   }
 
+  @ApiOperation({
+    summary: `Get all ${className}s in a company`,
+  })
+  @ApiOkResponse({
+    type: UserAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class in the specified company`,
+  })
+  @Get('all/company/:companyId')
+  async findAllUsersInCompany(@Headers() headers: any, @Param('companyId') companyId: string) {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(companyId)) {
+        throw new HttpException('Invalid Company ID', HttpStatus.BAD_REQUEST);
+      }
+      return { data: await this.usersService.getAllUsersInCompany(new Types.ObjectId(companyId)) };
+    } catch (Error) {
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiOperation({

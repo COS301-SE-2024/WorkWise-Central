@@ -209,7 +209,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit('update-chat', { Error: 'Chat not found' });
       return;
     }
-    this.server.to(payload.chatId.toString()).emit('typing', { name: user.profile.displayName });
+    this.server
+      .to(payload.chatId.toString())
+      .emit('typing', { chatId: payload.chatId, name: user.profile.displayName, userId: userId });
   }
 
   @SubscribeMessage('unread-messages')
