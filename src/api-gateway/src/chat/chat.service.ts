@@ -48,6 +48,19 @@ export class ChatService {
     const newMessage = new this.chatMessageModel(chatMessage);
     const result = await newMessage.save();
     this.updateChatB(await result.populate('userId'));
+    const chat = await this.chatModel.findById(addMessageDto.chatId).exec();
+    this.notificationService.create({
+      recipientIds: chat.participants,
+      message: {
+        title: `New Message in ${chat.name}`,
+        body: `${addMessageDto.textContent}`,
+        data: {
+          type: 'requestToJoin',
+          attachments: addMessageDto.attachments,
+        },
+      },
+      isJobRelated: false,
+    });
     return result;
   }
 

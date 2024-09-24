@@ -93,7 +93,10 @@ export class AdminService {
     const newRequest = new UserJoinRequest(company._id, desiredRole._id, userId, company.name, desiredRole.roleName);
     const savedReq = await this.adminRepository.saveRequest(newRequest);
 
-    const employees = await this.employeeService.findAllInCompany(requestToJoin.companyId);
+    const employees = await this.employeeService.findAllInCompanyWithPermission(
+      requestToJoin.companyId,
+      'company settings',
+    );
     //TODO: If they have company settings permissions
     //employees = employees.filter((x) => {x.permissionSuite.includes('can edit company')})
     const userIds: Types.ObjectId[] = [];
@@ -108,7 +111,7 @@ export class AdminService {
       throw new NotFoundException('User not found');
     }
 
-    await this.notificationService.create({
+    this.notificationService.create({
       recipientIds: userIds,
       message: {
         title: `New Request to join ${company.name}`,
@@ -409,7 +412,7 @@ export class AdminService {
       companyId: invite.companyId,
       newUserId: userId,
     });
-    await this.adminRepository.acceptInvite(invite.emailBeingInvited, invite.companyId);
+    this.adminRepository.acceptInvite(invite.emailBeingInvited, invite.companyId);
 
     return newJoinedCompany;
   }
@@ -442,7 +445,7 @@ export class AdminService {
     const invite = await this.adminRepository.findInviteById(rejectDto.inviteId);
     if (!invite) throw new NotFoundException('InviteId Invalid');
 
-    await this.adminRepository.rejectInvite(invite.emailBeingInvited, invite.companyId);
+    this.adminRepository.rejectInvite(invite.emailBeingInvited, invite.companyId);
     return true;
   }
 }
