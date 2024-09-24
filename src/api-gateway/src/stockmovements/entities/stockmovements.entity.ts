@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
-import { CreateStockMovementsDto } from '../dto/create-stockmovements.dto';
 
 export class InventoryItem {
   @ApiProperty()
@@ -37,14 +36,6 @@ export class EmployeeDetails {
 
 @Schema()
 export class StockMovements {
-  constructor(createStockMovementsDto: CreateStockMovementsDto) {
-    this.reason = createStockMovementsDto.reason;
-    this.movement = createStockMovementsDto.movement;
-    this.companyId = createStockMovementsDto.companyId;
-    this.movementDate = createStockMovementsDto.movementDate;
-    if (createStockMovementsDto.companyId) this.companyId = createStockMovementsDto.companyId;
-    this.createdAt = new Date();
-  }
   @ApiProperty()
   @Prop({ type: String, required: true })
   reason: string;
@@ -54,11 +45,11 @@ export class StockMovements {
   movement: number;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  @Prop({ type: EmployeeDetails, required: true })
   employee: EmployeeDetails;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  @Prop({ type: InventoryItem, required: true })
   inventoryItem: InventoryItem;
 
   @ApiHideProperty()

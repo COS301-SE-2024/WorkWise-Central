@@ -2,12 +2,17 @@
   <div>
     <v-row>
       <v-col class="d-flex justify-center">
-        <v-btn @click="toggleHistory" color="success" :icon="true">
-          <v-icon>
-            {{ showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye' }}
-          </v-icon>
-          {{ showHistory ? 'Hide History' : 'Show History' }}
-        </v-btn>
+<!--        <v-btn @click="toggleHistory" color="success" :icon="true">-->
+<!--          <v-icon>-->
+<!--            {{ showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye' }}-->
+<!--          </v-icon>-->
+<!--          {{ showHistory ? 'Hide History' : 'Show History' }}-->
+<!--        </v-btn>-->
+        <div class="pb-2">
+          <Button @click="toggleHistory" label="Show History" :icon="showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye'" :class="showHistory ? 'p-button-danger' : 'p-button-success'">
+          </Button>
+        </div>
+
       </v-col>
     </v-row>
     <v-card v-if="showHistory" height="auto" elevation="0">
@@ -44,6 +49,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
 import axios from 'axios'
+import Button from 'primevue/button'
 
 // Define the type for an event
 interface Event {
@@ -105,7 +111,7 @@ const refreshHistory = async () => {
   try {
     const res = await axios.get(`${apiUrl}job/id/${props.jobID}`)
     events.value = res.data.data.history
-    console.log('History updated:',res)
+    console.log('History updated:', res)
   } catch (error) {
     console.log(error)
   }

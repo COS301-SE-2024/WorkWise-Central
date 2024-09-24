@@ -44,7 +44,17 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeletePriority :tag-id="selectedItem.priorityTagId" @DeletedPriority="getPriorities" />
+                  <DeletePriority
+                    :tag-id="selectedItem.priorityTagId"
+                    :Disabled="
+                      selectedItem.label === 'Low' ||
+                      selectedItem.label === 'Medium' ||
+                      selectedItem.label === 'High'
+                        ? true
+                        : false
+                    "
+                    @DeletedPriority="getPriorities"
+                  />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -126,6 +136,8 @@ import DeletePriority from './DeletePriority.vue'
 import CreatePriority from './CreatePriority.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   data: () => ({
     headers: [
@@ -214,7 +226,6 @@ export default defineComponent({
   }),
   components: {
     DeletePriority,
-
     Toast,
     CreatePriority
   },
@@ -231,11 +242,11 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+      API_URL
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(
-          `${apiURL}job/tags/p/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/tags/p/${localStorage.getItem('currentCompany')}`,
           config
         )
         console.log(res)
@@ -276,10 +287,10 @@ export default defineComponent({
         }
       }
       const data = this.selectedItem
-      const apiURL = await this.getRequestUrl()
+      API_URL
       console.log(JSON.stringify(data))
       axios
-        .patch(`${apiURL}job/tags/p/`, data, config)
+        .patch(`${API_URL}job/tags/p/`, data, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({

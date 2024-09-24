@@ -18,7 +18,13 @@ import { ClientService } from '../client/client.service';
 import { JobRepository } from './job.repository';
 import { EmployeeService } from '../employee/employee.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { JobAssignDto, JobAssignGroupDto, jobAssignResultDto, TaskAssignDto } from './dto/assign-job.dto';
+import {
+  JobAssignDto,
+  JobAssignGroupDto,
+  jobAssignResultDto,
+  JobAssignTeamDto,
+  TaskAssignDto,
+} from './dto/assign-job.dto';
 import { JobTagRepository } from './job-tag.repository';
 import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
@@ -36,6 +42,8 @@ import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-
 import { ConvertItemToJobDto } from './dto/convert-item-to-job.dto';
 import { NotificationService } from '../notification/notification.service';
 import { Message } from '../notification/entities/notification.entity';
+import { EmailService } from '../email/email.service';
+import { TeamService } from '../team/team.service';
 
 @Injectable()
 export class JobService {
@@ -60,6 +68,12 @@ export class JobService {
 
     @Inject(forwardRef(() => NotificationService))
     private readonly notificationService: NotificationService,
+
+    @Inject(forwardRef(() => EmailService))
+    private readonly emailService: EmailService,
+
+    @Inject(forwardRef(() => TeamService))
+    private readonly teamService: TeamService,
   ) {}
 
   async create(userId: Types.ObjectId, createJobDto: CreateJobDto) {
@@ -96,6 +110,20 @@ export class JobService {
     console.log('createdJob', createdJob);
     const result = await this.jobRepository.save(createdJob);
     await this.assignEmployeesWithoutValidation(result._id, createJobDto.assignedEmployees.employeeIds);
+    if (result.clientId) {
+      const client = await this.clientService.getClientByIdInternal(result.clientId);
+      const companyName = await this.companyService.getCompanyNameById(client.details.companyId);
+      if (client.details.contactInfo.email != null) {
+        this.emailService.sendClientPortalLink(
+          client._id,
+          client.details.contactInfo.email,
+          client.details.firstName,
+          client.details.lastName,
+          companyName,
+          result.details.heading,
+        );
+      }
+    }
     return result;
   }
 
@@ -143,6 +171,20 @@ export class JobService {
         }
       }
       const updated = await this.jobRepository.update(id, updateJobDto);
+      if (updateJobDto.clientId) {
+        const client = await this.clientService.getClientByIdInternal(updated.clientId);
+        const companyName = await this.companyService.getCompanyNameById(client.details.companyId);
+        if (client.details.contactInfo.email != null) {
+          this.emailService.sendClientPortalLink(
+            client._id,
+            client.details.contactInfo.email,
+            client.details.firstName,
+            client.details.lastName,
+            companyName,
+            updated.details.heading,
+          );
+        }
+      }
       return await this.jobRepository.findById(updated._id);
     } catch (e) {
       throw new Error(e);
@@ -338,6 +380,52 @@ export class JobService {
     return this.jobRepository.findAllForEmployeeDetailed(employeeId);
   }
 
+  async assignTeam(userId: Types.ObjectId, assignDto: JobAssignTeamDto) {
+    const user = await this.usersService.getUserById(userId);
+    const job = await this.getJobById(assignDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+    if (!user.joinedCompanies.some((j) => j.companyId.toString() == job.companyId.toString())) {
+      throw new UnauthorizedException('User not in company');
+    }
+    const alreadyAssigned = job.assignedEmployees.teamIds.some((id) => id.toString() === assignDto.teamId.toString());
+    if (alreadyAssigned) throw new ConflictException('Team Already Assigned');
+
+    // Get team
+    const team = await this.teamService.findById(assignDto.teamId);
+    if (!team) throw new NotFoundException('Team not found');
+
+    const result = await this.jobRepository.assignTeam(assignDto.teamId, assignDto.jobId, team.teamMembers);
+    team.currentJobAssignments.push(job._id);
+    team.currentJobAssignments = [...new Set(team.currentJobAssignments)];
+    await this.employeeService.internalUpdate(team._id, {
+      currentJobAssignments: team.currentJobAssignments,
+    });
+    if (user) {
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned Team: ${team.teamName} to this job`;
+      this.jobRepository.addHistory(new History(event), result._id);
+      job.history.push(new History(event));
+    }
+
+    // Assign to each employee in team
+    this.assignEmployeesInTeam(team.teamMembers, job);
+
+    return job;
+  }
+
+  async unassignTeam(userId: Types.ObjectId, unassignDto: JobAssignTeamDto) {
+    const user = await this.usersService.getUserById(userId);
+    const job = await this.getJobById(unassignDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+    if (!user.joinedCompanies.some((j) => j.companyId.toString() == job.companyId.toString())) {
+      throw new UnauthorizedException('User not in company');
+    }
+
+    const teamMembers = (await this.teamService.findById(unassignDto.teamId))?.teamMembers;
+    if (!teamMembers) throw new NotFoundException('Team not found');
+
+    this.unassignEmployeesInternal(teamMembers, unassignDto.jobId);
+  }
+
   async assignEmployee(userId: Types.ObjectId, jobAssignDto: JobAssignDto) {
     ///Validation
     await this.userIdMatchesEmployeeId(userId, jobAssignDto.employeeId);
@@ -369,7 +457,43 @@ export class JobService {
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
+
+    const company = await this.companyService.getCompanyById(otherEmployee.companyId);
+    this.notificationService.create({
+      recipientIds: [otherEmployee.userId],
+      message: new Message(`New Job Assignment`, `You have been assigned to a new job: ${job.details.heading}`),
+      companyName: company?.name,
+      isJobRelated: true,
+    });
+
     return this.jobRepository.findById(result._id);
+  }
+
+  async assignEmployeesInTeam(members: Types.ObjectId[], job: Job & { _id: Types.ObjectId }) {
+    for (const memberId of members) {
+      if (job.assignedEmployees.employeeIds.some((emp) => emp._id.toString() === memberId.toString())) {
+        members = members.filter((m) => m.toString() !== memberId.toString());
+      }
+    }
+    /// Role-based stuff
+    //TODO: Implement later
+    await this.jobRepository.assignEmployees(members, job._id);
+    const company = await this.companyService.getCompanyById(job.companyId);
+
+    for (const member of members) {
+      const otherEmployee = await this.employeeService.findById(member);
+      const assignedJobs = otherEmployee.currentJobAssignments;
+      assignedJobs.push(job._id);
+      this.employeeService.internalUpdate(otherEmployee._id, {
+        currentJobAssignments: assignedJobs,
+      });
+      this.notificationService.create({
+        recipientIds: [otherEmployee.userId],
+        message: new Message(`New Job Assignment`, `You have been assigned to a new job: ${job.details.heading}`),
+        companyName: company?.name,
+        isJobRelated: true,
+      });
+    }
   }
 
   async assignEmployeeToTaskItem(userId: Types.ObjectId, taskAssignDto: TaskAssignDto) {
@@ -382,7 +506,7 @@ export class JobService {
     console.log(job);
 
     if (!job.taskList) {
-      throw new ConflictException('Tasklist is Empty');
+      throw new ConflictException('TaskList is Empty');
     }
 
     if (job.taskList) {
@@ -440,7 +564,7 @@ export class JobService {
     console.log(job);
 
     if (!job.taskList) {
-      throw new ConflictException('Tasklist is Empty');
+      throw new ConflictException('TaskList is Empty');
     }
 
     if (job.taskList) {
@@ -505,7 +629,7 @@ export class JobService {
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
     let assignedJobs = otherEmployee.currentJobAssignments;
     assignedJobs = assignedJobs.filter((j) => j.toString() !== job._id.toString());
-    await this.employeeService.internalUpdate(otherEmployee._id, {
+    this.employeeService.internalUpdate(otherEmployee._id, {
       currentJobAssignments: assignedJobs,
     });
     if (otherEmployee.userInfo) {
@@ -636,6 +760,30 @@ export class JobService {
     }
     return true;
   }
+
+  async unassignEmployeesInternal(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
+    const job = await this.getJobById(jobId);
+    for (const employeeId of employeeIds) {
+      const exists = await this.employeeService.employeeExists(employeeId);
+      if (!exists) {
+        throw new NotFoundException('Employee not found');
+      }
+    }
+
+    for (const employeeId of employeeIds) {
+      const isInJob = job.assignedEmployees.employeeIds.some((e) => e._id.toString() === employeeId.toString());
+
+      if (isInJob) {
+        this.jobRepository.unassignEmployee(employeeId, jobId);
+        const otherEmployee = await this.employeeService.findById(employeeId);
+        if (otherEmployee.userInfo) {
+          const event = `${otherEmployee?.userInfo?.firstName} ${otherEmployee?.userInfo?.surname} was unassigned from this job`;
+          this.jobRepository.addHistory(new History(event), jobId);
+        }
+      }
+    }
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   async getAllTagsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
@@ -1232,7 +1380,13 @@ export class JobService {
         `${client.details.firstName} ${client.details.lastName} has left a review on Job: ${updated.details.heading}`,
       );
       const allEmps = await this.getAllEmployeesRelatedToJob(jobId);
-      await this.notificationService.create({ recipientIds: allEmps, message: mes });
+      const company = await this.companyService.getCompanyById(updated.companyId);
+      await this.notificationService.create({
+        recipientIds: allEmps,
+        message: mes,
+        isJobRelated: true,
+        companyName: company.name,
+      });
     }
     return true;
   }
@@ -1254,6 +1408,6 @@ export class JobService {
     const finalStatus = await this.companyService.internalFindAllStatusesInCompany(client.details.companyId);
     console.log(finalStatus);
     const statusId = finalStatus.jobStatuses[finalStatus.jobStatuses.length - 1];
-    return this.jobRepository.findCompletedForClient(clientId, statusId);
+    return this.jobRepository.findCompletedForClient(clientId, statusId._id);
   }
 }

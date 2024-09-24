@@ -52,7 +52,7 @@ import {
   TagResponseDto,
   TagsAllResponseDto,
 } from './dto/job-responses.dto';
-import { JobAssignDto, JobAssignGroupDto, TaskAssignDto } from './dto/assign-job.dto';
+import { JobAssignDto, JobAssignGroupDto, JobAssignTeamDto, TaskAssignDto } from './dto/assign-job.dto';
 //import { UpdateProfilePicDto } from '../users/dto/update-user.dto';
 import { FileFieldsInterceptor /*, FileInterceptor*/ } from '@nestjs/platform-express';
 import { AddCommentDto, RemoveCommentDto, UpdateCommentDto } from './dto/job-comments.dto';
@@ -698,6 +698,40 @@ export class JobController {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.unassignEmployees(userId, jobAssignGroupDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'Assign a team to a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @Put('/team')
+  async assignTeam(@Headers() headers: any, @Body() assignTeamDto: JobAssignTeamDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.assignTeam(userId, assignTeamDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'Unassign a team from a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @Patch('/team')
+  async unassignTeam(@Headers() headers: any, @Body() assignTeamDto: JobAssignTeamDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.unassignTeam(userId, assignTeamDto),
       };
     } catch (e) {
       console.log(e);

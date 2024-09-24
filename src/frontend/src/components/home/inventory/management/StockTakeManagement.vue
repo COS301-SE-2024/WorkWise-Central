@@ -44,18 +44,12 @@
               :header-props="{ class: 'bg-secondRowColor h6' }"
               class="bg-cardColor"
             >
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-btn color="success" @click="showChart(item)" block>
-                  <v-icon icon="fa: fa-solid fa-chart-simple" color="success"></v-icon> Show Stock
-                  Chart
-                </v-btn>
-                <v-btn color="error" @click="selectItem(item)" block>
-                  <v-icon icon="fa: fa-solid fa-clipboard" color="error"></v-icon> Record Stock
-                </v-btn>
+              <template v-slot:[`item.currentStockLevel`]="{ item }">
+                <v-text-field type="number" v-model="item.currentStockLevel"> </v-text-field>
               </template>
             </v-data-table>
 
-            <v-btn color="success" block @click="saveAllStockTake">
+            <v-btn color="success" block @click="saveAllStockTake()">
               <v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon> Save
             </v-btn></v-card-text
           >
@@ -117,14 +111,14 @@
             ></v-text-field>
 
             <v-text-field
-              label="Current Stock Level"
+              label="Recorded Stock Level"
               v-model="selectedItem.currentStockLevel"
               type="number"
               :rules="currentStockLevelRules"
             ></v-text-field>
 
             <v-text-field
-              label="Reorder Level"
+              label="Current Stock Level"
               v-model="selectedItem.reorderLevel"
               type="number"
               :rules="reorderLevelRules"
@@ -165,20 +159,33 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <template>
+      <!-- Confirmation Dialog with PDF Preview -->
+      <v-dialog v-model="confirmDialog" max-width="800px">
+        <v-card>
+          <v-card-title class="headline">Update Inventory</v-card-title>
+          <v-card-text>
+            <p>Do you want to update the inventory table based on this stock take?</p>
+            <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="400px"></iframe>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" text @click="confirmUpdate(true)">Yes</v-btn>
+            <v-btn color="red darken-1" text @click="confirmUpdate(false)">No</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </template>
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import axios from 'axios'
 import Chart from 'primevue/chart'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-interface InventoryItem {
-  _id: string
-  name: string
-  currentStockLevel: number
-  updatedStock: number
-}
+import { API_URL } from '@/main'
+
 export default {
   data() {
     return {
@@ -191,9 +198,10 @@ export default {
       stockTakeDate: new Date(),
       headers: [
         { title: 'Name', value: 'name' },
-        { title: 'Cost Price', value: 'costPrice' },
-        { title: 'Current Stock Level', value: 'currentStockLevel' },
-        { title: 'Actions', value: 'actions', sortable: false }
+
+        { title: 'Current Stock Level', value:  'reorderLevel'},
+        { title: 'Recorded Stock Level', value: 'currentStockLevel' },
+        { title: '', value: 'actions', sortable: false }
       ],
       sortOptions: [
         { title: 'Name (A-Z)', value: 'name' },
@@ -209,53 +217,36 @@ export default {
         reorderLevel: 0,
         images: ''
       },
-      nameRules: [(v: string) => !!v || 'Name is required'],
-      descriptionRules: [(v: string) => !!v || 'Description is required'],
+      nameRules: [(v) => !!v || 'Name is required'],
+      descriptionRules: [(v) => !!v || 'Description is required'],
       costPriceRules: [
-        (v: string) => !!v || 'Cost Price is required',
-        (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number',
-        (v: string) => parseFloat(v) > 0 || 'Cost Price must be greater than 0',
-        (v: string) => !/^0\d/.test(v) || 'Cost Price cannot have leading zeros'
+        (v) => !!v || 'Cost Price is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Cost Price must be a valid number',
+        (v) => parseFloat(v) > 0 || 'Cost Price must be greater than 0',
+        (v) => !/^0\d/.test(v) || 'Cost Price cannot have leading zeros'
       ],
       currentStockLevelRules: [
-        (v: string) => !!v || 'Current Stock Level is required',
-        (v: string) =>
-          /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number',
-        (v: string) => !/^0\d/.test(v) || 'Current Stock Level cannot have leading zeros'
+        (v) => !!v || 'Recorded Stock Level is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Recorded Stock Level must be a valid number',
+        (v) => !/^0\d/.test(v) || 'Recorded Stock Level cannot have leading zeros'
       ],
       reorderLevelRules: [
-        (v: string) => !!v || 'Reorder Level is required',
-        (v: string) =>
-          /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Reorder Level must be a valid number',
-        (v: string) => !/^0\d/.test(v) || 'Reorder Level cannot have leading zeros'
+        (v) => !!v || 'Current Stock Level is required',
+        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Current Stock Level must be a valid number',
+        (v) => !/^0\d/.test(v) || 'Current Stock Level cannot have leading zeros'
       ],
       inventoryItems: [
-        {
-          _id: '1',
-          name: 'Item 1',
-          costPrice: 100,
-          currentStockLevel: 50
-        },
-        {
-          _id: '2',
-          name: 'Item 2',
-          costPrice: 150,
-          currentStockLevel: 30
-        },
-        {
-          _id: '3',
-          name: 'Item 3',
-          costPrice: 200,
-          currentStockLevel: 20
-        }
         // Add more items as needed
       ],
       chartDialog: false,
-      selectedItem: '' as any,
+      selectedItem: '',
       chartData: {
         labels: [],
         datasets: []
-      }
+      },
+      confirmDialog: false,
+      updateInventory: false,
+      pdfUrl: null
     }
   },
   components: {
@@ -269,7 +260,7 @@ export default {
     }
   },
   methods: {
-    async updateStock(item: InventoryItem) {
+    async updateStock(item) {
       this.isUpdating = true
       const config = {
         headers: {
@@ -282,9 +273,8 @@ export default {
         companyID: localStorage.getItem('currentCompany'),
         currentEmployee: localStorage.getItem('employeeId')
       }
-      const apiURL = await this.getRequestUrl()
       try {
-        await axios.patch(`${apiURL}inventory/${item._id}`, data, config).then(() => {
+        await axios.patch(`${API_URL}inventory/${item._id}`, data, config).then(() => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
@@ -300,7 +290,23 @@ export default {
         this.isUpdating = false
       }
     },
-    getRowProps(index: any) {
+    async createStockItem(item) {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      const apiUrl = await this.getRequestUrl()
+      const data = ''
+      try {
+        const response = await axios.post(`${apiUrl}stocktake/create`, data, config)
+        console.log('Stock take create:', response)
+      } catch (error) {
+        console.log('Failed to create stock: ', error)
+      }
+    },
+    getRowProps(index) {
       return {
         class: index % 2 === 0 ? 'bg-secondRowColor' : ''
       }
@@ -320,11 +326,15 @@ export default {
       this.resetForm()
     },
     async saveAllStockTake() {
+      this.generatePDFPreview()
+      this.confirmDialog = true
+    },
+    async generatePDFPreview() {
       const stockTakeData = {
-        date: this.currentDate,
+        date: new Date(this.currentDate).toISOString(),
         inventoryItems: this.filteredInventoryItems,
         companyID: localStorage.getItem('currentCompany'),
-        currentEmployee: localStorage.getItem('username') || 'John Doe' // Replace with actual employee name if available
+        currentEmployee: localStorage.getItem('username') || 'John Doe'
       }
 
       const doc = new jsPDF()
@@ -340,14 +350,14 @@ export default {
       doc.text(`Employee: ${stockTakeData.currentEmployee}`, 15, 40)
 
       // Create table headers
-      const headers = ['Item Name', 'Cost Price', 'Current Stock Level', 'Reorder Level']
+      const headers = ['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level']
 
       // Create table body data
       const body = stockTakeData.inventoryItems.map((item) => [
         item.name,
-        item.costPrice, // Formatting price
+        item.costPrice,
         item.currentStockLevel,
-        item.currentStockLevel + 30 // Example reorder level calculation
+        item.currentStockLevel + 30
       ])
 
       // Add table to the PDF
@@ -362,8 +372,41 @@ export default {
         margin: { top: 60 }
       })
 
-      // Save the PDF
-      doc.save(`stock_take_${stockTakeData.date}.pdf`)
+      // Generate Blob URL for PDF preview
+      const pdfBlob = doc.output('blob')
+      this.pdfUrl = URL.createObjectURL(pdfBlob)
+    },
+    async confirmUpdate(update) {
+      this.updateInventory = update;
+      this.confirmDialog = false;
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      };
+      const apiURL = await this.getRequestUrl();
+      const data = {
+        "currentEmployeeId": localStorage.getItem('employeeId'),
+        "companyId": localStorage.getItem('currentCompany'),
+        "date": new Date(this.currentDate).toISOString(),
+        "items": [],
+        "updateInventory": this.updateInventory
+      };
+      this.filteredInventoryItems.forEach((item) => {
+        data.items.push({
+          "inventoryId": item._id,
+          "recordedStockLevel": item.currentStockLevel
+        });
+      })
+      console.log('Data', data)
+      try {
+        const response = await axios.post(`${apiURL}stocktake/create`, data, config)
+        console.log('Response:', response)
+        console.log("Hello world!");
+      } catch (error) {
+        console.log('Failure to update stock take', error);
+      }
     },
 
     resetForm() {
@@ -376,17 +419,17 @@ export default {
         images: ''
       }
     },
-    selectItem(item: any) {
+    selectItem(item) {
       this.selectedItem = item
       this.showDialog = true
     },
-    handleImageUpload(event: Event) {
-      const target = event.target as HTMLInputElement
+    handleImageUpload(event) {
+      const target = event.target
       if (target.files && target.files[0]) {
-        const file: File = target.files[0]
+        const file = target.files[0]
         const reader = new FileReader()
 
-        reader.onload = (e: ProgressEvent<FileReader>) => {
+        reader.onload = (e) => {
           if (e.target && typeof e.target.result === 'string') {
             // this.selectItem.images = e.target.result
           }
@@ -394,7 +437,7 @@ export default {
         reader.readAsDataURL(file)
       }
     },
-    showChart(item: any) {
+    showChart(item) {
       console.log('Showing chart for:', item)
       this.selectedItem = item
 
@@ -403,14 +446,14 @@ export default {
 
       // Prepare the chart data
       this.chartData = {
-        labels: ['Current Stock Level', 'Suggested Reorder Level'] as any,
+        labels: ['Recorded Stock Level', 'Suggested Current Stock Level'],
         datasets: [
           {
             label: item.name,
             backgroundColor: '#42A5F5',
             data: [item.currentStockLevel, reorderLevel]
           }
-        ] as any
+        ]
       }
 
       // Show the chart dialog
@@ -429,8 +472,8 @@ export default {
 
         // Create the table data
         const tableData = [
-          ['Current Stock Level', item.currentStockLevel.toString()],
-          ['Suggested Reorder Level', reorderLevel.toString()]
+          ['Recorded Stock Level', item.currentStockLevel.toString()],
+          ['Suggested Current Stock Level', reorderLevel.toString()]
         ]
 
         // Add the table to the PDF
@@ -487,7 +530,7 @@ export default {
       })
 
       autoTable(doc, {
-        head: [['Item Name', 'Cost Price', 'Current Stock Level', 'Reorder Level', 'Difference']],
+        head: [['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level', 'Difference']],
         body: tableBody,
         startY: 40,
         theme: 'grid'
@@ -506,7 +549,7 @@ export default {
 
       // doc.text(`Total Items: ${totalItems}`, 10, doc.autoTable.previous.finalY + 10)
       // doc.text(`Total Current Stock: ${totalStock}`, 10, doc.autoTable.previous.finalY + 17)
-      // doc.text(`Total Reorder Level: ${totalReorder}`, 10, doc.autoTable.previous.finalY + 24)
+      // doc.text(`Total Current Stock Level: ${totalReorder}`, 10, doc.autoTable.previous.finalY + 24)
 
       // Save the PDF
       doc.save(`stock_take_${localStorage.getItem('currentCompanyName')}_${this.currentDate}.pdf`)
@@ -518,10 +561,9 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
 
       try {
-        await axios.post(`${apiURL}stocktake`, stockTakeData, config).then(() => {
+        await axios.post(`${API_URL}stocktake`, stockTakeData, config).then(() => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
@@ -539,7 +581,7 @@ export default {
       )
       if (confirmed) {
         for (const item of this.filteredInventoryItems) {
-          await this.updateStock(item as any)
+          await this.updateStock(item)
         }
       }
       // Generate and download the report
@@ -556,10 +598,9 @@ export default {
           currentEmployee: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}inventory/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}inventory/all/${localStorage.getItem('employeeId')}`,
           config
         )
         this.inventoryItems = response.data.data
@@ -567,7 +608,7 @@ export default {
         console.error(error)
       }
     },
-    async isLocalAvailable(localUrl: string) {
+    async isLocalAvailable(localUrl) {
       try {
         const res = await axios.get(localUrl)
         return res.status < 300 && res.status > 199

@@ -95,82 +95,6 @@
               </v-card>
             </v-tab-item>
 
-            <v-tab-item v-if="currentTab === 'Recently Left Companies'">
-              <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
-                <v-card-title>
-                  <v-row align="center" justify="space-between">
-                    <v-col cols="12" lg="4" class="d-flex justify-start align-center">
-                      <v-icon icon="fa: fa-solid fa-building"></v-icon>
-                      <v-label
-                        class="ms-2 h4 font-family-Nunito text-headingTextColor"
-                        height="auto"
-                        width="auto"
-                        >Recently Left Companies</v-label
-                      >
-                    </v-col>
-
-                    <v-col cols="12" lg="4" class="d-flex justify-center">
-                      <v-text-field
-                        v-model="search"
-                        density="compact"
-                        label="Search"
-                        prepend-inner-icon="mdi-magnify"
-                        variant="outlined"
-                        flat
-                        color="primary"
-                        style="
-                          font-family: 'Lato', sans-serif;
-                          font-size: 15px;
-                          font-weight: lighter;
-                        "
-                        hide-details
-                        single-line
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" lg="4">
-                      <RegisterCompanyModal :buttonColor="'secondary'"
-                    /></v-col>
-                  </v-row>
-                </v-card-title>
-                <v-card-text>
-                  <v-divider></v-divider>
-                  <v-data-table
-                    :items="leftCompanies"
-                    :headers="leftCompanyHeaders"
-                    height="auto"
-                    rounded="xl"
-                    class="bg-cardColor"
-                    :row-props="getRowProps"
-                  >
-                    <template #[`item.actions`]="{ item }">
-                      <v-menu max-width="500px">
-                        <template v-slot:activator="{ props }">
-                          <v-btn rounded="xl" variant="plain" v-bind="props">
-                            <v-icon color="primary">mdi-dots-horizontal</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list>
-                          <v-list-item>
-                            <v-btn @click="rejoinCompany(item)" color="success">
-                              <v-icon left color="success">{{
-                                'fa: fa-solid fa-exchange-alt'
-                              }}</v-icon>
-                              Rejoin the company
-                            </v-btn></v-list-item
-                          >
-                          <v-list-item>
-                            <v-btn color="red" @click="permanentlyLeaveCompany(item)">
-                              <v-icon left color="red">{{ 'fa: fa-solid fa-sign-out-alt' }}</v-icon>
-                              Permanently leave the company
-                            </v-btn></v-list-item
-                          >
-                        </v-list>
-                      </v-menu>
-                    </template>
-                  </v-data-table></v-card-text
-                >
-              </v-card>
-            </v-tab-item>
             <v-tab-item v-if="currentTab === 'Company Invites'">
               <InvitePage />
             </v-tab-item>
@@ -181,9 +105,7 @@
       <v-dialog v-model="confirmLeaveDialog" max-width="500px">
         <v-card class="bg-cardColor">
           <v-card-title class="headline">Confirm Leave</v-card-title>
-          <v-card-text>
-            Are you sure you want to leave the company?
-          </v-card-text>
+          <v-card-text> Are you sure you want to leave the company? </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" @click="confirmLeaveDialog = false">Cancel</v-btn>
@@ -203,6 +125,7 @@ import InvitePage from '../user/InvitePage.vue'
 import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 // Interfaces
 interface Company {
@@ -215,7 +138,7 @@ interface Company {
 const toast = useToast()
 const search = ref('')
 const isDarkMode = localStorage.getItem('theme') === 'true'
-const tabs = ['Current Companies', 'Recently Left Companies', 'Company Invites']
+const tabs = ['Current Companies', 'Company Invites']
 const currentTab = ref('Current Companies')
 const newCompanyCode = ref('')
 const companyCodeRules = [(v: string) => !!v || 'Company code is required']
@@ -240,8 +163,8 @@ const leftCompanyHeaders = [
 const companies = ref<Company[]>([])
 
 // API URLs and configs
-const localUrl = 'http://localhost:3000/'
-const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
+// const localUrl = API_URL
+// const remoteUrl = API_URL
 const config = {
   headers: {
     'Content-Type': 'application/json',
@@ -250,19 +173,19 @@ const config = {
 }
 
 // Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status >= 200 && res.status < 300
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
+// const isLocalAvailable = async (url: string): Promise<boolean> => {
+//   try {
+//     const res = await axios.get(url)
+//     return res.status >= 200 && res.status < 300
+//   } catch (error) {
+//     return false
+//   }
+// }
+//
+// const getRequestUrl = async (): Promise<string> => {
+//   const localAvailable = await isLocalAvailable(localUrl)
+//   return localAvailable ? localUrl : remoteUrl
+// }
 
 const getRowProps = ({ index }: any) => ({
   class: index % 2 ? 'bg-secondRowColor' : ''
@@ -274,9 +197,8 @@ const changeTab = (tab: string) => {
 
 // Company management actions
 const setUserCompanies = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
+    const response = await axios.get(`${API_URL}users/id/${localStorage.getItem('id')}`, config)
     if (response.status >= 200 && response.status < 300) {
       const companiesData = response.data.data.joinedCompanies
       console.log('Company data:', companiesData)
@@ -302,7 +224,7 @@ const leaveCompany = async (company: Company) => {
   console.log('Leaving company:', company.name)
 
   // Ensure the company exists in the joinedCompanies array
-  const companyIndex = joinedCompanies.value.findIndex(c => c.companyId === company.companyId)
+  const companyIndex = joinedCompanies.value.findIndex((c) => c.companyId === company.companyId)
   if (companyIndex === -1) {
     console.error('Company not found in joined companies')
     return
@@ -316,14 +238,13 @@ const leaveCompany = async (company: Company) => {
     leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
   }, 30000)
 
-  const apiUrl = await getRequestUrl()
   try {
     const body = {
       currentEmployee: company.employeeId,
       companyToLeaveId: company.companyId,
       reason: ''
     }
-    const response = await axios.patch(`${apiUrl}company/leave/`, body, config)
+    const response = await axios.patch(`${API_URL}company/leave/`, body, config)
     if (response.status >= 200 && response.status < 300) {
       leaveCompanyToast(company.name)
       if (joinedCompanies.value.length > 0) {
@@ -386,9 +307,8 @@ const switchCompany = async (company: Company) => {
   localStorage.setItem('currentCompany', company.companyId)
   localStorage.setItem('employeeId', company.employeeId)
   localStorage.setItem('currentCompanyName', company.name)
-  const apiUrl = getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}employee/id/${company.employeeId}`, config)
+    const response = await axios.get(`${API_URL}employee/id/${company.employeeId}`, config)
     console.log('Returned employee', response)
     // const roleId = response.data.data.role.roleId
     // localStorage.setItem('roleId', roleId)
@@ -413,31 +333,59 @@ const leaveCompanyToast = (companyName: string) => {
 }
 
 const leaveCompanyFailureToast = (companyName: string) => {
-  toast.add({ severity: 'error', summary: 'Failed to Leave Company', detail: `Failed to leave ${companyName}` })
+  toast.add({
+    severity: 'error',
+    summary: 'Failed to Leave Company',
+    detail: `Failed to leave ${companyName}`
+  })
 }
 
 const permanentlyLeaveCompanyToast = (companyName: string) => {
-  toast.add({ severity: 'warn', summary: 'Company Permanently Left', detail: `You have permanently left ${companyName}` })
+  toast.add({
+    severity: 'warn',
+    summary: 'Company Permanently Left',
+    detail: `You have permanently left ${companyName}`
+  })
 }
 
 const permanentlyLeaveCompanyFailureToast = (companyName: string) => {
-  toast.add({ severity: 'error', summary: 'Failed to Permanently Leave Company', detail: `Failed to permanently leave ${companyName}` })
+  toast.add({
+    severity: 'error',
+    summary: 'Failed to Permanently Leave Company',
+    detail: `Failed to permanently leave ${companyName}`
+  })
 }
 
 const rejoinCompanyToast = (companyName: string) => {
-  toast.add({ severity: 'success', summary: 'Company Rejoined', detail: `You have rejoined ${companyName}` })
+  toast.add({
+    severity: 'success',
+    summary: 'Company Rejoined',
+    detail: `You have rejoined ${companyName}`
+  })
 }
 
 const rejoinCompanyFailureToast = (companyName: string) => {
-  toast.add({ severity: 'error', summary: 'Failed to Rejoin Company', detail: `Failed to rejoin ${companyName}` })
+  toast.add({
+    severity: 'error',
+    summary: 'Failed to Rejoin Company',
+    detail: `Failed to rejoin ${companyName}`
+  })
 }
 
 const switchCompanyToast = (companyName: string) => {
-  toast.add({ severity: 'success', summary: 'Company Switched', detail: `Switched to ${companyName}` })
+  toast.add({
+    severity: 'success',
+    summary: 'Company Switched',
+    detail: `Switched to ${companyName}`
+  })
 }
 
 const switchCompanyFailureToast = (companyName: string) => {
-  toast.add({ severity: 'error', summary: 'Failed to Switch Company', detail: `Failed to switch to ${companyName}` })
+  toast.add({
+    severity: 'error',
+    summary: 'Failed to Switch Company',
+    detail: `Failed to switch to ${companyName}`
+  })
 }
 
 // Lifecycle hooks

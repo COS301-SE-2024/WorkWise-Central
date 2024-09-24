@@ -72,6 +72,7 @@ import { ref, defineProps } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 const fileDialog = ref<boolean>(false)
 const selectedFiles = ref<File[]>([])
@@ -140,11 +141,10 @@ const uploadFileInput = async (): Promise<string> => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   await processSelectedFiles()
 
   try {
-    const response = await axios.patch(`${apiUrl}job/${props.jobID}`, recordedDetails, config)
+    const response = await axios.patch(`${API_URL}job/${props.jobID}`, recordedDetails, config)
     if (response.status < 300 && response.status > 199) {
       showImageUploadSuccess()
     } else {

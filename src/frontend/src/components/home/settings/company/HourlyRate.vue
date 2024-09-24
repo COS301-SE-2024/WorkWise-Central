@@ -33,7 +33,7 @@
               class="bg-cardColor"
             >
               <template v-slot:[`item.actions`]="{ item }">
-                <v-btn @click="openRoleDialog(item)" color="primary">
+                <v-btn @click="openEmployeeDialog(item)" color="primary">
                   <v-icon>mdi-dots-horizontal</v-icon></v-btn
                 >
               </template>
@@ -41,7 +41,12 @@
           >
 
           <v-tab-item v-if="currentTab === 'Roles'">
-            <v-data-table :headers="roleHeaders" :items="roles" item-key="id" class="bg-cardColor">
+            <v-data-table
+              :headers="roleHeaders"
+              :items="roleUpdates"
+              item-key="id"
+              class="bg-cardColor"
+            >
               <template v-slot:[`item.actions`]="{ item }">
                 <v-btn @click="openRoleDialog(item)" color="primary">
                   <v-icon color="primary">mdi-dots-horizontal</v-icon></v-btn
@@ -59,12 +64,12 @@
         <v-card-title>Edit Employee's Hourly Rate</v-card-title>
         <v-card-subtitle>
           <v-text-field
-            v-model="currentEmployee.firstName"
+            v-model="currentEmployee.userInfo.firstName"
             label="First Name"
             readonly
           ></v-text-field>
           <v-text-field
-            v-model="currentEmployee.lastName"
+            v-model="currentEmployee.userInfo.surname"
             label="Last Name"
             readonly
           ></v-text-field>
@@ -77,12 +82,12 @@
         <v-card-actions>
           <v-container
             ><v-row
-              ><v-col cols="12" lg="6" order="last" order-lg="last"
-                ><v-btn @click="saveEmployeeChanges" block
+              ><v-col cols="12" lg="6" order="first" order-lg="last"
+                ><v-btn @click="updateHourlyRateEmployee" block color="success"
                   ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
                 ></v-col
               ><v-col cols="12" lg="6"
-                ><v-btn @click="employeeDialog = false" block
+                ><v-btn @click="employeeDialog = false" block color="error"
                   ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
                 ></v-col
               ></v-row
@@ -126,6 +131,8 @@
 
 <script lang="ts">
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default {
   name: 'HourlyRate',
 
@@ -134,8 +141,8 @@ export default {
       currentTab: 'Employees',
       tabs: ['Employees', 'Roles'],
       employeeHeaders: [
-        { title: 'First Name', value: 'firstName' },
-        { title: 'Last Name', value: 'lastName' },
+        { title: 'First Name', value: 'userInfo.firstName' },
+        { title: 'Last Name', value: 'userInfo.surname' },
         { title: 'Hourly Rate', value: 'hourlyRate' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
@@ -218,6 +225,28 @@ export default {
           console.log(error)
         })
     },
+    async updateHourlyRateEmployee() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          currentEmployeeId: localStorage.getItem('employeeId'),
+          hourlyRate: this.currentEmployee.hourlyRate
+        }
+      }
+      try {
+        const response = await axios.patch(
+          `${API_URL}employee/${this.currentEmployee.employeeId}`,
+          config
+        )
+        console.log(response.data.data)
+        this.employees = response.data.data
+      } catch (error) {
+        console.error(error)
+      }
+    },
     async getEmployees() {
       const config = {
         headers: {
@@ -228,13 +257,12 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        console.log(response.data.data[0].role)
+        console.log(response.data.data)
         this.employees = response.data.data
       } catch (error) {
         console.error(error)
@@ -256,6 +284,10 @@ export default {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    this.getEmployees()
+    this.getRoles()
   }
 }
 </script>

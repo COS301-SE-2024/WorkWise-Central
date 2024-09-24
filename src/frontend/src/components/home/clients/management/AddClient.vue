@@ -265,6 +265,7 @@ import axios from 'axios'
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 
 interface ContactInfo {
   email?: string
@@ -524,9 +525,8 @@ export default defineComponent({
     async handleSubmission() {
       console.log(JSON.stringify(this.req_obj))
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
       axios
-        .post(apiURL + 'client/create', this.req_obj, config)
+        .post(API_URL + 'client/create', this.req_obj, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({
@@ -540,7 +540,9 @@ export default defineComponent({
             this.addDialog = false
             this.isDeleting = false
             this.$emit('createClient', res.data.data)
-          }, 1500)
+            this.resetFields()
+            this.$emit('close')
+          }, 1000)
         })
         .catch((res) => {
           console.log('Client creation failed')
@@ -558,6 +560,31 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    resetFields() {
+      this.req_obj = {
+        employeeId: localStorage['employeeId'],
+        details: {
+          firstName: '',
+          lastName: '',
+          preferredLanguage: '',
+          contactInfo: {
+            email: '',
+            phoneNumber: ''
+          },
+          address: {
+            street: '',
+            suburb: '',
+            city: '',
+            province: '',
+            postalCode: '',
+            complex: '',
+            houseNumber: ''
+          },
+          companyId: localStorage['currentCompany'],
+          idNumber: ''
+        }
+      } as RequestObject
     }
   },
   mounted() {

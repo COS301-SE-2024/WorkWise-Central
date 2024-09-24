@@ -1,3 +1,4 @@
+import { InventoryUsedService } from './../inventory-used/inventory-used.service';
 import { JobService } from './../job/job.service';
 import { EmployeeService } from './../employee/employee.service';
 import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { StockTakeService } from '../stocktake/stocktake.service';
 import { StockMovementsService } from '../stockmovements/stockmovements.service';
 import { CreateStockMovementsDto } from '../stockmovements/dto/create-stockmovements.dto';
 import { ListOfUpdatesForUsedInventory, ListOfUsedInventory } from './dto/use-inventory.dto';
+import { CreateInventoryUsedDto } from '../inventory-used/dto/create-inventory-used.dto';
 
 @Injectable()
 export class InventoryService {
@@ -37,6 +39,9 @@ export class InventoryService {
 
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
+
+    @Inject(forwardRef(() => InventoryUsedService))
+    private readonly inventoryUsedService: InventoryUsedService,
   ) {}
 
   async validateCreateInventory(inventory: CreateInventoryDto) {
@@ -109,6 +114,16 @@ export class InventoryService {
     const employee = await this.employeeService.findById(listOfUsedInventory.currentEmployeeId);
     const job = await this.jobService.getJobById(listOfUsedInventory.jobId);
     for (const item of listOfUsedInventory.listOfUsedInventory) {
+      //creating a inventory used record
+      const inventoryUsedDto = new CreateInventoryUsedDto();
+      inventoryUsedDto.companyId = listOfUsedInventory.companyId;
+      inventoryUsedDto.jobId = listOfUsedInventory.jobId;
+      inventoryUsedDto.employeeId = listOfUsedInventory.currentEmployeeId;
+      inventoryUsedDto.inventoryId = item.inventoryId;
+      inventoryUsedDto.amount = item.amountUsed;
+      await this.inventoryUsedService.create(inventoryUsedDto);
+
+      //updating the inventory record
       const inventory = await this.findById(item.inventoryId);
       const dto = new ExternalInventoryUpdateDto();
       dto.currentEmployeeId = listOfUsedInventory.currentEmployeeId;
@@ -122,6 +137,12 @@ export class InventoryService {
     const employee = await this.employeeService.findById(listOfUsedInventory.currentEmployeeId);
     const job = await this.jobService.getJobById(listOfUsedInventory.jobId);
     for (const item of listOfUsedInventory.listOfUsedInventory) {
+      //updating the inventory used record
+      const updateInventoryUsedDto = new CreateInventoryUsedDto();
+      updateInventoryUsedDto.amount = item.changeInAmount;
+      await this.inventoryUsedService.update(item.inventoryUsedId, updateInventoryUsedDto);
+
+      //updating the inventory record
       const inventory = await this.findById(item.inventoryId);
       const dto = new ExternalInventoryUpdateDto();
       dto.currentEmployeeId = listOfUsedInventory.currentEmployeeId;
@@ -133,24 +154,53 @@ export class InventoryService {
   }
 
   async update(id: Types.ObjectId, updateInventoryDto: ExternalInventoryUpdateDto) {
+    console.log('In update inventory');
+    const validation = await this.validateUpdateInventory(id);
+    if (!validation.isValid) {
+      console.log('validation failed');
+      throw new Error(validation.message);
+    }
+    const inventory = await this.findById(id);
+    console.log(
+      'updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel: ',
+      updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel,
+    );
+    if (
+      updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel > 0 ||
+      updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel < 0
+    ) {
+      const dto = new CreateStockMovementsDto();
+      dto.movementDate = new Date();
+      if (updateInventoryDto.updateInventoryDto.reason) {
+        dto.reason = updateInventoryDto.updateInventoryDto.reason;
+      } else {
+        dto.reason = 'Inventory Update';
+      }
+      if (updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel > 0) {
+        dto.movement = updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel;
+      }
+      if (updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel < 0) {
+        dto.movement = -(updateInventoryDto.updateInventoryDto.currentStockLevel - inventory.currentStockLevel);
+      }
+      dto.companyId = new Types.ObjectId(inventory.companyId.toString());
+      dto.employeeId = new Types.ObjectId(updateInventoryDto.currentEmployeeId.toString());
+      dto.inventoryId = new Types.ObjectId(id.toString());
+
+      console.log('dto for stockmovements: ', dto);
+      await this.stockMovementsService.create(dto);
+    }
+
+    if (updateInventoryDto.updateInventoryDto.name) {
+      await this.stockTakeService.updateInventoryReference(id, updateInventoryDto.updateInventoryDto.name);
+    }
+    return await this.inventoryRepository.update(id, updateInventoryDto.updateInventoryDto);
+  }
+
+  async updateWithoutMovements(id: Types.ObjectId, updateInventoryDto: ExternalInventoryUpdateDto) {
     const validation = await this.validateUpdateInventory(id);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
-    const inventory = await this.findById(id);
-    const dto = new CreateStockMovementsDto();
-    dto.companyId = inventory.companyId;
-    dto.inventoryId = id;
-    dto.movementDate = new Date();
-    dto.employeeId = updateInventoryDto.currentEmployeeId;
-    if (updateInventoryDto.updateInventoryDto.reason) {
-      dto.reason = updateInventoryDto.updateInventoryDto.reason;
-    } else {
-      dto.reason = 'Inventory Update';
-    }
-
-    await this.stockMovementsService.create(dto);
-
     if (updateInventoryDto.updateInventoryDto.name) {
       await this.stockTakeService.updateInventoryReference(id, updateInventoryDto.updateInventoryDto.name);
     }

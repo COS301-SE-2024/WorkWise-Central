@@ -73,7 +73,7 @@ export class JobAssignTeamDto {
 
   @IsNotEmpty()
   @IsMongoId({ each: true })
-  teamIds: Types.ObjectId[];
+  teamId: Types.ObjectId;
 
   @IsNotEmpty()
   @IsMongoId()

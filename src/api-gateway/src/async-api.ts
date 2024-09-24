@@ -1,3 +1,4 @@
+/*
 import { AsyncApiDocumentBuilder, AsyncApiModule } from 'nestjs-asyncapi';
 
 const DOC_RELATIVE_PATH = '/ws-documentation';
@@ -14,3 +15,4 @@ export const createAsyncapiDocs = async (app: any) => {
 
   await AsyncApiModule.setup(DOC_RELATIVE_PATH, app, asyncapiDocument);
 };
+*/

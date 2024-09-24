@@ -48,13 +48,13 @@
 <script>
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
+
 export default {
   name: 'DeleteClient',
   props: {
-
     client_id: Number,
     client: Object
-  
   },
   components: { Toast },
   data() {
@@ -96,11 +96,10 @@ export default {
       }
 
       try {
-        const apiURL = await this.getRequestUrl()
         console.log(this.client_id)
         this.isDeleting = true // Indicate the start of the deletion process
 
-        await axios.delete(`${apiURL}client/delete/`, config).then((response) => {
+        await axios.delete(`${API_URL}client/delete/`, config).then((response) => {
           console.log(response)
 
           this.$toast.add({

@@ -1,13 +1,14 @@
 <template>
   <v-select
-    v-model="selectedStatus"
-    label="Select"
-    :items="statusItems"
-    item-value="_id"
-    item-title="status"
-    variant="solo"
-    color="primary"
-    item-text="status"
+      v-model="selectedStatus"
+      label="Select"
+      :items="statusItems"
+      item-value="_id"
+      item-title="status"
+      variant="solo"
+      color="primary"
+      item-text="status"
+      @update:modelValue="updateStatus"
   >
     <template #selection="{ item }">
       <v-chip :style="{ backgroundColor: item.raw.colour, color: 'white' }">
@@ -15,16 +16,11 @@
       </v-chip>
     </template>
   </v-select>
-  <v-btn color="success" @click="updateStatus">
-    <v-icon left>{{'fa: fa-solid fa-sync'}}</v-icon>
-    Update Status
-  </v-btn>
 </template>
 
 <script setup lang="ts">
 import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
-
 
 interface Status {
   _id: string
@@ -39,7 +35,7 @@ const config = {
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
 }
-const props = defineProps<{jobID: string, status:Status}>()
+const props = defineProps<{ jobID: string; status: Status }>()
 const statusItems = ref<Status[]>([])
 const selectedStatus = ref<Status>(props.status)
 
@@ -65,7 +61,10 @@ const getRequestUrl = async (): Promise<string> => {
 const getAllStatuses = async () => {
   const url = await getRequestUrl()
   try {
-    const response = await axios.get(`${url}job/status/all/${localStorage.getItem('currentCompany')}`, config)
+    const response = await axios.get(
+      `${url}job/status/all/${localStorage.getItem('currentCompany')}`,
+      config
+    )
     statusItems.value = response.data.data
     console.log('Status request:', response)
   } catch (error) {
@@ -74,10 +73,12 @@ const getAllStatuses = async () => {
 }
 
 const updateStatus = async () => {
+  console.log('Update status')
   const apiUrl = await getRequestUrl()
   try {
     const response = await axios.patch(
-      `${apiUrl}job/update/${props.jobID}`, {status: selectedStatus.value},
+      `${apiUrl}job/update/${props.jobID}`,
+      { status: selectedStatus.value },
       config
     )
     console.log('Status update:', response)

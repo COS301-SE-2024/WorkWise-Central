@@ -8,11 +8,11 @@
     </v-row>
     <v-container class="d-flex flex-column align-center justify-center">
       <v-row>
-        <v-col cols="12" md="3" class="text-center" sm="12" order-sm="1" order-md="0" order="1">
+        <v-col cols="12" md="5" class="text-center" sm="12" order-sm="1" order-md="0" order="1">
           <userAvatar ref="UserAvatar" />
         </v-col>
         <!-- Personal Information -->
-        <v-col cols="12" md="5" order-sm="2" order-md="1" order="2">
+        <v-col cols="12" md="7" order-sm="2" order-md="1" order="2">
           <v-form ref="form" @submit.prevent>
             <v-row>
               <!-- Personal Information Header -->
@@ -177,10 +177,6 @@
               <v-btn color="primary" @click="submitForm">Update Profile</v-btn>
             </div>
           </v-form>
-        </v-col>
-        <!-- This should not be visible for       -->
-        <v-col cols="12" md="4" order-sm="0" order-md="2" order="0" class="pt-8">
-          <settingsMenu />
         </v-col>
       </v-row>
     </v-container>

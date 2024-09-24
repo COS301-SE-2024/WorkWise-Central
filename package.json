@@ -11,6 +11,7 @@
     "concurrently": "^8.2.2",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
+    "vite-plugin-pwa": "^0.20.5",
     "vuepress": "^2.0.0-rc.13"
   },
   "scripts": {
@@ -18,5 +19,9 @@
     "docs:build": "vuepress build docs",
     "start:dev": "concurrently \"cd src/frontend && npm run dev\" \"cd src/api-gateway && npm run start:dev\"",
     "installAll": "npm install && cd src/api-gateway && npm install && cd ../frontend && npm install && cd ../../"
+  },
+  "dependencies": {
+    "https-localhost": "^4.7.1",
+    "vue-material-design-icons": "^5.3.0"
   }
 }

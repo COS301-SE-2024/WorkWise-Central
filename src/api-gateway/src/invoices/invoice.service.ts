@@ -11,6 +11,7 @@ import { ClientService } from '../client/client.service';
 import { InventoryService } from '../inventory/inventory.service';
 import { TimeTrackerService } from '../time-tracker/time-tracker.service';
 import { EmployeeService } from '../employee/employee.service';
+import { InventoryUsedService } from '../inventory-used/inventory-used.service';
 
 @Injectable()
 export class InvoiceService {
@@ -35,6 +36,9 @@ export class InvoiceService {
 
     @Inject(forwardRef(() => EmployeeService))
     private readonly employeeService: EmployeeService,
+
+    @Inject(forwardRef(() => InventoryUsedService))
+    private readonly inventoryUsedService: InventoryUsedService,
   ) {}
 
   async validateCreateInvoice(Invoice: CreateInvoiceDto) {
@@ -48,10 +52,10 @@ export class InvoiceService {
       return new ValidationResult(false, `Job not found`);
     }
 
-    //Checking that the items exist
-    if (Invoice.inventoryItems.length === 0 && Invoice.laborItems.length === 0) {
-      return new ValidationResult(false, `Items not found`);
-    }
+    // //Checking that the items exist
+    // if (Invoice.inventoryItems.length === 0 && Invoice.laborItems.length === 0) {
+    //   return new ValidationResult(false, `Items not found`);
+    // }
 
     //checking that the client exists
     if (!(await this.clientService.getClientByIdInternal(Invoice.clientId))) {
@@ -62,7 +66,9 @@ export class InvoiceService {
   }
 
   async create(createInvoiceDto: CreateInvoiceDto) {
+    console.log('createInvoiceDto: ', createInvoiceDto);
     const validation = await this.validateCreateInvoice(createInvoiceDto);
+    console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
@@ -90,11 +96,12 @@ export class InvoiceService {
     let total = 0;
 
     //Adding the inventory items used for the job
-    for (const inventory of job.recordedDetails.inventoryUsed) {
-      const inventoryItem = await this.inventoryService.findById(inventory.inventoryItemId);
+    const inventoryUsedList = await this.inventoryUsedService.findAllForJob(jobId);
+    for (const inventoryUsed of inventoryUsedList) {
+      const inventoryItem = await this.inventoryService.findById(inventoryUsed.inventoryId);
       const item = new Items();
-      item.description = inventory.inventoryItemName;
-      item.quantity = inventory.quantityUsed;
+      item.description = inventoryItem.name;
+      item.quantity = inventoryUsed.amount;
       if (inventoryItem.salePrice) {
         item.unitPrice = inventoryItem.salePrice;
       } else if (inventoryItem.costPrice) {
@@ -130,6 +137,22 @@ export class InvoiceService {
       throw new Error('CompanyId does not exist');
     }
     return await this.invoiceRepository.findAllInCompany(companyId);
+  }
+
+  async detailedFindAllInCompany(companyId: Types.ObjectId) {
+    //checking if the company exist
+    if (!(await this.companyService.companyIdExists(companyId))) {
+      throw new Error('CompanyId does not exist');
+    }
+    return await this.invoiceRepository.detailedFindAllInCompany(companyId);
+  }
+
+  async findAllForClient(clientId: Types.ObjectId) {
+    //checking if the company exist
+    if (!(await this.clientService.clientExists(clientId))) {
+      throw new Error('CompanyId does not exist');
+    }
+    return await this.invoiceRepository.findAllForClient(clientId);
   }
 
   async findById(id: Types.ObjectId) {

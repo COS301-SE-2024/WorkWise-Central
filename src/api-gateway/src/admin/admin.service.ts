@@ -118,6 +118,8 @@ export class AdminService {
           type: 'requestToJoin',
         },
       },
+      isJobRelated: false,
+      companyName: company.name,
     });
     return savedReq;
   }
@@ -168,6 +170,13 @@ export class AdminService {
         ? await this.roleService.findOneInCompany('Worker', company._id)
         : await this.roleService.findById(userInviteRequestDto.roleId);
 
+    let superior: Types.ObjectId;
+    if (userInviteRequestDto.superiorId == null) {
+      superior = (await this.employeeService.findAllInCompanyWithRoleName(company._id, 'Owner'))[0]._id;
+    } else {
+      superior = userInviteRequestDto.superiorId;
+    }
+
     //
     const newInvite = new InviteToJoin(
       company._id,
@@ -175,12 +184,12 @@ export class AdminService {
       role._id,
       role.roleName,
       userInviteRequestDto.emailToInvite,
-      userInviteRequestDto.superiorId,
+      superior,
     );
     const result = await this.adminRepository.saveInvite(newInvite);
 
     const hasAccount = await this.usersService.emailExists(userInviteRequestDto.emailToInvite);
-    await this.emailService.sendInvite(newInvite, result._id, hasAccount);
+    await this.emailService.sendInvite(newInvite, result._id, hasAccount, userId);
 
     return result;
   }
@@ -346,6 +355,8 @@ export class AdminService {
           body: `Congratulations, ${fName} ${lName}! You have been accepted into ${companyName} in the role: ${roleName}`,
         },
         recipientIds: [acceptRequestDto.userToJoinId],
+        isJobRelated: false,
+        companyName: company.name,
       });
       //remove request
       await this.adminRepository.acceptRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
@@ -363,6 +374,8 @@ export class AdminService {
           body: `Good day, ${fName} ${lName}. You have unfortunately been rejected from ${companyName}.`,
         },
         recipientIds: [acceptRequestDto.userToJoinId],
+        isJobRelated: false,
+        companyName: company.name,
       });
       await this.adminRepository.rejectRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
       return true;

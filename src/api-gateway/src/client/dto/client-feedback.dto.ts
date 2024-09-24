@@ -9,6 +9,9 @@ export class ClientFeedbackDto {
   @IsMongoId()
   clientId: Types.ObjectId;
   @IsOptional()
+  @IsString()
+  clientName?: string;
+  @IsOptional()
   @IsNumber()
   @Min(1)
   @Max(10)

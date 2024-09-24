@@ -82,6 +82,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Priority {
   label: string
@@ -96,7 +97,7 @@ export default defineComponent({
       priority: {
         label: '',
         colour: '',
-        priorityLevel: 0,
+        priorityLevel: 0 as number,
         companyId: localStorage.getItem('currentCompany')
       },
       localUrl: 'http://localhost:3000/',
@@ -165,9 +166,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+      console.log(this.priority)
       axios
-        .post(`${apiURL}job/tags/p`, this.priority, config)
+        .post(`${API_URL}job/tags/p`, this.priority, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({

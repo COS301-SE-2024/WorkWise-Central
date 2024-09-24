@@ -6,7 +6,7 @@
     <v-card-text class="text-center">
       <v-row>
         <v-col xs="12" sm="12" md="9">
-<!--          <EditDetails :jobDetails="props?.passedInJob?.details" :jobID="props.passedInJob?._id" />-->
+          <!--          <EditDetails :jobDetails="props?.passedInJob?.details" :jobID="props.passedInJob?._id" />-->
           <v-form ref="jobForm">
             <v-label>Job Name</v-label>
             <v-text-field
@@ -119,7 +119,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col  cols="12" md="6" class="d-flex justify-center align-center">
+              <v-col cols="12" md="6" class="d-flex justify-center align-center">
                 <v-date-picker
                   title="SELECT START DATE"
                   header="Start date of job"
@@ -214,12 +214,14 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, ref} from 'vue'
+import { defineEmits, defineProps, ref } from 'vue'
 import ChangeClient from './ChangeClientDialog.vue'
 import SelectMembers from './SelectMembers.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
+
 // import ChangeDueDate from './UpdateDateDialog.vue'
 
 // Props and Emits
@@ -279,7 +281,7 @@ const currentMinute = now.getMinutes()
 // Date Rules and Minimum Date
 const startDateRule = [(v: string) => !!v || 'Start date is required']
 const endDateRule = [(v: string) => !!v || 'End date is required']
-const minDate = new Date().toISOString().slice(0, 10);
+const minDate = new Date().toISOString().slice(0, 10)
 
 // Allowed Hours and Minutes
 const allowedHours = ref<(hour: number) => boolean>(() => true)
@@ -342,7 +344,6 @@ const patchJobDetails = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   try {
     // Validate and set startDate
     if (startDate.value && startTime.value) {
@@ -365,7 +366,7 @@ const patchJobDetails = async () => {
       const endDateTimeStr = endTime.value
       const [hours, minutes] = endDateTimeStr.split(':').map(Number)
       const endDateTime = new Date(endDate.value)
-      endDateTime.setHours(hours, minutes, 0,0)
+      endDateTime.setHours(hours, minutes, 0, 0)
       if (!isNaN(endDateTime.getTime())) {
         job.value.details.endDate = endDateTime.toISOString()
       } else {
@@ -375,9 +376,9 @@ const patchJobDetails = async () => {
       console.error('Missing end date or time value')
     }
 
-      // Make patch request
+    // Make patch request
     const response = await axios.patch(
-      `${apiUrl}job/update/${props.passedInJob._id}`,
+      `${API_URL}job/update/${props.passedInJob._id}`,
       { details: job.value.details },
       config
     )

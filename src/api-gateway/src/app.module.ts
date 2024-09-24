@@ -20,6 +20,12 @@ import { StockTakeModule } from './stocktake/stocktake.module';
 import { ChatModule } from './chat/chat.module';
 import { TimeTrackerModule } from './time-tracker/time-tracker.module';
 import { StockMovementsModule } from './stockmovements/stockmovements.module';
+import { GlobalModuleModule } from './shared/global-module/global-module.module';
+import { InvoiceModule } from './invoices/invoice.module';
+import { PayfastModule } from 'src/payfast/payfast.module';
+import { InventoryUsedModule } from './inventory-used/inventory-used.module';
+import { VideoCallModule } from './video-call/video-call.module';
+import { FleetModule } from './fleet/fleet.module';
 
 const rootPath = join(__dirname, '..', '../../uploads');
 
@@ -40,13 +46,20 @@ const rootPath = join(__dirname, '..', '../../uploads');
     EmailModule,
     FileModule,
     InventoryModule,
+    InvoiceModule,
     AdminModule,
     ServeStaticModule.forRoot({
       rootPath: rootPath,
+      serveRoot: '/uploads',
     }),
     ChatModule,
     TimeTrackerModule,
     StockMovementsModule,
+    PayfastModule,
+    VideoCallModule,
+    InventoryUsedModule,
+    GlobalModuleModule,
+    FleetModule,
   ],
 })
 export class AppModule {}

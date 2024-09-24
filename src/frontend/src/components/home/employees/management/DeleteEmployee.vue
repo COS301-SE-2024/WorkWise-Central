@@ -63,6 +63,8 @@
 <script lang="ts">
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
+
 export default {
   name: 'DeleteClient',
   components: { Toast },
@@ -99,9 +101,8 @@ export default {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
         data: employee_to_be_deleted
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .delete(apiURL + `employee/${this.details.employeeId}`, config)
+        .delete(API_URL + `employee/${this.details.employeeId}`, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

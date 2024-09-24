@@ -1,14 +1,20 @@
-import { Global, Injectable } from '@nestjs/common';
+import { forwardRef, Global, Inject, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserConfirmation } from '../users/entities/user-confirmation.entity';
 import { InviteToJoin } from '../admin/entities/invite-to-join.entity';
 import { Types } from 'mongoose';
 import { EmailInfoDto, PasswordResetDto } from './dto/emailInfo.dto';
+import { NotificationService } from '../notification/notification.service';
+import { Message } from '../notification/entities/notification.entity';
 
 @Global()
 @Injectable()
 export class EmailService {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly mailerService: MailerService,
+    @Inject(forwardRef(() => NotificationService))
+    private readonly notificationService: NotificationService,
+  ) {}
 
   async sendUserConfirmation(userConfirmation: UserConfirmation) {
     console.log('sendUserConfirmation', userConfirmation);
@@ -53,6 +59,17 @@ export class EmailService {
 
   async sendEmailConfirmation(details: { name: string; surname: string; email: string }, token: string) {
     const url = `example.com/auth/confirm?token=${encodeURIComponent(token)}`; //TODO:confirm
+
+    /*    const user = await this.userService.getUserByEmail(details.email);
+    if (user) {
+      this.notificationService.create({
+        recipientIds: [user._id],
+        message: new Message(
+          'Please confirm you email address',
+          `Please go to your email, and you should have received a confirmation email.`,
+        ),
+      });
+    }*/
 
     const result = await this.mailerService.sendMail({
       to: details.email,
@@ -105,17 +122,7 @@ export class EmailService {
     console.log(result);
   }
 
-  async sendMail() {
-    const message = `Forgot your password? If you didn't forget your password, please ignore this email!`;
-
-    await this.mailerService.sendMail({
-      from: `WorkWise Admin <practicalsix@gmail.com>`,
-      to: 'dokuzuku@gmail.com',
-      subject: `How to Send Emails with Nodemailer`,
-      text: message,
-    });
-  }
-  async sendInvite(inviteDto: InviteToJoin, inviteId: Types.ObjectId, hasAccount: boolean) {
+  async sendInvite(inviteDto: InviteToJoin, inviteId: Types.ObjectId, hasAccount: boolean, userId?: Types.ObjectId) {
     const subject = `Invite to Join ${inviteDto.companyName}`;
     // const newUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;//TODO:Point to Deployment
     // const existingUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
@@ -125,6 +132,15 @@ export class EmailService {
     const existingUserLink = `${tempUrl}/company-invites?inviteId=${encodeURIComponent(inviteId.toString())}`;
 
     if (hasAccount) {
+      if (userId) {
+        this.notificationService.create({
+          recipientIds: [userId],
+          message: new Message('New invite to Company!', `You have been invited to join ${inviteDto.companyName}`, {
+            inviteId: inviteId,
+          }),
+        });
+      }
+
       const result = await this.mailerService.sendMail({
         to: inviteDto.emailBeingInvited,
         from: '"Support Team" <support@workwise.com>',
@@ -155,5 +171,33 @@ export class EmailService {
       });
       console.log(result);
     }
+  }
+
+  async sendClientPortalLink(
+    clientId: Types.ObjectId,
+    clientEmail: string,
+    clientName: string,
+    clientSurname: string,
+    companyName: string,
+    jobTitle: string,
+  ) {
+    const serverUrl = `http://localhost:5173`; //TODO: Point to Deployment <!-- https://tuksui.sharpsoftwaresolutions.net?clientid=clientid-->
+    const url = `${serverUrl}/client-portal?cId=${encodeURIComponent(clientId.toString())}`;
+    const ourEmail = '<support@workwise.com>';
+
+    const result = await this.mailerService.sendMail({
+      to: clientEmail,
+      from: `"Support Team" ${ourEmail}`,
+      subject: 'New Job Alert',
+      template: './client-portal',
+      context: {
+        name: clientName,
+        surname: clientSurname,
+        companyName: companyName,
+        jobTitle: jobTitle,
+        link: url,
+      },
+    });
+    console.log(result);
   }
 }

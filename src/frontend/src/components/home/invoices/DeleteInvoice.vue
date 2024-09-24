@@ -26,7 +26,6 @@
         <v-container>
           <v-row justify="end">
             <v-col cols="12" lg="6" order="last" order-lg="first">
-            
               <v-btn label="Cancel" color="secondary" @click="close" block
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn>
@@ -48,6 +47,7 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'DeleteInvoice',
@@ -76,9 +76,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
-        await axios.delete(`${apiURL}invoice/${this.invoice_id}`, config).then((response) => {
+        await axios.delete(`${API_URL}invoice/${this.invoice_id}`, config).then((response) => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',

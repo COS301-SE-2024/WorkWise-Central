@@ -129,6 +129,15 @@ export class CompanyRepository {
     return result != null;
   }
 
+  async nameExists(name: string) {
+    const result = await this.companyModel
+      .findOne({
+        $and: [{ name: name }, isNotDeleted],
+      })
+      .lean();
+    return result != null;
+  }
+
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     const company = await this.companyModel.findOne({
       $and: [
@@ -225,6 +234,18 @@ export class CompanyRepository {
       .exec();
   }
 
+  // I want a function that will return the company name of a company with a given id
+  async findCompanyNameById(id: Types.ObjectId): Promise<string> {
+    const comp = await this.companyModel
+      .findOne({
+        $and: [{ _id: id }, isNotDeleted],
+      })
+      .select('name')
+      .lean()
+      .exec();
+    return comp.name;
+  }
+
   async updateStatuses(
     companyId: Types.ObjectId,
     jobStatuses: Types.ObjectId[],
@@ -248,6 +269,26 @@ export class CompanyRepository {
       .populate('jobStatuses')
       .lean()
       .exec();
+  }
+
+  async findAllStatusNamesInCompany(companyId: Types.ObjectId) {
+    const comp = await this.companyModel
+      .findOne({
+        $and: [{ _id: companyId }, isNotDeleted],
+      })
+      .select(['jobStatuses'])
+      .populate('jobStatuses')
+      .lean()
+      .exec();
+
+    if (!comp) throw new Error('Company not found');
+
+    const statArr: any[] = comp.jobStatuses;
+    const result: string[] = [];
+    for (const statArrElement of statArr) {
+      result.push(statArrElement.status);
+    }
+    return result;
   }
 
   async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
@@ -275,4 +316,14 @@ export class CompanyRepository {
       })
       .exec();
   }
+
+  /*  async findCompanyAccountDetails(companyId: Types.ObjectId) {
+    return this.companyModel
+      .findOne({
+        $and: [{ _id: companyId }, isNotDeleted],
+      })
+      .select(['accountDetails'])
+      .lean()
+      .exec();
+  }*/
 }

@@ -22,6 +22,9 @@ import { InventoryModule } from '../inventory/inventory.module';
 import { InventoryService } from '../inventory/inventory.service';
 import { StockTakeModule } from '../stocktake/stocktake.module';
 import { StockMovementsModule } from '../stockmovements/stockmovements.module';
+import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
+import { EmailModule } from '../email/email.module';
+import { TeamService } from '../team/team.service';
 
 @Module({
   imports: [
@@ -42,6 +45,8 @@ import { StockMovementsModule } from '../stockmovements/stockmovements.module';
     forwardRef(() => InventoryModule),
     forwardRef(() => StockTakeModule),
     forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryUsedModule),
+    forwardRef(() => EmailModule),
   ],
   providers: [
     JobService,
@@ -52,6 +57,7 @@ import { StockMovementsModule } from '../stockmovements/stockmovements.module';
     JwtService,
     FileService,
     InventoryService,
+    TeamService,
   ],
   controllers: [JobController],
   exports: [JobService, MongooseModule, JobRepository, JobTagRepository],

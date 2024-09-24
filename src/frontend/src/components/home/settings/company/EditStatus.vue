@@ -32,18 +32,40 @@
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
               <template v-slot:activator="{ props }">
-                <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
+                <v-btn
+                  rounded="xl"
+                  variant="plain"
+                  v-bind="props"
+                  @click="selectItem(item)"
+                  :disabled="item.status === 'No Status' || item.status === 'Archive'"
+                >
                   <v-icon color="primary">mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
               <v-list>
                 <v-list-item @click="selectItem(item)">
-                  <v-btn color="success" block @click="dialog = true"
+                  <v-btn
+                    color="success"
+                    block
+                    @click="dialog = true"
+                    :disabled="
+                      selectedItem.status === 'No Status' || selectedItem.status === 'Archive'
+                        ? true
+                        : false
+                    "
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteStatus :statusId="selectedItem.statusId" @DeletedStatus="getStatuses" />
+                  <DeleteStatus
+                    :statusId="selectedItem.statusId"
+                    @DeletedStatus="getStatuses"
+                    :Disabled="
+                      selectedItem.status === 'No Status' || selectedItem.status === 'Archive'
+                        ? true
+                        : false
+                    "
+                  />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -124,6 +146,8 @@ import axios from 'axios'
 import DeleteStatus from './DeleteStatus.vue'
 import Toast from 'primevue/toast'
 import CreateStatus from './CreateStatus.vue'
+import { API_URL } from '@/main'
+
 interface Status {
   status: string
   colour: string
@@ -228,11 +252,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(
-          `${apiURL}job/status/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/status/all/${localStorage.getItem('currentCompany')}`,
           config
         )
         this.items = res.data.data
@@ -276,9 +299,8 @@ export default defineComponent({
         }
       }
       console.log(this.selectedItem)
-      const apiURL = await this.getRequestUrl()
       await axios
-        .patch(`${apiURL}job/status`, this.selectedItem, config)
+        .patch(`${API_URL}job/status`, this.selectedItem, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
