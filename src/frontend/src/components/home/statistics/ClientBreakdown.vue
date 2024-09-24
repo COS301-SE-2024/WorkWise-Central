@@ -118,6 +118,19 @@
                   </v-list>
                 </v-card>
               </v-col></v-row></v-container>
+          <v-dialog v-model="dialog" max-width="500">
+            <v-card>
+              <v-card-title>{{ dialogTitle }}</v-card-title>
+              <v-card-text>
+                <ul>
+                  <li v-for="(item, index) in dialogItems" :key="index">{{ item }}</li>
+                </ul>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn text @click="dialog = false">Close</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-card-text>
       </v-card>
     </v-card-text>
@@ -417,19 +430,32 @@ export default {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    onChartClick(chartType, datasetIndex, index) {
-      // Handle the chart click event based on chart type and the clicked item
-      if (chartType === 'jobsData') {
-        console.log(`Clicked on Job dataset: ${datasetIndex}, index: ${index}`)
-        // You can trigger a modal or a detailed view for the clicked job
-      } else if (chartType === 'jobRatingData') {
-        console.log(`Clicked on Job Rating dataset: ${datasetIndex}, index: ${index}`)
-        // Show job rating breakdown or other details
-      } else if (chartType === 'invoiceData') {
-        console.log(`Clicked on Invoice dataset: ${datasetIndex}, index: ${index}`)
-        // Show invoice details, such as payment info
+    onChartClick(type, index) {
+      if (type === 'jobs') {
+        if (index === 0) {
+          // Show active jobs in dialog
+          console.log('jkefh')
+          this.dialogTitle = `Active Jobs for ${this.selectedClient.firstName}`
+          this.dialogItems = this.clientStats.activeJobs
+        } else if (index === 1) {
+          // Show completed jobs in dialog
+          this.dialogTitle = `Completed Jobs for ${this.selectedClient.firstName}`
+          this.dialogItems = this.clientStats.completedJobs
+        }
+      } else if (type === 'invoices') {
+        if (index === 0) {
+          // Show paid invoices in dialog
+          this.dialogTitle = `Paid Invoices for ${this.selectedClient.firstName}`
+          this.dialogItems = this.clientStats.invoicesPaid
+        } else if (index === 1) {
+          // Show unpaid invoices in dialog
+          this.dialogTitle = `Unpaid Invoices for ${this.selectedClient.firstName}`
+          this.dialogItems = this.clientStats.invoicesUnpaid
+        }
       }
-    }
+      // Show the dialog
+      this.dialog = true
+    },
   },
   async mounted() {
     await this.getClients()
