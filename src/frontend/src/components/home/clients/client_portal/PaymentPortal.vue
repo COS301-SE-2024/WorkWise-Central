@@ -179,9 +179,9 @@ export default defineComponent({
         .then((response) => {
           // console.log('Invoices:', response)
           this.invoices = response.data.data
-          // for (const invoice of this.invoices) {
-          //   this.forms[invoice._id] = this.generateHtmlForm(invoice._id)
-          // }
+          for(const invoice of this.invoices) {
+            invoice.paymentDate = this.formatDate(invoice.paymentDate)
+          }
         })
         .catch((error) => {
           console.error(error)
@@ -198,6 +198,17 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
+    },
+    formatDate(date: string) {
+      const date_passed_in = new Date(date)
+      const y = date_passed_in.getFullYear()
+      const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
+      const d = String(date_passed_in.getDate()).padStart(2, '0')
+      const h = String(date_passed_in.getHours()).padStart(2, '0')
+      const mn = String(date_passed_in.getMinutes()).padStart(2, '0')
+      const f_date = `${y}-${m}-${d} ${h}:${mn}`
+      console.log('f_date: ', f_date)
+      return f_date
     }
   },
   mounted() {
