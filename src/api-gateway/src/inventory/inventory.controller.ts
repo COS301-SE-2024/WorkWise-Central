@@ -277,12 +277,13 @@ export class InventoryController {
     description: `The updated ${className} object`,
   })
   @ApiBody({ type: ListOfUsedInventory })
-  @Patch('/recordStockUse')
+  @Post('/recordStockUse')
   async recordStockUse(
     @Headers() headers: any,
     @Body()
     listOfUsedInventory: ListOfUsedInventory,
   ) {
+    console.log('In recordStockUse');
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, listOfUsedInventory.currentEmployeeId);
 
@@ -315,7 +316,7 @@ export class InventoryController {
     description: `The updated ${className} object`,
   })
   @ApiBody({ type: ListOfUpdatesForUsedInventory })
-  @Patch('/updateStockUse')
+  @Post('/updateStockUse')
   async updateStockUse(
     @Headers() headers: any,
     @Body()

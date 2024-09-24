@@ -16,9 +16,9 @@ export class InventoryUsedRepository {
     return this.InventoryUsedModel.find().lean().exec();
   }
 
-  async save(company: InventoryUsed) {
-    const newCompanyModel = new this.InventoryUsedModel(company);
-    return await newCompanyModel.save();
+  async save(inventoryUsed: InventoryUsed) {
+    const newInventoryUsedModel = new this.InventoryUsedModel(inventoryUsed);
+    return await newInventoryUsedModel.save();
   }
 
   async findAllInCompany(identifier: Types.ObjectId) {
