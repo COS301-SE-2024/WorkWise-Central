@@ -1,7 +1,7 @@
 import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
 import { Prop } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { FuelType, VehicleAvailabilityEnum } from '../entities/vehicle.entity';
+import { VehicleAvailabilityEnum } from '../entities/vehicle.entity';
 import { Type } from 'class-transformer';
 
 export class VehicleName {
