@@ -17,7 +17,7 @@ export class Items {
   unitPrice: number;
 
   @ApiProperty()
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number, required: false })
   discount: number;
 
   @ApiProperty()
