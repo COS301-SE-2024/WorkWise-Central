@@ -111,6 +111,7 @@ export class InventoryService {
   }
 
   async recordStockUse(listOfUsedInventory: ListOfUsedInventory) {
+    const result = [];
     const employee = await this.employeeService.findById(listOfUsedInventory.currentEmployeeId);
     const job = await this.jobService.getJobById(listOfUsedInventory.jobId);
     for (const item of listOfUsedInventory.listOfUsedInventory) {
@@ -127,10 +128,12 @@ export class InventoryService {
       const inventory = await this.findById(item.inventoryId);
       const dto = new ExternalInventoryUpdateDto();
       dto.currentEmployeeId = listOfUsedInventory.currentEmployeeId;
+      dto.updateInventoryDto = new CreateInventoryDto();
       dto.updateInventoryDto.currentStockLevel = inventory.currentStockLevel - item.amountUsed;
       dto.updateInventoryDto.reason = employee.userInfo.displayName + ' used this item in ' + job.details.heading;
-      await this.update(inventory._id, dto);
+      result.push(await this.update(inventory._id, dto));
     }
+    return result;
   }
 
   async updateStockUse(listOfUsedInventory: ListOfUpdatesForUsedInventory) {
