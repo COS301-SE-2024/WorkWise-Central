@@ -120,6 +120,17 @@ export class NotificationController {
     }
   }
 
+  @ApiOperation({ summary: 'Check if there are new notifications for me, for me, for ME!' })
+  @Get('new-notifications')
+  async getNewNotifications(@Headers() headers: any): Promise<{ data: boolean }> {
+    try {
+      const userId = this.extractUserId(headers);
+      return { data: await this.notificationService.haveNewNotifications(userId) };
+    } catch (e) {
+      throw e;
+    }
+  }
+
   public extractUserId(headers: any) {
     const authHeader: string = headers.authorization;
     const decodedJwtAccessToken = this.jwtService.decode(authHeader.replace(/^Bearer\s+/i, ''));
