@@ -1,10 +1,10 @@
 <template>
   <v-form @submit.prevent="saveInventory" class="pa-4">
     <v-select
-        v-model="newInventory.id"
+        v-model="newInventory.name"
         :items="inventoryOptions"
         item-title="name"
-        item-value="id"
+        item-value="name"
         label="Select Inventory Item"
         class="mb-3"
         @update:model-value="handleInventorySelection"
@@ -43,7 +43,7 @@
 
   <v-divider></v-divider>
 
-  <v-table>
+  <v-table class="left-align-table">
     <thead>
     <tr>
       <th>Item Name</th>
@@ -85,6 +85,7 @@ interface InventoryItem {
   id: string;
   name: string;
   quantity: number;
+  inventoryUsedId: string;
 }
 
 interface InventoryOption {
@@ -140,17 +141,18 @@ async function fetchStockUsed() {
     const response = await axios.get(`${API_URL}inventory/stockUsed/${props.jobID}`, config)
     console.log('Stock use:', response)
     if (response.data.data.length > 0) {
-      inventoryList.value = response.data.map((item: any) => ({
-        id: item.inventoryId,
-        name: item.name,
-        quantity: item.amountUsed
+      inventoryList.value = response.data.data.map((item: any) => ({
+        id: item._id,
+        name: item.inventoryId.name,
+        quantity: item.amount,
+        inventoryUsedId: item.inventoryId._id
       }))
     }
+    console.log('Inventory list:', inventoryList.value)
   } catch (error) {
     console.error('Error fetching stock used:', error)
   }
 }
-
 function validateForm() {
   formValid.value = newInventory.value.id !== '' && newInventory.value.quantity > 0
 }
@@ -159,7 +161,7 @@ function handleInventorySelection(value: string) {
   console.log('Selected value:', value);
   console.log('Inventory options:', inventoryOptions.value);
 
-  const selectedInventory = inventoryOptions.value.find(inv => inv.id === value);
+  const selectedInventory = inventoryOptions.value.find(inv => inv.name === value);
   console.log('Selected inventory:', selectedInventory);
 
   if (selectedInventory) {
@@ -173,17 +175,19 @@ async function saveInventory() {
   try {
     console.log(newInventory.value)
     if (isEditing.value) {
+      const itemToEdit = inventoryList.value[editingIndex.value]
+      console.log('Item to edit:', itemToEdit)
       const payload = {
         listOfUsedInventory: [{
           changeInAmount: newInventory.value.quantity,
-          inventoryId: newInventory.value.id,
-          inventoryUsedId: inventoryList.value[editingIndex.value]
+          inventoryId: itemToEdit.inventoryUsedId,
+          inventoryUsedId: itemToEdit.inventoryUsedId
         }],
         currentEmployeeId: localStorage.getItem('employeeId'),
         jobId: props.jobID,
         companyId: localStorage.getItem('currentCompany')
       }
-      console.log('Updating stock use...')
+      console.log('Updating stock use...', payload)
       await axios.post(`${API_URL}inventory/updateStockUse`, payload, config)
     } else {
       const payload = {
@@ -236,3 +240,10 @@ onMounted(async () => {
   validateForm()
 })
 </script>
+
+<style scoped>
+.left-align-table th,
+.left-align-table td {
+  text-align: left;
+}
+</style>
