@@ -372,18 +372,16 @@ export default {
         })
     },
 
-    calculateRatingCounts(ratingsArray) {
-      // Calculate the number of 5-star, 4-star, etc. ratings from the customerServiceRating array
-      const ratingCounts = [0, 0, 0, 0, 0] // Initialize counts for 5, 4, 3, 2, 1 stars
-
-      ratingsArray.forEach((rating) => {
-        if (rating >= 1 && rating <= 5) {
-          ratingCounts[5 - rating]++
+    calculateRatingCounts(ratings) {
+      const counts = [0, 0, 0, 0, 0]; // Array to hold counts for ratings 1 to 5
+      ratings?.forEach((rating) => {
+        if (rating.rating >= 1 && rating.rating <= 5) {
+          counts[Math.floor(rating.rating) - 1]++; // Adjust index for 0-based array
         }
-      })
-
-      return ratingCounts
-    },
+      });
+      return counts;
+    }
+    ,
     async getClients() {
       const config = {
         headers: {

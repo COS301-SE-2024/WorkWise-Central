@@ -245,17 +245,21 @@ export default {
 
         // Assuming `ratingCounts` is calculated from `customerServiceRating`
         this.ratingCounts = this.calculateRatingCounts(data.customerServiceRating)
+        this.jobRatingCounts = this.calculateRatingCounts(data.workPerformanceRating)
       } catch (error) {
         console.error('Failed to fetch employee stats:', error)
       }
     },
     calculateRatingCounts(ratings) {
-      const counts = [0, 0, 0, 0, 0]
-      ratings.forEach((rating) => {
-        counts[Math.floor(rating) - 1]++
-      })
-      return counts
-    },
+      const counts = [0, 0, 0, 0, 0]; // Array to hold counts for ratings 1 to 5
+      ratings?.forEach((rating) => {
+        if (rating.rating >= 1 && rating.rating <= 5) {
+          counts[Math.floor(rating.rating) - 1]++; // Adjust index for 0-based array
+        }
+      });
+      return counts;
+    }
+    ,
     async getNumEmployees() {
       const config = {
         headers: {

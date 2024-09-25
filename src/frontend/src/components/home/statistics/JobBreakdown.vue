@@ -21,7 +21,7 @@
 
 
         <!-- Overall Rating Cards -->
-        <v-container >
+        <v-container>
           <v-row> <v-col cols="12" lg="4">
               <Chart type="pie" :data="activeJobsChartData" :options="chartOptions" height="300px" />
             </v-col>
@@ -190,15 +190,18 @@ export default {
         .catch((error) => {
           console.error('Failed to fetch job stats:', error)
         })
-        this.statsShown = true
+      this.statsShown = true
     },
     calculateRatingCounts(ratings) {
-      const counts = [0, 0, 0, 0, 0]
-      ratings.forEach((rating) => {
-        counts[Math.floor(rating) - 1]++
-      })
-      return counts
+      const counts = [0, 0, 0, 0, 0]; // Array to hold counts for ratings 1 to 5
+      ratings?.forEach((rating) => {
+        if (rating.rating >= 1 && rating.rating <= 5) {
+          counts[Math.floor(rating.rating) - 1]++; // Adjust index for 0-based array
+        }
+      });
+      return counts;
     }
+
   },
   mounted() {
     this.getJobStats()
