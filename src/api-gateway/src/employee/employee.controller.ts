@@ -39,7 +39,6 @@ import { AuthGuard } from '../auth/auth.guard';
 import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
 import { AddSubordinatesDto, RemoveSubordinatesDto, UpdateEmployeeDto } from './dto/update-employee.dto';
 import { ExternalCreateEmployeeDto } from './dto/create-employee.dto';
 import { UsersService } from '../users/users.service';
@@ -56,7 +55,10 @@ export class EmployeeController {
   ) {}
 
   async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+    console.log('userId:', userId);
     const user = await this.userService.getUserById(userId);
+    console.log('user:', user);
+    console.log('currentEmployeeId:', currentEmployeeId);
     if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -770,13 +772,17 @@ export class EmployeeController {
   async remove(
     @Headers() headers: any,
     @Param('employeeId') employeeId: Types.ObjectId,
-    @Body() currentEmployeeDto: CurrentEmployeeDto,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
+    console.log('employeeId:', employeeId);
     const userId = await extractUserId(this.jwtService, headers);
-    await this.validateRequestWithEmployeeId(userId, currentEmployeeDto.currentEmployeeId);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
-    const currentEmployee = await this.employeeService.findById(currentEmployeeDto.currentEmployeeId);
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    console.log('currentEmployee:', currentEmployee);
+
     if (currentEmployee.role.permissionSuite.includes('delete employees')) {
+      console.log('In if');
       let data;
       try {
         console.log('In try block');
@@ -791,6 +797,7 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
+      console.log('In else');
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }

@@ -99,7 +99,8 @@
 // import type { InvoiceCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
 import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
-// import { type SortableEvent, VueDraggable } from 'vue-draggable-plus'
+// import { type Sortable , VueDraggable } from 'vue-draggable-plus'
+import { VueDraggable } from 'vue-draggable-plus'
 import axios from 'axios'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 import { API_URL } from '@/main'
@@ -440,26 +441,17 @@ export default {
       console.log(this.column_color)
     },
     async clickedEvent(payload) {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-
       try {
-        const response = await axios.get(API_URL + `invoice/id/${payload.id}`, config)
-        const company_res = await axios.get(
-          API_URL + `company/id/${localStorage['currentCompany']}`,
-          config
-        )
-        console.log(payload)
+        if (payload.laborItems.length != 0) {
+          payload.inventoryItems.push(['', '', '', ''])
+          payload.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Total'])
+          payload.inventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Total'])
+          payload.inventoryItems = payload.inventoryItems.concat(payload.laborItems)
+          payload.inventoryItems.push(['', '', '', ''])
+        }
         const data = {
           outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
-          fileName: 'Invoice_2021',
+          fileName: `Invoice ${payload.companyName}`,
           orientationLandscape: false,
           compress: true,
           logo: {
@@ -504,8 +496,8 @@ export default {
             invGenDate: `Invoice Date:  ${this.formatDate(payload.invoiceDate)}`,
             headerBorder: false,
             tableBodyBorder: false,
-            header: [{ title: 'Paid' }, { title: 'Total' }],
-            table: [[payload.paid, payload.total]],
+            header: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }],
+            table: payload.inventoryItems,
             additionalRows: [
               {
                 col1: 'Total:',
@@ -517,7 +509,7 @@ export default {
               },
               {
                 col1: 'VAT:',
-                col2: '20',
+                col2: `${payload.taxPercentage}`,
                 col3: '%',
                 style: {
                   fontSize: 10
@@ -541,6 +533,8 @@ export default {
           pageEnable: true,
           pageLabel: 'Page '
         }
+        console.log(payload)
+        console.log(data)
         this.pdfSrc = URL.createObjectURL(jsPDFInvoiceTemplate(data).blob)
       } catch (error) {
         console.log('Error fetching data: ' + error)
@@ -553,25 +547,7 @@ export default {
     loading(cards) {
       console.log(cards.length)
       let hit = false
-      // for (let i = 0; i < cards.length; i++) {
-      //   this.columns.forEach((value: Column) => {
-      //     if (value.status === cards[i].status.status) {
-      //       console.log('hit')
-      //       hit = true
-      //       this.loadCardsInRespectiveColumns(cards[i], value)
-      //     }
-      //   })
-      //   if (!hit) this.loadCardsInRespectiveColumns(cards[i], this.columns[0])
-      //
-      //   hit = false
-      // }
-      // this.columns.forEach((col: Column) => {
-      //   // this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
-      //   col.cards.sort(
-      //     (a: InvoiceCardDataFormat, b: InvoiceCardDataFormat) =>
-      //       a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
-      //   )
-      // })
+
       console.log(this.columns[0].cards.length)
     },
     async loadData() {
@@ -631,7 +607,19 @@ export default {
                 card.companyId.address.postalCode,
               companyEmail: card.companyId.contactDetails.email,
               companyPhoneNumber: card.companyId.contactDetails.phoneNumber,
-              companyLogo: card.companyId.logo
+              companyLogo: card.companyId.logo,
+              inventoryItems: card.inventoryItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.untiPrice,
+                obj.total
+              ]),
+              laborItems: card.laborItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.untiPrice,
+                obj.total
+              ])
             })
           else
             unpaid_cards.push({
@@ -672,8 +660,22 @@ export default {
                 card.companyId.address.postalCode,
               companyEmail: card.companyId.contactDetails.email,
               companyPhoneNumber: card.companyId.contactDetails.phoneNumber,
-              companyLogo: card.companyId.logo
+              companyLogo: card.companyId.logo,
+              inventoryItems: card.inventoryItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.unitPrice,
+                obj.total
+              ]),
+              laborItems: card.laborItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.unitPrice,
+                obj.total
+              ])
             })
+
+          console.log()
         })
         this.columns[0].cards = unpaid_cards
         this.columns[1].cards = paid_cards

@@ -31,6 +31,7 @@
                 color="secondary"
                 :rules="nameRules"
                 required
+                :disabled="isDeleting"
               ></v-text-field
             ></v-col>
             <v-col>
@@ -39,6 +40,7 @@
                 v-model="localEditedItem.description"
                 color="secondary"
                 required
+                :disabled="isDeleting"
               ></v-text-field
             ></v-col>
             <v-row
@@ -48,6 +50,7 @@
                   v-model="localEditedItem.costPrice"
                   color="secondary"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
               <v-col cols="12" lg="4">
@@ -56,6 +59,7 @@
                   v-model="localEditedItem.currentStockLevel"
                   color="secondary"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
               <v-col cols="12" lg="4">
@@ -64,6 +68,7 @@
                   v-model="localEditedItem.reorderLevel"
                   color="secondary"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field></v-col
             ></v-row>
           </v-col>
@@ -200,7 +205,6 @@ export default {
 
         setTimeout(() => {
           this.addDialog = false
-          this.isDeleting = false
           this.resetFields()
           this.$emit('updateInventory', response.data.data)
         }, 1500)
@@ -212,6 +216,8 @@ export default {
           detail: 'Failed to add inventory',
           life: 3000
         })
+      } finally {
+        this.isDeleting = false
       }
     },
     allRulesPass() {
