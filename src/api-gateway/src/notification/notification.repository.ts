@@ -32,6 +32,7 @@ export class NotificationRepository {
   }
 
   async saveToken(token: NotificationToken) {
+    await this.notificationTokenModel.deleteMany({ userId: token.userId }).exec();
     const tokenModel = new this.notificationTokenModel(token);
     return await tokenModel.save();
   }
