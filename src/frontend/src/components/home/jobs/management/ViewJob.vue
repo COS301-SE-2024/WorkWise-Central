@@ -12,6 +12,7 @@
             :src="imageSrc"
             aspect-ratio="5.75"
             @load="(src) => onImageLoad(src)"
+            height="120%"
         ></v-img>
         <v-btn color="primary" class="position-absolute bottom-right">
           <v-icon left>mdi-image</v-icon>

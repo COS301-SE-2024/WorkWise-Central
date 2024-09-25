@@ -138,6 +138,7 @@ async function fetchInventoryOptions() {
 async function fetchStockUsed() {
   try {
     const response = await axios.get(`${API_URL}inventory/stockUsed/${props.jobID}`, config)
+    console.log('Stock use:', response)
     if (response.data.data.length > 0) {
       inventoryList.value = response.data.map((item: any) => ({
         id: item.inventoryId,
@@ -167,22 +168,34 @@ function handleInventorySelection(value: string) {
   }
   validateForm();
 }
+
 async function saveInventory() {
   try {
     console.log(newInventory.value)
-    const payload = {
-      listOfUsedInventory: [{
-        amountUsed: newInventory.value.quantity,
-        inventoryId: newInventory.value.id
-      }],
-      currentEmployeeId: localStorage.getItem('employeeId'),
-      jobId: props.jobID,
-      companyId: localStorage.getItem('currentCompany')
-    }
-
     if (isEditing.value) {
+      const payload = {
+        listOfUsedInventory: [{
+          changeInAmount: newInventory.value.quantity,
+          inventoryId: newInventory.value.id,
+          inventoryUsedId: inventoryList.value[editingIndex.value]
+        }],
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        jobId: props.jobID,
+        companyId: localStorage.getItem('currentCompany')
+      }
+      console.log('Updating stock use...')
       await axios.post(`${API_URL}inventory/updateStockUse`, payload, config)
     } else {
+      const payload = {
+        listOfUsedInventory: [{
+          amountUsed: newInventory.value.quantity,
+          inventoryId: newInventory.value.id
+        }],
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        jobId: props.jobID,
+        companyId: localStorage.getItem('currentCompany')
+      }
+      console.log('Recording stock use...', payload)
       await axios.post(`${API_URL}inventory/recordStockUse`, payload, config)
     }
 
