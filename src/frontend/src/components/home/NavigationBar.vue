@@ -105,6 +105,7 @@ export default defineComponent({
     isdarkmode: localStorage.getItem('theme') === 'true',
     logoutDialog: false,
     selected: '',
+    new_notification: false,
     employeePermissions: [] as string[],
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
@@ -173,8 +174,9 @@ export default defineComponent({
       }
       axios
         .get(`${API_URL}notification/new-notifications`, config)
-        .then((response) => {
+        .then((res) => {
           console.log('new notification check')
+          this.new_notification = res.data.data
         })
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
@@ -183,6 +185,7 @@ export default defineComponent({
   },
   mounted() {
     this.getEmployeePermissions()
+    this.notificationCheck()
   }
 })
 </script>
@@ -386,7 +389,12 @@ export default defineComponent({
         prepend-icon="fa: fa-solid fa-bell"
         :style="{ height: '70px' }"
       >
+        <!--        <v-list-item-title> Notifications </v-list-item-title>-->
+        <template v-slot:append>
+          <v-icon color="green" size="x-small" v-if="new_notification">mdi-circle</v-icon>
+        </template>
       </v-list-item>
+
       <v-list-item
         to="support"
         value="Help"
