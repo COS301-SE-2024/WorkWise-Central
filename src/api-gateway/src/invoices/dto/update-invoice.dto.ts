@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Items {
