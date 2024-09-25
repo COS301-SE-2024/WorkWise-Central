@@ -292,27 +292,6 @@ export default defineComponent({
         </v-list-group>
       </v-list>
       <v-list v-model:open="open">
-        <v-list-group fluid value="Communication">
-          <template v-slot:activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              prepend-icon="fa: fa-solid fa-address-book"
-              title="Social"
-              class="list-item-large"
-            ></v-list-item>
-          </template>
-          <v-list-item
-            v-for="(item, i) in CommunicationSubItems"
-            :key="i"
-            :to="{ name: item.routeName }"
-            :value="item.title"
-            :title="item.title"
-            :prepend-icon="item.icon"
-            @click="setInbox(item.title)"
-          ></v-list-item>
-        </v-list-group>
-      </v-list>
-      <v-list v-model:open="open">
         <v-list-group fluid value="Invoices">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -356,18 +335,25 @@ export default defineComponent({
           ></v-list-item>
         </v-list-group>
       </v-list>
+      <v-list-item
+        to="map"
+        value="Fleet"
+        title="Fleet"
+        prepend-icon="fa: fa-solid fa-truck"
+        :style="{ height: '70px' }"
+      ></v-list-item>
       <v-list v-model:open="open">
-        <v-list-group fluid value="Fleet">
+        <v-list-group fluid value="Communication">
           <template v-slot:activator="{ props }">
             <v-list-item
               v-bind="props"
-              prepend-icon="fa: fa-solid fa-truck"
-              title="Fleet"
+              prepend-icon="fa: fa-solid fa-address-book"
+              title="Social"
               class="list-item-large"
             ></v-list-item>
           </template>
           <v-list-item
-            v-for="(item, i) in FleetSubItems"
+            v-for="(item, i) in CommunicationSubItems"
             :key="i"
             :to="{ name: item.routeName }"
             :value="item.title"
@@ -385,27 +371,13 @@ export default defineComponent({
         :style="{ height: '70px' }"
       >
       </v-list-item>
-      <v-list v-model:open="open">
-        <v-list-group fluid value="Help">
-          <template v-slot:activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              prepend-icon="fa: fa-solid fa-life-ring"
-              title="Help"
-              class="list-item-large"
-            ></v-list-item>
-          </template>
-          <v-list-item
-            v-for="(item, i) in supportSubItems"
-            :key="i"
-            :to="{ name: item.routeName }"
-            :value="item.title"
-            :title="item.title"
-            :prepend-icon="item.icon"
-            @click="setInbox(item.title)"
-          ></v-list-item>
-        </v-list-group>
-      </v-list>
+      <v-list-item
+        to="support"
+        value="Help"
+        title="Help"
+        prepend-icon="fa: fa-solid fa-circle-question"
+        :style="{ height: '70px' }"
+      ></v-list-item>
 
       <v-list v-model:open="open" v-show="checkPermission('company settings') === true">
         <v-list-group fluid value="More">
