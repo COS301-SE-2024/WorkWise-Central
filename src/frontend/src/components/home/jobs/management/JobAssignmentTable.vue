@@ -108,7 +108,7 @@
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ item }">
-                        {{ item?.details?.endDate }}
+                        {{ formatDate(item?.details?.endDate) }}
                       </template>
 
                       <!-- Actions slot -->
