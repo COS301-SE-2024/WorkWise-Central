@@ -1,13 +1,13 @@
 <template>
   <v-container fluid>
-    <v-row justify="end"
-      ><v-col cols="auto">
-        <v-btn size="x-large" align="right" @click="redirectToArchivePage">
-          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-        </v-btn>
-      </v-col></v-row
-    >
-    <v-row>
+    <!--    <v-row justify="end"-->
+    <!--      ><v-col cols="auto">-->
+    <!--        <v-btn size="x-large" align="right" @click="redirectToArchivePage">-->
+    <!--          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>-->
+    <!--        </v-btn>-->
+    <!--      </v-col></v-row-->
+    <!--    >-->
+    <v-row class="flex">
       <VueDraggable
         ref="el"
         v-model="columns"
@@ -23,12 +23,20 @@
           :key="column._id"
           role="listbox"
           aria-dropeffect="move"
+          :xl="2"
           :lg="3"
           :md="4"
           :sm="6"
           :cols="12"
         >
-          <v-card variant="flat" elevation="1" color="red" :min-width="350">
+          <v-card
+            variant="flat"
+            elevation="1"
+            color="red"
+            :min-width="350"
+            :max-height="800"
+            class="overflow-auto"
+          >
             <v-card-item
               class="font-weight-black text-h5"
               style="font-family: 'Nunito', sans-serif"
@@ -232,14 +240,14 @@
               </v-menu>
             </v-card-item>
 
-            <!--            <v-virtual-scroll-->
-            <!--              :items="column.cards"-->
-            <!--              class="kanban-column-scroller"-->
-            <!--              :max-height="700"-->
-            <!--              :max-width="500"-->
-            <!--            >-->
-            <!--              <template #default="{ item }">-->
             <v-card-text>
+              <!--              <v-virtual-scroll-->
+              <!--                :items="column.cards"-->
+              <!--                class="kanban-column-scroller"-->
+              <!--                :max-height="700"-->
+              <!--                :max-width="500"-->
+              <!--              >-->
+              <!--                <template v-slot:default>-->
               <VueDraggable
                 class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
                 v-model="column.cards"
@@ -249,6 +257,7 @@
                 :onAdd="(event) => onCardStatusAdd(event, column)"
               >
                 <v-card
+                  class="my-5"
                   v-for="item in column.cards"
                   :key="item.jobId"
                   @click="clickedEvent(item)"
@@ -305,7 +314,7 @@
                     ></v-card-item
                   >
 
-                  <v-card-text v-if="item.tags.length != 0">
+                  <v-card-item v-if="item.tags.length != 0">
                     <v-chip
                       :color="item.tags[i].colour"
                       class=""
@@ -313,12 +322,12 @@
                       :key="i"
                       ><b>{{ item.tags[i].label }}</b></v-chip
                     >
-                  </v-card-text>
+                  </v-card-item>
                 </v-card>
               </VueDraggable>
+              <!--                </template>-->
+              <!--              </v-virtual-scroll>-->
             </v-card-text>
-            <!--              </template>-->
-            <!--            </v-virtual-scroll>-->
           </v-card>
         </v-col>
         <v-col cols="auto">

@@ -117,6 +117,9 @@ export default defineComponent({
     redirectToDashBoard() {
       if (this.$route.path !== '/dashboard') this.$router.push('/dashboard')
     },
+    redirectToArchivePage() {
+      this.$router.push('/backlog/archive')
+    },
     toggleDarkMode() {
       console.log(this.isdarkmode)
       if (this.isdarkmode) {
@@ -210,6 +213,9 @@ export default defineComponent({
       <v-spacer class="d-none d-sm-flex"></v-spacer>
 
       <div class="d-flex align-center">
+        <v-btn @click="redirectToArchivePage" v-if="$route.path === '/backlog'">
+          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+        </v-btn>
         <UserAvatar />
         <v-icon
           class="icon-padding mr-5"
