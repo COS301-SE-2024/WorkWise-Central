@@ -441,23 +441,7 @@ export default {
       console.log(this.column_color)
     },
     async clickedEvent(payload) {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-
       try {
-        const response = await axios.get(API_URL + `invoice/id/${payload.id}`, config)
-        const company_res = await axios.get(
-          API_URL + `company/id/${localStorage['currentCompany']}`,
-          config
-        )
-        console.log(payload)
         if (payload.laborItems.length != 0) {
           payload.inventoryItems.push(['', '', '', ''])
           payload.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Total'])
@@ -467,7 +451,7 @@ export default {
         }
         const data = {
           outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
-          fileName: 'Invoice_2021',
+          fileName: `Invoice ${payload.companyName}`,
           orientationLandscape: false,
           compress: true,
           logo: {
@@ -517,7 +501,7 @@ export default {
             additionalRows: [
               {
                 col1: 'Total:',
-                col2: payload.total,
+                col2: `${payload.total}`,
                 col3: 'R',
                 style: {
                   fontSize: 14
@@ -525,7 +509,7 @@ export default {
               },
               {
                 col1: 'VAT:',
-                col2: payload.taxPercentage,
+                col2: `${payload.taxPercentage}`,
                 col3: '%',
                 style: {
                   fontSize: 10
@@ -533,7 +517,7 @@ export default {
               },
               {
                 col1: 'SubTotal:',
-                col2: payload.subTotal,
+                col2: `${payload.subTotal}`,
                 col3: 'R',
                 style: {
                   fontSize: 10
@@ -549,7 +533,9 @@ export default {
           pageEnable: true,
           pageLabel: 'Page '
         }
-        jsPDFInvoiceTemplate(data)
+        console.log(payload)
+        console.log(data)
+        this.pdfSrc = URL.createObjectURL(jsPDFInvoiceTemplate(data).blob)
       } catch (error) {
         console.log('Error fetching data: ' + error)
       }

@@ -48,7 +48,12 @@
               >
             </v-col>
             <v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn color="secondary" variant="text" @click="clientDialog = false" block
+              <v-btn
+                :disabled="isDeleting"
+                color="secondary"
+                variant="text"
+                @click="clientDialog = false"
+                block
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon
                 >Cancel</v-btn
               >
@@ -114,9 +119,7 @@ export default {
             detail: 'Employee deleted successfully',
             life: 3000
           })
-          this.isDeleting = false
           this.clientDialog = false
-          this.isDeleting = false
           this.clientDialog = false
           window.location.reload()
         })
@@ -130,6 +133,7 @@ export default {
             life: 3000
           })
         })
+      this.isDeleting = false
     },
     async isLocalAvailable(localUrl: string) {
       try {

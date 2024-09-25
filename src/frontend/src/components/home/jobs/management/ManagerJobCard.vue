@@ -197,12 +197,17 @@
       <v-container>
         <v-row>
           <v-col class="d-flex flex-column" order="last" order-lg="first" cols="12" lg="6">
-            <v-btn class="mb-4" @click="cancelJob" color="error" block
+            <v-btn class="mb-4" @click="cancelJob" color="error" block :disabled="req_loading"
               ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
             >
           </v-col>
           <v-col class="d-flex flex-column" order="first" order-lg="last" cols="12" lg="6">
-            <v-btn class="mb-4" @click="patchJobDetails" color="success" block
+            <v-btn
+              class="mb-4"
+              @click="patchJobDetails"
+              color="success"
+              block
+              :loading="req_loading"
               ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
             >
           </v-col></v-row
@@ -335,6 +340,7 @@ const updateAllowedTimesEnd = () => {
     allowedMinutes2.value = () => true
   }
 }
+let req_loading = ref<boolean>(false)
 
 // Patch Job Details
 const patchJobDetails = async () => {
@@ -345,6 +351,7 @@ const patchJobDetails = async () => {
     }
   }
   try {
+    req_loading.value = true
     // Validate and set startDate
     if (startDate.value && startTime.value) {
       const startTimeString = startTime.value
@@ -390,6 +397,8 @@ const patchJobDetails = async () => {
   } catch (error) {
     console.error('Error getting editing job details', error)
     showEditError()
+  } finally {
+    req_loading.value = false
   }
 }
 

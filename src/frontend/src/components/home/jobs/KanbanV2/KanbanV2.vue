@@ -269,7 +269,7 @@
                       </template>
                       <v-list :border="true" bg-color="background" rounded="lg">
                         <v-list-item>
-                          <v-btn :elevation="0" @click="ArchiveJob(item)">
+                          <v-btn :elevation="0" @click="ArchiveJob(item, column)">
                             <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
                             {{ 'Archive' }}
                           </v-btn>
@@ -511,7 +511,7 @@ export default {
           console.log(error)
         })
     },
-    async ArchiveJob(payload: JobCardDataFormat) {
+    async ArchiveJob(payload: JobCardDataFormat, col: Column) {
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -525,7 +525,7 @@ export default {
         .patch(API_URL + `job/update/${payload.jobId}`, { status: this.archive_status_id }, config)
         .then((res) => {
           console.log(res.data.data)
-          window.location.reload()
+          col.cards = col.cards.filter((item) => item.jobId !== payload.jobId)
         })
         .catch((error) => console.log(error))
     },
@@ -572,13 +572,10 @@ export default {
           }
         }
 
+        const obj = { status: this.nostatusID } as any
         await axios.delete(API_URL + 'job/status', config).then(() => {
           for (let i = 0; i < col.cards.length; i++) {
-            axios.patch(
-              API_URL + `job/update/${col.cards[i].jobId}`,
-              { status: this.nostatusID },
-              config
-            )
+            axios.patch(API_URL + `job/update/${col.cards[i].jobId}`, obj, config)
           }
           for (let i = 0; i < this.columns.length; i++) {
             if (this.columns[i]._id == this.nostatusID) {
