@@ -359,6 +359,7 @@ export class InventoryController {
   })
   @Get('stockUsed/:jobId')
   async getStockUsed(@Headers() headers: any, @Param('jobId') jobId: Types.ObjectId) {
+    console.log('In endpoint');
     try {
       const data = await this.inventoryUsedService.findAllForJob(jobId);
       return { data: data };
