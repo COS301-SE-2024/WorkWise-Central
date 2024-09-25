@@ -189,8 +189,6 @@ import { API_URL } from '@/main'
 export default {
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       currentDate: new Date().toISOString().substr(0, 10),
       isUpdating: false,
       searchQuery: '',
@@ -297,10 +295,9 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiUrl = await this.getRequestUrl()
       const data = ''
       try {
-        const response = await axios.post(`${apiUrl}stocktake/create`, data, config)
+        const response = await axios.post(`${API_URL}stocktake/create`, data, config)
         console.log('Stock take create:', response)
       } catch (error) {
         console.log('Failed to create stock: ', error)
@@ -385,7 +382,6 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       };
-      const apiURL = await this.getRequestUrl();
       const data = {
         "currentEmployeeId": localStorage.getItem('employeeId'),
         "companyId": localStorage.getItem('currentCompany'),
@@ -401,7 +397,7 @@ export default {
       })
       console.log('Data', data)
       try {
-        const response = await axios.post(`${apiURL}stocktake/create`, data, config)
+        const response = await axios.post(`${API_URL}stocktake/create`, data, config)
         console.log('Response:', response)
         console.log("Hello world!");
       } catch (error) {
@@ -608,18 +604,6 @@ export default {
         console.error(error)
       }
     },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.getInventoryItems()

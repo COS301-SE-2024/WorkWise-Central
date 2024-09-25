@@ -142,7 +142,7 @@ export default {
       }
 
       axios
-        .patch(`${API_URL}/invoices/${this.invoice_id}`, this.localEditedInvoice, config)
+        .patch(`${API_URL}invoices/${this.invoice_id}`, this.localEditedInvoice, config)
         .then((response) => {
           this.$toast.add({
             severity: 'success',
@@ -176,9 +176,6 @@ export default {
     deepCopy(obj: any) {
       return JSON.parse(JSON.stringify(obj))
     },
-    getRequestUrl() {
-      return 'https://your-api-url.com'
-    }
   }
 }
 </script>

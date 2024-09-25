@@ -7,7 +7,7 @@
     </v-row>
     <!-- Search and Filters Section -->
     <v-row class="d-flex justify-space-between">
-      <v-col cols="12" md="4">
+      <v-col cols="12">
         <v-text-field
           v-model="searchQuery"
           label="Search Feedback"
@@ -17,7 +17,7 @@
           clearable
         ></v-text-field>
       </v-col>
-      <v-col cols="12" md="4">
+      <!-- <v-col cols="12" md="4">
         <v-select
           v-model="selectedCategory"
           :items="categories"
@@ -36,7 +36,7 @@
           color="primary"
           clearable
         ></v-select>
-      </v-col>
+      </v-col> -->
     </v-row>
 
     <v-tabs-items v-model="activeTab">
@@ -112,6 +112,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Feedback {
   clientName: string
@@ -133,8 +134,6 @@ export default defineComponent({
       satisfactionLevels: [1, 2, 3, 4, 5],
       categories: ['All Feedback'] as string[],
       categoryName: 'All Feedback',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       companyId: '',
       feedbacks: [] as Feedback[]
     }
@@ -154,18 +153,6 @@ export default defineComponent({
         }
       })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
     async getRequests() {
       // Getting all the jobs for the company
       const config = {
@@ -174,12 +161,11 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
       if (localStorage.getItem('currentCompany') !== null) {
         this.companyId = localStorage.getItem('currentCompany') as string
       }
       await axios
-        .get(`${url}job/all/company/${this.companyId}`, config)
+        .get(`${API_URL}job/all/company/${this.companyId}`, config)
         .then((response) => {
           for (const job of response.data.data) {
             if (job.clientFeedback != null) {

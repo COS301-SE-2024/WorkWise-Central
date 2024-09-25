@@ -231,10 +231,6 @@ const emits = defineEmits(['close', 'save'])
 // Toast for notifications
 const toast = useToast()
 
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
 // Province Options
 const provinceOptions = [
   'Eastern Cape',
@@ -288,21 +284,6 @@ const allowedHours = ref<(hour: number) => boolean>(() => true)
 const allowedMinutes = ref<(minute: number) => boolean>(() => true)
 const allowedHours2 = ref<(hour: number) => boolean>(() => true)
 const allowedMinutes2 = ref<(minute: number) => boolean>(() => true)
-
-// Utility Functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
 
 // Function to Update Allowed Start Times
 const updateAllowedTimes = () => {

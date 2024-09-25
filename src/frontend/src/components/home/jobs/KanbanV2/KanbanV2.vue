@@ -426,8 +426,6 @@ export default {
   },
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       delete_all_jobs_dialog: false,
       add_column_dialog: false,
       delete_column_dialog: false,
@@ -1058,18 +1056,6 @@ export default {
         return tracker1 - tracker2
       })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))

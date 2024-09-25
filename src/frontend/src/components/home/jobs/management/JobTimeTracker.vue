@@ -13,31 +13,13 @@
 import { ref, computed, defineProps, onUnmounted } from 'vue';
 import Button from 'primevue/button'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 const config = {
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
-}
-
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
 }
 
 const props = defineProps<{ jobID: string }>();
@@ -60,8 +42,7 @@ const getEmployeeId = (): string | null => {
 
 const makeApiCall = async (endpoint: string, action: string) => {
   try {
-    const baseUrl = await getRequestUrl();
-    const url = `${baseUrl}${endpoint}`;
+    const url = `${API_URL}${endpoint}`;
     const employeeId = getEmployeeId();
 
     if (!employeeId) {

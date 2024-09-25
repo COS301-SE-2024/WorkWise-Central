@@ -147,6 +147,7 @@
 <script>
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 export default {
   name: 'EditClient',
   props: {
@@ -266,7 +267,7 @@ export default {
       console.log(data)
       try {
         const response = await axios.patch(
-          `http://localhost:3000/client/${this._clientID}`,
+          `${API_URL}client/${this._clientID}`,
           data,
           config
         )
@@ -294,18 +295,6 @@ export default {
         })
         return false
       }
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     allRulesPass() {
       if (

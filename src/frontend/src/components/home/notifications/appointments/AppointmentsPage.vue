@@ -181,7 +181,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+import { API_URL } from '@/main'
 import axios from 'axios'
 
 interface Appointment {
@@ -229,8 +229,6 @@ export default defineComponent({
         participants: []
       } as Appointment,
       recentAppointments: [] as Appointment[],
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       companyId: '',
       startDate: null as string | null,
       minDate: new Date().toISOString().substr(0, 10),
@@ -251,18 +249,6 @@ export default defineComponent({
     selected_participants(a: any) {
       console.log(a)
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
 
     async getRequests() {
       const config = {
@@ -274,10 +260,9 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -293,7 +278,7 @@ export default defineComponent({
       //getting the meeting for the current employee
       try {
         const response = await axios.get(
-          `${apiURL}videoCalls/forEmployee/${localStorage.getItem('employeeId')}`,
+          `${API_URL}videoCalls/forEmployee/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -386,7 +371,6 @@ export default defineComponent({
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const url = await this.getRequestUrl()
         if (localStorage.getItem('currentCompany') !== null) {
           this.companyId = localStorage.getItem('currentCompany') as string
         }
@@ -401,7 +385,7 @@ export default defineComponent({
         const id = this.newAppointment._id
         console.log(data)
         await axios
-          .patch(`${url}videoCalls/${id}`, data, config)
+          .patch(`${API_URL}videoCalls/${id}`, data, config)
           .then((response) => {
             console.log('response: ', response)
           })
@@ -419,7 +403,7 @@ export default defineComponent({
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const url = await this.getRequestUrl()
+        
 
         console.log('this.newAppointment: ', this.newAppointment)
         const data = {
@@ -438,7 +422,7 @@ export default defineComponent({
         }
         console.log(data)
         await axios
-          .post(`${url}videoCalls/create`, data, config)
+          .post(`${API_URL}videoCalls/create`, data, config)
           .then((response) => {
             console.log(response)
             this.$toast.add({
@@ -473,9 +457,8 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = this.getRequestUrl()
       axios
-        .delete(`${url}videoCalls/${id}`, config)
+        .delete(`${API_URL}videoCalls/${id}`, config)
         .then((response) => {
           console.log(response)
         })

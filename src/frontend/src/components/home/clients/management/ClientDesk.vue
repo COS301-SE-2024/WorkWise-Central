@@ -188,8 +188,6 @@ export default defineComponent({
 
   data: () => ({
     dialogVisible: false,
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dummy: '',
     selectedItem: {
       firstName: ' ',
@@ -518,7 +516,7 @@ export default defineComponent({
         }
       }
       axios
-        .get(`http://localhost:3000/users/id/${localStorage.getItem('id')}`, config)
+        .get(`${API_URL}users/id/${localStorage.getItem('id')}`, config)
         .then((response) => {
           console.log(response.data)
           this.employees = response.data.data
@@ -527,18 +525,6 @@ export default defineComponent({
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
         })
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     getRowProps({ index }) {
       console.log(index)

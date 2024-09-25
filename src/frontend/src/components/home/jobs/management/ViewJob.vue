@@ -368,6 +368,7 @@ import LogJobInventory from './LogJobInventory.vue'
 import GenerateInvoice from './GenerateInvoice.vue'
 import JobTimeTracker from './JobTimeTracker.vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 const props = defineProps<{ passedInJob: any }>()
 const emits = defineEmits(['close'])
@@ -386,30 +387,12 @@ const jobTimeTrackerSection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
 const config = {
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
-}
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
 }
 
 function scrollToSection(
@@ -471,13 +454,12 @@ const changeImage = async (event: Event) => {
     reader.onload = async (e) => {
       imageSrc.value = e.target?.result as string
       setCardBackgroundColor(imageSrc.value)
-      const apiUrl = await getRequestUrl()
       try {
         console.log('Image src value:', imageSrc.value)
         console.log('Passed in job:', props.passedInJob)
         console.log('Job id:', props.passedInJob._id)
         await axios.patch(
-            `${apiUrl}job/update/${props.passedInJob._id}`,
+            `${API_URL}job/update/${props.passedInJob._id}`,
             {
               coverImage: imageSrc.value
             },

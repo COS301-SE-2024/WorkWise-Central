@@ -92,39 +92,9 @@ export default {
       jobRating: 0,
       feedback: '',
       customerServiceRating: 0,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
-    // trackEmployee(job) {
-    //   if (navigator.geolocation) {
-    //     navigator.geolocation.getCurrentPosition(
-    //       (position) => {
-    //         const latitude = position.coords.latitude
-    //         const longitude = position.coords.longitude
-    //         job.employeeLocation = `Lat: ${latitude}, Lon: ${longitude}`
-    //       },
-    //       (error) => {
-    //         console.error('Geolocation failed', error)
-    //       }
-    //     )
-    //   } else {
-    //     console.error('Geolocation is not supported by this browser.')
-    //   }
-    // },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    // async getRequestUrl() {
-    //   const localAvailable = await this.isLocalAvailable(this.localUrl)
-    //   return localAvailable ? this.localUrl : this.remoteUrl
-    // },
     async getRequests() {
       if (localStorage.getItem('clientId') !== null) {
         this.clientId = localStorage.getItem('clientId') as string

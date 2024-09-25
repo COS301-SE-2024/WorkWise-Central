@@ -97,6 +97,8 @@ import ViewTeam from './ViewTeam.vue'
 import UpdateTeam from './UpdateTeam.vue'
 import DeleteTeam from './DeleteTeam.vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 interface Team {
   _id: string
   companyId: string
@@ -135,8 +137,6 @@ export default defineComponent({
       selectedItemName: '',
       selectedItemID: '',
       actionsMenu: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
@@ -187,10 +187,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
           config
         )
         console.log(response.data.data)
@@ -213,10 +212,9 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -237,9 +235,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}employee/detailed/id/${this.teamLeaderId}`, config)
+        .get(`${API_URL}employee/detailed/id/${this.teamLeaderId}`, config)
         .then((response) => {
           console.log(response.data.data.userInfo.displayName)
           this.teamLeaderName = response.data.data.userInfo.displayName
@@ -248,18 +245,6 @@ export default defineComponent({
           console.error('Failed to fetch employees:', error)
         })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.getTeams()

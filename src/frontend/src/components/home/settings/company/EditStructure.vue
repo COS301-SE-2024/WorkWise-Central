@@ -204,8 +204,6 @@ const nodeSize = 40
 export default defineComponent({
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       color: 'primary',
       isLoading: false,
       selectedItem: '',
@@ -532,7 +530,6 @@ export default defineComponent({
       this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      let API_URL = await this.getRequestUrl()
       console.log(this.this.selectedItem.id)
       axios
         .patch(API_URL + `employee/${this.this.selectedItem.id}`, this.req_obj, config)
@@ -559,20 +556,6 @@ export default defineComponent({
           })
           console.log(error)
         })
-    },
-    async getRequestUrl() {
-      console.log(this.localUrl)
-      console.log(this.remoteUrl)
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
     },
     updateLayout(direction) {
       this.layout(direction)

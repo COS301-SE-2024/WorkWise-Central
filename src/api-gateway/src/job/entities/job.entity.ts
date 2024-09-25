@@ -44,6 +44,10 @@ export class ClientFeedback {
   @ApiProperty()
   @Prop({ type: String, required: false, default: '' })
   comments?: string;
+
+  @ApiProperty()
+  @Prop({ type: Date, required: false })
+  date?: Date;
 }
 
 export class Details {

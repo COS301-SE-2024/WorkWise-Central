@@ -924,6 +924,7 @@ import axios from 'axios'
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import Tutorial from './Tutorial.vue'
+import { API_URL } from '@/main'
 
 
 export default defineComponent({
@@ -934,8 +935,6 @@ export default defineComponent({
     Tutorial
   },
   data: () => ({
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     click_create_client: false,
     tabs: [
       { title: 'Client Management', icon: 'mdi-account-group' },
@@ -1095,7 +1094,7 @@ export default defineComponent({
     },
     skils: '',
     roles: '',
-    url: 'http://localhost:3000/users',
+    url: '${API_URL}users',
     valid: true,
     isDarkMode: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -1240,9 +1239,8 @@ export default defineComponent({
         }
         try {
           this.OTPDialog = true
-          const apiUrl = await this.getRequestUrl()
           await axios.post(
-            `${apiUrl}users/request/reset-pass`,
+            `${API_URL}users/request/reset-pass`,
             {
               email: this.email
             },
@@ -1296,10 +1294,9 @@ export default defineComponent({
     },
     async login() {
       this.loading = true
-      const apiURL = await this.getRequestUrl()
       if (this.$refs.form.validate()) {
         await axios
-          .post(apiURL + 'auth/login', {
+          .post(API_URL + 'auth/login', {
             identifier: this.username,
             password: this.password
           })
@@ -1341,7 +1338,6 @@ export default defineComponent({
       this.date = new Date(date).toISOString()
     },
     async signup() {
-      const apiURL = await this.getRequestUrl()
       this.birthDateFormatter(this.birthDate)
       const jsonData = {
         username: this.username,
@@ -1377,7 +1373,7 @@ export default defineComponent({
       }
 
       await axios
-        .post(apiURL + 'users/create', jsonData)
+        .post(API_URL + 'users/create', jsonData)
         .then((response) => {
           console.log(response)
           this.alertSignUpFailure = false
@@ -1457,8 +1453,7 @@ export default defineComponent({
     },
     async emailExist() {
       try {
-        const apiURL = await this.getRequestUrl()
-        const response = await axios.post(`${apiURL}users/exists/email`, {
+        const response = await axios.post(`${API_URL}users/exists/email`, {
           email: this.email
         })
         console.log(response.data.data)
@@ -1470,8 +1465,7 @@ export default defineComponent({
     },
     async usernameExist() {
       try {
-        const apiURL = await this.getRequestUrl()
-        const response = await axios.post(`${apiURL}users/exists/username`, {
+        const response = await axios.post(`${API_URL}users/exists/username`, {
           username: this.username
         })
         console.log(response.data.data)
@@ -1515,18 +1509,6 @@ export default defineComponent({
       }
       localStorage.setItem('theme', this.isDarkMode) // save the theme to session storage
     },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   }
 })
 </script>

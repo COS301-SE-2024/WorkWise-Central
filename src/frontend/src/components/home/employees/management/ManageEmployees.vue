@@ -167,8 +167,6 @@ export default {
       details: {}
     },
     selectedItemName: '',
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     selectedItemSurname: '',
     loading_data: true,
     permissions: [] as string[],
@@ -296,7 +294,7 @@ export default {
 
       try {
         const employee_response = await axios.get(
-          API_URL + `employee/id/${localStorage['employeeId']}`,
+          `${API_URL}employee/id/${localStorage['employeeId']}`,
           config
         )
         console.log(employee_response.data.data)
@@ -319,7 +317,7 @@ export default {
 
       try {
         const employee_response = await axios.get(
-          API_URL + `employee/detailed/all/${localStorage['employeeId']}`,
+          `${API_URL}employee/detailed/all/${localStorage['employeeId']}`,
           config
         )
 
@@ -427,18 +425,6 @@ export default {
       const index = this.clients.indexOf(item)
       return index % 2 === 0 ? 'row-color' : 'second-row-color'
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   }
 }
 </script>

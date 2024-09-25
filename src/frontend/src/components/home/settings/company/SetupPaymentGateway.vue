@@ -271,8 +271,6 @@ export default {
         dashboard: dashboard,
         enterDetails: enterDetails
       },
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       company: {
         accountDetails: {
           merchantId: '',
@@ -303,7 +301,7 @@ export default {
       }
       const company_id = localStorage.getItem('currentCompany')
       await axios
-        .get(`http://localhost:3000/company/id/${company_id}/accountDetails`, config)
+        .get(`${API_URL}company/id/${company_id}/accountDetails`, config)
         .then((response) => {
           this.company.accountDetails.merchantId = response.data.data.merchantId
           this.company.accountDetails.merchantKey = response.data.data.merchantKey
@@ -325,18 +323,6 @@ export default {
             life: 3000
           })
         })
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
     },
     async updateCompanyDetails() {
       this.isDeleting = true

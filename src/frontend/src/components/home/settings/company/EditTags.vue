@@ -121,7 +121,6 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import DeleteTags from './DeleteTags.vue'
-
 import CreateTags from './CreateTags.vue'
 import Toast from 'primevue/toast'
 import { API_URL } from '@/main'
@@ -152,8 +151,6 @@ export default defineComponent({
       colour: '',
       companyId: localStorage.getItem('currentCompany')
     },
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     formIsValid: false,
     nameRules: [(v: string) => !!v || 'Name is required'],
     labelRules: [(v: string) => !!v || 'Label is required'],
@@ -244,18 +241,6 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     selectItem(item: any) {
       console.log(item)

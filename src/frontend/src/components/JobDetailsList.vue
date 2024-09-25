@@ -258,14 +258,6 @@ export default defineComponent({
   methods: {
     handleSubmission() {
       alert('Job Successfully added')
-      // axios
-      //     .post('http://localhost:3000/client/create', this.req_obj)
-      //     .then((res) => {
-      //       console.log(res)
-      //     })
-      //     .catch((res) => {
-      //       console.log(res)
-      //     })
     }
   }
 })

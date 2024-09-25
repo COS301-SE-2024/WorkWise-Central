@@ -85,27 +85,13 @@ import Divider from 'primevue/divider'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Paginator from 'primevue/paginator'
+import { API_URL } from '@/main'
 
 const props = defineProps<{ jobID: string }>()
 
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
 const getInventoryInCompany = async() => {
-  const baseUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${baseUrl}inventory/all/${localStorage.getItem('employeeId')}`)
+    const response = await axios.get(`${API_URL}inventory/all/${localStorage.getItem('employeeId')}`)
     inventoryOptions.value = response.data.data.map((item: any) => ({
       id: item.id,
       name: item.name,
@@ -114,11 +100,6 @@ const getInventoryInCompany = async() => {
   } catch (error) {
     console.error('Error fetching inventory data:', error)
   }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
 }
 
 interface InventoryItem {
@@ -159,8 +140,7 @@ onMounted(async () => {
 
 async function fetchInventoryData() {
   try {
-    const baseUrl = await getRequestUrl()
-    const response = await axios.get(`${baseUrl}inventory/stockUsed/${props.jobID}`)
+    const response = await axios.get(`${API_URL}inventory/stockUsed/${props.jobID}`)
     inventoryOptions.value = response.data.data.map((item: any) => ({
       id: item.id,
       name: item.name,
@@ -177,11 +157,10 @@ function validateForm() {
 
 async function saveInventory() {
   try {
-    const baseUrl = await getRequestUrl()
     if (isEditing.value) {
       // Update existing inventory item
       const changeInAmount = newInventory.value.quantity - inventoryList.value[editingIndex.value].quantity
-      await axios.patch(`${baseUrl}inventory/updateStockUse`, {
+      await axios.patch(`${API_URL}inventory/updateStockUse`, {
         listOfUsedInventory: [{
           changeInAmount,
           inventoryId: newInventory.value.id
@@ -193,7 +172,7 @@ async function saveInventory() {
       isEditing.value = false
     } else {
       // Add new inventory item
-      await axios.patch(`${baseUrl}inventory/recordStockUse`, {
+      await axios.patch(`${API_URL}inventory/recordStockUse`, {
         listOfUsedInventory: [{
           amountUsed: newInventory.value.quantity,
           inventoryId: newInventory.value.id
@@ -222,8 +201,7 @@ async function removeInventory(index: number) {
   try {
     const actualIndex = first.value + index
     const itemToRemove = inventoryList.value[actualIndex]
-    const baseUrl = await getRequestUrl()
-    await axios.patch(`${baseUrl}inventory/updateStockUse`, {
+    await axios.patch(`${API_URL}inventory/updateStockUse`, {
       listOfUsedInventory: [{
         changeInAmount: -itemToRemove.quantity,
         inventoryId: itemToRemove.id
@@ -257,9 +235,8 @@ function onPageChange(event: any) {
 
 async function logInventory() {
   try {
-    const baseUrl = await getRequestUrl()
     const updatePromises = inventoryList.value.map(item =>
-        axios.patch(`${baseUrl}inventory/updateStockUse`, {
+        axios.patch(`${API_URL}inventory/updateStockUse`, {
           listOfUsedInventory: [{
             changeInAmount: item.quantity,
             inventoryId: item.id

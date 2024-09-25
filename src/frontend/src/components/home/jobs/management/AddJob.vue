@@ -490,8 +490,6 @@ export default defineComponent({
     const currentHour = now.getHours()
     const currentMinute = now.getMinutes()
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       click_create_employee: false,
       valid: false,
       selectedDate: '',
@@ -906,18 +904,6 @@ export default defineComponent({
       } catch (error) {
         console.log('Error fetching data:', error)
       }
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     updateClient() {
       console.log(this.req_obj.clientId)

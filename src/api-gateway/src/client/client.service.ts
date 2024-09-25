@@ -308,6 +308,7 @@ export class ClientService {
         comments: feedbackDto.comments,
         jobRating: feedbackDto.jobRating,
         customerServiceRating: feedbackDto.customerServiceRating,
+        date: new Date(),
       },
     });
   }

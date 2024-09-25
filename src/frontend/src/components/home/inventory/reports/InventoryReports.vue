@@ -50,8 +50,6 @@ import { API_URL } from '@/main'
 export default defineComponent({
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       activeTab: 0,
       isGenerating: false,
       locationTab: null,
@@ -97,22 +95,10 @@ export default defineComponent({
       doc.save(`${reportType.toLowerCase().replace(/ /g, '_')}_report.pdf`)
       this.isGenerating = false
     },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
     formatDate (dateString) {
       const options = { day: 'numeric', month: 'long', year: 'numeric' }
       const date = new Date(dateString)
       return date.toLocaleDateString('en-US', options)
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     async getRequests() {
       const config = {

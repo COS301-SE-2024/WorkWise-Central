@@ -1,18 +1,19 @@
 <template>
-  <v-container fluid fill-height>
-     <v-row class="justify-center align-center">
+  <v-container fluid fill-height class="pa-0 ma-0">
+     <v-row class="fill-height justify-center align-center">
       <v-col cols="12" class="text-center">
         <h4>Statistics</h4>
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row justify="center" class="fill-height">
       <v-col>
         <v-card
-          height="auto"
+          height="100%" 
+          width="100%" 
           class="pa-16 ma-0 bg-background"
           rounded="md"
-          border="md"
           elevation="0"
+          outlined="false"
         >
           <v-tabs v-model="activeTab" fixed-tabs bg-color="secondary" rounded="md">
             <v-tab v-for="tab in tabs" :key="tab" @click="changeTab(tab)">{{ tab }}</v-tab>

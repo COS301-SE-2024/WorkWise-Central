@@ -102,8 +102,6 @@ export default defineComponent({
     logoutDialog: false,
     selected: '',
     employeePermissions: [] as string[],
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
     toggleDarkMode() {
@@ -141,18 +139,6 @@ export default defineComponent({
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
         })
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     checkPermission(permission: string) {
       return this.employeePermissions.includes(permission)

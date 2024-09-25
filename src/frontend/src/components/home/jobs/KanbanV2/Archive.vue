@@ -63,8 +63,6 @@ export default defineComponent({
       selected: [],
       isDarkMode: localStorage['theme'] !== 'false',
       actionsDialog: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       nostatusID: '',
       starting_cards: [] as JobCardDataFormat[],
       headers: [
@@ -204,18 +202,6 @@ export default defineComponent({
       const f_date = `${y}-${m}-${d} ${h}:${mn}`
       return f_date
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.loadArchiveData()
