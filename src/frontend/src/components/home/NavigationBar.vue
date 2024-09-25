@@ -155,6 +155,22 @@ export default defineComponent({
     },
     checkPermission(permission: string) {
       return this.employeePermissions.includes(permission)
+    },
+    notificationCheck() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      axios
+        .get(`${API_URL}notification/new-notifications`, config)
+        .then((response) => {
+          console.log('new notification check')
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
     }
   },
   mounted() {
