@@ -163,7 +163,7 @@ export class TimeTrackerController {
   async getLatestCheckinForEmployee(@Headers() headers: any, @Body() generalTimeTrackerDto: GeneralTimeTrackerDto) {
     const userId = extractUserId(this.jwtService, headers);
     await this.timeTrackerService.userIdMatchesEmployeeId(userId, generalTimeTrackerDto.employeeId);
-    return { data: this.timeTrackerService.getLatestCheckinForEmployee(userId, generalTimeTrackerDto) };
+    return { data: await this.timeTrackerService.getLatestCheckinForEmployee(userId, generalTimeTrackerDto) };
   }
 
   @Get('all-checkins')
@@ -172,7 +172,7 @@ export class TimeTrackerController {
   async getAllEmployeeCheckins(@Headers() headers: any, @Body() generalTimeTrackerDto: GeneralTimeTrackerDto) {
     const userId = extractUserId(this.jwtService, headers);
     await this.timeTrackerService.userIdMatchesEmployeeId(userId, generalTimeTrackerDto.employeeId);
-    return { data: this.timeTrackerService.getAllEmployeeCheckins(userId, generalTimeTrackerDto.employeeId) };
+    return { data: await this.timeTrackerService.getAllEmployeeCheckins(userId, generalTimeTrackerDto.employeeId) };
   }
 
   @Get('total-time-spent')
@@ -182,7 +182,7 @@ export class TimeTrackerController {
     const userId = extractUserId(this.jwtService, headers);
     await this.timeTrackerService.userIdMatchesEmployeeId(userId, generalTimeTrackerDto.employeeId);
     return {
-      data: this.timeTrackerService.getTotalTimeSpentOnJob(
+      data: await this.timeTrackerService.getTotalTimeSpentOnJob(
         generalTimeTrackerDto.employeeId,
         generalTimeTrackerDto.jobId,
       ),

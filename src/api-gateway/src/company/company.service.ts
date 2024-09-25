@@ -196,6 +196,16 @@ export class CompanyService {
 
     return result;
   }
+  feat;
+  async getCompanyNameById(identifier: Types.ObjectId): Promise<string> {
+    const result = await this.companyRepository.findCompanyNameById(identifier);
+
+    if (result == null) {
+      throw new ConflictException('Company not found');
+    }
+
+    return result;
+  }
 
   async getCompanyAccountDetails(identifier: Types.ObjectId) {
     const company = await this.companyRepository.findById(identifier);
@@ -550,7 +560,7 @@ export class CompanyService {
       throw new UnauthorizedException('Only the owner can perform this action');
     }
 
-    const usersInCompany = await this.usersService.getAllUsersInCompany(deleteCompanyDto.companyId);
+    const usersInCompany = await this.usersService.getAllUsersInCompanyInternal(deleteCompanyDto.companyId);
 
     for (const user of usersInCompany) {
       const newJoinedCompanies: JoinedCompany[] = [];

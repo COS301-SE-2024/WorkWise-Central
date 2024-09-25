@@ -21,7 +21,7 @@
     "installAll": "npm install && cd src/api-gateway && npm install && cd ../frontend && npm install && cd ../../"
   },
   "dependencies": {
-    "colorthief": "^2.4.0",
-    "https-localhost": "^4.7.1"
+    "https-localhost": "^4.7.1",
+    "vue-material-design-icons": "^5.3.0"
   }
 }

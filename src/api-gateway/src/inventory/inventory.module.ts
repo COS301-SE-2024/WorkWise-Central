@@ -18,6 +18,7 @@ import { StockTakeModule } from '../stocktake/stocktake.module';
 import { StockTakeService } from '../stocktake/stocktake.service';
 import { StockMovementsModule } from '../stockmovements/stockmovements.module';
 import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
     forwardRef(() => StockTakeModule),
     forwardRef(() => StockMovementsModule),
     forwardRef(() => InventoryUsedModule),
+    forwardRef(() => EmailModule),
   ],
   controllers: [InventoryController],
   providers: [InventoryService, InventoryRepository, JobService, EmployeeService, StockTakeService],
