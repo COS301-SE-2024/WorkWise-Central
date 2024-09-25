@@ -12,6 +12,7 @@ import { ClientModule } from '../client/client.module';
 import { TeamRepository } from './team.repository';
 import { FileModule } from '../file/file.module';
 import { StockTakeModule } from '../stocktake/stocktake.module';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { StockTakeModule } from '../stocktake/stocktake.module';
     forwardRef(() => ClientModule),
     forwardRef(() => FileModule),
     forwardRef(() => StockTakeModule),
+    forwardRef(() => EmailModule),
   ],
   controllers: [TeamController],
   providers: [TeamService, TeamRepository, JobService],

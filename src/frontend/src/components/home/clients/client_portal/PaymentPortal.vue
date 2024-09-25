@@ -46,6 +46,7 @@
 import axios from 'axios'
 import { defineComponent } from 'vue'
 import CryptoJS from 'crypto-js'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   data() {
@@ -143,9 +144,8 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
       await axios
-        .get(`${url}client/clientPortal/id/${this.clientId}`, config)
+        .get(`${API_URL}client/clientPortal/id/${this.clientId}`, config)
         .then((response) => {
           this.client = response.data.data
           // console.log('Client:', this.client)
@@ -163,7 +163,7 @@ export default defineComponent({
 
       // Getting the company info
       await axios
-        .get(`${url}company/id/${this.companyId}/accountDetails`, config)
+        .get(`${API_URL}company/id/${this.companyId}/accountDetails`, config)
         .then((response) => {
           this.merchant_id = response.data.data.merchantId
           this.merchant_key = response.data.data.merchantKey
@@ -175,7 +175,7 @@ export default defineComponent({
 
       // Getting the invoices
       await axios
-        .get(`${url}invoice/all/forClient/${this.clientId}`, config)
+        .get(`${API_URL}invoice/all/forClient/${this.clientId}`, config)
         .then((response) => {
           // console.log('Invoices:', response)
           this.invoices = response.data.data
@@ -194,10 +194,6 @@ export default defineComponent({
       } catch (error) {
         return false
       }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     }
   },
   mounted() {

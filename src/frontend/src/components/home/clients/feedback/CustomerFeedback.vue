@@ -65,18 +65,20 @@
                     <span>{{ feedback.jobTitle }}</span>
                   </v-card-title>
                   <v-card-text
-                    ><v-container
-                      ><v-row
-                        ><v-col cols="12" lg="6">
+                    ><v-container>
+                      <v-row>
+                        <v-col cols="12">
                           <v-label style="display: block; margin-bottom: 10px">Job Rating</v-label>
                           <v-rating
                             v-model="feedback.jobRating"
                             active-color="blue"
                             color="orange-lighten-1"
                             readonly
-                          ></v-rating></v-col
-                        ><v-col cols="12" lg="6"
-                          ><v-label style="display: block; margin-bottom: 10px"
+                          ></v-rating>
+                        </v-col>
+
+                        <v-col cols="12">
+                          <v-label style="display: block; margin-bottom: 10px"
                             >Customer Service Rating</v-label
                           >
                           <v-rating
@@ -84,8 +86,11 @@
                             active-color="blue"
                             color="orange-lighten-1"
                             readonly
-                          ></v-rating></v-col></v-row
-                    ></v-container>
+                          ></v-rating>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+
                     <v-container>
                       <v-row
                         ><v-col>
@@ -136,7 +141,6 @@ export default defineComponent({
     }
   },
   methods: {
-   
     getFeedbackDetails(feedback: Feedback) {
       console.log(feedback)
     },

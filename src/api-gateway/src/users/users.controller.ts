@@ -38,8 +38,9 @@ import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserAllResponseDetailedDto } from './dto/user-response.dto';
 //import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
-import { isBase64Uri } from '../utils/Utils';
+import { isBase64Uri, extractUserId } from '../utils/Utils';
 import { RequestResetDto, UserResetPasswordDto } from './dto/user-reset-password.dto';
+
 // import { diskStorage } from 'multer';
 // import e from 'express';
 // import firebase from 'firebase/compat';
@@ -152,6 +153,28 @@ export class UsersController {
     try {
       console.log(headers);
       return { data: await this.usersService.getAllUsers() };
+    } catch (Error) {
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @ApiOperation({
+    summary: `Get all ${className}s in a company`,
+  })
+  @ApiOkResponse({
+    type: UserAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class in the specified company`,
+  })
+  @ApiBearerAuth('JWT')
+  @UseGuards(AuthGuard)
+  @Get('all/company/:companyId')
+  async findAllUsersInCompany(@Headers() headers: any, @Param('companyId') companyId: string) {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(companyId)) {
+        throw new HttpException('Invalid Company ID', HttpStatus.BAD_REQUEST);
+      }
+      const userId = extractUserId(this.jwtService, headers);
+      return { data: await this.usersService.getAllUsersInCompany(userId, new Types.ObjectId(companyId)) };
     } catch (Error) {
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }

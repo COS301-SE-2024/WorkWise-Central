@@ -20,7 +20,7 @@ export class NotificationRepository {
   }
 
   async findAllWithRecipientId(id: Types.ObjectId): Promise<Notification[]> {
-    return await this.notificationModel.find({ recipientId: id }).lean().exec();
+    return await this.notificationModel.find({ recipientId: id }).sort({ createdAt: -1 }).lean().exec();
   }
 
   /*  async findAllWithUserId(id: Types.ObjectId): Promise<Notification[]> {
