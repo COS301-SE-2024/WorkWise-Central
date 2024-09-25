@@ -43,24 +43,31 @@
       </v-data-table>
 
       <!-- Breakdown Section (Appears after clicking View Breakdown) -->
-      <v-card v-if="
-        showStats
-      ">
+      <!-- Breakdown Section (Appears after clicking View Breakdown) -->
+      <v-card v-if="showStats">
         <v-card-title>Client Breakdown for {{ selectedClient.firstName }}</v-card-title>
         <v-card-text>
           <!-- Bar chart for number of jobs -->
           <v-container>
-            <v-row><v-col cols="12" lg="6" v-if="!jobsData.data">
+            <v-row>
+              <!-- Jobs chart - only show if job data is not all zeros -->
+              <v-col cols="12" lg="6" v-if="jobsData.datasets[0].data.some(value => value > 0)">
                 <h5>Breakdown of the Jobs for {{ selectedClient.firstName }}</h5>
-                <Chart type="pie" :data="jobsData"  @chart-click="onChartClick" />
-              </v-col><v-col cols="12" lg="6" v-if="!invoiceData.data">
+                <Chart type="pie" :data="jobsData" @chart-click="onChartClick" />
+              </v-col>
+
+              <!-- Invoices chart - only show if invoice data is not all zeros -->
+              <v-col cols="12" lg="6" v-if="invoiceData.datasets[0].data.some(value => value > 0)">
                 <h5>Breakdown of the Invoices for {{ selectedClient.firstName }}</h5>
-                <Chart type="pie" :data="invoiceData"  @chart-click="onChartClick" />
-              </v-col></v-row></v-container>
+                <Chart type="pie" :data="invoiceData" @chart-click="onChartClick" />
+              </v-col>
+            </v-row>
+          </v-container>
 
           <!-- Customer Service Rating Section -->
           <v-container>
             <v-row>
+              <!-- Only show if there are customer service ratings -->
               <v-col cols="12" lg="6" v-if="totalRatings !== 0">
                 <h5>Average Customer Service ratings given by {{ selectedClient.firstName }}</h5>
                 <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
@@ -70,7 +77,7 @@
                       {{ overallCustomerRating }}
                       <span class="text-h6 ml-n3">/5</span>
                     </div>
-                    <v-rating :model-value="overallRating" color="yellow-darken-3" half-increments></v-rating>
+                    <v-rating :model-value="overallCustomerRating" color="yellow-darken-3" half-increments></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
                   <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
@@ -89,7 +96,10 @@
                     </v-list-item>
                   </v-list>
                 </v-card>
-              </v-col><v-col cols="12" lg="6" v-if="totalJobRatings !== 0">
+              </v-col>
+
+              <!-- Job Quality Rating Section - only show if there are job quality ratings -->
+              <v-col cols="12" lg="6" v-if="totalJobRatings !== 0">
                 <h5>Average Job quality ratings given by {{ selectedClient.firstName }}</h5>
                 <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
                   <div class="d-flex justify-center mt-auto text-h5">Job Quality Rating</div>
@@ -117,22 +127,12 @@
                     </v-list-item>
                   </v-list>
                 </v-card>
-              </v-col></v-row></v-container>
-          <v-dialog v-model="dialog" max-width="500">
-            <v-card>
-              <v-card-title>{{ dialogTitle }}</v-card-title>
-              <v-card-text>
-                <ul>
-                  <li v-for="(item, index) in dialogItems" :key="index">{{ item }}</li>
-                </ul>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn text @click="dialog = false">Close</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card-text>
       </v-card>
+
     </v-card-text>
   </v-card>
 </template>

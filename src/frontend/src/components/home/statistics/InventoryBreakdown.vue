@@ -38,16 +38,16 @@
     </v-card-subtitle>
 
     <v-card-text>
-      <!-- Doughnut Chart for Highest Usage Items -->
       <v-container>
         <v-row>
-          <v-col cols="12" lg="6">
+          <!-- Doughnut Chart for Highest Usage Items -->
+          <v-col v-if="hasHighestUsageData" cols="12" lg="6">
             <p><strong>Highest Usage Items:</strong></p>
             <Chart type="doughnut" :data="highestUsageItemsChartData" :options="chartOptions" height="600px" />
           </v-col>
 
           <!-- Bar Chart for Loss of Stock -->
-          <v-col cols="12" lg="6">
+          <v-col v-if="hasLossOfStockData" cols="12" lg="6">
             <p><strong>Loss of Stock:</strong></p>
             <Chart type="pie" :data="lossOfStockChartData" :options="chartOptions" height="400px" />
           </v-col>
@@ -104,6 +104,14 @@ export default {
       },
 
       inventoryStats: {}
+    }
+  },
+  computed: {
+    hasHighestUsageData() {
+      return this.itemUsage.length > 0 && this.itemUsage.some(item => item.quantity > 0);
+    },
+    hasLossOfStockData() {
+      return this.stockLost.length > 0 && this.stockLost.some(item => item.inventoryItem.quantity > 0);
     }
   },
   methods: {
@@ -195,6 +203,7 @@ export default {
   }
 }
 </script>
+
 
 
 <style scoped>

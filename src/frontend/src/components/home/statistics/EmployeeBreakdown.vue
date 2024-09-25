@@ -43,27 +43,28 @@
         </template>
       </v-data-table>
 
+
       <!-- Employee Breakdown Charts -->
       <div v-if="showStats">
         <v-card-title>Employee Breakdown for {{ selectedEmployee.userInfo.firstName }}</v-card-title>
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6" v-show="!combinedChartData.data">
+            <v-col cols="12" lg="6" v-if="!combinedChartData.datasets[0].data.every(d => d !== 0)">
               <h5>Jobs for {{ selectedEmployee.userInfo.firstName }}</h5>
-              <Chart type="pie" :data="combinedChartData"  height="300px" />
+              <Chart type="pie" :data="combinedChartData" height="300px" />
             </v-col>
-            <v-col cols="12" lg="6" v-show="!onTimeJobsChartData.data">
+            <v-col cols="12" lg="6" v-if="!onTimeJobsChartData.datasets[0].data.every(d => d !== 0)">
               <h5>
                 Jobs completed on time vs jobs completed late for {{ selectedEmployee.userInfo.firstName }}
               </h5>
-              <Chart type="pie" :data="onTimeJobsChartData"  height="300px" />
+              <Chart type="pie" :data="onTimeJobsChartData" height="300px" />
             </v-col>
           </v-row>
         </v-container>
 
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6" v-show="totalCustomerRatings !== 0">
+            <v-col cols="12" lg="6" v-if="totalCustomerRatings !== 0">
               <h5>Average Customer Service ratings given by</h5>
               <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
                 <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
@@ -93,7 +94,7 @@
                 </v-list>
               </v-card>
             </v-col>
-            <v-col cols="12" lg="6" v-show="totalJobRatings !== 0">
+            <v-col cols="12" lg="6" v-if="totalJobRatings !== 0">
               <h5>Average Job Performance ratings given by</h5>
               <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
                 <div class="d-flex justify-center mt-auto text-h5">Job Performance Rating</div>
@@ -126,6 +127,7 @@
           </v-row>
         </v-container>
       </div>
+
     </v-card-text>
   </v-card>
 </template>
