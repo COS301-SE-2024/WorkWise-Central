@@ -50,13 +50,13 @@
           <v-row>
             <v-col cols="12" lg="6" v-show="!combinedChartData.data">
               <h5>Jobs for {{ selectedEmployee.userInfo.firstName }}</h5>
-              <Chart type="pie" :data="combinedChartData" :options="chartOptions" height="300px" />
+              <Chart type="pie" :data="combinedChartData"  height="300px" />
             </v-col>
             <v-col cols="12" lg="6" v-show="!onTimeJobsChartData.data">
               <h5>
                 Jobs completed on time vs jobs completed late for {{ selectedEmployee.userInfo.firstName }}
               </h5>
-              <Chart type="pie" :data="onTimeJobsChartData" :options="chartOptions" height="300px" />
+              <Chart type="pie" :data="onTimeJobsChartData"  height="300px" />
             </v-col>
           </v-row>
         </v-container>

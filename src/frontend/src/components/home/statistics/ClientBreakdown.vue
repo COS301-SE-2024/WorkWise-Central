@@ -52,10 +52,10 @@
           <v-container>
             <v-row><v-col cols="12" lg="6" v-if="!jobsData.data">
                 <h5>Breakdown of the Jobs for {{ selectedClient.firstName }}</h5>
-                <Chart type="pie" :data="jobsData" :options="jobsChartOptions" @chart-click="onChartClick" />
+                <Chart type="pie" :data="jobsData"  @chart-click="onChartClick" />
               </v-col><v-col cols="12" lg="6" v-if="!invoiceData.data">
                 <h5>Breakdown of the Invoices for {{ selectedClient.firstName }}</h5>
-                <Chart type="pie" :data="invoiceData" :options="invoiceChartOptions" @chart-click="onChartClick" />
+                <Chart type="pie" :data="invoiceData"  @chart-click="onChartClick" />
               </v-col></v-row></v-container>
 
           <!-- Customer Service Rating Section -->
