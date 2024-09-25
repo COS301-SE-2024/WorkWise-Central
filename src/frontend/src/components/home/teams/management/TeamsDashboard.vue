@@ -9,7 +9,7 @@
         >
           <v-row align="center" justify="space-between">
             <v-col cols="12" lg="4" class="d-flex align-center">
-              <v-icon icon="fa: fa-solid fa-users"></v-icon>
+              <v-icon icon="fa: fa-solid fa-people-group"></v-icon>
               <v-label
                 class="ms-2 h4 font-family-Nunito text-headingTextColor"
                 height="auto"

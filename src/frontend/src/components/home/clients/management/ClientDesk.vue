@@ -9,7 +9,7 @@
         >
           <v-row align="center" justify="space-between">
             <v-col cols="12" lg="4" class="d-flex justify-start align-center">
-              <v-icon icon="mdi-account"></v-icon>
+              <v-icon icon="fa: fa-solid fa-handshake"></v-icon>
               <v-label
                 class="ms-2 h2 font-family-Nunito text-headingTextColor"
                 height="auto"

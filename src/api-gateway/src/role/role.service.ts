@@ -43,7 +43,7 @@ export class RoleService {
     this.permissionsArray.push('view statistics');
     this.permissionsArray.push('view customer feedback');
     this.permissionsArray.push('view all inventory');
-    this.permissionsArray.push('edit all inventory');
+    this.permissionsArray.push('edit inventory');
     this.permissionsArray.push('add new inventory item');
     this.permissionsArray.push('delete inventory item');
     this.permissionsArray.push('record stock take');
@@ -308,7 +308,7 @@ export class RoleService {
     inventoryRoleDto.roleName = 'Inventory manager';
 
     inventoryRoleDto.permissionSuite.push('view all inventory');
-    inventoryRoleDto.permissionSuite.push('edit all inventory');
+    inventoryRoleDto.permissionSuite.push('edit inventory');
     inventoryRoleDto.permissionSuite.push('delete inventory item');
     inventoryRoleDto.permissionSuite.push('add new inventory item');
     inventoryRoleDto.permissionSuite.push('record inventory use');

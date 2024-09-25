@@ -2,9 +2,8 @@
   <v-container fluid fill-height>
      <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h2 class="text-xl font-semibold">Statistics Dashboard</h2>
+        <h4>Statistics</h4>
       </v-col>
-      <v-divider></v-divider>
     </v-row>
     <v-row justify="center">
       <v-col>
@@ -20,7 +19,7 @@
             <v-spacer></v-spacer>
           </v-tabs>
           <v-spacer></v-spacer>
-          <v-tabs-items v-model="activeTab">
+          <v-tabs-items v-model="activeTab" >
             <!-- Recent Jobs Completed Chart -->
             <v-tab-item v-if="currentTab === 'Recent Jobs Completed'">
               <v-card border="" rounded="md">

@@ -1,14 +1,14 @@
 <template>
-  <v-container>
+  <v-container fluid fill-height>
+
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h1 class="text-xl font-semibold">Stock Take</h1>
-        <v-divider></v-divider>
+        <h4>Stock Take</h4>
       </v-col>
     </v-row>
 
     <v-row>
-      <v-container>
+      <v-container fluid fill-height>
         <v-card class="bg-cardColor">
           <v-card-title>
             <v-row>

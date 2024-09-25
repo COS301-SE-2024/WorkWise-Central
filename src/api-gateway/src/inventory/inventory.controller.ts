@@ -248,7 +248,7 @@ export class InventoryController {
     await this.validateRequestWithEmployeeId(userId, externalInventoryUpdateDto.currentEmployeeId);
 
     const currentEmployee = await this.employeeService.findById(externalInventoryUpdateDto.currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('edit all inventory')) {
+    if (currentEmployee.role.permissionSuite.includes('edit inventory')) {
       console.log('in if');
       let data;
       try {
@@ -415,7 +415,7 @@ export class InventoryController {
     console.log('In addImages inventory controller');
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     console.log('currentEmployee: ', currentEmployee);
-    if (currentEmployee.role.permissionSuite.includes('edit all inventory')) {
+    if (currentEmployee.role.permissionSuite.includes('edit inventory')) {
       console.log('in if');
       let data;
       try {

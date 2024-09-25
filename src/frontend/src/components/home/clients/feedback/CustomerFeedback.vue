@@ -1,10 +1,9 @@
 <template>
-  <v-container>
+  <v-container fluid fill-height>
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h2 class="text-xl font-semibold">Customer Feedback</h2>
+        <h4>Customer Feedback</h4>
       </v-col>
-      <v-divider></v-divider>
     </v-row>
     <!-- Search and Filters Section -->
     <v-row class="d-flex justify-space-between">

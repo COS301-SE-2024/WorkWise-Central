@@ -8,7 +8,7 @@
           width="100%"
           ><v-row align="center" justify="space-between">
             <v-col cols="12" lg="4" class="d-flex align-center">
-              <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
+              <v-icon icon="fa: fa-solid fa-boxes"></v-icon>
               <v-label
                 class="ms-2 h2 font-family-Nunito text-headingTextColor"
                 height="auto"
@@ -60,7 +60,7 @@
                     @click="selectItem(item)"
                     v-if="
                       checkPermission('view all inventory') &&
-                      checkPermission('edit all inventory') &&
+                      checkPermission('edit inventory') &&
                       checkPermission('delete inventory item')
                     "
                   >
@@ -71,7 +71,7 @@
                   <v-list-item v-show="checkPermission('view all inventory')">
                     <InventoryDetails :inventoryItem="selectedItem" />
                   </v-list-item>
-                  <v-list-item v-show="checkPermission('edit all inventory')">
+                  <v-list-item v-show="checkPermission('edit inventory')">
                     <EditInventory
                       :inventory_id="selectedItemID"
                       :editedItem="selectedItem"

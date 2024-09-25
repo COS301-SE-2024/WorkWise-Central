@@ -1,18 +1,18 @@
 <template>
-  <v-container>
+  <v-container fluid fill-height>
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h1 class="text-xl font-semibold">Inventory Movements</h1>
-        <v-divider></v-divider>
+        <h4>Inventory Movements</h4>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col cols="12">
         <v-tabs-items v-model="activeTab">
           <!-- Stock Movement Report -->
           <v-card class="bg-cardColor">
             <v-card-text>
-              <v-container>
+              <v-container fluid fill-height>
                 <v-col>
                   <v-btn
                     variant="elevated"

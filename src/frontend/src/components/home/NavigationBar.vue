@@ -3,80 +3,76 @@ import { ref } from 'vue'
 import '@mdi/font/css/materialdesignicons.css' // icon import
 import UserAvatar from './UserAvatar.vue'
 const isVisible = ref(false)
-const drawer = ref(true)
+// const drawer = ref(true)
 
 const open = ref(['Dashboard'])
 
-const dashboardSubItems = ref([
-  { title: 'Calender', icon: 'fa: fa-solid fa-house', routeName: 'dashboard' },
-  { title: 'Statistics', icon: 'fa: fa-solid fa-chart-line', routeName: 'statisticView' }
-])
-
-const clientSubItems = ref([
-  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'client-desk-view' },
-
-  { title: 'Customer Feedback', icon: 'fa: fa-solid fa-comment', routeName: 'client-feedback' }
-])
 const CommunicationSubItems = ref([
   {
     title: 'Chats',
     icon: 'fa: fa-solid fa-comments',
     routeName: 'chatHome'
   },
-  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
-])
-const employeeSubItems = ref([
-  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'manageremployees' },
-  { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' }
-])
-const teamSubItems = ref([{ title: 'Management' }])
-const jobSubItems = ref([
-  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'jobAssignmentView' },
-  { title: 'Job Board', icon: 'fa: fa-solid fa-table', routeName: 'backlog' }
+  { title: 'Video Calls', icon: 'fa: fa-solid fa-video', routeName: 'appointments' }
 ])
 
-const inventorySubItems = ref([
-  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'inventory' },
-  {
-    title: 'Stock Take',
-    icon: 'fa: fa-solid fa-chart-line',
-    routeName: 'stock-take'
-  },
-  {
-    title: 'Movements',
-    icon: 'fa: fa-solid fa-bars-progress',
-    routeName: 'report-view'
-  }
-])
 const invoicesSubItems = ref([
-  { title: 'Management', icon: 'fa: fa-solid fa-user-tie', routeName: 'invoices' },
-  { title: 'Invoice Board', icon: 'fa: fa-solid fa-table', routeName: 'invoice-kanban' }
+  { title: 'Invoice Details', icon: 'fa: fa-solid fa-table', routeName: 'invoices' },
+  { title: 'Invoice Board', icon: 'fa: fa-solid fa-table-columns', routeName: 'invoice-kanban' }
 ])
 
-const FleetSubItems = ref([{ title: 'Map', icon: 'fa: fa-solid fa-map', routeName: 'map' }])
 
-/*const inboxSubItems = ref([
-  { title: 'Notifications', icon: 'fa: fa-solid fa-bell', routeName: 'notifications' },
-  // { title: 'Messages', icon: 'fa: fa-solid fa-message', routeName: 'messages' },
-  { title: 'Meetings', icon: 'fa: fa-solid fa-calendar-check', routeName: 'appointments' }
-])*/
-
-const supportSubItems = ref([
-  { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
-])
 const companySubItems = ref([
-  { title: 'Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
+  { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
   {
-    title: 'Requests',
-    icon: 'fa: fa-solid fa-envelope',
+    title: 'Join Requests',
+    icon: 'fa: fa-solid fa-person-circle-question',
     routeName: 'company-requests'
   }
 ])
 
-const filterClientSubItems = ref(clientSubItems.value.filter((item) => item.title === 'Management'))
-const filterInventorySubItems = ref(
-  inventorySubItems.value.filter((item) => item.title === 'Management')
-)
+const jobSubItems = ref([
+  { title: 'Job Details', icon: 'fa: fa-solid fa-table', routeName: 'jobAssignmentView' },
+  { title: 'Job Board', icon: 'fa: fa-solid fa-table-columns', routeName: 'backlog' }
+])
+
+// const dashboardSubItems = ref([
+//   { title: 'Calender', icon: 'fa: fa-solid fa-house', routeName: 'dashboard' },
+//   { title: 'Statistics', icon: 'fa: fa-solid fa-chart-line', routeName: 'statisticView' }
+// ])
+
+// const clientSubItems = ref([
+//   { title: 'Management', icon: 'fa: fa-solid fa-table', routeName: 'client-desk-view' },
+
+//   { title: 'Customer Feedback', icon: 'fa: fa-solid fa-comment', routeName: 'client-feedback' }
+// ])
+// const employeeSubItems = ref([
+//   { title: 'Management', icon: 'fa: fa-solid fa-table', routeName: 'manageremployees' },
+//   { title: 'Teams', icon: 'fa: fa-solid fa-users', routeName: 'teams' }
+// ])
+// const teamSubItems = ref([{ title: 'Management' }])
+// const inventorySubItems = ref([
+//   { title: 'Management', icon: 'fa: fa-solid fa-table', routeName: 'inventory' },
+//   {
+//     title: 'Stock Take',
+//     icon: 'fa: fa-solid fa-chart-line',
+//     routeName: 'stock-take'
+//   },
+//   {
+//     title: 'Movements',
+//     icon: 'fa: fa-solid fa-bars-progress',
+//     routeName: 'report-view'
+//   }
+// ])
+// const FleetSubItems = ref([{ title: 'Map', icon: 'fa: fa-solid fa-map', routeName: 'map' }])
+
+// const supportSubItems = ref([
+//   { title: 'Support', icon: 'fa: fa-solid fa-headset', routeName: 'support' }
+// ])
+// const filterClientSubItems = ref(clientSubItems.value.filter((item) => item.title === 'Management'))
+// const filterInventorySubItems = ref(
+//   inventorySubItems.value.filter((item) => item.title === 'Management')
+// )
 </script>
 
 <script lang="ts">
@@ -109,9 +105,6 @@ export default defineComponent({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
-  // computed: {
-  //   ...mapGetters(['isDarkMode'])
-  // },
   methods: {
     toggleDarkMode() {
       console.log(this.isdarkmode)
@@ -196,25 +189,31 @@ export default defineComponent({
         ></v-icon>
       </div>
     </v-app-bar>
-    <v-navigation-drawer class="bg-background" app v-model="isVisible" min-height="100%">
+    <v-navigation-drawer class="bg-background " app v-model="isVisible" min-height="100%" width="300">
       <v-list v-model:open="open">
         <v-list-group fluid value="Dashboard">
           <template v-slot:activator="{ props }">
             <v-list-item
               v-bind="props"
-              prepend-icon="fa: fa-solid fa-tachometer-alt"
+              prepend-icon="fa: fa-solid fa-house"
               title="Dashboard"
               class="list-item-large"
             ></v-list-item>
           </template>
           <v-list-item
-            v-for="(item, i) in dashboardSubItems"
-            :key="i"
-            :to="{ name: item.routeName }"
-            :value="item.title"
-            :title="item.title"
-            :prepend-icon="item.icon"
-            @click="setInbox(item.title)"
+            class="list-item-large"
+            to="dashboard"
+            value="Calender"
+            title="Calender"
+            prepend-icon="fa: fa-solid fa-calendar-days"
+          ></v-list-item>
+          <v-list-item
+            class="list-item-large"
+            to="statisticView"
+            value="Statistics"
+            title="Statistics"
+            prepend-icon="fa: fa-solid fa-chart-pie"
+            v-show="checkPermission('view statistics')"
           ></v-list-item>
         </v-list-group>
       </v-list>
@@ -233,21 +232,26 @@ export default defineComponent({
             ></v-list-item>
           </template>
           <v-list-item
-            v-for="(item, i) in checkPermission('view all clients')
-              ? clientSubItems
-              : filterClientSubItems"
-            :key="i"
-            :to="{ name: item.routeName }"
-            :value="item.title"
-            :title="item.title"
-            :prepend-icon="item.icon"
-            @click="setInbox(item.title)"
+            class="list-item-large"
+            to="client-desk-view"
+            value="Client details"
+            title="Client details"
+            prepend-icon="fa: fa-solid fa-table"
+            v-show="checkPermission('view all clients') || checkPermission('view clients under me')"
+          ></v-list-item>
+          <v-list-item
+            class="list-item-large"
+            to="client-feedback"
+            value="Customer Feedback"
+            title="Customer Feedback"
+            prepend-icon="fa: fa-solid fa-comment"
+            v-show="checkPermission('view customer feedback')"
           ></v-list-item>
         </v-list-group>
       </v-list>
+
       <v-list
         v-model:open="open"
-        v-show="checkPermission('view all employees') || checkPermission('view employees under me')"
       >
         <v-list-group fluid value="Employees">
           <template v-slot:activator="{ props }">
@@ -258,19 +262,26 @@ export default defineComponent({
               class="list-item-large"
             ></v-list-item>
           </template>
-
           <v-list-item
-            v-for="(item, i) in employeeSubItems"
-            :key="i"
-            :to="{ name: item.routeName }"
-            :value="item.title"
-            :title="item.title"
-            :prepend-icon="item.icon"
-            @click="setInbox(item.title)"
+            class="list-item-large"
+            to="manageremployees"
+            value="Employee details"
+            title="Employee details"
+            prepend-icon="fa: fa-solid fa-table"
+            v-show="checkPermission('view all employees') || checkPermission('view employees under me')"
+          ></v-list-item>
+          <v-list-item
+            class="list-item-large"
+            to="teams"
+            value="Teams"
+            title="Teams"
+            prepend-icon="fa: fa-solid fa-people-group"
+            v-show="checkPermission('view teams')"
           ></v-list-item>
         </v-list-group>
       </v-list>
-      <v-list v-model:open="open">
+
+      <v-list v-model:open="open" v-show="checkPermission('view all jobs') || checkPermission('view jobs under me') || checkPermission('view jobs assigned to me')">
         <v-list-group fluid value="Jobs">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -291,7 +302,8 @@ export default defineComponent({
           ></v-list-item>
         </v-list-group>
       </v-list>
-      <v-list v-model:open="open">
+
+      <v-list v-model:open="open"  v-show="checkPermission('view invoices')">
         <v-list-group fluid value="Invoices">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -312,6 +324,7 @@ export default defineComponent({
           ></v-list-item>
         </v-list-group>
       </v-list>
+
       <v-list v-model:open="open">
         <v-list-group fluid value="Inventory">
           <template v-slot:activator="{ props }">
@@ -323,25 +336,41 @@ export default defineComponent({
             ></v-list-item>
           </template>
           <v-list-item
-            v-for="(item, i) in checkPermission('view all inventory')
-              ? inventorySubItems
-              : filterInventorySubItems"
-            :key="i"
-            :to="{ name: item.routeName }"
-            :value="item.title"
-            :title="item.title"
-            :prepend-icon="item.icon"
-            @click="setInbox(item.title)"
+            class="list-item-large"
+            to="inventory"
+            value="Inventory Details"
+            title="Inventory Details"
+            prepend-icon="fa: fa-solid fa-table"
+            v-show="checkPermission('view all inventory')"
+          ></v-list-item>
+          <v-list-item
+            class="list-item-large"
+            to="stock-take"
+            value="Stock Take"
+            title="Stock Take"
+            prepend-icon="fa: fa-solid fa-clipboard"
+            v-show="checkPermission('record stock take')"
+          ></v-list-item>
+          <v-list-item
+            class="list-item-large"
+            to="report-view"
+            value="Movements"
+            title="Movements"
+            prepend-icon="fa: fa-solid fa-people-carry-box"
+            v-show="checkPermission('view movements')"
           ></v-list-item>
         </v-list-group>
       </v-list>
+
       <v-list-item
+        class="list-item-large"
         to="map"
         value="Fleet"
         title="Fleet"
         prepend-icon="fa: fa-solid fa-truck"
-        :style="{ height: '70px' }"
+        v-show="checkPermission('view fleet')"
       ></v-list-item>
+
       <v-list v-model:open="open">
         <v-list-group fluid value="Communication">
           <template v-slot:activator="{ props }">
@@ -364,19 +393,20 @@ export default defineComponent({
         </v-list-group>
       </v-list>
       <v-list-item
+        class="list-item-large"
         to="notifications"
         value="Notifications"
         title="Notifications"
         prepend-icon="fa: fa-solid fa-bell"
-        :style="{ height: '70px' }"
       >
       </v-list-item>
+
       <v-list-item
+        class="list-item-large"
         to="support"
         value="Help"
         title="Help"
         prepend-icon="fa: fa-solid fa-circle-question"
-        :style="{ height: '70px' }"
       ></v-list-item>
 
       <v-list v-model:open="open" v-show="checkPermission('company settings') === true">
@@ -385,7 +415,7 @@ export default defineComponent({
             <v-list-item
               v-bind="props"
               prepend-icon="fa: fa-solid fa-building"
-              title="Company"
+              title="Admin"
               class="list-item-large"
             ></v-list-item>
           </template>
@@ -409,14 +439,14 @@ export default defineComponent({
 
 <style scoped>
 .icon-padding {
-  padding: 8px; /* Adjust the padding value as needed */
+  padding: 8px; 
 }
 
 .list-item-large {
-  height: 70px; /* Customize the height as needed */
+  height: 70px; 
 }
 
 .list-item-small {
-  height: 40px; /* Customize the height as needed */
+  height: 40px; 
 }
 </style>

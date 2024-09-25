@@ -2,9 +2,8 @@
   <v-container fluid fill-height>
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
-        <h2 class="text-xl font-semibold">Dashboard</h2>
+        <h4>Calendar</h4>
       </v-col>
-      <v-divider></v-divider>
     </v-row>
     <v-row justify="center">
       <v-col>
@@ -12,7 +11,7 @@
         <v-col cols="12">
           <v-card :max-height="1500" border="md" rounded="lg" class="bg-cardColor">
             <v-icon icon="fa:fa-solid fa-calender-alt"></v-icon>
-            <v-card-title>Calendar</v-card-title>
+            <!-- <v-card-title>Calendar</v-card-title> -->
 
             <v-card-item>
               <div class="calendar-container-dark is-light-mode" :style="{ height: '700px' }">

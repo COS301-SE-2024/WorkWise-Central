@@ -7,17 +7,19 @@
         width="100%"
       >
         <v-row align="center" justify="space-between">
+          <!-- Invoice Label -->
           <v-col cols="12" lg="4" class="d-flex align-center">
-            <v-icon icon="fa: fa-solid fa-file-invoice"></v-icon>
+            <v-icon icon="fa: fa-solid fa-file"></v-icon>
             <v-label
               class="ms-2 h2 font-family-Nunito text-headingTextColor"
               height="auto"
               width="auto"
-              >Company Invoices</v-label
+              >Invoice Details</v-label
             >
           </v-col>
 
-          <v-col cols="12" lg="4" class="d-flex align-center">
+          <!-- Centered Search Bar -->
+          <v-col cols="12" lg="4" class="d-flex justify-center">
             <v-text-field
               v-model="search"
               density="compact"
@@ -34,6 +36,8 @@
         </v-row>
       </v-card-title>
       <v-divider></v-divider>
+
+      <!-- Table Content -->
       <v-card-text>
         <v-data-table
           :headers="invoiceHeaders"
@@ -75,6 +79,7 @@
     </v-card>
   </v-container>
 </template>
+
 
 <script lang="ts">
 import { defineComponent } from 'vue'
