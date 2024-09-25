@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, HttpException, HttpStatus, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpException, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiInternalServerErrorResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NotificationService } from './notification.service';
 import { Types } from 'mongoose';
@@ -94,8 +94,9 @@ export class NotificationController {
     } catch (e) {}
   }*/
 
+  @ApiOperation({ summary: 'Mark a notification as read' })
   @Patch('markAsRead/:nId')
-  async markAsRead(@Headers() headers: any, @Query('nId') nId: string) {
+  async markAsRead(@Headers() headers: any, @Param('nId') nId: string) {
     validateObjectId(nId);
     const notificationId = new Types.ObjectId(nId);
     try {
@@ -106,8 +107,9 @@ export class NotificationController {
     }
   }
 
+  @ApiOperation({ summary: 'Mark a notification as unread' })
   @Patch('markAsUnread/:nId')
-  async markAsUnread(@Headers() headers: any, @Query('nId') nId: string) {
+  async markAsUnread(@Headers() headers: any, @Param('nId') nId: string) {
     validateObjectId(nId);
     const notificationId = new Types.ObjectId(nId);
     try {
