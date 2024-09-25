@@ -35,7 +35,7 @@
             <v-col cols="12" lg="4" class="d-flex align-center">
               <AddInventory
                 v-show="checkPermission('add new inventory item')"
-                @inventoryCreated="addInventory"
+                @inventoryCreated="getInventoryItems"
               />
             </v-col> </v-row
         ></v-card-title>
@@ -72,13 +72,18 @@
                     <InventoryDetails :inventoryItem="selectedItem" />
                   </v-list-item>
                   <v-list-item v-show="checkPermission('edit all inventory')">
-                    <EditInventory :inventory_id="selectedItemID" :editedItem="selectedItem" />
+                    <EditInventory
+                      :inventory_id="selectedItemID"
+                      :editedItem="selectedItem"
+                      @inventoryUpdated="getInventoryItems"
+                    />
                   </v-list-item>
 
                   <v-list-item v-show="checkPermission('delete inventory item')">
                     <DeleteInventory
                       :inventory_id="selectedItemID"
                       :inventoryName="selectedItemName"
+                      @deleteInventory="getInventoryItems"
                     />
                   </v-list-item>
                 </v-list> </v-menu
@@ -97,6 +102,7 @@ import DeleteInventory from './DeleteInventory.vue'
 import EditInventory from './EditInventory.vue'
 import InventoryDetails from './InventoryDetails.vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Inventory {
   _id: string
@@ -169,6 +175,15 @@ export default defineComponent({
     addInventory(newInventory: Inventory) {
       this.inventoryItems.push(newInventory)
     },
+    deleteInventory(deletedTeamId: String) {
+      const index = this.inventoryItems.findIndex((item) => item._id === deletedTeamId)
+      if (index !== -1) {
+        this.inventoryItems.splice(index, 1)
+      }
+    },
+    updateInventory() {
+      this.getInventoryItems()
+    },
     async getInventoryItems() {
       // Fetch inventory items from the backend
       const config = {
@@ -180,10 +195,9 @@ export default defineComponent({
           currentEmployee: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}inventory/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}inventory/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -215,9 +229,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
           console.log(response.data.data.role.permissionSuite)
           this.employeePermissions = response.data.data.role.permissionSuite

@@ -5,26 +5,20 @@
         ><v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Inventory Details</span>
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="4">
+          <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Product Name</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{ inventoryItem.name }}</small>
           </v-col>
-          <v-col cols="4">
-            <label class="font-weight-light" style="font-size: 20px"> Description</label
-            ><v-spacer></v-spacer
-            ><small class="text-caption" style="font-size: 12px">{{
-              inventoryItem.description
-            }}</small>
-          </v-col>
-          <v-col cols="4">
+
+          <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Cost Price</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{
@@ -55,17 +49,26 @@
             <label class="font-weight-light" style="font-size: 20px"> Date Added</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{
-              inventoryItem.createdAt
+              formatDate(inventoryItem.createdAt)
             }}</small>
           </v-col>
           <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Updated Date</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{
-              inventoryItem.updatedAt
+              formatDate(inventoryItem.updatedAt)
             }}</small>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="12">
+            <label class="font-weight-light" style="font-size: 20px"> Description</label
+            ><v-spacer></v-spacer
+            ><small class="text-caption" style="font-size: 12px">{{
+              inventoryItem.description
+            }}</small>
+          </v-col></v-row
+        >
         <v-divider></v-divider>
       </v-card-text>
       <v-card-actions>
@@ -111,6 +114,9 @@ export default defineComponent({
         detail: 'Inventory Added',
         life: 3000
       })
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleDateString()
     },
     close() {
       this.dialog = false

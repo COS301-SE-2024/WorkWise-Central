@@ -62,6 +62,18 @@ export class Address {
   postalCode?: string;
 }
 
+export class AccountDetails {
+  @IsOptional()
+  @IsString()
+  merchantId?: string;
+  @IsOptional()
+  @IsString()
+  merchantKey?: string;
+  @IsOptional()
+  @IsString()
+  passPhrase?: string;
+}
+
 export class UpdateCompanyDto {
   @ApiProperty()
   @IsOptional()
@@ -99,6 +111,12 @@ export class UpdateCompanyDto {
   @ValidateNested()
   @Type(() => Address)
   address?: Address;
+
+  @ApiProperty()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AccountDetails)
+  accountDetails?: AccountDetails;
 
   @ApiProperty()
   @IsOptional()

@@ -1,5 +1,5 @@
-<template>
-  <v-dialog close-on-back :max-height="800" :max-width="900" v-model="jobDialog">
+﻿<template>
+  <v-dialog close-on-back :max-height="800" opacity="0.6" :max-width="900" v-model="jobDialog">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -73,10 +73,17 @@
                     >Add new client</label
                   ></label
                 >
-                <AddClient
-                  :showDialog="clientDialogVisibility"
-                  @update:showDialog="clientDialogVisibility = $event"
-                />
+                <v-dialog
+                  opacity="0.6"
+                  v-model="clientDialogVisibility"
+                  max-height="800"
+                  max-width="600"
+                >
+                  <AddClient
+                    :showDialog="clientDialogVisibility"
+                    @close="clientDialogVisibility = false"
+                  />
+                </v-dialog>
               </v-col>
               <v-col>
                 <label style="font-size: 14px; font-weight: lighter"
@@ -196,10 +203,14 @@
                     variant="solo"
                     clearable
                     data-testid="status-select"
-                  ></v-select
+                  >
+                  </v-select
                 ></v-col>
                 <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
-                  <label style="font-size: 14px; font-weight: lighter">Priority</label>
+                  <label style="font-size: 14px; font-weight: lighter"
+                    >Priority
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
 
                   <v-select
                     :items="priorityOptionsArray"
@@ -213,9 +224,16 @@
                     @update:modelValue="updateEmployee"
                     variant="solo"
                     clearable
+                    :rules="priorityRules"
                     data-testid="priority-select"
-                  ></v-select
-                ></v-col>
+                  >
+                    <!--                    <template #chip="{ item, index }">-->
+                    <!--                      <v-chip :key="index" :color="item.colour" text-color="white">{{-->
+                    <!--                        item.title-->
+                    <!--                      }}</v-chip>-->
+                    <!--                    </template>-->
+                  </v-select></v-col
+                >
 
                 <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
                   <label style="font-size: 14px; font-weight: lighter">Tags</label>
@@ -234,7 +252,8 @@
                     variant="solo"
                     clearable
                     data-testid="tags-multi-select"
-                  ></v-select
+                  >
+                  </v-select
                 ></v-col>
                 <v-col>
                   <small class="text-caption">Cover Image</small>
@@ -406,6 +425,7 @@
                 height="35"
                 variant="text"
                 data-testid="create-btn"
+                :loading="request_load"
                 ><v-icon icon="fa: fa-solid fa-plus" color="success" start></v-icon>Create Job
               </v-btn>
             </v-col>
@@ -428,6 +448,7 @@ import type {
   JobStatuses
 } from '../types'
 import AddClient from '@/components/home/clients/management/AddClient.vue'
+import { API_URL } from '@/main'
 
 type JobDetails = {
   heading: string
@@ -475,6 +496,7 @@ export default defineComponent({
       valid: false,
       selectedDate: '',
       selectedTime: '',
+      request_load: false,
       clientDialogVisibility: false,
       minDate: new Date().toISOString().substr(0, 10),
       currentHour,
@@ -505,6 +527,7 @@ export default defineComponent({
       description_rules: [(v: string) => !!v || 'Description is required'],
       startDateRule: [(v: string) => !!v || 'Start date is required'],
       endDateRule: [(v: string) => !!v || 'End date is required'],
+      priorityRules: [(v: string) => !!v || 'Priority tag is required'],
       employeesArray: [] as EmployeeInformation[],
       clientsArray: [] as ClientInformation[],
       time: '',
@@ -556,6 +579,19 @@ export default defineComponent({
       this.validateDates()
     }
   },
+  // computed: {
+  //   selectedTags: {
+  //     get(): JobTag[] {
+  //       if (this.req_obj.tags != undefined)
+  //         return this.req_obj.tags.map((value: string) =>
+  //           this.tagOptionsArray.find((item: JobTag) => item._id === value)
+  //         ) as JobTag[]
+  //     },
+  //     set(val: JobTag[]) {
+  //       this.req_obj.tags = val.map((item) => item._id)
+  //     }
+  //   }
+  // },
   methods: {
     showAddClientModal() {
       console.log('modal event')
@@ -623,7 +659,6 @@ export default defineComponent({
       }
     },
     async validateForm() {
-      this.createClientLoadClicked = true
       const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
       const validate = await (form as any).validate()
 
@@ -639,7 +674,10 @@ export default defineComponent({
         console.log(this.req_obj)
         console.log(update)
         this.date_validation_error_alert = !update
-        if (update) await this.handleSubmission()
+        if (update) {
+          this.request_load = true
+          await this.handleSubmission()
+        }
       }
     },
     formatStartDateAndTime(date: Date, time: string) {
@@ -664,11 +702,11 @@ export default defineComponent({
     },
     async handleSubmission() {
       console.log(this.req_obj)
-      const apiURL = await this.getRequestUrl()
+
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       console.log('before the request')
       axios
-        .post(apiURL + 'job/create', this.req_obj, config)
+        .post(API_URL + 'job/create', this.req_obj, config)
         .then((res) => {
           console.log('request has gone through')
           if (this.req_obj.assignedEmployees.employeeIds === undefined) {
@@ -678,11 +716,12 @@ export default defineComponent({
               detail: 'Job Added Successfully'
             })
             this.createClientLoadClicked = false
+            this.request_load = false
             window.location.reload()
           }
           axios
             .put(
-              apiURL + 'job/employees',
+              API_URL + 'job/employees',
               {
                 employeeId: localStorage['employeeId'],
                 employeesToAssignIds: this.req_obj.assignedEmployees.employeeIds,
@@ -698,11 +737,12 @@ export default defineComponent({
                 summary: 'Success',
                 detail: 'Job Added Successfully'
               })
-              this.createClientLoadClicked = false
+              this.request_load = false
               window.location.reload()
             })
             .catch((error) => {
               console.log(error)
+              this.request_load = false
             })
         })
         .catch((error) => {
@@ -731,10 +771,10 @@ export default defineComponent({
           currentEmployeeId: localStorage['employeeId']
         }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+
+      console.log(API_URL)
       axios
-        .get(apiURL + `client/all/${localStorage['currentCompany']}`, config)
+        .get(API_URL + `client/all/${localStorage['currentCompany']}`, config)
         .then((res) => {
           console.log(res)
 
@@ -767,10 +807,10 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/detailed/all/${localStorage['employeeId']}`,
+          API_URL + `employee/detailed/all/${localStorage['employeeId']}`,
           config
         )
 
@@ -819,10 +859,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_priorities_response = await axios.get(
-          apiURL + `job/tags/p/${localStorage['currentCompany']}`,
+          API_URL + `job/tags/p/${localStorage['currentCompany']}`,
           config
         )
         this.priorityOptionsArray = loaded_priorities_response.data.data
@@ -837,10 +877,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `job/tags/${localStorage['currentCompany']}`,
+          API_URL + `job/tags/${localStorage['currentCompany']}`,
           config
         )
         this.tagOptionsArray = loaded_tags_response.data.data
@@ -855,10 +895,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const statuses_response = await axios.get(
-          apiURL + `company/status/all/${localStorage['currentCompany']}`,
+          API_URL + `company/status/all/${localStorage['currentCompany']}`,
           config
         )
         this.statusOptionsArray = statuses_response.data.data.jobStatuses

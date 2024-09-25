@@ -114,7 +114,7 @@ export class UsersRepository {
     const result: FlattenMaps<User> & { _id: Types.ObjectId } = await this.userModel
       .findOne({
         $and: [
-          { id: userId },
+          { _id: userId },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
@@ -122,7 +122,7 @@ export class UsersRepository {
       })
       .lean();
     //console.log('userIdExists -> ', result);
-    return result == null;
+    return result != null;
   }
 
   async findById(id: Types.ObjectId) {

@@ -5,6 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
 import * as compression from 'compression';
 import { urlencoded, json } from 'express';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+//import { createAsyncapiDocs } from './async-api';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,10 +26,16 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  //  await createAsyncapiDocs(app);
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ limit: '50mb', extended: true }));
   app.use(compression());
-  app.enableCors();
+  const corsOptions: CorsOptions = {
+    origin: '*', //['http://localhost:5173', 'https://tuksui.sharpsoftwaresolutions.net/'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  };
+  app.enableCors(corsOptions);
   await app.listen(3000);
 }
 bootstrap();

@@ -6,7 +6,7 @@
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon>Edit
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-center"> Edit Client </v-card-title>
 
       <v-card-text>
@@ -240,15 +240,13 @@ export default {
         }
       }
 
-      // const apiURL = await this.getRequestUrl();
-
       const data = {
         // registrationNumber: this.localEditedItem.registrationNumber,
         currentEmployeeId: localStorage.getItem('employeeId'),
         updateClientDto: {
           details: {
             firstName: this.localEditedItem.firstName,
-            lastName: this.localEditedItem.surname,
+            lastName: this.localEditedItem.lastName,
             preferred_Language: this.localEditedItem.preferred_Language,
             contactInfo: {
               phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
@@ -265,7 +263,7 @@ export default {
           }
         }
       }
-
+      console.log(data)
       try {
         const response = await axios.patch(
           `http://localhost:3000/client/${this._clientID}`,

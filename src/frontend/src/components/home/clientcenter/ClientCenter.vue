@@ -51,6 +51,18 @@
             </v-chip>
           </template>
         </v-data-table>
+
+        <v-row class="mt-4">
+          <v-col cols="12">
+            <bar-chart :data="chartData"></bar-chart>
+          </v-col>
+        </v-row>
+
+        <v-row class="mt-4">
+          <v-col cols="12">
+            <v-btn @click="generatePDF">Generate PDF Report</v-btn>
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-card>
   </v-container>
@@ -58,9 +70,25 @@
 
 <script>
 import { defineComponent } from 'vue'
+import { Bar } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+} from 'chart.js'
+import jsPDF from 'jspdf'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 export default defineComponent({
   name: 'ClientInvoices',
+  components: {
+    BarChart: Bar
+  },
   data() {
     return {
       selectedFilter: 'All',
@@ -103,6 +131,21 @@ export default defineComponent({
       } else {
         return this.clients
       }
+    },
+    chartData() {
+      const paidCount = this.filteredClients.filter((client) => client.status === 'Paid').length
+      const unpaidCount = this.filteredClients.filter((client) => client.status === 'Unpaid').length
+
+      return {
+        labels: ['Paid', 'Unpaid'],
+        datasets: [
+          {
+            label: 'Invoices',
+            data: [paidCount, unpaidCount],
+            backgroundColor: ['#4caf50', '#f44336']
+          }
+        ]
+      }
     }
   },
   methods: {
@@ -113,6 +156,25 @@ export default defineComponent({
       return {
         class: index % 2 === 0 ? 'bg-secondRowColor' : ''
       }
+    },
+    generatePDF() {
+      const doc = new jsPDF()
+      const table = this.filteredClients.map((client) => [
+        client.name,
+        client.invoiceNumber,
+        client.amount,
+        client.status,
+        client.date
+      ])
+
+      doc.text('Client Invoices Report', 10, 10)
+      doc.autoTable({
+        head: [this.headers.map((header) => header.title)],
+        body: table,
+        startY: 20
+      })
+
+      doc.save('client-invoices-report.pdf')
     }
   }
 })
@@ -120,4 +182,15 @@ export default defineComponent({
 
 <style scoped>
 /* Add any custom styles here */
+.bg-cardColor {
+  background-color: #f5f5f5;
+}
+
+.bg-secondRowColor {
+  background-color: #e0e0e0;
+}
+
+.text-headingTextColor {
+  color: #333;
+}
 </style>

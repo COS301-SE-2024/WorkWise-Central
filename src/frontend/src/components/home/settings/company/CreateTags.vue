@@ -13,7 +13,7 @@
         Create Tag
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title> Create new Tag</v-card-title>
       <v-card-text>
         <v-form v-model="formIsValid" ref="form">
@@ -75,6 +75,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Tag {
   label: string
@@ -153,9 +154,8 @@ export default defineComponent({
       this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.tag)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
       await axios
-        .post(`${apiURL}job/tags/add`, this.tag, config)
+        .post(`${API_URL}job/tags/add`, this.tag, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -165,7 +165,9 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
-            this.$emit('Created', response.data.data)
+            this.isDeleting = false
+            this.dialog = false
+            this.$emit('CreatedTag', response.data.data)
           }, 3000)
         })
         .catch((error) => {

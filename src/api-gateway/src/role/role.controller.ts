@@ -18,6 +18,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
@@ -30,10 +31,11 @@ import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { RoleListResponseDto, RoleResponseDto } from './entity/role.entity';
 import { AuthGuard } from '../auth/auth.guard';
-// import { extractUserId } from '../utils/Utils';
+import { extractUserId, validateObjectId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeService } from '../employee/employee.service';
 import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
+import { UsersService } from '../users/users.service';
 
 const className = 'Role';
 
@@ -44,7 +46,22 @@ export class RoleController {
     private readonly roleService: RoleService,
     private readonly jwtService: JwtService,
     private readonly employeeService: EmployeeService,
+    private readonly userService: UsersService,
   ) {}
+
+  async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+    const user = await this.userService.getUserById(userId);
+    if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  async validateRequestWithCompanyId(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    const user = await this.userService.getUserById(userId);
+    if (!user.joinedCompanies.find((joined) => joined.companyId.toString() === companyId.toString())) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
 
   //********Endpoints for test purposes - Start**********/
   @ApiOperation({
@@ -98,6 +115,11 @@ export class RoleController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -114,11 +136,12 @@ export class RoleController {
     type: String,
   })
   @Get('/all/:companyId')
-  async findAllInCompany(@Param('companyId') companyId: Types.ObjectId) {
-    console.log('In findAllInCompany');
+  async findAllInCompany(@Headers() headers: any, @Param('companyId') companyId: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, companyId);
+
     let data;
     try {
-      console.log('In try clause');
       data = await this.roleService.findAllInCompany(companyId);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
@@ -144,6 +167,11 @@ export class RoleController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -160,11 +188,12 @@ export class RoleController {
     type: String,
   })
   @Get('/all/editing/:companyId')
-  async findAllInCompanyForEditing(@Param('companyId') companyId: Types.ObjectId) {
-    console.log('In findAllInCompanyForEditing');
+  async findAllInCompanyForEditing(@Headers() headers: any, @Param('companyId') companyId: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, companyId);
+
     let data;
     try {
-      console.log('In try clause');
       data = await this.roleService.findAllInCompanyForEditing(companyId);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
@@ -190,6 +219,11 @@ export class RoleController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -206,10 +240,11 @@ export class RoleController {
     type: String,
   })
   @Get('id/:roleId')
-  async findById(@Param('roleId') roleId: Types.ObjectId) {
-    console.log('In findById endpoint');
+  async findById(@Headers() headers: any, @Param('roleId') roleId: Types.ObjectId) {
     const data = await this.roleService.findById(roleId);
-    console.log('data: ', data);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, data.companyId);
+
     if (!data) {
       throw new HttpException('No data found', HttpStatus.NO_CONTENT);
     }
@@ -232,6 +267,11 @@ export class RoleController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -243,7 +283,10 @@ export class RoleController {
     description: ``,
   })
   @Get('/allPermissions')
-  async getPermissionsArray() {
+  async getPermissionsArray(@Headers() headers: any) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await validateObjectId(userId);
+
     return { data: await this.roleService.getPermissionsArray() };
   }
 
@@ -262,6 +305,11 @@ export class RoleController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -275,15 +323,15 @@ export class RoleController {
     type: createRoleResponseDto,
   })
   @Post('/create')
-  async create(@Headers() headers: any, @Body() body: ExternalCreateRoleDto) {
-    console.log('In create endpoint');
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    console.log('currentEmployee: ', currentEmployee);
+  async create(@Headers() headers: any, @Body() externalCreateRoleDto: ExternalCreateRoleDto) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, externalCreateRoleDto.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(externalCreateRoleDto.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
-      console.log('In if');
       let data;
       try {
-        data = await this.roleService.create(body.createRoleDto);
+        data = await this.roleService.create(externalCreateRoleDto.createRoleDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -308,6 +356,11 @@ export class RoleController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -325,15 +378,19 @@ export class RoleController {
   })
   @ApiBody({ type: ExternalUpdateRoleDto })
   @Patch(':roleId')
-  async update(@Headers() headers: any, @Param('roleId') roleId: Types.ObjectId, @Body() body: ExternalUpdateRoleDto) {
-    console.log('In update endpoint');
-    // const userId = extractUserId(this.jwtService, headers);
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    console.log('currentEmployee: ', currentEmployee);
+  async update(
+    @Headers() headers: any,
+    @Param('roleId') roleId: Types.ObjectId,
+    @Body() externalCreateRoleDto: ExternalUpdateRoleDto,
+  ) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, externalCreateRoleDto.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(externalCreateRoleDto.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       try {
-        data = await this.roleService.update(roleId, body.updateRoleDto);
+        data = await this.roleService.update(roleId, externalCreateRoleDto.updateRoleDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -358,6 +415,11 @@ export class RoleController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -379,20 +441,16 @@ export class RoleController {
     @Headers() headers: any,
     @Param('companyId') companyId: Types.ObjectId,
     @Body()
-    body: ExternalBulkUpdateRoleDto,
+    externalBulkUpdateRoleDto: ExternalBulkUpdateRoleDto,
   ) {
-    // console.log('In bulkUpdate endpoint');
-    // console.log('companyId: ', companyId);
-    // console.log('body: ', body);
-    // const userId = extractUserId(this.jwtService, headers);
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    // console.log('currentEmployee: ', currentEmployee);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, externalBulkUpdateRoleDto.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(externalBulkUpdateRoleDto.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
-      // console.log('In if');
       try {
-        // console.log('In try clause');
-        data = await this.roleService.bulkUpdate(body.bulkUpdateRoleDto, companyId);
+        data = await this.roleService.bulkUpdate(externalBulkUpdateRoleDto.bulkUpdateRoleDto, companyId);
       } catch (e) {
         console.log(e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
@@ -418,6 +476,11 @@ export class RoleController {
   @ApiUnauthorizedResponse({
     type: HttpException,
     status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
     description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
@@ -435,8 +498,15 @@ export class RoleController {
     type: String,
   })
   @Delete(':roleId')
-  async remove(@Headers() headers: any, @Param('roleId') roleId: Types.ObjectId, @Body() body: CurrentEmployeeDto) {
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+  async remove(
+    @Headers() headers: any,
+    @Param('roleId') roleId: Types.ObjectId,
+    @Body() currentEmployeeDto: CurrentEmployeeDto,
+  ) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeDto.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(currentEmployeeDto.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       try {

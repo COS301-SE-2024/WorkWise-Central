@@ -22,7 +22,7 @@
           origin="top center"
         >
           <template v-slot:default="{ isActive }">
-            <v-card>
+            <v-card class="bg-cardColor">
               <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
                 Image Actions
               </v-card-title>
@@ -72,7 +72,7 @@
     </v-row>
 
     <v-dialog v-model="imageOverlay" fullscreen hide-overlay transition="dialog-bottom-transition">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-toolbar dark color="primary">
           <v-btn dark @click="imageOverlay = false">
             <v-icon>mdi-close</v-icon>
@@ -92,6 +92,7 @@
 import { ref, defineProps, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 const toast = useToast()
 interface Image {
@@ -133,9 +134,9 @@ const getRequestUrl = async (): Promise<string> => {
 
 const getJobData = async () => {
   console.log('Getting job data', props.id)
-  const apiUrl = await getRequestUrl()
+
   try {
-    const response = await axios.get(`${apiUrl}job/id/${props.id}`, config)
+    const response = await axios.get(`${API_URL}job/id/${props.id}`, config)
     const job = response.data.data
     job.attachments.forEach((attachment: string) => {
       images.value.push({
@@ -143,7 +144,7 @@ const getJobData = async () => {
         dialog: false
       })
     })
-      console.log('Here are the images',images.value)
+    console.log('Here are the images', images.value)
   } catch (error) {
     console.log(error)
   }
@@ -162,14 +163,14 @@ const handleFileChange = async () => {
         // Upload the image
         const formData = new FormData()
         formData.append('files', file)
-        const apiUrl = await getRequestUrl()
+
         const config = {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const url = `${apiUrl}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
+        const url = `${API_URL}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
         try {
           const response = await axios.patch(url, formData, config)
           if (response.status === 200) {
@@ -182,7 +183,12 @@ const handleFileChange = async () => {
           }
         } catch (error) {
           console.log(error)
-          toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload image', life: 3000 })
+          toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to upload image',
+            life: 3000
+          })
           console.log(url)
         }
       }
@@ -202,56 +208,61 @@ const openImageOverlay = (index: number): void => {
 }
 
 const changeImage = (index: number): void => {
-  images.value[index].dialog = false;
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/*';
+  images.value[index].dialog = false
+  const fileInput = document.createElement('input')
+  fileInput.type = 'file'
+  fileInput.accept = 'image/*'
   fileInput.onchange = async (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const file = target.files ? target.files[0] : null;
+    const target = event.target as HTMLInputElement
+    const file = target.files ? target.files[0] : null
     if (file) {
       // Remove the old image
-      await deleteImage(index);
+      await deleteImage(index)
       // Add the new image
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = async (e: ProgressEvent<FileReader>) => {
         if (e.target && e.target.result) {
           images.value.push({
             src: e.target.result as string,
             dialog: false
-          });
+          })
           // Upload the new image
-          const formData = new FormData();
-          formData.append('files', file);
-          const apiUrl = await getRequestUrl();
+          const formData = new FormData()
+          formData.append('files', file)
+
           const config = {
             headers: {
               'Content-Type': 'multipart/form-data',
               Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
-          };
-          const url = `${apiUrl}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`;
+          }
+          const url = `${API_URL}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
           try {
-            const response = await axios.patch(url, formData, config);
+            const response = await axios.patch(url, formData, config)
             if (response.status === 200) {
               toast.add({
                 severity: 'success',
                 summary: 'Success',
                 detail: 'Image updated successfully',
                 life: 3000
-              });
+              })
             }
           } catch (error) {
-            console.log(error);
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update image', life: 3000 });
+            console.log(error)
+            toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to update image',
+              life: 3000
+            })
           }
         }
-      };
-      reader.readAsDataURL(file);
+      }
+      reader.readAsDataURL(file)
     }
-  };
-  fileInput.click();
-};
+  }
+  fileInput.click()
+}
 
 const downloadImage = (index: number): void => {
   const link = document.createElement('a')
@@ -264,44 +275,44 @@ const downloadImage = (index: number): void => {
 
 const deleteImage = async (index: number): Promise<void> => {
   // Clear the images array
-  images.value.splice(index, 1);
+  images.value.splice(index, 1)
   // Prepare the request body
-  const imgUrls = images.value.map(image => image.src);
+  const imgUrls = images.value.map((image) => image.src)
   const body = {
     employeeId: localStorage.getItem('employeeId'),
     jobId: props.id,
     attachments: imgUrls
-  };
+  }
   console.log('Body:', body)
   // Get the API URL
-  const apiUrl = await getRequestUrl();
-  const url = `${apiUrl}job/updateAttachments`;
+
+  const url = `${API_URL}job/updateAttachments`
   const config = {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
-  };
+  }
   try {
-    const response = await axios.patch(url, body, config);
+    const response = await axios.patch(url, body, config)
     if (response.status === 200) {
       toast.add({
         severity: 'success',
         summary: 'Success',
         detail: 'Image deleted successfully',
         life: 3000
-      });
+      })
     }
   } catch (error) {
-    console.log(error);
+    console.log(error)
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: 'Failed to delete image',
       life: 3000
-    });
+    })
   }
-};
+}
 const hasImages = computed(() => images.value.length > 0)
 
 onMounted(() => {

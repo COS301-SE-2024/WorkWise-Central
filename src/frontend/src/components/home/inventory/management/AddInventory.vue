@@ -1,5 +1,12 @@
 <template>
-  <v-dialog v-model="addDialog" max-height="800" max-width="600" scrollablea :opacity="0.1">
+  <v-dialog
+    v-model="addDialog"
+    max-height="800"
+    max-width="600"
+    scrollable
+    :opacity="0.1"
+    @click:outside="resetFields"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         class="text-none font-weight-regular hello"
@@ -12,7 +19,7 @@
         Add Inventory</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Add Inventory
@@ -78,7 +85,7 @@
         ><v-container
           ><v-row justify="end"
             ><v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn @click="close" color="error" block :loading="isDeleting"
+              <v-btn @click="close(), resetFields()" color="error" block :loading="isDeleting"
                 ><v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                 >Cancel
               </v-btn></v-col
@@ -105,6 +112,8 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'AddInventory',
   components: {
@@ -160,7 +169,6 @@ export default defineComponent({
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
-      const apiURL = await this.getRequestUrl()
 
       const data = {
         createInventoryDto: {
@@ -175,7 +183,7 @@ export default defineComponent({
       }
       try {
         console.log(data)
-        const response = await axios.post(`${apiURL}inventory/create`, data, config)
+        const response = await axios.post(`${API_URL}inventory/create`, data, config)
         console.log(response)
         this.$toast.add({
           severity: 'success',
@@ -187,6 +195,7 @@ export default defineComponent({
         setTimeout(() => {
           this.addDialog = false
           this.isDeleting = false
+          this.resetFields()
           this.$emit('inventoryCreated', response.data.data)
         }, 1500)
       } catch (error) {
@@ -209,6 +218,13 @@ export default defineComponent({
     },
     close() {
       this.addDialog = false
+    },
+    resetFields() {
+      this.name = ''
+      this.description = ''
+      this.costPrice = ''
+      this.currentStockLevel = ''
+      this.reorderLevel = ''
     },
     async isLocalAvailable(localUrl: string) {
       try {

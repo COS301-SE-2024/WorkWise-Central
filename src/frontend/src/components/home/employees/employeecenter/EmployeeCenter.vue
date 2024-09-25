@@ -1,8 +1,14 @@
 <template>
   <v-container>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Employee Center</h2>
+      </v-col>
+      <v-divider></v-divider>
+    </v-row>
     <v-row>
       <v-col cols="12">
-        <v-card>
+        <v-card class="bg-cardColor">
           <v-card-title>Employee Reports</v-card-title>
           <v-divider></v-divider>
           <v-card-text>
@@ -32,13 +38,13 @@
     <!-- Summary Section -->
     <v-row class="mt-4">
       <v-col cols="12">
-        <v-card>
+        <v-card class="bg-cardColor">
           <v-card-title>{{ companyName }} Summary</v-card-title>
           <v-divider></v-divider>
           <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
-                <v-card>
+                <v-card class="bg-cardColor">
                   <v-card-title>Overall Job Performance</v-card-title>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -51,7 +57,7 @@
                 </v-card>
               </v-col>
               <v-col cols="12" md="6">
-                <v-card>
+                <v-card class="bg-cardColor">
                   <v-card-title>Overall Productivity</v-card-title>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -66,7 +72,7 @@
             </v-row>
             <v-row>
               <v-col cols="12" lg="6">
-                <v-card>
+                <v-card class="bg-cardColor">
                   <v-card-title>Average Satisfaction</v-card-title>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -79,7 +85,7 @@
                 </v-card>
               </v-col>
               <v-col cols="12" lg="6">
-                <v-card>
+                <v-card class="bg-cardColor">
                   <v-card-title>Average Project Completion</v-card-title>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -95,13 +101,13 @@
 
     <!-- Report Dialog -->
     <v-dialog v-model="reportDialog" max-width="800px">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title>{{ selectedEmployee?.name }}'s Report</v-card-title>
         <v-divider></v-divider>
         <v-card-text>
           <v-row>
             <v-col cols="12" md="6">
-              <v-card>
+              <v-card class="bg-cardColor">
                 <v-card-title>Job Performance Report</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
@@ -110,7 +116,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="6">
-              <v-card>
+              <v-card class="bg-cardColor">
                 <v-card-title>Productivity Report</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
@@ -121,7 +127,7 @@
           </v-row>
           <v-row>
             <v-col cols="12" md="6">
-              <v-card>
+              <v-card class="bg-cardColor">
                 <v-card-title>Satisfaction Survey Results</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
@@ -130,7 +136,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="6">
-              <v-card>
+              <v-card class="bg-cardColor">
                 <v-card-title>Completed Projects</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
@@ -166,6 +172,7 @@ import Chart from 'primevue/chart'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'EmployeeCenter',
@@ -313,10 +320,9 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data[0].role)
@@ -339,11 +345,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
-      const user_id = localStorage.getItem('id')
+
       try {
         const res = await axios.get(
-          `${apiURL}job/status/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/status/all/${localStorage.getItem('currentCompany')}`,
           config
         )
         this.items = res.data.data
@@ -376,9 +381,8 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
-        const res = await axios.get(`${apiURL}job/id/${id}`, config)
+        const res = await axios.get(`${API_URL}job/id/${id}`, config)
         return res.data.data.jobName
       } catch (error) {
         console.error(error)

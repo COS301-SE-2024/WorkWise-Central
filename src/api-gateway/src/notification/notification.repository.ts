@@ -20,7 +20,7 @@ export class NotificationRepository {
   }
 
   async findAllWithRecipientId(id: Types.ObjectId): Promise<Notification[]> {
-    return await this.notificationModel.find({ recipientId: id }).lean().exec();
+    return await this.notificationModel.find({ recipientId: id }).sort({ createdAt: -1 }).lean().exec();
   }
 
   /*  async findAllWithUserId(id: Types.ObjectId): Promise<Notification[]> {
@@ -28,7 +28,7 @@ export class NotificationRepository {
   }*/
 
   async findOne(id: Types.ObjectId): Promise<Notification[]> {
-    return this.notificationModel.find({ id: id }).exec();
+    return this.notificationModel.find({ _id: id }).exec();
   }
 
   async saveToken(token: NotificationToken) {
@@ -58,5 +58,13 @@ export class NotificationRepository {
     const result = await this.notificationTokenModel.find({ userId: userId }).lean().exec();
     console.log('User Tokens: ', result);
     return result;
+  }
+
+  markAsRead(notificationId: Types.ObjectId) {
+    return this.notificationModel.updateOne({ _id: notificationId }, { isRead: true }).lean().exec();
+  }
+
+  markAsUnread(notificationId: Types.ObjectId) {
+    return this.notificationModel.updateOne({ _id: notificationId }, { isRead: false }).lean().exec();
   }
 }

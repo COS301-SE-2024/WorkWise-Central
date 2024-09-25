@@ -15,32 +15,38 @@
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-center" style="font-family: Nunito, sans-serif"
         >Add Employee</v-card-title
       >
       <v-card-text>
-        <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
+        <v-form ref="form" v-model="valid" @submit.prevent="validate">
           <v-col>
             <v-row>
               <v-col :cols="12">
                 <small
                   class="text-caption font-weight-regular"
                   style="font-family: Nunito, sans-serif"
-                  >Add employee using employee email</small
-                >
+                  >Add employee using employee email
+                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </small>
 
                 <v-text-field
                   v-model="req_obj.emailToInvite"
                   placeholder="Employee email"
                   rounded="md"
                   required
-                  :rules="rules.username"
+                  :rules="rules.email_rules"
                   data-testid="username-textfield"
                 ></v-text-field>
               </v-col>
 
               <v-col :cols="12">
+                <small
+                  class="text-caption font-weight-regular"
+                  style="font-family: Nunito, sans-serif"
+                  >Choose role
+                </small>
                 <v-select
                   clearable
                   label="Company Role"
@@ -51,13 +57,17 @@
                   item-value="roleId"
                   item-title="roleName"
                   v-model="req_obj.roleId"
-                  :rules="rules.role"
                   bg-color="background"
                   variant="solo"
                   data-testid="role-select"
                 ></v-select>
               </v-col>
               <v-col :cols="12">
+                <small
+                  class="text-caption font-weight-regular"
+                  style="font-family: Nunito, sans-serif"
+                  >Choose superior
+                </small>
                 <v-select
                   clearable
                   label="Superior"
@@ -66,7 +76,6 @@
                   @update:modelValue="selected_supirior"
                   :items="subordinateItemNames"
                   v-model="req_obj.superiorId"
-                  :rules="rules.superior"
                   item-value="employeeId"
                   item-title="name"
                   bg-color="background"
@@ -104,7 +113,8 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
-// import router from '@/router'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'RegisterCompanyModal',
   components: {
@@ -114,13 +124,15 @@ export default defineComponent({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     rules: {
-      username: [(v: string) => !!v || 'Username is required'],
+      email_rules: [(v: string) => !!v || 'Email is required'],
       role: [(v: any) => !!v || 'Role is required'],
       superior: [(v: any) => !!v || 'Superior is required']
     },
     valid: false,
     dialog: false,
     isDeleting: false,
+    role_rules: [(v: string) => !!v || 'Role is required'],
+    superior_rules: [(v: string) => !!v || 'Superior is required'],
     roleItems: [] as RoleItem[],
     subordinateItemNames: [] as EmployeeInformation2[],
     isDarkMode: localStorage['theme'] !== 'false',
@@ -135,7 +147,8 @@ export default defineComponent({
       emailToInvite: '',
       superiorId: '',
       roleId: ''
-    }
+    },
+    request_load: false
   }),
   methods: {
     selected_supirior() {
@@ -147,10 +160,10 @@ export default defineComponent({
     },
     async loadSubordinates() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const sub_res = await axios.get(
-          apiURL + `employee/detailed/all/${localStorage.getItem('employeeId')}`,
+          API_URL + `employee/detailed/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(sub_res)
@@ -175,11 +188,11 @@ export default defineComponent({
     },
     async loadRoles() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+
+      console.log(API_URL)
       try {
         let roles_response = await axios.get(
-          apiURL + `role/all/${localStorage['currentCompany']}`,
+          API_URL + `role/all/${localStorage['currentCompany']}`,
           config
         )
         console.log(roles_response)
@@ -203,10 +216,10 @@ export default defineComponent({
       //if the username that was entered exists
       // in the company, waiting on jess to create endpoint
       // const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      // const apiURL = await this.getRequestUrl()
+      //
       // try {
       //   const res = await axios.post(
-      //     apiURL + 'employee/exists/username',
+      //     API_URL + 'employee/exists/username',
       //     { username: this.req_obj.newUserUsername },
       //     config
       //   )
@@ -215,6 +228,14 @@ export default defineComponent({
       // } catch (error) {
       //   console.log(error)
       // }
+    },
+    async validate() {
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+      if (validate) {
+        this.request_load = true
+        await this.handleSubmit()
+      }
     },
     async handleSubmit() {
       this.req_obj.employeeId = localStorage['employeeId']
@@ -228,10 +249,11 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       axios
-        .post(apiURL + 'admin/invite/create', this.req_obj, config)
+        .post(API_URL + 'admin/invite/create', this.req_obj, config)
         .then((response) => {
+          this.request_load = false
           console.log(response)
           this.$toast.add({
             severity: 'success',
@@ -252,6 +274,7 @@ export default defineComponent({
             detail: 'Failed to add employee',
             life: 3000
           })
+          this.request_load = false
         })
     },
     async isLocalAvailable(localUrl: string) {

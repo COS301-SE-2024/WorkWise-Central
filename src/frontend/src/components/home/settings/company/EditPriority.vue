@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <Toast position="top-center" />
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -14,7 +14,7 @@
               width="auto"
               >Priorities</v-label
             ></v-col
-          ><v-col cols="12" lg="6"><CreatePriority /></v-col
+          ><v-col cols="12" lg="6"><CreatePriority @CreatedPriority="getPriorities" /></v-col
         ></v-row>
       </v-card-title>
 
@@ -23,7 +23,7 @@
           :headers="headers"
           :items="items"
           item-value="role"
-          class="bg-cardColor elevation-1"
+          class="bg-cardColor"
           :row-props="getRowProps"
           :header-props="{ class: 'bg-secondary h5 ' }"
         >
@@ -44,7 +44,17 @@
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeletePriority :tag-id="selectedItem._id" />
+                  <DeletePriority
+                    :tag-id="selectedItem.priorityTagId"
+                    :Disabled="
+                      selectedItem.label === 'Low' ||
+                      selectedItem.label === 'Medium' ||
+                      selectedItem.label === 'High'
+                        ? true
+                        : false
+                    "
+                    @DeletedPriority="getPriorities"
+                  />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -53,7 +63,7 @@
       </v-card-text>
     </v-card>
     <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title> Edit Priorities</v-card-title>
         <v-card-text>
           <v-form v-model="formIsValid" ref="form">
@@ -126,6 +136,8 @@ import DeletePriority from './DeletePriority.vue'
 import CreatePriority from './CreatePriority.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   data: () => ({
     headers: [
@@ -151,7 +163,7 @@ export default defineComponent({
     dialog: false,
     isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     selectedItem: {
-      _id: '',
+      priorityTagId: '',
       label: '',
       colour: '',
       priorityLevel: 0,
@@ -214,7 +226,6 @@ export default defineComponent({
   }),
   components: {
     DeletePriority,
-
     Toast,
     CreatePriority
   },
@@ -231,11 +242,11 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+      API_URL
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(
-          `${apiURL}job/tags/p/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/tags/p/${localStorage.getItem('currentCompany')}`,
           config
         )
         console.log(res)
@@ -259,7 +270,13 @@ export default defineComponent({
     },
     selectItem(item: any) {
       console.log(item)
-      this.selectedItem = item
+      this.selectedItem = {
+        priorityTagId: item._id,
+        label: item.label,
+        colour: item.colour,
+        priorityLevel: item.priorityLevel,
+        companyId: item.companyId
+      }
     },
     async updatePrority() {
       this.isDeleting = true // Indicate the start of the deletion process
@@ -270,9 +287,10 @@ export default defineComponent({
         }
       }
       const data = this.selectedItem
-      const apiURL = await this.getRequestUrl()
+      API_URL
+      console.log(JSON.stringify(data))
       axios
-        .patch(`${apiURL}job/tags/p/`, data, config)
+        .patch(`${API_URL}job/tags/p/`, data, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({
@@ -283,9 +301,9 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.getPriorities()
+            this.dialog = false
             this.isDeleting = false
           }, 3000)
-          this.dialog = false
         })
         .catch((err) => {
           console.error(err)
@@ -295,6 +313,7 @@ export default defineComponent({
             detail: 'An error occurred while updating priority',
             life: 3000
           })
+          this.isDeleting = false
         })
     },
     close() {

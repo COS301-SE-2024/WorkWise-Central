@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <Toast position="top-center" />
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -14,7 +14,7 @@
               width="auto"
               >Statuses</v-label
             ></v-col
-          ><v-col cols="12" lg="6"><CreateStatus /></v-col
+          ><v-col cols="12" lg="6"><CreateStatus @CreatedStatus="getStatuses" /></v-col
         ></v-row>
       </v-card-title>
       <v-card-text>
@@ -32,18 +32,40 @@
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
               <template v-slot:activator="{ props }">
-                <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
+                <v-btn
+                  rounded="xl"
+                  variant="plain"
+                  v-bind="props"
+                  @click="selectItem(item)"
+                  :disabled="item.status === 'No Status' || item.status === 'Archive'"
+                >
                   <v-icon color="primary">mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
               <v-list>
                 <v-list-item @click="selectItem(item)">
-                  <v-btn color="success" block @click="dialog = true"
+                  <v-btn
+                    color="success"
+                    block
+                    @click="dialog = true"
+                    :disabled="
+                      selectedItem.status === 'No Status' || selectedItem.status === 'Archive'
+                        ? true
+                        : false
+                    "
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
                 </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteStatus :statusId="selectedItem._id" />
+                  <DeleteStatus
+                    :statusId="selectedItem.statusId"
+                    @DeletedStatus="getStatuses"
+                    :Disabled="
+                      selectedItem.status === 'No Status' || selectedItem.status === 'Archive'
+                        ? true
+                        : false
+                    "
+                  />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -52,7 +74,7 @@
       </v-card-text>
     </v-card>
     <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title> Edit Statuses</v-card-title>
         <v-card-text>
           <v-form v-model="formIsValid" ref="form">
@@ -92,14 +114,7 @@
           <v-container
             ><v-row
               ><v-col cols="12" lg="6" order="last" order-lg="first"
-                ><v-btn
-                  color="error"
-                  rounded="md"
-                  variant="text"
-                  @click="close"
-                  block
-                  :loading="isDeleting"
-                >
+                ><v-btn color="error" rounded="md" variant="text" @click="close" block>
                   <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
                 </v-btn></v-col
               ><v-col cols="12" lg="6" order="first" order-lg="last"
@@ -131,6 +146,8 @@ import axios from 'axios'
 import DeleteStatus from './DeleteStatus.vue'
 import Toast from 'primevue/toast'
 import CreateStatus from './CreateStatus.vue'
+import { API_URL } from '@/main'
+
 interface Status {
   status: string
   colour: string
@@ -155,7 +172,7 @@ export default defineComponent({
     items: [] as any[],
     dialog: false,
     selectedItem: {
-      _id: '',
+      statusId: '',
       status: '',
       colour: '',
       companyId: localStorage.getItem('currentCompany'),
@@ -235,11 +252,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(
-          `${apiURL}job/status/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/status/all/${localStorage.getItem('currentCompany')}`,
           config
         )
         this.items = res.data.data
@@ -258,7 +274,13 @@ export default defineComponent({
     },
     selectItem(item: any) {
       console.log(item)
-      this.selectedItem = item
+      this.selectedItem = {
+        statusId: item._id,
+        status: item.status,
+        colour: item.colour,
+        companyId: localStorage.getItem('currentCompany'),
+        employeeId: localStorage.getItem('employeeId')
+      }
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
@@ -277,9 +299,8 @@ export default defineComponent({
         }
       }
       console.log(this.selectedItem)
-      const apiURL = await this.getRequestUrl()
       await axios
-        .patch(`${apiURL}job/status`, this.selectedItem, config)
+        .patch(`${API_URL}job/status`, this.selectedItem, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -290,8 +311,9 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.getStatuses()
+            this.dialog = false
             this.isDeleting = false
-          }, 3000)
+          }, 2000)
         })
         .catch((error) => {
           this.$toast.add({

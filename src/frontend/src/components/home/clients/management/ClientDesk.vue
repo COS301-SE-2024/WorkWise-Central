@@ -32,7 +32,7 @@
                 single-line
               ></v-text-field>
             </v-col>
-            <v-col cols="12" lg="4" md="4" sm="4" :class="{ 'd-flex justify-end': !isSmallScreen }">
+            <v-col cols="12" lg="4">
               <v-btn
                 rounded="md"
                 class="text-none font-weight-regular"
@@ -41,27 +41,27 @@
                 prepend-icon="mdi-account-plus"
                 variant="elevated"
                 color="secondary"
+                width="100%"
                 block
-                @click="addClientVisibility = true"
+                @click="openDialog"
               >
                 <template #prepend>
                   <v-icon color="buttonText">mdi-account-plus</v-icon>
                 </template>
               </v-btn>
-              <!--            <v-dialog-->
-              <!--              v-model="addClientVisibility"-->
-              <!--              max-height="800"-->
-              <!--              max-width="600"-->
-              <!--              scrollable-->
-              <!--             -->
-              <!--              :opacity="0"-->
-              <!--            >-->
-              <AddClient
-                v-show="checkPermission('add new clients')"
-                :showDialog="addClientVisibility"
-                @update:showDialog="addClientVisibility = $event"
-              />
-              <!--            </v-dialog>-->
+              <v-dialog
+                v-model="addClientVisibility"
+                opacity="0.6"
+                max-height="800"
+                max-width="600"
+              >
+                <AddClient
+                  v-show="checkPermission('add new clients')"
+                  :showDialog="addClientVisibility"
+                  @createClient="getClients"
+                  @close="addClientVisibility = false"
+                />
+              </v-dialog>
             </v-col>
           </v-row>
         </v-card-title>
@@ -149,17 +149,16 @@
 
                       <v-list-item v-show="checkPermission('edit clients')"
                         ><EditClient
-                          @update:item="selectedItem = $event"
+                          @clientUpdated="getClients"
                           :editedItem="selectedItem"
                           :_clientID="selectedItemId"
                       /></v-list-item>
 
                       <v-list-item v-show="checkPermission('delete clients')">
                         <DeleteClient
-                          :details="selectedItem"
                           :client_id="selectedItemId"
                           :client="selectedItem"
-                          :company_id="clientCompanyID"
+                          @deleteClient="getClients"
                       /></v-list-item>
                     </v-list>
                   </v-menu>
@@ -180,6 +179,7 @@ import AddClient from './AddClient.vue'
 import ClientDetails from './ClientDetails.vue'
 import axios from 'axios'
 import { defineComponent } from 'vue'
+import { API_URL } from '@/main'
 
 // import AddEmployee from '@/components/home/employees/management/AddEmployee.vue'
 
@@ -187,6 +187,7 @@ export default defineComponent({
   name: 'ClientDesk',
 
   data: () => ({
+    dialogVisible: false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dummy: '',
@@ -320,16 +321,16 @@ export default defineComponent({
     this.getEmployeePermissions()
   },
   methods: {
-    openClientDialogVisbility() {
-      this.addClientDialog = true
-    },
-    addClient(item) {
-      this.clientDetails.push(item)
+    openDialog() {
+      this.addClientVisibility = true
     },
     removeClientFromList(item) {
+      console.log(this.clientDetails)
       const index = this.clientDetails.findIndex((client) => client._id === item)
+      console.log(index)
       if (index !== -1) {
         this.clientDetails.splice(index, 1)
+        console.log('Im not crazy')
       }
     },
     updateClientInList(updatedClient) {
@@ -349,9 +350,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
           console.log(response.data.data.role.permissionSuite)
           this.employeePermissions = response.data.data.role.permissionSuite
@@ -482,23 +482,33 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       axios
-        .get(`${apiURL}client/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}client/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response.data)
           this.clients = response.data.data
           console.log(this.clients)
+
+          this.clearClientDetailsArray()
+          this.clearClientIdsArray()
           for (let i = 0; i < this.clients.length; i++) {
             this.clientIds[i] = this.clients[i]._id
             console.log(this.clientIds[i])
             this.clientDetails[i] = this.clients[i].details
             console.log(this.clientDetails[i])
           }
+          console.log(this.clientDetails)
         })
         .catch((error) => {
           console.error('Failed to fetch clients:', error)
         })
+    },
+    clearClientDetailsArray() {
+      this.clientDetails = []
+    },
+    clearClientIdsArray() {
+      this.clientIds = []
     },
     async getEmployeeDetails() {
       const config = {
@@ -517,9 +527,6 @@ export default defineComponent({
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
         })
-    },
-    openDialog() {
-      this.addClientVisibility = true
     },
     async isLocalAvailable(localUrl) {
       try {

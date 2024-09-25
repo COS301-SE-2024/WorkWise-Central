@@ -6,8 +6,8 @@
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
       </v-btn>
     </template>
-    <v-card>
-      <v-card-title> Delete {{ client.name + ' ' + client.surname }} </v-card-title>
+    <v-card class="bg-cardColor">
+      <v-card-title> Delete {{ client.firstName + ' ' + client.lastName }} </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
@@ -48,12 +48,12 @@
 <script>
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
+
 export default {
   name: 'DeleteClient',
   props: {
-    opened: Boolean,
     client_id: Number,
-    companyID: String,
     client: Object
   },
   components: { Toast },
@@ -89,31 +89,30 @@ export default {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-        data: {
-          employeeId: localStorage.getItem('employeeId'),
+        params: {
+          empId: localStorage.getItem('employeeId'),
           clientId: this.client_id
         }
       }
 
       try {
-        const apiURL = await this.getRequestUrl()
         console.log(this.client_id)
         this.isDeleting = true // Indicate the start of the deletion process
 
-        const response = await axios.delete(`${apiURL}client/delete`, config)
-        console.log(response)
+        await axios.delete(`${API_URL}client/delete/`, config).then((response) => {
+          console.log(response)
 
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Client deleted successfully',
-          life: 3000
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Client deleted successfully',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.clientDialog = false
+            this.$emit('deleteClient', this.client_id)
+          }, 1500)
         })
-
-        setTimeout(() => {
-          this.clientDialog = false
-          this.$emit('clientDeleted', res.data.data)
-        }, 3000)
       } catch (error) {
         console.error('Error deleting client:', error)
 

@@ -14,7 +14,7 @@
       </v-btn>
     </template>
 
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <span class="text-h6">Log Stock Movement</span>
       </v-card-title>

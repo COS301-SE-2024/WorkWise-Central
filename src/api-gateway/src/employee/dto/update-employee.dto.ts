@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 export class AddSubordinatesDto {
   @IsMongoId()
@@ -42,6 +42,11 @@ export class UpdateEmployeeDto {
   @IsOptional()
   @ApiProperty()
   superiorId?: Types.ObjectId;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  hourlyRate?: number;
 }
 
 export class updateEmployeeResponseDto {

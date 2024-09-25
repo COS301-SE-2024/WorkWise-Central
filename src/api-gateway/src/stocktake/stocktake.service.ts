@@ -8,6 +8,7 @@ import { StockTake } from './entities/stocktake.entity';
 import { Types } from 'mongoose';
 import { CompanyService } from '../company/company.service';
 import { UpdateStockTakeDto } from './dto/update-stocktake.dto';
+import { ExternalInventoryUpdateDto, UpdateInventoryDto } from '../inventory/dto/update-inventory.dto';
 
 @Injectable()
 export class StockTakeService {
@@ -79,9 +80,16 @@ export class StockTakeService {
     console.log('Stock take has been saved');
     //Checking if the inventory needs to be updated
     if (stocktakeDto.updateInventory) {
-      stocktakeDto.items.forEach(async (createDto) => {
-        await this.inventoryService.update(createDto.inventoryId, { currentStockLevel: createDto.recordedStockLevel });
-      });
+      console.log('Updating inventory');
+      for (const createDto of stocktakeDto.items) {
+        const dto = new ExternalInventoryUpdateDto();
+        dto.currentEmployeeId = stocktakeDto.currentEmployeeId;
+        dto.updateInventoryDto = new UpdateInventoryDto();
+        dto.updateInventoryDto.currentStockLevel = createDto.recordedStockLevel;
+        console.log('inventoryId: ', createDto.inventoryId);
+        console.log('dto: ', dto);
+        await this.inventoryService.update(createDto.inventoryId, dto);
+      }
     }
     return response;
   }

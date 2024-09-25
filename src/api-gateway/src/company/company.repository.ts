@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FlattenMaps, Model, Types } from 'mongoose';
-import { Address, Company } from './entities/company.entity';
+import { AccountDetails, Address, Company } from './entities/company.entity';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { currentDate } from '../utils/Utils';
 import { isNotDeleted } from '../shared/soft-delete';
@@ -52,7 +52,7 @@ export class CompanyRepository {
       .lean();
   }
 
-  async findByEmailOrName(identifier: string): Promise<FlattenMaps<Company> & { _id: Types.ObjectId }> {
+  async findByEmailOrName(identifier: string) {
     const regex = `${identifier}`;
     return this.companyModel
       .find({
@@ -129,6 +129,15 @@ export class CompanyRepository {
     return result != null;
   }
 
+  async nameExists(name: string) {
+    const result = await this.companyModel
+      .findOne({
+        $and: [{ name: name }, isNotDeleted],
+      })
+      .lean();
+    return result != null;
+  }
+
   async update(id: Types.ObjectId, updateCompanyDto: UpdateCompanyDto) {
     const company = await this.companyModel.findOne({
       $and: [
@@ -139,20 +148,47 @@ export class CompanyRepository {
       ],
     });
 
-    if (updateCompanyDto.registrationNumber) company.registrationNumber = updateCompanyDto.registrationNumber;
-    if (updateCompanyDto.vatNumber) company.vatNumber = updateCompanyDto.vatNumber;
-    if (updateCompanyDto.name) company.name = updateCompanyDto.name;
-    if (updateCompanyDto.type) company.type = updateCompanyDto.type;
-    if (updateCompanyDto.logo) company.logo = updateCompanyDto.logo;
+    if (updateCompanyDto.registrationNumber) {
+      company.registrationNumber = updateCompanyDto.registrationNumber;
+      company.markModified('registrationNumber');
+    }
+    if (updateCompanyDto.vatNumber) {
+      company.vatNumber = updateCompanyDto.vatNumber;
+      company.markModified('vatNumber');
+    }
+    if (updateCompanyDto.name) {
+      company.name = updateCompanyDto.name;
+      company.markModified('name');
+    }
+    if (updateCompanyDto.type) {
+      company.type = updateCompanyDto.type;
+      company.markModified('type');
+    }
+    if (updateCompanyDto.logo) {
+      company.logo = updateCompanyDto.logo;
+      company.markModified('logo');
+    }
     if (updateCompanyDto.contactDetails) {
       company.contactDetails = { ...company.contactDetails, ...updateCompanyDto.contactDetails };
+      company.markModified('contactDetails');
     }
     if (updateCompanyDto.address) {
       const updatedAddress: Address = { ...company.address, ...updateCompanyDto.address };
       console.log(updatedAddress);
       company.address = updatedAddress;
+      company.markModified('address');
     }
-    if (updateCompanyDto.private) company.private = updateCompanyDto.private;
+    if (updateCompanyDto.accountDetails) {
+      const updatedAccDetails: AccountDetails = { ...company.accountDetails, ...updateCompanyDto.accountDetails };
+      console.log(updatedAccDetails);
+      company.accountDetails = updatedAccDetails;
+      company.markModified('accountDetails');
+    }
+
+    if (updateCompanyDto.private) {
+      company.private = updateCompanyDto.private;
+      company.markModified('private');
+    }
     company.updatedAt = currentDate();
     return (await company.save()).toObject();
   }
@@ -198,6 +234,18 @@ export class CompanyRepository {
       .exec();
   }
 
+  // I want a function that will return the company name of a company with a given id
+  async findCompanyNameById(id: Types.ObjectId): Promise<string> {
+    const comp = await this.companyModel
+      .findOne({
+        $and: [{ _id: id }, isNotDeleted],
+      })
+      .select('name')
+      .lean()
+      .exec();
+    return comp.name;
+  }
+
   async updateStatuses(
     companyId: Types.ObjectId,
     jobStatuses: Types.ObjectId[],
@@ -221,6 +269,26 @@ export class CompanyRepository {
       .populate('jobStatuses')
       .lean()
       .exec();
+  }
+
+  async findAllStatusNamesInCompany(companyId: Types.ObjectId) {
+    const comp = await this.companyModel
+      .findOne({
+        $and: [{ _id: companyId }, isNotDeleted],
+      })
+      .select(['jobStatuses'])
+      .populate('jobStatuses')
+      .lean()
+      .exec();
+
+    if (!comp) throw new Error('Company not found');
+
+    const statArr: any[] = comp.jobStatuses;
+    const result: string[] = [];
+    for (const statArrElement of statArr) {
+      result.push(statArrElement.status);
+    }
+    return result;
   }
 
   async addJobStatus(companyId: Types.ObjectId, statusId: Types.ObjectId) {
@@ -248,4 +316,14 @@ export class CompanyRepository {
       })
       .exec();
   }
+
+  /*  async findCompanyAccountDetails(companyId: Types.ObjectId) {
+    return this.companyModel
+      .findOne({
+        $and: [{ _id: companyId }, isNotDeleted],
+      })
+      .select(['accountDetails'])
+      .lean()
+      .exec();
+  }*/
 }

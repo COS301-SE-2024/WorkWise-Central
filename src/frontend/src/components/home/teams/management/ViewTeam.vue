@@ -6,7 +6,7 @@
         View
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa:fa-solid fa-users"></v-icon>
         <span>Team Details</span>
@@ -53,7 +53,9 @@
           <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Date Created</label>
             <v-spacer></v-spacer>
-            <small class="text-caption" style="font-size: 12px">{{ team.createdAt }}</small>
+            <small class="text-caption" style="font-size: 12px">{{
+              formatDatec(team.createdAt)
+            }}</small>
           </v-col>
         </v-row>
         <v-divider></v-divider>
@@ -83,7 +85,8 @@ import Toast from 'primevue/toast'
 export default defineComponent({
   name: 'ViewTeam',
   props: {
-    team: Object
+    team: Object,
+    teamMembersName: Array
   },
   components: {
     Toast
@@ -139,6 +142,9 @@ export default defineComponent({
         .then(() => true)
         .catch(() => false)
       return isLocalAvailable ? localUrl : remoteUrl
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleDateString()
     }
   },
   mounted() {

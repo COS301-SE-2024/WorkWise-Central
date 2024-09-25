@@ -14,7 +14,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Edit Inventory
@@ -87,7 +87,7 @@
 
             <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
-                @click="createInventoryItem"
+                @click="updateItem"
                 color="success"
                 :disabled="!valid"
                 block
@@ -169,62 +169,46 @@ export default {
         life: 3000
       })
     },
-    updateItem() {
-      this.$emit('update:item', this.localEditedItem)
-      alert('Item updated')
-    },
-    async createInventoryItem() {
+    async updateItem() {
       this.isDeleting = true // Indicate the start of the deletion process
-      if (!this.localEditedItem) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Invalid item data',
-          life: 3000
-        })
-        return
-      }
-      console.log(this.inventory_id)
       const config = {
-        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
-      const apiURL = await this.getRequestUrl()
 
       const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
         updateInventoryDto: {
           name: this.localEditedItem.name,
           description: this.localEditedItem.description,
-          costPrice: this.convertToNumber(this.localEditedItem.costPrice),
-          currentStockLevel: this.convertToNumber(this.localEditedItem.currentStockLevel),
-          reorderLevel: this.convertToNumber(this.localEditedItem.reorderLevel),
-          companyId: localStorage.getItem('currentCompany')
-        },
-        currentEmployeeId: localStorage.getItem('employeeId')
+          costPrice: this.localEditedItem.costPrice,
+          salePrice: this.localEditedItem.salePrice,
+          currentStockLevel: this.localEditedItem.currentStockLevel,
+          reorderLevel: this.localEditedItem.reorderLevel
+        }
       }
-      console.log(data)
       try {
-        const response = await axios.patch(`${apiURL}inventory/${this.inventory_id}`, data, config)
+        console.log(data)
+        const response = await axios.patch(`${API_URL}inventory/${this.inventory_id}`, data, config)
         console.log(response)
         this.$toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Inventory updated successfully',
+          detail: 'Inventory Updated',
           life: 3000
         })
-        this.addDialog = false
+
         setTimeout(() => {
+          this.addDialog = false
           this.isDeleting = false
-          this.$emit('inventoryUpdated', response.data.data)
+          this.resetFields()
+          this.$emit('updateInventory', response.data.data)
         }, 1500)
       } catch (error) {
         console.error(error)
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'An error occurred while updating the inventory',
+          detail: 'Failed to add inventory',
           life: 3000
         })
       }

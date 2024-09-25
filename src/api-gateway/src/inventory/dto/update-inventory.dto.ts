@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateInventoryDto {
@@ -21,6 +21,11 @@ export class UpdateInventoryDto {
   @IsOptional()
   @ApiProperty()
   @IsNumber()
+  salePrice?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsNumber()
   currentStockLevel?: number;
 
   @IsOptional()
@@ -32,11 +37,20 @@ export class UpdateInventoryDto {
   @ApiProperty()
   @IsNumber()
   reorderLevel?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsString()
+  reason?: string;
 }
 
 export class ExternalInventoryUpdateDto {
+  @ApiProperty()
+  @IsMongoId()
   currentEmployeeId: Types.ObjectId;
 
+  @ApiProperty()
+  @IsObject()
   updateInventoryDto: UpdateInventoryDto;
 }
 

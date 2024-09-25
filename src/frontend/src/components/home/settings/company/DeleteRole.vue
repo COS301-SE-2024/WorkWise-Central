@@ -5,7 +5,7 @@
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Delete Role</span>
@@ -25,8 +25,7 @@
       <v-card-actions>
         <v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6" order="last" order-lg="first"
-              ><Toast position="bottom-center" />
+            ><v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn label="Cancel" color="secondary" @click="close" block
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
@@ -46,6 +45,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'DeleteStatus',
   props: {
@@ -89,9 +90,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
-        const res = await axios.delete(`${apiURL}role/${this.roleId}`, config)
+        const res = await axios.delete(`${API_URL}role/${this.roleId}`, config)
         if (res.status === 200) {
           console.log(res.data)
           this.isDeleting = true
@@ -104,7 +104,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.deleteDialog = false
-            this.$emit('Deleted', res.data.data)
+            this.$emit('DeletedRole', res.data.data)
           }, 1500)
           this.isDeleting = false
         }

@@ -30,6 +30,10 @@ export class Inventory {
   costPrice?: number;
 
   @ApiProperty()
+  @Prop({ type: Number, required: false })
+  salePrice?: number;
+
+  @ApiProperty()
   @Prop({ type: Number, required: false, default: 0 })
   currentStockLevel?: number;
 
@@ -112,6 +116,44 @@ export class InventoryApiObject {
   public deletedAt?: Date;
 }
 
+export class InventoryUsedApiObject {
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
+  id: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: Number, required: true })
+  amount: number;
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
+  companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Inventory' })
+  inventoryId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Job' })
+  jobId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Employee' })
+  employeeId: Types.ObjectId;
+
+  @ApiHideProperty()
+  @Prop({ required: true, default: new Date() })
+  public createdAt: Date;
+
+  @ApiHideProperty()
+  @Prop({ required: false })
+  public updatedAt?: Date;
+
+  @ApiHideProperty()
+  @Prop({ required: false })
+  public deletedAt?: Date;
+}
+
 export const InventorySchema = SchemaFactory.createForClass(Inventory);
 
 export class InventoryListResponseDto {
@@ -125,5 +167,9 @@ export class InventoryResponseDto {
   constructor(data: InventoryApiObject) {
     this.data = data;
   }
+  data: InventoryApiObject;
+}
+
+export class InventoryUsedResponseDto {
   data: InventoryApiObject;
 }

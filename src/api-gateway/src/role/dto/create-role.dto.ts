@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateRoleDto {
@@ -22,6 +22,11 @@ export class CreateRoleDto {
   @IsMongoId()
   @ApiProperty()
   companyId: Types.ObjectId;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  hourlyRate?: number;
 }
 
 export class ExternalCreateRoleDto {

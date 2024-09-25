@@ -52,7 +52,7 @@ import {
   TagResponseDto,
   TagsAllResponseDto,
 } from './dto/job-responses.dto';
-import { JobAssignDto, JobAssignGroupDto, TaskAssignDto } from './dto/assign-job.dto';
+import { JobAssignDto, JobAssignGroupDto, JobAssignTeamDto, TaskAssignDto } from './dto/assign-job.dto';
 //import { UpdateProfilePicDto } from '../users/dto/update-user.dto';
 import { FileFieldsInterceptor /*, FileInterceptor*/ } from '@nestjs/platform-express';
 import { AddCommentDto, RemoveCommentDto, UpdateCommentDto } from './dto/job-comments.dto';
@@ -60,6 +60,7 @@ import { AddAttachmentDto, UpdateAttachmentDto } from './dto/job-attachment.dto'
 import { UpdateStatus, UpdateStatusDto } from './dto/job-status.dto';
 import { AddTaskDto, RemoveTaskDto, UpdateTaskDto } from './dto/job-tasks.dto';
 import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-task-item.dto';
+import { ConvertItemToJobDto } from './dto/convert-item-to-job.dto';
 
 const className = 'Job';
 
@@ -704,6 +705,40 @@ export class JobController {
     }
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'Assign a team to a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @Put('/team')
+  async assignTeam(@Headers() headers: any, @Body() assignTeamDto: JobAssignTeamDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.assignTeam(userId, assignTeamDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'Unassign a team from a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @Patch('/team')
+  async unassignTeam(@Headers() headers: any, @Body() assignTeamDto: JobAssignTeamDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.unassignTeam(userId, assignTeamDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
   ///Employees
 
   @UseGuards(AuthGuard)
@@ -1010,6 +1045,29 @@ export class JobController {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.editJobTaskItem(userId, updateTaskItemDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Convert a Job TaskList Item into a new Job`,
+    description: `It also removes the task from the current Job and updated the History to reflect the conversion`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The new Job that was created from the TaskList Item`,
+  })
+  @Patch('/convert')
+  async convertItemToJob(@Headers() headers: any, @Body() convertItemToJobDto: ConvertItemToJobDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.convertTaskListItemToJob(userId, convertItemToJobDto),
       };
     } catch (e) {
       console.log(e);

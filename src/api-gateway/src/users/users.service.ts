@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
 import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
@@ -124,7 +125,18 @@ export class UsersService {
     return this.userRepository.findAll(populatedFields);
   }
 
-  async getAllUsersInCompany(companyId: Types.ObjectId): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async getAllUsersInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    if (!(await this.userIsInCompany(userId, companyId)))
+      throw new UnauthorizedException('You must be a member of the company');
+    return this.userRepository.findAllInCompany(companyId);
+  }
+
+  async getAllUsersInCompanyInternal(
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     return this.userRepository.findAllInCompany(companyId);
   }
 
@@ -264,6 +276,20 @@ export class UsersService {
     if (updatedUser == null) {
       throw new NotFoundException('failed to update user');
     }
+    if (updateUserDto.systemDetails || updateUserDto.personalInfo) {
+      const updatePromises = updatedUser.joinedCompanies.map((joinedCompany) =>
+        this.employeeService.internalUpdate(joinedCompany.employeeId, {
+          userInfo: {
+            firstName: updatedUser.personalInfo.firstName,
+            surname: updatedUser.personalInfo.surname,
+            username: updatedUser.systemDetails.username,
+            displayName: updatedUser.profile.displayName,
+            displayImage: updatedUser.profile.displayImage,
+          },
+        }),
+      );
+      await Promise.all(updatePromises);
+    }
     return updatedUser;
   }
 
@@ -310,10 +336,14 @@ export class UsersService {
       throw new NotFoundException('Error: User not found, please verify your user');
     }
     //Remove All joinedCompanies
-    for (const joinedCompany of userToDelete.joinedCompanies) {
-      this.jobService.removeAllReferencesToEmployee(joinedCompany.employeeId);
-      this.employeeService.remove(joinedCompany.employeeId);
-    }
+    const removalPromises = userToDelete.joinedCompanies.map((joinedCompany) => {
+      return Promise.all([
+        this.jobService.removeAllReferencesToEmployee(joinedCompany.employeeId),
+        this.employeeService.remove(joinedCompany.employeeId),
+      ]);
+    });
+
+    await Promise.all(removalPromises);
 
     this.emailService.sendGoodbye({
       name: userToDelete.personalInfo.firstName,
@@ -418,10 +448,6 @@ export class UsersService {
     }
 
     return false;
-  }
-
-  getFullName(user: User): string {
-    return user.personalInfo.firstName + ' ' + user.personalInfo.surname;
   }
 
   async resetPassword(userId: Types.ObjectId, userResetPasswordDto: UserResetPasswordDto) {

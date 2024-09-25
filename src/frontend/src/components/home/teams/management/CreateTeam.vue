@@ -6,12 +6,13 @@
         color="secondary"
         v-bind="activatorProps"
         variant="elevated"
+        block
         ><v-icon icon="fa:fa-solid fa-plus" color="" size="xs" />
         <v-icon icon="fa:fa-solid fa-users" color="" />
         Create Team</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-users"></v-icon>
         Create Team
@@ -35,7 +36,7 @@
 
             <v-row>
               <v-col>
-                <h6>Team Leader ID</h6>
+                <h6>Team Leader</h6>
                 <v-select
                   v-model="teamLeaderName"
                   color="secondary"
@@ -55,6 +56,7 @@
                   :items="teamMemberNames"
                   :rules="teamMembersRules"
                   required
+                  v-model="selectedTeamMembers"
                   multiple
                   chips
                   hide-details="auto"
@@ -121,6 +123,7 @@ export default defineComponent({
     teamLeaderIds: [] as string[],
     teamMemberNames: [] as string[],
     teamMemberIds: [] as string[],
+    selectedTeamMembers: [] as string[],
     teamLeaderId: '',
     teamLeaderName: '',
     localUrl: 'http://localhost:3000/',
@@ -139,10 +142,11 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       const data = {
         teamName: this.teamName,
-        teamMembers: this.selectTeamMembers(),
-        teamLeaderId: this.selectTeamLeader(),
+        teamMembers: await this.selectTeamMembers(),
+        teamLeaderId: await this.selectTeamLeader(),
         companyId: localStorage.getItem('currentCompany')
       }
+      console.log(JSON.stringify(data))
       try {
         const response = await axios.post(`${apiURL}team/create`, data, config)
         this.$toast.add({
@@ -155,6 +159,7 @@ export default defineComponent({
           this.isDeleting = false
           this.addDialog = false
           // Emit the event to the parent component with the new team data
+          this.resetFields()
           this.$emit('teamCreated', response.data.data)
         }, 1500)
       } catch (error) {
@@ -197,16 +202,22 @@ export default defineComponent({
         this.createTeam()
       }
     },
-    selectTeamLeader() {
+    async selectTeamLeader() {
       console.log(this.teamLeaderIds[this.teamMemberNames.indexOf(this.teamLeaderName)])
       return this.teamLeaderIds[this.teamMemberNames.indexOf(this.teamLeaderName)]
     },
-    selectTeamMembers() {
-      for (const member of this.teamMemberNames) {
-        this.teamMemberIds.push(this.teamLeaderIds[this.teamMemberNames.indexOf(member)])
+    async selectTeamMembers() {
+      for (const member of this.selectedTeamMembers) {
+        console.log(member)
+        this.teamMemberIds.push(this.teamLeaderIds[this.selectedTeamMembers.indexOf(member)])
       }
       console.log(this.teamMemberIds)
       return this.teamMemberIds
+    },
+    resetFields() {
+      this.teamName = ''
+      this.teamLeaderName = ''
+      this.selectedTeamMembers = []
     },
     close() {
       this.addDialog = false

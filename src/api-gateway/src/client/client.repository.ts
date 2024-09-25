@@ -28,7 +28,7 @@ export class ClientRepository {
       .exec();
   }
 
-  async findClientById(id: Types.ObjectId): Promise<FlattenMaps<Client>> {
+  async findClientById(id: Types.ObjectId): Promise<FlattenMaps<Client & { _id: Types.ObjectId }>> {
     return this.clientModel
       .findOne({
         $and: [{ _id: id }, isNotDeleted],
@@ -41,7 +41,7 @@ export class ClientRepository {
     return this.clientModel
       .find({
         $and: [
-          { companyId: companyId },
+          { 'details.companyId': companyId },
           {
             $or: [
               { 'contactInfo.email': { $regex: regex, $options: 'i' } },

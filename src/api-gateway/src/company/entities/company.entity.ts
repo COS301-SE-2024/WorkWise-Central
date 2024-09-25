@@ -33,6 +33,15 @@ export class Address {
   postalCode: string;
 }
 
+export class AccountDetails {
+  @Prop({ type: String, required: false })
+  merchantId?: string;
+  @Prop({ type: String, required: false })
+  merchantKey?: string;
+  @Prop({ type: String, required: false })
+  passPhrase?: string;
+}
+
 @Schema()
 export class Company {
   constructor(createCompanyDto: CreateCompanyDto) {
@@ -90,6 +99,10 @@ export class Company {
   @ApiProperty()
   @Prop({ required: true })
   address: Address;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  accountDetails: AccountDetails = new AccountDetails();
 
   @ApiProperty()
   @Prop({ type: Boolean, required: true, default: false })
@@ -172,6 +185,9 @@ export class CompanyApiDetailedObject {
   address: Address;
 
   @ApiProperty()
+  accountDetails: AccountDetails;
+
+  @ApiProperty()
   private: boolean;
 
   @ApiHideProperty()
@@ -182,6 +198,17 @@ export class CompanyApiDetailedObject {
 
   @ApiHideProperty()
   public deletedAt: Date;
+}
+
+export class CompanyAccountDetailsObject {
+  @ApiProperty()
+  merchantId?: string;
+
+  @ApiProperty()
+  merchantKey?: string;
+
+  @ApiProperty()
+  passPhrase: string;
 }
 
 export const CompanySchema = SchemaFactory.createForClass(Company);
@@ -220,4 +247,8 @@ export class CompanyDetailedResponseDto {
     this.data = data;
   }
   data: CompanyApiDetailedObject;
+}
+
+export class CompanyAccountDetailsResponseDto {
+  data: CompanyAccountDetailsObject;
 }

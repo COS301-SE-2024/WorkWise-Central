@@ -23,7 +23,7 @@
     </template>
 
     <template v-slot:default="{ isActive }">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
           Update Job Status
         </v-card-title>
@@ -75,6 +75,7 @@
 import { ref, defineProps, reactive } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 // Reactive state
 const statusDialog = ref(false)
@@ -191,7 +192,6 @@ const saveStatus = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
 
   try {
     console.log(props.passedInJob)
@@ -203,7 +203,7 @@ const saveStatus = async () => {
     }
     console.log(updatedJob)
     // Make the PATCH request to update the job
-    const response = await axios.patch(`${apiUrl}job/${job._id}`, updatedJob, config)
+    const response = await axios.patch(`${API_URL}job/${job._id}`, updatedJob, config)
     console.log(response.data)
     if (response.status < 300 && response.status > 199) {
       showJobCommentSuccess()

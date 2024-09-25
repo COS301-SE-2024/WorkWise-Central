@@ -8,8 +8,8 @@ import {
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateJobDto } from './dto/create-job.dto';
-import { UpdateJobDto } from './dto/update-job.dto';
+import { AssignedEmployees, CreateJobDto } from './dto/create-job.dto';
+import { AddFeedbackDto, UpdateJobDto } from './dto/update-job.dto';
 import { FlattenMaps, Types } from 'mongoose';
 import { Comment, History, Job, Task } from './entities/job.entity';
 import { UsersService } from '../users/users.service';
@@ -18,7 +18,13 @@ import { ClientService } from '../client/client.service';
 import { JobRepository } from './job.repository';
 import { EmployeeService } from '../employee/employee.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
-import { JobAssignDto, JobAssignGroupDto, jobAssignResultDto, TaskAssignDto } from './dto/assign-job.dto';
+import {
+  JobAssignDto,
+  JobAssignGroupDto,
+  jobAssignResultDto,
+  JobAssignTeamDto,
+  TaskAssignDto,
+} from './dto/assign-job.dto';
 import { JobTagRepository } from './job-tag.repository';
 import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
@@ -33,6 +39,11 @@ import { UpdateStatus } from './dto/job-status.dto';
 import { UpdatePriorityTag, UpdateTag } from './dto/job-tag.dto';
 import { AddAttachmentDto, UpdateAttachmentDto } from './dto/job-attachment.dto';
 import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-task-item.dto';
+import { ConvertItemToJobDto } from './dto/convert-item-to-job.dto';
+import { NotificationService } from '../notification/notification.service';
+import { Message } from '../notification/entities/notification.entity';
+import { EmailService } from '../email/email.service';
+import { TeamService } from '../team/team.service';
 
 @Injectable()
 export class JobService {
@@ -54,6 +65,15 @@ export class JobService {
 
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+
+    @Inject(forwardRef(() => NotificationService))
+    private readonly notificationService: NotificationService,
+
+    @Inject(forwardRef(() => EmailService))
+    private readonly emailService: EmailService,
+
+    @Inject(forwardRef(() => TeamService))
+    private readonly teamService: TeamService,
   ) {}
 
   async create(userId: Types.ObjectId, createJobDto: CreateJobDto) {
@@ -89,7 +109,21 @@ export class JobService {
 
     console.log('createdJob', createdJob);
     const result = await this.jobRepository.save(createdJob);
-    await this.assignEmployeesWithoutValidation(result._id, result.assignedEmployees.employeeIds);
+    await this.assignEmployeesWithoutValidation(result._id, createJobDto.assignedEmployees.employeeIds);
+    if (result.clientId) {
+      const client = await this.clientService.getClientByIdInternal(result.clientId);
+      const companyName = await this.companyService.getCompanyNameById(client.details.companyId);
+      if (client.details.contactInfo.email != null) {
+        this.emailService.sendClientPortalLink(
+          client._id,
+          client.details.contactInfo.email,
+          client.details.firstName,
+          client.details.lastName,
+          companyName,
+          result.details.heading,
+        );
+      }
+    }
     return result;
   }
 
@@ -136,13 +170,21 @@ export class JobService {
           //return null;
         }
       }
-      // const user = await this.usersService.getUserById(userId);
-      // const previousJob = await this.jobRepository.findById(id);
       const updated = await this.jobRepository.update(id, updateJobDto);
-      console.log(updated);
-      // const event = new History(this.compareJobDto(this.usersService.getFullName(user), previousJob, updateJobDto));
-      // const historyUpdate = await this.jobRepository.addHistory(event, previousJob._id);
-      // console.log('updatedJob', updated, historyUpdate);
+      if (updateJobDto.clientId) {
+        const client = await this.clientService.getClientByIdInternal(updated.clientId);
+        const companyName = await this.companyService.getCompanyNameById(client.details.companyId);
+        if (client.details.contactInfo.email != null) {
+          this.emailService.sendClientPortalLink(
+            client._id,
+            client.details.contactInfo.email,
+            client.details.firstName,
+            client.details.lastName,
+            companyName,
+            updated.details.heading,
+          );
+        }
+      }
       return await this.jobRepository.findById(updated._id);
     } catch (e) {
       throw new Error(e);
@@ -218,10 +260,12 @@ export class JobService {
     }
 
     if (job.assignedEmployees) {
-      for (const employee of job.assignedEmployees.employeeIds) {
-        const exists = await this.employeeService.employeeExists(employee);
-        if (!exists) {
-          return new ValidationResult(false, `Employee: ${employee} Not found`);
+      if (job.assignedEmployees.employeeIds.length > 0) {
+        for (const employee of job.assignedEmployees.employeeIds) {
+          const exists = await this.employeeService.employeeExists(employee);
+          if (!exists) {
+            return new ValidationResult(false, `Employee: ${employee} Not found`);
+          }
         }
       }
     }
@@ -342,6 +386,52 @@ export class JobService {
     return this.jobRepository.findAllForEmployeeDetailed(employeeId);
   }
 
+  async assignTeam(userId: Types.ObjectId, assignDto: JobAssignTeamDto) {
+    const user = await this.usersService.getUserById(userId);
+    const job = await this.getJobById(assignDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+    if (!user.joinedCompanies.some((j) => j.companyId.toString() == job.companyId.toString())) {
+      throw new UnauthorizedException('User not in company');
+    }
+    const alreadyAssigned = job.assignedEmployees.teamIds.some((id) => id.toString() === assignDto.teamId.toString());
+    if (alreadyAssigned) throw new ConflictException('Team Already Assigned');
+
+    // Get team
+    const team = await this.teamService.findById(assignDto.teamId);
+    if (!team) throw new NotFoundException('Team not found');
+
+    const result = await this.jobRepository.assignTeam(assignDto.teamId, assignDto.jobId, team.teamMembers);
+    team.currentJobAssignments.push(job._id);
+    team.currentJobAssignments = [...new Set(team.currentJobAssignments)];
+    await this.employeeService.internalUpdate(team._id, {
+      currentJobAssignments: team.currentJobAssignments,
+    });
+    if (user) {
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned Team: ${team.teamName} to this job`;
+      this.jobRepository.addHistory(new History(event), result._id);
+      job.history.push(new History(event));
+    }
+
+    // Assign to each employee in team
+    this.assignEmployeesInTeam(team.teamMembers, job);
+
+    return job;
+  }
+
+  async unassignTeam(userId: Types.ObjectId, unassignDto: JobAssignTeamDto) {
+    const user = await this.usersService.getUserById(userId);
+    const job = await this.getJobById(unassignDto.jobId);
+    if (!job) throw new NotFoundException('Job not found');
+    if (!user.joinedCompanies.some((j) => j.companyId.toString() == job.companyId.toString())) {
+      throw new UnauthorizedException('User not in company');
+    }
+
+    const teamMembers = (await this.teamService.findById(unassignDto.teamId))?.teamMembers;
+    if (!teamMembers) throw new NotFoundException('Team not found');
+
+    this.unassignEmployeesInternal(teamMembers, unassignDto.jobId);
+  }
+
   async assignEmployee(userId: Types.ObjectId, jobAssignDto: JobAssignDto) {
     ///Validation
     await this.userIdMatchesEmployeeId(userId, jobAssignDto.employeeId);
@@ -360,7 +450,6 @@ export class JobService {
     }
     /// Role-based stuff
     //TODO: Implement later
-    await this.employeeService.addJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
     const result = await this.jobRepository.assignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
@@ -370,11 +459,47 @@ export class JobService {
       currentJobAssignments: assignedJobs,
     });
     if (otherEmployee.userInfo) {
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} to this job`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned ${otherEmployee?.userInfo?.firstName} ${otherEmployee?.userInfo?.surname} to this job`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
-    return result;
+
+    const company = await this.companyService.getCompanyById(otherEmployee.companyId);
+    this.notificationService.create({
+      recipientIds: [otherEmployee.userId],
+      message: new Message(`New Job Assignment`, `You have been assigned to a new job: ${job.details.heading}`),
+      companyName: company?.name,
+      isJobRelated: true,
+    });
+
+    return this.jobRepository.findById(result._id);
+  }
+
+  async assignEmployeesInTeam(members: Types.ObjectId[], job: Job & { _id: Types.ObjectId }) {
+    for (const memberId of members) {
+      if (job.assignedEmployees.employeeIds.some((emp) => emp._id.toString() === memberId.toString())) {
+        members = members.filter((m) => m.toString() !== memberId.toString());
+      }
+    }
+    /// Role-based stuff
+    //TODO: Implement later
+    await this.jobRepository.assignEmployees(members, job._id);
+    const company = await this.companyService.getCompanyById(job.companyId);
+
+    for (const member of members) {
+      const otherEmployee = await this.employeeService.findById(member);
+      const assignedJobs = otherEmployee.currentJobAssignments;
+      assignedJobs.push(job._id);
+      this.employeeService.internalUpdate(otherEmployee._id, {
+        currentJobAssignments: assignedJobs,
+      });
+      this.notificationService.create({
+        recipientIds: [otherEmployee.userId],
+        message: new Message(`New Job Assignment`, `You have been assigned to a new job: ${job.details.heading}`),
+        companyName: company?.name,
+        isJobRelated: true,
+      });
+    }
   }
 
   async assignEmployeeToTaskItem(userId: Types.ObjectId, taskAssignDto: TaskAssignDto) {
@@ -387,7 +512,7 @@ export class JobService {
     console.log(job);
 
     if (!job.taskList) {
-      throw new ConflictException('Tasklist is Empty');
+      throw new ConflictException('TaskList is Empty');
     }
 
     if (job.taskList) {
@@ -428,7 +553,7 @@ export class JobService {
     });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned Task: ${taskAssignDto.taskId} to ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName}`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Assigned Task: ${taskAssignDto.taskId} to ${otherEmployee?.userInfo?.firstName} ${otherEmployee?.userInfo?.surname}`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
@@ -445,7 +570,7 @@ export class JobService {
     console.log(job);
 
     if (!job.taskList) {
-      throw new ConflictException('Tasklist is Empty');
+      throw new ConflictException('TaskList is Empty');
     }
 
     if (job.taskList) {
@@ -486,7 +611,7 @@ export class JobService {
     });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned Task: ${taskAssignDto.taskId} from ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName}`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned Task: ${taskAssignDto.taskId} from ${otherEmployee?.userInfo?.firstName} ${otherEmployee?.userInfo?.surname}`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
@@ -505,22 +630,21 @@ export class JobService {
     if (!alreadyAssigned) throw new ConflictException('Employee Not Assigned');
     /// Role-based stuff
     //TODO: Implement later
-    await this.employeeService.removeJobAssignment(jobAssignDto.employeeId, jobAssignDto.jobId);
     const result = await this.jobRepository.unassignEmployee(jobAssignDto.employeeToAssignId, jobAssignDto.jobId);
     const user = await this.usersService.getUserById(userId);
     const otherEmployee = await this.employeeService.findById(jobAssignDto.employeeToAssignId);
     let assignedJobs = otherEmployee.currentJobAssignments;
     assignedJobs = assignedJobs.filter((j) => j.toString() !== job._id.toString());
-    await this.employeeService.internalUpdate(otherEmployee._id, {
+    this.employeeService.internalUpdate(otherEmployee._id, {
       currentJobAssignments: assignedJobs,
     });
     if (otherEmployee.userInfo) {
       //TODO: FIX later
-      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
+      const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} Unassigned ${otherEmployee?.userInfo?.firstName} ${otherEmployee?.userInfo?.surname} from this job`;
       const historyUpdate = await this.jobRepository.addHistory(new History(event), result._id);
       console.log(historyUpdate);
     }
-    return result;
+    return this.jobRepository.findById(result._id);
   }
 
   private async userIdMatchesEmployeeId(userId: Types.ObjectId, employeeId: Types.ObjectId) {
@@ -564,10 +688,15 @@ export class JobService {
         const otherEmployee = await this.employeeService.findById(employeeId);
         if (otherEmployee.userInfo) {
           //TODO: FIX later
-          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} assigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
+          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} assigned ${otherEmployee?.userInfo?.firstName} ${otherEmployee?.userInfo?.surname} from this job`;
           const historyUpdate = await this.jobRepository.addHistory(new History(event), jobAssignGroupDto.jobId);
           console.log(historyUpdate);
         }
+        const assignedJobs = otherEmployee.currentJobAssignments;
+        assignedJobs.push(job._id);
+        await this.employeeService.internalUpdate(otherEmployee._id, {
+          currentJobAssignments: assignedJobs,
+        });
         pass++;
       }
     }
@@ -581,10 +710,9 @@ export class JobService {
     ///Validation
     const job = await this.getJobById(jobId);
     for (const employeeId of employeesToAssignIds) {
-      const exists = await this.employeeService.employeeExists(employeeId);
-      if (!exists) {
-        throw new NotFoundException('Employee not found');
-      }
+      const employee = await this.employeeService.findById(employeeId);
+      console.log('Assigning', employee);
+      if (!employee) throw new NotFoundException('Employee not found');
     }
     ///
     const total = employeesToAssignIds.length;
@@ -593,7 +721,6 @@ export class JobService {
     employeesToAssignIds = [...new Set(employeesToAssignIds)];
     let pass: number = 0;
 
-    //const result = [];
     for (const employeeId of employeesToAssignIds) {
       const isInJob = job.assignedEmployees.employeeIds.some((e) => e._id.toString() === employeeId.toString());
 
@@ -630,8 +757,7 @@ export class JobService {
         const result = await this.jobRepository.unassignEmployee(employeeId, jobAssignGroupDto.jobId);
         const otherEmployee = await this.employeeService.findById(employeeId);
         if (otherEmployee.userInfo) {
-          //TODO: FIX later
-          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} unassigned ${otherEmployee?.userInfo.firstName} ${otherEmployee?.userInfo.firstName} from this job`;
+          const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} unassigned ${otherEmployee?.userInfo?.firstName} ${otherEmployee?.userInfo?.surname} from this job`;
           const historyUpdate = await this.jobRepository.addHistory(new History(event), jobAssignGroupDto.jobId);
           console.log(historyUpdate);
         }
@@ -640,6 +766,30 @@ export class JobService {
     }
     return true;
   }
+
+  async unassignEmployeesInternal(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
+    const job = await this.getJobById(jobId);
+    for (const employeeId of employeeIds) {
+      const exists = await this.employeeService.employeeExists(employeeId);
+      if (!exists) {
+        throw new NotFoundException('Employee not found');
+      }
+    }
+
+    for (const employeeId of employeeIds) {
+      const isInJob = job.assignedEmployees.employeeIds.some((e) => e._id.toString() === employeeId.toString());
+
+      if (isInJob) {
+        this.jobRepository.unassignEmployee(employeeId, jobId);
+        const otherEmployee = await this.employeeService.findById(employeeId);
+        if (otherEmployee.userInfo) {
+          const event = `${otherEmployee?.userInfo?.firstName} ${otherEmployee?.userInfo?.surname} was unassigned from this job`;
+          this.jobRepository.addHistory(new History(event), jobId);
+        }
+      }
+    }
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   async getAllTagsInCompany(userId: Types.ObjectId, companyId: Types.ObjectId) {
@@ -670,7 +820,7 @@ export class JobService {
     return this.jobTagRepository.findAllPriorityTagsInCompany(companyId);
   }
 
-  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto): Promise<Job & { _id: Types.ObjectId }> {
+  async addJobTagToCompany(userId: Types.ObjectId, createTagDto: CreateTagDto) {
     /// Validation
     const user = await this.usersService.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
@@ -692,9 +842,9 @@ export class JobService {
     }
 
     const newTag = new JobTag(createTagDto.label, createTagDto.colour, createTagDto.companyId);
-    const savedDoc = await this.jobTagRepository.addJobTagToCompany(newTag);
-    console.log(savedDoc);
-    return savedDoc.toObject();
+    const j = await this.jobTagRepository.addJobTagToCompany(newTag);
+    console.log(j);
+    return j;
   }
 
   /*  async addJobStatusToCompany(
@@ -1153,13 +1303,117 @@ export class JobService {
     this.jobTagRepository.deleteAllTagsAndStatusesInCompany(companyId);
   }
 
-  removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
-    this.jobRepository.removeAllReferencesToEmployee(employeeId);
+  async removeAllReferencesToEmployee(employeeId: Types.ObjectId) {
+    const employee = await this.employeeService.findById(employeeId);
+    if (!employee) throw new NotFoundException('Employee not found');
+    this.jobRepository.removeAllReferencesToEmployee(employee.companyId, employee._id);
     return true;
   }
 
   removeAllReferencesToTeam(teamId: Types.ObjectId) {
     this.jobRepository.removeAllReferencesToTeam(teamId);
     return true;
+  }
+
+  async convertTaskListItemToJob(userId: Types.ObjectId, convertItemDto: ConvertItemToJobDto) {
+    await this.userIdMatchesEmployeeId(userId, convertItemDto.currentEmployeeId);
+    const user = await this.usersService.getUserById(userId);
+    const employee = await this.employeeService.findById(convertItemDto.currentEmployeeId);
+    const job = await this.jobRepository.findById(convertItemDto.jobId);
+    if (!user) throw new NotFoundException('user not found');
+    if (!employee) throw new NotFoundException('Employee not found');
+    if (!job) throw new NotFoundException('Job not found');
+
+    const task = job.taskList.find((t) => t._id.toString() === convertItemDto.taskId.toString());
+    const item = task.items.find((i) => i._id.toString() === convertItemDto.taskItemId.toString());
+    if (!task) throw new ConflictException('Task not found');
+    if (!item) throw new ConflictException('Item not found');
+
+    const createJobDto: CreateJobDto = new CreateJobDto();
+    createJobDto.assignedBy = job.assignedBy._id;
+    createJobDto.companyId = job.companyId;
+    createJobDto.details = {
+      address: job.details.address,
+      heading: item.description,
+    };
+    createJobDto.assignedEmployees = new AssignedEmployees();
+    createJobDto.status = job.status._id;
+
+    const newJob = await this.create(userId, createJobDto);
+    newJob.history.push(
+      new History(
+        `${employee.userInfo.firstName} ${employee.userInfo.surname} converted item: ${item.description} into a Job`,
+      ),
+    );
+    for (const assignedEmployee of newJob.assignedEmployees.employeeIds) {
+      await this.assignEmployee(userId, {
+        jobId: newJob._id,
+        employeeId: employee._id,
+        employeeToAssignId: assignedEmployee._id,
+      });
+    }
+    this.jobRepository.convertTaskToJob(convertItemDto.jobId, convertItemDto.taskId, convertItemDto.taskItemId);
+    return (await newJob.save()).toObject();
+  }
+
+  async getAllEmployeesRelatedToJob(jobId: Types.ObjectId) {
+    //This is an internal function
+    const relevantJobs = await this.jobRepository.getAllRelatedEmployees(jobId);
+    const result: Types.ObjectId[] = [];
+    if (relevantJobs.assignedBy) result.push(relevantJobs.assignedBy);
+    if (relevantJobs.assignedEmployees && relevantJobs.assignedEmployees.employeeIds)
+      result.concat(relevantJobs.assignedEmployees.employeeIds);
+    if (relevantJobs.taskList) {
+      for (const task of relevantJobs.taskList) {
+        for (const item of task.items) {
+          if (item.assignedEmployees) result.concat(item.assignedEmployees);
+          //TODO: Remove duplicates
+        }
+      }
+    }
+    return result;
+  }
+
+  async addClientFeedback(jobId: Types.ObjectId, addFeedbackDto: AddFeedbackDto) {
+    const updated = await this.jobRepository.update(jobId, addFeedbackDto);
+    console.log('updatedJob', updated);
+    if (updated) {
+      const client = await this.clientService.internalGetClientById(updated.clientId);
+      if (!client) throw new NotFoundException('Client not found');
+
+      const mes = new Message(
+        'New Feedback from Client',
+        `${client.details.firstName} ${client.details.lastName} has left a review on Job: ${updated.details.heading}`,
+      );
+      const allEmps = await this.getAllEmployeesRelatedToJob(jobId);
+      const company = await this.companyService.getCompanyById(updated.companyId);
+      await this.notificationService.create({
+        recipientIds: allEmps,
+        message: mes,
+        isJobRelated: true,
+        companyName: company.name,
+      });
+    }
+    return true;
+  }
+
+  async getAllCurrentJobsForClient(clientId: Types.ObjectId) {
+    const client = await this.clientService.internalGetClientById(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+
+    const finalStatus = await this.companyService.internalFindAllStatusesInCompany(client.details.companyId);
+    console.log(finalStatus);
+    const statusId = finalStatus.jobStatuses[finalStatus.jobStatuses.length - 1];
+    return this.jobRepository.findAllCurrentForClient(clientId, statusId);
+  }
+
+  async getAllCompletedJobsForClient(clientId: Types.ObjectId) {
+    const client = await this.clientService.internalGetClientById(clientId);
+    if (!client) throw new NotFoundException('Client not found');
+
+    const finalStatus = await this.companyService.internalFindAllStatusesInCompany(client.details.companyId);
+    console.log(finalStatus);
+    const statusId = finalStatus.jobStatuses[finalStatus.jobStatuses.length - 1];
+    return this.jobRepository.findCompletedForClient(clientId, statusId._id);
   }
 }

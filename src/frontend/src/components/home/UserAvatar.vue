@@ -12,7 +12,7 @@
         </v-avatar>
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-text>
         <div class="mx-auto text-center">
           <v-avatar color="secondary" style="width: 38px; height: 36px">
@@ -55,6 +55,8 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 // import avatarImage from '@/assets/images/profile/avatar.jpg'
 
 const firstName = ref('')
@@ -105,11 +107,10 @@ const getUserData = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   const userId = localStorage.getItem('id')
 
   try {
-    const response = await axios.get(`${apiUrl}users/id/${userId}`, config)
+    const response = await axios.get(`${API_URL}users/id/${userId}`, config)
     const data = response.data.data
 
     firstName.value = data.personalInfo.firstName

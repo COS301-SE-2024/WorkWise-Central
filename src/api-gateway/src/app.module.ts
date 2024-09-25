@@ -17,14 +17,21 @@ import { AdminModule } from './admin/admin.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { StockTakeModule } from './stocktake/stocktake.module';
-import { ChatGateway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
+import { TimeTrackerModule } from './time-tracker/time-tracker.module';
+import { StockMovementsModule } from './stockmovements/stockmovements.module';
+import { GlobalModuleModule } from './shared/global-module/global-module.module';
+import { InvoiceModule } from './invoices/invoice.module';
+import { PayfastModule } from 'src/payfast/payfast.module';
+import { InventoryUsedModule } from './inventory-used/inventory-used.module';
+import { VideoCallModule } from './video-call/video-call.module';
+import { FleetModule } from './fleet/fleet.module';
 
 const rootPath = join(__dirname, '..', '../../uploads');
 
 @Module({
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService],
   imports: [
     ConfigModule.forRoot({ envFilePath: [`../.env`, `.env`], isGlobal: true }),
     MongooseModule.forRoot(`${process.env.SERVER_LOGIN}`),
@@ -39,11 +46,20 @@ const rootPath = join(__dirname, '..', '../../uploads');
     EmailModule,
     FileModule,
     InventoryModule,
+    InvoiceModule,
     AdminModule,
     ServeStaticModule.forRoot({
       rootPath: rootPath,
+      serveRoot: '/uploads',
     }),
     ChatModule,
+    TimeTrackerModule,
+    StockMovementsModule,
+    PayfastModule,
+    VideoCallModule,
+    InventoryUsedModule,
+    GlobalModuleModule,
+    FleetModule,
   ],
 })
 export class AppModule {}

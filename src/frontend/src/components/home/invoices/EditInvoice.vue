@@ -7,7 +7,7 @@
         Edit
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-file-document-edit-outline</v-icon>
         Edit Invoice
@@ -19,7 +19,7 @@
             <v-col>
               <small class="text-caption">Invoice Number</small>
               <v-text-field
-                v-model="localEditedInvoice.number"
+                v-model="localEditedInvoice.invoiceNumber"
                 color="secondary"
                 :rules="invoiceNumberRules"
                 required
@@ -28,7 +28,7 @@
             <v-col>
               <small class="text-caption">Date</small>
               <v-text-field
-                v-model="localEditedInvoice.date"
+                v-model="localEditedInvoice.creationDate"
                 color="secondary"
                 required
               ></v-text-field>
@@ -37,7 +37,7 @@
               <v-col cols="12" lg="6">
                 <small class="text-caption">Amount</small>
                 <v-text-field
-                  v-model="localEditedInvoice.amount"
+                  v-model="localEditedInvoice.total"
                   color="secondary"
                   required
                 ></v-text-field>
@@ -45,7 +45,7 @@
               <v-col cols="12" lg="6">
                 <small class="text-caption">Status</small>
                 <v-select
-                  v-model="localEditedInvoice.status"
+                  v-model="localEditedInvoice.paid"
                   :items="statusOptions"
                   color="secondary"
                   required
@@ -77,14 +77,29 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
+interface Invoice {
+  _id: string
+  invoiceNumber: string
+  creationDate: string
+  paymentDate: string
+  total: number
+  paid: boolean
+  clientName: string
+  jobTitle: string
+}
 
 export default {
   name: 'EditInvoice',
   props: {
-    editedInvoice: Object,
+    editedInvoice: {
+      type: Object as () => Invoice,
+      required: true
+    },
     invoice_id: String
   },
   components: {
@@ -92,21 +107,23 @@ export default {
   },
   data() {
     return {
-      localEditedInvoice: this.editedInvoice,
+      localEditedInvoice: {
+        ...this.editedInvoice
+      } as Invoice,
       editDialog: false,
       valid: false,
-      statusOptions: ['Paid', 'Unpaid', 'Pending'],
-      invoiceNumberRules: [(v) => !!v || 'Invoice number is required'],
-      dateRules: [(v) => !!v || 'Date is required'],
+      statusOptions: ['Paid', 'Unpaid', 'Pending'] as any[],
+      invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
+      dateRules: [(v: string) => !!v || 'Date is required'],
       amountRules: [
-        (v) => !!v || 'Amount is required',
-        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Amount must be a valid number'
+        (v: string) => !!v || 'Amount is required',
+        (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Amount must be a valid number'
       ]
     }
   },
   created() {
     // Create a deep copy of editedInvoice
-    // this.localEditedInvoice = this.deepCopy(this.editedInvoice)
+    this.localEditedInvoice = this.deepCopy(this.editedInvoice)
   },
   methods: {
     updateInvoice() {
@@ -123,19 +140,9 @@ export default {
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` }
       }
-      const apiURL = this.getRequestUrl()
-
-      const data = {
-        invoice: {
-          number: this.localEditedInvoice.number,
-          date: this.localEditedInvoice.date,
-          amount: this.localEditedInvoice.amount,
-          status: this.localEditedInvoice.status
-        }
-      }
 
       axios
-        .patch(`${apiURL}/invoices/${this.invoice_id}`, data, config)
+        .patch(`${API_URL}/invoices/${this.invoice_id}`, this.localEditedInvoice, config)
         .then((response) => {
           this.$toast.add({
             severity: 'success',
@@ -143,8 +150,10 @@ export default {
             detail: 'Invoice updated successfully',
             life: 3000
           })
-          this.editDialog = false
-          this.$emit('invoiceUpdated', response.data)
+          setTimeout(() => {
+            this.editDialog = false
+            this.$emit('invoiceUpdated', response.data)
+          }, 3000)
         })
         .catch((error) => {
           console.error(error)
@@ -164,9 +173,9 @@ export default {
     close() {
       this.editDialog = false
     },
-    // deepCopy(obj) {
-    //   return JSON.parse(JSON.stringify(obj))
-    // },
+    deepCopy(obj: any) {
+      return JSON.parse(JSON.stringify(obj))
+    },
     getRequestUrl() {
       return 'https://your-api-url.com'
     }

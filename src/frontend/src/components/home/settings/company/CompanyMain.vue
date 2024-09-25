@@ -81,6 +81,7 @@ import axios from 'axios'
 import Toast from 'primevue/toast'
 import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
 import JoinCompanyModal from '@/components/signup/JoinCompanyModal.vue'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   props: {
@@ -172,10 +173,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       const user_id = localStorage.getItem('id')
       await axios
-        .get(`${apiURL}users/id/${user_id}`, config)
+        .get(`${API_URL}users/id/${user_id}`, config)
         .then((response) => {
           this.joinedCompanies = response.data.data.joinedCompanies
           this.joinedCompanies.forEach((company) => {

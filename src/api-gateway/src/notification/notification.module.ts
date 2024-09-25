@@ -24,6 +24,8 @@ import { InventoryModule } from '../inventory/inventory.module';
 import { ClientRepository } from '../client/client.repository';
 import { StockTakeModule } from '../stocktake/stocktake.module';
 import { NotificationToken, NotificationTokenSchema } from './entities/notificationToken.entity';
+import { StockMovementsModule } from '../stockmovements/stockmovements.module';
+import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
 
 @Global()
 @Module({
@@ -43,6 +45,8 @@ import { NotificationToken, NotificationTokenSchema } from './entities/notificat
     forwardRef(() => ClientModule),
     forwardRef(() => InventoryModule),
     forwardRef(() => StockTakeModule),
+    forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryUsedModule),
   ],
   providers: [
     NotificationGateway,

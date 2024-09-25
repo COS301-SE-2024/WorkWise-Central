@@ -14,7 +14,7 @@
         Create Status
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title> Create new Status</v-card-title>
       <v-card-text>
         <v-form v-model="formIsValid" ref="form">
@@ -76,6 +76,8 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
+
 interface Status {
   status: string
   colour: string
@@ -155,9 +157,8 @@ export default defineComponent({
     async createStatus() {
       this.isDeleting = true // Indicate the start of the deletion process
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
       await axios
-        .post(`${apiURL}job/status`, this.status, config)
+        .post(`${API_URL}job/status`, this.status, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -169,7 +170,7 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.dialog = false
-            this.$emit('Created', response.data.data)
+            this.$emit('CreatedStatus', response.data.data)
           }, 3000)
         })
         .catch((error) => {
