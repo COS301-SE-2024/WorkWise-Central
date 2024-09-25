@@ -29,7 +29,7 @@
           <div class="text-caption pa-3">Select a client</div>
 
           <v-autocomplete
-            :disabled="saveClient"
+            :disabled="isDeleting"
             v-model="selectedClient"
             hint="Click the field to select a client"
             :items="clientData.filter((item) => getClientFullName(item))"
@@ -53,11 +53,11 @@
           <v-container
             ><v-row
               ><v-col cols="12" lg="6">
-                <v-btn @click="saveClient" color="success" block :loading="saveClient"
+                <v-btn @click="saveClient" color="success" block :loading="isDeleting"
                   ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
                 ></v-col
               ><v-col cols="12" lg="6">
-                <v-btn @click="isActive.value = false" color="error" block :disabled="saveClient"
+                <v-btn @click="isActive.value = false" color="error" block :disabled="isDeleting"
                   ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
                 ></v-col
               ></v-row
