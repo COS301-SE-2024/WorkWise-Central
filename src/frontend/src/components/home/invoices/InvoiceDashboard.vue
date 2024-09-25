@@ -1,49 +1,24 @@
 <template>
   <v-container fluid fill-height>
     <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
-      <v-card-title
-        class="d-flex align-center pe-2 text-h5 font-weight-regular"
-        height="auto"
-        width="100%"
-      >
+      <v-card-title class="d-flex align-center pe-2 text-h5 font-weight-regular" height="auto" width="100%">
         <v-row align="center" justify="space-between">
           <v-col cols="12" lg="4" class="d-flex align-center">
             <v-icon icon="fa: fa-solid fa-file-invoice"></v-icon>
-            <v-label
-              class="ms-2 h2 font-family-Nunito text-headingTextColor"
-              height="auto"
-              width="auto"
-              >Company Invoices</v-label
-            >
+            <v-label class="ms-2 h2 font-family-Nunito text-headingTextColor" height="auto" width="auto">Company
+              Invoices</v-label>
           </v-col>
 
           <v-col cols="12" lg="4" class="d-flex align-center">
-            <v-text-field
-              v-model="search"
-              density="compact"
-              label="Search"
-              prepend-inner-icon="mdi-magnify"
-              variant="outlined"
-              flat
-              color="primary"
-              width="100%"
-              hide-details="auto"
-              single-line
-            ></v-text-field>
+            <v-text-field v-model="search" density="compact" label="Search" prepend-inner-icon="mdi-magnify"
+              variant="outlined" flat color="primary" width="100%" hide-details="auto" single-line></v-text-field>
           </v-col>
         </v-row>
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <v-data-table
-          :headers="invoiceHeaders"
-          :items="invoiceItems"
-          :search="search"
-          height="auto"
-          :row-props="getRowProps"
-          :header-props="{ class: 'bg-secondRowColor h6' }"
-          class="bg-cardColor"
-        >
+        <v-data-table :headers="invoiceHeaders" :items="invoiceItems" :search="search" height="auto"
+          :row-props="getRowProps" :header-props="{ class: 'bg-secondRowColor h6' }" class="bg-cardColor">
           <template v-slot:[`item.total`]="{ item }">R{{ item.total }}</template>
           <template v-slot:[`item.creationDate`]="{ item }">{{
             formatDate(item.creationDate)
@@ -54,12 +29,8 @@
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu max-width="500px">
               <template v-slot:activator="{ props }">
-                <v-btn
-                  v-bind="props"
-                  class="text-none font-weight-regular"
-                  color="warning"
-                  @click="selectInvoice(item)"
-                >
+                <v-btn v-bind="props" class="text-none font-weight-regular" color="warning"
+                  @click="selectInvoice(item)">
                   <v-icon start color="primary" size="small">mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
@@ -137,7 +108,7 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    formatDate (dateString: string) {
+    formatDate(dateString: any) {
       const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' }
       const date = new Date(dateString)
       return date.toLocaleDateString('en-US', options)
@@ -165,8 +136,8 @@ export default defineComponent({
             this.invoiceItems.push({
               _id: invoice._id,
               invoiceNumber: invoice.invoiceNumber,
-              creationDate: this.formatDate(invoice.invoiceDate),
-              paymentDate: this.formatDate(invoice.paymentDate),
+              creationDate: this.formatDate(invoice.invoiceDate) as any,
+              paymentDate: this.formatDate(invoice.paymentDate) as any,
               total: invoice.total,
               paid: invoice.paid,
               clientName:
@@ -192,9 +163,7 @@ export default defineComponent({
         class: index % 2 === 0 ? 'bg-secondRowColor' : ''
       }
     },
-    formatDate(date: any) {
-      return new Date(date).toDateString()
-    }
+
   },
   mounted() {
     this.getRequests()

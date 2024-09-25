@@ -11,19 +11,11 @@
         <!-- Date Picker for filtering with native date type -->
         <v-row>
           <v-col cols="6">
-            <v-text-field
-              v-model="startDate"
-              label="Start Date"
-              type="date"
-            ></v-text-field>
+            <v-text-field v-model="startDate" label="Start Date" type="date"></v-text-field>
           </v-col>
 
           <v-col cols="6">
-            <v-text-field
-              v-model="endDate"
-              label="End Date"
-              type="date"
-            ></v-text-field>
+            <v-text-field v-model="endDate" label="End Date" type="date"></v-text-field>
           </v-col>
         </v-row>
 
@@ -33,24 +25,13 @@
             <v-card-text>
               <v-container>
                 <v-col>
-                  <v-btn
-                    variant="elevated"
-                    color="primary"
-                    block
-                    :loading="isGenerating"
-                    @click="generatePDF"
-                    ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
-                    PDF</v-btn
-                  ></v-col
-                >
+                  <v-btn variant="elevated" color="primary" block :loading="isGenerating" @click="generatePDF"><v-icon
+                      color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
+                    PDF</v-btn></v-col>
               </v-container>
             </v-card-text>
-            <v-data-table
-              :headers="stockMovementHeaders"
-              :items="filteredStockMovements"
-              class="elevation-1 bg-cardColor"
-              :header-props="{ class: 'bg-cardColor h6' }"
-            >
+            <v-data-table :headers="stockMovementHeaders" :items="filteredStockMovements"
+              class="elevation-1 bg-cardColor" :header-props="{ class: 'bg-cardColor h6' }">
               <template v-slot:[`item.date`]="{ item }"> {{ formatDate(item.date) }} </template>
             </v-data-table>
           </v-card>
@@ -141,7 +122,7 @@ export default defineComponent({
         return false
       }
     },
-    formatDate (dateString) {
+    formatDate(dateString) {
       const options = { day: 'numeric', month: 'long', year: 'numeric' }
       const date = new Date(dateString)
       return date.toLocaleDateString('en-US', options)
@@ -150,9 +131,7 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    formatDate(date) {
-      return new Date(date).toDateString()
-    },
+
     async getRequests() {
       const config = {
         headers: {
