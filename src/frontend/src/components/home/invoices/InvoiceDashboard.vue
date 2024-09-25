@@ -137,6 +137,11 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
+    formatDate (dateString: string) {
+      const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' }
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', options)
+    },
     async getRequests() {
       // Getting all the jobs for the company
       const config = {
@@ -160,8 +165,8 @@ export default defineComponent({
             this.invoiceItems.push({
               _id: invoice._id,
               invoiceNumber: invoice.invoiceNumber,
-              creationDate: invoice.invoiceDate,
-              paymentDate: invoice.paymentDate,
+              creationDate: this.formatDate(invoice.invoiceDate),
+              paymentDate: this.formatDate(invoice.paymentDate),
               total: invoice.total,
               paid: invoice.paid,
               clientName:

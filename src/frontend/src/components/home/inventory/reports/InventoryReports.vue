@@ -141,6 +141,11 @@ export default defineComponent({
         return false
       }
     },
+    formatDate (dateString) {
+      const options = { day: 'numeric', month: 'long', year: 'numeric' }
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', options)
+    },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
@@ -162,7 +167,7 @@ export default defineComponent({
         )
         for (const item of response.data.data) {
           this.stockMovements.push({
-            date: item.movementDate,
+            date: this.formatDate(item.movementDate),
             type: item.type,
             item: item.inventoryItem.nameOfItem,
             quantity: item.movement,

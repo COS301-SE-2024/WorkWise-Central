@@ -30,26 +30,33 @@
             >
             <v-card-text>{{ appointment.details }}</v-card-text>
             <v-card-actions class="bg-cardColor">
-              <v-container
-                ><v-row
-                  ><v-col cols="12" lg="4"
-                    ><v-btn color="primary" @click="editAppointment(appointment)" block
-                      ><v-icon icon="fa:fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
-                    ></v-col
-                  >
-                  <v-col cols="12" lg="4">
-                    <v-btn color="error" @click="deleteAppointment(appointment._id)" block
-                      ><v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>Delete</v-btn
-                    ></v-col
-                  >
-                  <v-col cols="12" lg="4">
-                    <v-btn @click="joiningRoom(appointment)" color="success" block>
-                      <v-icon icon="fa:fa-solid fa-right-to-bracket" color="success"></v-icon>Join
-                      Room
+              <v-container>
+                <v-row>
+                  <!-- Edit Button -->
+                  <v-col cols="12" sm="4">
+                    <v-btn color="primary" @click="editAppointment(appointment)" block>
+                      <v-icon icon="fa:fa-solid fa-pencil" color="primary"></v-icon>
+                      Edit
                     </v-btn>
-                  </v-col></v-row
-                ></v-container
-              >
+                  </v-col>
+
+                  <!-- Delete Button -->
+                  <v-col cols="12" sm="4">
+                    <v-btn color="error" @click="deleteAppointment(appointment._id)" block>
+                      <v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>
+                      Delete
+                    </v-btn>
+                  </v-col>
+
+                  <!-- Join Room Button -->
+                  <v-col cols="12" sm="4">
+                    <v-btn @click="joiningRoom(appointment)" color="success" block>
+                      <v-icon icon="fa:fa-solid fa-right-to-bracket" color="success"></v-icon>
+                      Join Room
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-actions>
           </v-card>
         </v-col>

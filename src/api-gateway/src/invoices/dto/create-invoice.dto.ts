@@ -18,10 +18,10 @@ export class Items {
   @IsNumber()
   unitPrice: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
   @IsNumber()
-  discount: number;
+  discount?: number;
 
   @IsNotEmpty()
   @ApiProperty()
