@@ -209,9 +209,27 @@ export class JobRepository {
       .exec();
   }
 
+  async findAllForEmployees(employeeIds: Types.ObjectId[]) {
+    const filter = {
+      $and: [
+        {
+          $or: [
+            { 'assignedEmployees.employeeIds': { $in: employeeIds } },
+            { 'taskList.items.assignedEmployees': { $in: employeeIds } },
+          ],
+        },
+        isNotDeleted,
+      ],
+    };
+    return await this.jobModel.find(filter).lean().exec();
+  }
+
   async findAllForEmployeeDetailed(employeeId: Types.ObjectId) {
     const filter = {
-      $and: [{ 'assignedEmployees.employeeIds': employeeId }, isNotDeleted],
+      $and: [
+        { $or: [{ 'assignedEmployees.employeeIds': employeeId }, { 'taskList.items.assignedEmployees': employeeId }] },
+        isNotDeleted,
+      ],
     };
     return await this.jobModel
       .find(filter)

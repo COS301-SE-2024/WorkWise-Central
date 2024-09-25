@@ -366,6 +366,12 @@ export class JobService {
     return this.jobRepository.findAllForEmployee(employeeId);
   }
 
+  async findAllJobsForEmployees(
+    employeeIds: Types.ObjectId[],
+  ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
+    return await this.jobRepository.findAllForEmployees(employeeIds);
+  }
+
   async getAllDetailedJobsForEmployee(
     userId: Types.ObjectId,
     employeeId: Types.ObjectId,
