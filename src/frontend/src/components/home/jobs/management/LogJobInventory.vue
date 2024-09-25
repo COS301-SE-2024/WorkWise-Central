@@ -9,6 +9,8 @@
         class="mb-3"
         @update:model-value="handleInventorySelection"
         variant="solo"
+        color="primary"
+        background-color="#f5f5f5"
     ></v-select>
 
     <v-text-field
@@ -20,25 +22,32 @@
         @input="validateForm"
     ></v-text-field>
 
-    <v-btn
+    <Button
         type="submit"
         :disabled="!formValid"
-        color="success"
-        class="mb-3"
-        prepend-icon="mdi-plus"
-    >
-      {{ isEditing ? 'Update Inventory' : 'Add Inventory' }}
-    </v-btn>
+        label="Add Inventory"
+        icon="fa: fa-solid fa-plus"
+        class="mb-3 p-button-success"
+        v-if="!isEditing"
 
-    <v-btn
+    />
+
+    <Button
+        type="submit"
+        :disabled="!formValid"
+        label="Update Inventory"
+        icon="fa: fa-solid fa-plus"
+        class="mb-3 p-button-success"
         v-if="isEditing"
-        color="secondary"
-        class="mb-3 ml-2"
-        prepend-icon="mdi-cancel"
+    />
+
+    <Button
+        v-if="isEditing"
+        label="Cancel"
+        icon="fa: fa-solid fa-times"
+        class="mb-3 ml-2 p-button-danger"
         @click="cancelEdit"
-    >
-      Cancel
-    </v-btn>
+    />
   </v-form>
 
   <v-divider></v-divider>
@@ -73,11 +82,13 @@
       :length="Math.ceil(inventoryList.length / itemsPerPage)"
       @update:model-value="onPageChange"
       class="mt-3"
+      color="primary"
   ></v-pagination>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import Button from 'primevue/button'
 import { API_URL } from '@/main'
 import axios from 'axios'
 
