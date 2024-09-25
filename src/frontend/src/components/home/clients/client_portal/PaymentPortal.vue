@@ -88,7 +88,7 @@ export default defineComponent({
       cancel_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal',
       notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
       testingMode: true,
-      pfHost: 'https://sandbox.payfast.co.za/eng/process',
+      pfHost:'sandbox.payfast.co.za',
       forms: {} as { [key: string]: any }
     }
   },
@@ -156,10 +156,18 @@ export default defineComponent({
 
       this.companyId = this.client.details.companyId
 
-      if (this.companyId !== '66cdad718554b49834a56eed') {
-        this.testingMode = false
-        this.pfHost = 'www.payfast.co.za'
-      }
+      // Getting the company info
+      await axios
+        .get(`${API_URL}company/id/${this.companyId}`, config)
+        .then((response) => {
+          if(response.data.data.name.includes('DemoAccount')) {
+            this.testingMode = true
+            this.pfHost = 'https://sandbox.payfast.co.za/eng/process'
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
 
       // Getting the company info
       await axios
