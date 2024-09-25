@@ -14,6 +14,7 @@ import { Employee } from '../employee/entities/employee.entity';
 import { TimeTrackerRepository } from './time-tracker.repository';
 import { TimeInterval } from './entities/time-tracker.entity';
 import { TimeSpentDto } from './dto/time-spent.dto';
+import { currentDate } from '../utils/Utils';
 
 @Injectable()
 export class TimeTrackerService {
@@ -112,6 +113,19 @@ export class TimeTrackerService {
     return new TimeSpentDto(timeWorking, timePaused);
   }
 
+  async getTotalTimeSpentOnJobSoFar(employeeId: Types.ObjectId, jobId: Types.ObjectId): Promise<TimeSpentDto> {
+    const times = await this.timeTrackerRepository.getAllIntervalsOnJob(employeeId, jobId);
+    if (!times) return new TimeSpentDto(0, 0);
+    let timeWorking: number = 0;
+    let timePaused: number = 0;
+    for (const time of times) {
+      timePaused += this.calculateTotalPauseMinutesWhileRunning(time.pauses);
+      timeWorking += this.calculateTotalWorkMinutes(time.checkInTime, currentDate());
+    }
+
+    return new TimeSpentDto(timeWorking, timePaused);
+  }
+
   async closeAllTimeTrackersForJob(jobId: Types.ObjectId) {
     return this.timeTrackerRepository.closeAllTimeTrackersForJob(jobId);
   }
@@ -120,6 +134,20 @@ export class TimeTrackerService {
     let totalMinutes = 0;
 
     for (const pause of pauses) {
+      const start = new Date(pause.start).getTime();
+      const end = new Date(pause.end).getTime();
+      const duration = (end - start) / (1000 * 60);
+      totalMinutes += duration;
+    }
+
+    return totalMinutes;
+  }
+
+  calculateTotalPauseMinutesWhileRunning(pauses: TimeInterval[]): number {
+    let totalMinutes = 0;
+
+    for (const pause of pauses) {
+      if (pause.end == null) continue;
       const start = new Date(pause.start).getTime();
       const end = new Date(pause.end).getTime();
       const duration = (end - start) / (1000 * 60);

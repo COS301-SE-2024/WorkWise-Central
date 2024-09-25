@@ -188,4 +188,18 @@ export class TimeTrackerController {
       ),
     };
   }
+
+  @Get('total-time-spent-so-far')
+  @ApiOperation({ summary: `Get total time spent on a job so far for an employee` })
+  @ApiResponse({ type: TimeSpentDto })
+  async getTotalTimeSpentOnJobSoFar(@Headers() headers: any, @Body() generalTimeTrackerDto: GeneralTimeTrackerDto) {
+    const userId = extractUserId(this.jwtService, headers);
+    await this.timeTrackerService.userIdMatchesEmployeeId(userId, generalTimeTrackerDto.employeeId);
+    return {
+      data: await this.timeTrackerService.getTotalTimeSpentOnJobSoFar(
+        generalTimeTrackerDto.employeeId,
+        generalTimeTrackerDto.jobId,
+      ),
+    };
+  }
 }
