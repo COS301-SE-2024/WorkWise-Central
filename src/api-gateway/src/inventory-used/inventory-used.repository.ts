@@ -22,6 +22,7 @@ export class InventoryUsedRepository {
   }
 
   async findAllInCompany(identifier: Types.ObjectId) {
+    console.log('identifier', identifier);
     return await this.InventoryUsedModel.find({
       $and: [
         {
@@ -35,6 +36,7 @@ export class InventoryUsedRepository {
   }
 
   async findAllForJob(identifier: Types.ObjectId) {
+    console.log('identifier', identifier);
     return await this.InventoryUsedModel.find({
       $and: [
         {
