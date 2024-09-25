@@ -97,10 +97,11 @@ export class FileService {
     let fileLink: string = '';
     const extension = this.getFileExtension(base64Image);
     if (!extension) {
+      console.log('No extension', extension);
       return new SaveBase64Response(false);
     }
 
-    const fileName = `${uuidv4()}-${uuidv4()}${extension}`;
+    const fileName = `File-${uuidv4()}.${extension}`;
     const filePath = path.join(uploadPath, fileName);
 
     // Decode the Base64 string
