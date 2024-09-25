@@ -114,6 +114,9 @@ export default defineComponent({
   //   ...mapGetters(['isDarkMode'])
   // },
   methods: {
+    redirectToDashBoard() {
+      if (this.$route.path !== '/dashboard') this.$router.push('/dashboard')
+    },
     toggleDarkMode() {
       console.log(this.isdarkmode)
       if (this.isdarkmode) {
@@ -199,7 +202,7 @@ export default defineComponent({
       <CompanyMain />
       <v-spacer></v-spacer>
 
-      <v-toolbar-title class="d-flex justify-center">
+      <v-toolbar-title class="d-flex justify-center" @click="redirectToDashBoard">
         <v-label class="text-primary h4">Work</v-label>
         <v-label class="text-secondary h4">Wise</v-label>
       </v-toolbar-title>
@@ -391,7 +394,13 @@ export default defineComponent({
       >
         <!--        <v-list-item-title> Notifications </v-list-item-title>-->
         <template v-slot:append>
-          <v-icon color="green" size="x-small" v-if="new_notification">mdi-circle</v-icon>
+          <v-icon
+            color="light-green-accent-4"
+            :style="{ fontSize: '10px' }"
+            size="x-small"
+            v-if="new_notification"
+            >mdi-circle</v-icon
+          >
         </template>
       </v-list-item>
 
