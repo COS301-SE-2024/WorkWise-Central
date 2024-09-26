@@ -27,9 +27,9 @@
               <small class="text-caption">Team Name</small>
               <v-text-field
                 v-model="localEditedItem.teamName"
-                color="secondary"
                 :rules="teamNameRules"
                 required
+                color="secondary"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -37,11 +37,13 @@
               <v-select
                 v-model="selectedTeamMembers"
                 :items="teamMemberNames"
-                color="secondary"
                 :rules="teamMembersRules"
                 multiple
                 chips
                 required
+                variant="solo"
+                color="primary"
+                background-color="#f5f5f5"
               ></v-select>
             </v-col>
             <v-col>
@@ -49,18 +51,25 @@
               <v-select
                 v-model="localEditedItem.teamLeaderId.userInfo.displayName"
                 :items="teamMemberNames"
-                color="secondary"
                 :rules="teamLeaderIdRules"
                 required
+                variant="solo"
+                color="primary"
+                background-color="#f5f5f5"
               ></v-select>
             </v-col>
             <v-col>
-              <small class="text-caption">Assigned Job</small>
+              <small class="text-caption">Assign Job</small>
               <v-select
-                  v-model="selectedJob"
-                  :items="teamMemberNames"
-                  color="secondary"
+                  v-model="selectedJobs"
+                  :items="jobList"
+                  multiple
+                  item-title="details.heading"
+                  item-value="_id"
                   required
+                  variant="solo"
+                  color="primary"
+                  background-color="#f5f5f5"
               ></v-select>
             </v-col>
           </v-col>
@@ -110,6 +119,7 @@
 
 <script>
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 import axios from 'axios'
 
 export default {
@@ -123,7 +133,9 @@ export default {
   },
   data() {
     return {
-      selectedJob: '',
+      selectedJobs: [],
+      assignedJobs: [],
+      jobList: [],
       localEditedItem: this.editedItem,
       editDialog: false,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
@@ -143,6 +155,8 @@ export default {
   created() {
     this.localEditedItem = this.deepCopy(this.editedItem)
     this.getEmployees()
+    this.getJobInCompany()
+    this.getCurrentJobAssignment()
   },
   methods: {
     async updateTeam() {
@@ -176,6 +190,32 @@ export default {
         currentEmployeeId: localStorage.getItem('employeeId')
       }
       console.log(data)
+
+      // Unassign if the job has been removed
+
+      for (const job of this.assignedJobs) {
+        if (!this.selectedJobs.find(job._id)) {
+          console.log('Removing job... :', job._id)
+          await axios.patch(`${API_URL}job/team`, {
+              employeeId: localStorage.getItem('employeeId'),
+              teamId: this.teamId,
+              jobId: job._id
+            }, config
+          )
+        }
+      }
+
+      // Assign new jobs to the team
+
+      for (const job of this.selectedJobs) {
+        console.log('Job id:', job)
+        await axios.put(`${API_URL}job/team`, {
+          employeeId: localStorage.getItem('employeeId'),
+          teamId: this.teamId,
+          jobId: job
+        }, config)
+      }
+
       axios
         .patch(`${apiURL}team/${this.teamId}`, data, config)
         .then((response) => {
@@ -220,6 +260,51 @@ export default {
     populateCurrentTeamMembers() {
       for (let i = 0; i < this.localEditedItem.teamMembers.length; i++) {
         this.selectedTeamMembers.push(this.editedItem.teamMembers[i].userInfo.displayName)
+      }
+    },
+    async getCurrentJobAssignment() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      try {
+        const response = await axios.get(
+            `${API_URL}team/id/${this.teamId}`,
+            config
+        )
+        console.log('Selected Jobs:', response.data.data)
+        for (const job in response.data.data.currentJobAssignments) {
+          this.assignedJobs.push(job)
+        }
+        for (const job of this.jobList) {
+          if (this.assignedJobs.includes(job._id)) {
+            this.selectedJobs.push(job._id)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch current job assignments:', error)
+      }
+    },
+    async getJobInCompany() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      try {
+        const response = await axios.get(
+            `${API_URL}job/all/company/${localStorage.getItem('currentCompany')}`,
+            config
+        )
+        response.data.data.forEach((job) => {
+          this.jobList.push(job)
+        })
+        console.log('Job List:', this.jobList)
+      } catch (error) {
+        console.error(error)
       }
     },
     async getEmployees() {

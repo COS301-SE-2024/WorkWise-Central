@@ -387,8 +387,10 @@ export class JobService {
     if (!user.joinedCompanies.some((j) => j.companyId.toString() == job.companyId.toString())) {
       throw new UnauthorizedException('User not in company');
     }
-    const alreadyAssigned = job.assignedEmployees.teamIds.some((id) => id.toString() === assignDto.teamId.toString());
-    if (alreadyAssigned) throw new ConflictException('Team Already Assigned');
+    if (job.assignedEmployees.teamIds != null) {
+      const alreadyAssigned = job.assignedEmployees.teamIds.some((id) => id.toString() === assignDto.teamId.toString());
+      if (alreadyAssigned) throw new ConflictException('Team Already Assigned');
+    }
 
     // Get team
     const team = await this.teamService.findById(assignDto.teamId);
