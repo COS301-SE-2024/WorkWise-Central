@@ -205,7 +205,7 @@ export default {
 
         setTimeout(() => {
           this.addDialog = false
-          this.resetFields()
+
           this.$emit('updateInventory', response.data.data)
         }, 1500)
       } catch (error) {
