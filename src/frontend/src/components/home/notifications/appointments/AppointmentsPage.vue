@@ -1,22 +1,45 @@
 <template>
-
   <v-container fluid fill-height>
     <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
-      <v-card-title class="d-flex align-center pe-2 text-h5 font-weight-regular" height="auto" width="100%">
+      <v-card-title
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
+      >
         <v-row align="center" justify="space-between">
           <v-col cols="12" lg="4" class="d-flex align-center">
             <v-icon icon="fa:fa-solid fa-video"></v-icon>
-            <v-label class="ms-2 h2 font-family-Nunito text-headingTextColor" height="auto"
-              width="auto">Meetings</v-label>
+            <v-label
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Meetings</v-label
+            >
           </v-col>
 
           <v-col cols="12" lg="4" class="d-flex align-center">
-            <v-text-field v-model="search" density="compact" label="Search Meetings" prepend-inner-icon="mdi-magnify"
-              variant="outlined" flat color="primary" width="100%" hide-details="auto" single-line></v-text-field>
+            <v-text-field
+              v-model="search"
+              density="compact"
+              label="Search Meetings"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              flat
+              color="primary"
+              width="100%"
+              hide-details="auto"
+              single-line
+            ></v-text-field>
           </v-col>
 
           <v-col cols="12" lg="4" class="d-flex align-center">
-            <v-btn color="secondary" block @click="openCreate" variant="elevated" style="color: white !important">
+            <v-btn
+              color="secondary"
+              block
+              @click="openCreate"
+              variant="elevated"
+              style="color: white !important"
+            >
               <v-icon icon="fa: fa-solid fa-video" color="white"></v-icon>
               Create New Meeting
             </v-btn>
@@ -25,8 +48,16 @@
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <v-data-table :headers="meetingHeaders" :items="appointments" :search="search" height="auto" rounded="xl"
-          class="bg-cardColor" item-key="_id" min-width="100%">
+        <v-data-table
+          :headers="meetingHeaders"
+          :items="appointments"
+          :search="search"
+          height="auto"
+          rounded="xl"
+          class="bg-cardColor"
+          item-key="_id"
+          min-width="100%"
+        >
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu max-width="500px">
               <template v-slot:activator="{ props }">
@@ -37,13 +68,26 @@
               <v-list class="bg-background">
                 <v-list-item>
                   <v-btn @click.stop="joiningRoom(item)" color="success">
-                    <v-icon icon="fa:fa-solid fa-right-to-bracket" color="success" size="small"></v-icon>
+                    <v-icon
+                      icon="fa:fa-solid fa-right-to-bracket"
+                      color="success"
+                      size="small"
+                    ></v-icon>
                     Join Room
                   </v-btn>
                 </v-list-item>
                 <v-list-item>
-                  <v-btn color="warning" width="100%" @click.stop="openEditDialog(), selectItem(item)">
-                    <v-icon icon="fa:fa-solid fa-pencil" start color="warning" size="small"></v-icon>
+                  <v-btn
+                    color="warning"
+                    width="100%"
+                    @click.stop="openEditDialog(), selectItem(item)"
+                  >
+                    <v-icon
+                      icon="fa:fa-solid fa-pencil"
+                      start
+                      color="warning"
+                      size="small"
+                    ></v-icon>
                     Edit
                   </v-btn>
                 </v-list-item>
@@ -60,10 +104,10 @@
             {{ formatDate(item.date) }}
           </template>
           <template v-slot:[`item.startTime`]="{ item }">
-            {{ (item.startTime) }}
+            {{ item.startTime }}
           </template>
           <template v-slot:[`item.endTime`]="{ item }">
-            {{ (item.endTime) }}
+            {{ item.endTime }}
           </template>
 
           <template v-slot:no-data>
@@ -105,7 +149,13 @@
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6" order="first" order-lg="last">
-              <v-btn label="Delete" color="error" :loading="isDeleting" block @click="confirmDelete">
+              <v-btn
+                label="Delete"
+                color="error"
+                :loading="isDeleting"
+                block
+                @click="confirmDelete"
+              >
                 <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete
               </v-btn>
             </v-col>
@@ -127,26 +177,52 @@
             <v-row>
               <v-col cols="12">
                 <h6>Meeting Title</h6>
-                <v-text-field v-model="newAppointment.title" label="Title" :rules="titleRules" required></v-text-field>
+                <v-text-field
+                  v-model="newAppointment.title"
+                  label="Title"
+                  :rules="titleRules"
+                  required
+                ></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <h6>Meeting Date</h6>
-                <v-text-field type="date" v-model="newAppointment.date" header="Meeting start date" border="md" width="unset"
-                  max-width="350" elevation="5" :rules="startDateRule" :min="minDate" class="mb-4"
-                  required></v-text-field>
+                <v-text-field
+                  type="date"
+                  v-model="newAppointment.date"
+                  header="Meeting start date"
+                  border="md"
+                  width="unset"
+                  max-width="350"
+                  elevation="5"
+                  :rules="startDateRule"
+                  :min="minDate"
+                  class="mb-4"
+                  required
+                ></v-text-field>
               </v-col>
 
               <v-col cols="6">
                 <h6>Start Time</h6>
-                <v-text-field type="time"  v-model="newAppointment.startTime" format="24hr" :allowed-hours="allowedHours"
-                  :allowed-minutes="allowedMinutes" class="mb-4"></v-text-field>
+                <v-text-field
+                  type="time"
+                  v-model="newAppointment.startTime"
+                  format="24hr"
+                  :allowed-hours="allowedHours"
+                  :allowed-minutes="allowedMinutes"
+                  class="mb-4"
+                ></v-text-field>
               </v-col>
 
               <v-col cols="6">
                 <h6>End Time</h6>
-                <v-text-field type="time" v-model="newAppointment.endTime" format="24hr" :allowed-hours="allowedHours2"
-                  :allowed-minutes="allowedMinutes2"></v-text-field>
+                <v-text-field
+                  type="time"
+                  v-model="newAppointment.endTime"
+                  format="24hr"
+                  :allowed-hours="allowedHours2"
+                  :allowed-minutes="allowedMinutes2"
+                ></v-text-field>
               </v-col>
 
               <v-col cols="12">
@@ -156,9 +232,18 @@
 
               <v-col cols="12">
                 <h6>Choose Participants</h6>
-                <v-select v-model="newAppointment.participants" :items="teamMemberNames" item-value="employeeId"
-                  item-title="name" clearable multiple chips label="Participants"
-                  hint="Select the employee you'd like to join the meeting" persistent-hint></v-select>
+                <v-select
+                  v-model="newAppointment.participants"
+                  :items="employeeList"
+                  item-value="employeeId"
+                  item-title="name"
+                  clearable
+                  multiple
+                  chips
+                  label="Participants"
+                  hint="Select the employee you'd like to join the meeting"
+                  persistent-hint
+                ></v-select>
               </v-col>
             </v-row>
           </v-container>
@@ -174,7 +259,13 @@
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6">
-              <v-btn color="success" @click="editAppointment" block :loading="isGenerating" :disabled="!valid">
+              <v-btn
+                color="success"
+                @click="createAppointment"
+                block
+                :loading="isGenerating"
+                :disabled="!valid"
+              >
                 <v-icon icon="fa: fa-solid fa-floppy-disk" color="success" start></v-icon>
                 Save
               </v-btn>
@@ -198,26 +289,52 @@
             <v-row>
               <v-col cols="12">
                 <h6>Meeting Title</h6>
-                <v-text-field v-model="selectedAppointment.title" label="Title" :rules="titleRules" required></v-text-field>
+                <v-text-field
+                  v-model="selectedAppointment.title"
+                  label="Title"
+                  :rules="titleRules"
+                  required
+                ></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <h6>Meeting Date</h6>
-                <v-text-field type="date" v-model="selectedAppointment.date" header="Meeting start date" border="md" width="unset"
-                  max-width="350" elevation="5" :rules="startDateRule" :min="minDate" class="mb-4"
-                  required></v-text-field>
+                <v-text-field
+                  type="date"
+                  v-model="selectedAppointment.date"
+                  header="Meeting start date"
+                  border="md"
+                  width="unset"
+                  max-width="350"
+                  elevation="5"
+                  :rules="startDateRule"
+                  :min="minDate"
+                  class="mb-4"
+                  required
+                ></v-text-field>
               </v-col>
 
               <v-col cols="6">
                 <h6>Start Time</h6>
-                <v-text-field type="time"  v-model="selectedAppointment.startTime" format="24hr" :allowed-hours="allowedHours"
-                  :allowed-minutes="allowedMinutes" class="mb-4"></v-text-field>
+                <v-text-field
+                  type="time"
+                  v-model="selectedAppointment.startTime"
+                  format="24hr"
+                  :allowed-hours="allowedHours"
+                  :allowed-minutes="allowedMinutes"
+                  class="mb-4"
+                ></v-text-field>
               </v-col>
 
               <v-col cols="6">
                 <h6>End Time</h6>
-                <v-text-field type="time" v-model="selectedAppointment.endTime" format="24hr" :allowed-hours="allowedHours2"
-                  :allowed-minutes="allowedMinutes2"></v-text-field>
+                <v-text-field
+                  type="time"
+                  v-model="selectedAppointment.endTime"
+                  format="24hr"
+                  :allowed-hours="allowedHours2"
+                  :allowed-minutes="allowedMinutes2"
+                ></v-text-field>
               </v-col>
 
               <v-col cols="12">
@@ -227,9 +344,18 @@
 
               <v-col cols="12">
                 <h6>Choose Participants</h6>
-                <v-select v-model="selectedAppointment.participants" :items="teamMemberNames" item-value="employeeId" item-title="name"
-                  clearable multiple chips label="Participants"
-                  hint="Select the employee you'd like to join the meeting" persistent-hint></v-select>
+                <v-select
+                  v-model="selectedAppointment.participants"
+                  :items="employeeList"
+                  item-value="employeeId"
+                  item-title="name"
+                  clearable
+                  multiple
+                  chips
+                  label="Participants"
+                  hint="Select the employee you'd like to join the meeting"
+                  persistent-hint
+                ></v-select>
               </v-col>
             </v-row>
           </v-container>
@@ -246,7 +372,13 @@
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6">
-              <v-btn color="success" @click="createAppointment" block :loading="isGenerating" :disabled="!valid">
+              <v-btn
+                color="success"
+                @click="editAppointment(selectedAppointment)"
+                block
+                :loading="isGenerating"
+                :disabled="!valid"
+              >
                 <v-icon icon="fa: fa-solid fa-floppy-disk" color="success" start></v-icon>
                 Save
               </v-btn>
@@ -256,8 +388,6 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-
-
 </template>
 <script>
 import { defineComponent } from 'vue'
@@ -313,7 +443,8 @@ export default defineComponent({
       startDateRule: [
         (v) => !!v || 'Date is required',
         (v) => v >= new Date().toISOString().substr(0, 10) || 'Date cannot be in the past'
-      ]
+      ],
+      employeeList: [] // list of employees
     }
   },
   methods: {
@@ -327,8 +458,6 @@ export default defineComponent({
     },
     openEditDialog() {
       this.showEdit = true
-
-
     },
     selectItem(item) {
       console.log(item)
@@ -349,7 +478,6 @@ export default defineComponent({
           console.error('Error deleting appointment:', error)
         })
     },
-
     async getRequests() {
       const config = {
         headers: {
@@ -366,6 +494,7 @@ export default defineComponent({
           config
         )
         for (const employee of response.data.data) {
+          this.employeeList.push({name: employee.userInfo.displayName, employeeId: employee._id})
           this.teamMemberNames.push(employee.userInfo.displayName)
           this.teamLeaderIds.push(employee._id)
         }
@@ -373,14 +502,13 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
-
       try {
         const response = await axios.get(
           `${API_URL}videoCalls/forEmployee/${localStorage.getItem('employeeId')}`,
           config
         )
         for (const appointment of response.data.data) {
-          const participants = appointment.participants.map(participant => participant.name)
+          // const participants = appointment.participants.map((participant) => participant.name)
           this.appointments.push({
             _id: appointment._id,
             title: appointment.title,
@@ -388,7 +516,7 @@ export default defineComponent({
             startTime: appointment.startTime,
             endTime: appointment.endTime,
             details: appointment.details,
-            participants: participants,
+            participants: appointment.participants,
             roomId: appointment.roomId
           })
         }
@@ -440,10 +568,12 @@ export default defineComponent({
       date.setMinutes(min)
       return date.toISOString()
     },
-    async editAppointment() {
-      this.newAppointment.date
+    async editAppointment(appointment) {
+      //checking if the current user is removed form the participants list and removing the appointment
+      if (!appointment.participants.includes(localStorage.getItem('employeeId'))) {
+        this.appointments = this.appointments.filter((app) => app._id !== appointment._id)
+      }
       this.isGenerating = true
-      this.appointments.splice(this.editIndex, 1, { ...this.newAppointment })
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -455,21 +585,31 @@ export default defineComponent({
       }
 
       const data = {
-        title: this.selectedItem.title,
-        scheduledTime: this.selectedItem.date,
-        details: this.selectedItem.details,
-        participants: await this.selectTeamMembers(),
+        title: appointment.title,
+        date: appointment.date,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        details: appointment.details,
+        participants: appointment.participants,
         companyId: this.companyId
       }
       console.log(data)
-      const id = this.newAppointment._id
+      const id = appointment._id
       await axios
         .patch(`${API_URL}videoCalls/${id}`, data, config)
-        .then(response => {
-          //console.log('response: ', response)
+        .then((response) => {
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Meeting created successfully'
+          })
         })
-        .catch(error => {
-          console.error(error)
+        .catch((error) => {
+          this.$toast.add({
+            severity: 'failure',
+            summary: 'failure',
+            detail: 'Creating meeting failed'
+          })
         })
 
       this.showEdit = false
@@ -477,10 +617,12 @@ export default defineComponent({
       this.clearFields()
     },
     async createAppointment() {
-      this.newAppointment.date
       this.isGenerating = true
       const appointment = { ...this.newAppointment }
-      this.appointments.push(appointment)
+      //checking if the current employee is in the participants list
+      if (this.newAppointment.participants.includes(localStorage.getItem('employeeId'))) {
+        this.appointments.push(appointment)
+      }
 
       const config = {
         headers: {
@@ -491,30 +633,29 @@ export default defineComponent({
 
       const data = {
         title: this.newAppointment.title,
-        scheduledStartTime: this.formatStartDateAndTime(
-          new Date(this.newAppointment.date),
-          this.newAppointment.startTime
-        ),
-        scheduledEndTime: this.formatEndDateAndTime(
-          new Date(this.newAppointment.date),
-          this.newAppointment.endTime
-        ),
+        date: this.newAppointment.date,
+        startTime: this.newAppointment.startTime,
+        endTime: this.newAppointment.endTime,
         details: this.newAppointment.details,
-        participants: await this.selectTeamMembers(),
+        participants: this.newAppointment.participants,
         companyId: this.companyId
       }
+      console.log('data: ', data)
       await axios
         .post(`${API_URL}videoCalls/create`, data, config)
-        .then(response => {
-          this.appointments = []
-          this.getRequests()
+        .then((response) => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Review Submitted'
+            detail: 'Meeting created successfully'
           })
         })
-        .catch(error => {
+        .catch((error) => {
+          this.$toast.add({
+            severity: 'failure',
+            summary: 'failure',
+            detail: 'Creating meeting failed'
+          })
           console.error(error)
         })
 
@@ -554,30 +695,29 @@ export default defineComponent({
       }
       axios
         .delete(`${API_URL}videoCalls/${id}`, config)
-        .then(response => {
+        .then((response) => {
           //console.log(response)
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error)
         })
 
-      this.appointments = this.appointments.filter(
-        appointment => appointment._id !== id
-      )
+      this.appointments = this.appointments.filter((appointment) => appointment._id !== id)
     },
     async selectTeamMembers() {
-      if (Array.isArray(this.newAppointment
-        .participants)) {
+      console.log('newAppointment.participants', this.newAppointment.participants)
+      if (Array.isArray(this.newAppointment.participants)) {
         for (const member of this.newAppointment.participants) {
-          this.participants.push(this.teamLeaderIds[this.newAppointment.participants.indexOf(member)]);
+          this.participants.push(
+            this.teamLeaderIds[this.newAppointment.participants.indexOf(member)]
+          )
         }
       } else {
-        console.error("participants is not an array", this.newAppointment.participants);
+        console.error('participants is not an array', this.newAppointment.participants)
       }
 
-      return this.participants;
+      return this.participants
     }
-
   },
   mounted() {
     this.getRequests()

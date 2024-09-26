@@ -43,6 +43,7 @@ export class VideoCallService {
         }
       }
     }
+    return new ValidationResult(true, `Looks good`);
   }
 
   async create(createVideoCallDto: CreateVideoCallDto) {
@@ -103,6 +104,7 @@ export class VideoCallService {
   async update(id: Types.ObjectId, updateVideoCallDto: UpdateVideoCallDto) {
     const validation = await this.validateUpdateVideoCall(updateVideoCallDto);
     if (!validation.isValid) {
+      console.log('validation', validation);
       throw new Error(validation.message);
     }
     return this.videoCallRepository.update(id, updateVideoCallDto);
