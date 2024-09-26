@@ -227,7 +227,7 @@ export default {
           teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader),
           companyId: localStorage.getItem('currentCompany')
         },
-        currentEmployeeId: localStorage.getItem('employeeId')
+        currentEmployeeId = localStorage.getItem('employeeId')
       }
       console.log(data)
 
