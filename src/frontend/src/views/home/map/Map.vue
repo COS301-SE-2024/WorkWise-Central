@@ -57,11 +57,14 @@
         </div>
       </div>
       <div class="card">
-        <Button
-          label="Show All Vehicle Data"
-          icon="pi pi-external-link"
-          @click="dialogVisible = true"
-        />
+        <div class="text-center pt-10">
+          <Button
+              label="Show All Vehicle Data"
+              icon="fa: fa-solid fa-external-link"
+              @click="dialogVisible = true"
+              class="p-button-success"
+          />
+        </div>
         <Dialog
           v-model:visible="dialogVisible"
           header="Flex Scroll"
@@ -164,7 +167,7 @@
             ></Column>
           </DataTable>
           <template #footer>
-            <Button label="Close" icon="pi pi-check" @click="dialogVisible = false" />
+            <Button label="Close" class="p-button-danger" icon="fa: fa-solid fa-check" @click="dialogVisible = false" />
           </template>
         </Dialog>
       </div>

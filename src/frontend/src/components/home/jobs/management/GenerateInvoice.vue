@@ -38,7 +38,9 @@ const formatDate = (date) => {
 const generatePdf = async () => {
   let invoiceData
   try {
-    const response = await axios.get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`,config)
+    let response = await axios.get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`,config)
+    let invoiceId = response.data.data._id
+    response = await axios.get(`${API_URL}invoice/detailed/id/${invoiceId}&currentEmployeeId=${localStorage.getItem('employeeId')}`,config)
     invoiceData = response.data.data
     console.log('Returned invoice:', invoiceData)
   } catch (error) {

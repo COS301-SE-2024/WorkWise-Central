@@ -23,7 +23,7 @@
     "@googlemaps/js-api-loader": "^1.16.8",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
-    "@primevue/themes": "^4.0.0",
+    "@primevue/themes": "^4.0.7",
     "@syncfusion/ej2-base": "^25.2.7",
     "@syncfusion/ej2-vue-kanban": "^25.2.6",
     "@vuepic/vue-datepicker": "^8.7.0",

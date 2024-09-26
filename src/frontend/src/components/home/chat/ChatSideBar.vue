@@ -221,15 +221,11 @@ const theKidIsNotMySon = (userId) => {
 <style scoped>
 .chat-sidebar {
   width: 300px;
-  background-color: rgba(34, 125, 155, 0.2); /* Adjusted to theme secondary color with transparency */
-  border-right: 1px solid var(--highlighter-color); /* Use theme highlighter color */
   padding: 1rem;
   height: 100%;
 }
 
 .new-chat-dialog {
-  background-color: var(--card-color); /* Use theme card color */
-  border: 1px solid var(--highlighter-color); /* Use theme highlighter color */
   padding: 1rem;
 }
 
