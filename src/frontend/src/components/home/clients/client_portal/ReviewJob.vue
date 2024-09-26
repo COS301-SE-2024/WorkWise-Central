@@ -106,7 +106,7 @@ export default {
               complex: '',
               houseNumber: ''
             },
-            startDate: null,
+            startDate: '',
             endDate: ''
           },
           clientFeedback: {
@@ -151,6 +151,10 @@ export default {
         .then((response) => {
           this.completedJobs = response.data.data
           console.log('response.data.data: ', response.data.data)
+          for(const job of this.completedJobs) {
+            job.details.startDate = this.formatDate(job.details.startDate)
+            job.details.endDate = this.formatDate(job.details.endDate)
+          }
         })
         .catch((error) => {
           console.error(error)
@@ -185,6 +189,17 @@ export default {
           detail: 'Review Submitted'
         })
       })
+    },
+    formatDate(date: string) {
+      const date_passed_in = new Date(date)
+      const y = date_passed_in.getFullYear()
+      const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
+      const d = String(date_passed_in.getDate()).padStart(2, '0')
+      const h = String(date_passed_in.getHours()).padStart(2, '0')
+      const mn = String(date_passed_in.getMinutes()).padStart(2, '0')
+      const f_date = `${y}-${m}-${d} ${h}:${mn}`
+      console.log('f_date: ', f_date)
+      return f_date
     }
   },
   mounted() {

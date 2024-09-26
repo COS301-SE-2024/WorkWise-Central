@@ -96,21 +96,21 @@
       </VueDraggable>
     </v-row>
   </v-container>
-  <v-dialog v-model="dialog" max-width="400" persistent>
-    <template v-slot:activator="{ props: activatorProps }">
-      <v-btn v-bind="activatorProps"> Open Dialog </v-btn>
-    </template>
+<!--  <v-dialog v-model="dialog" max-width="400" persistent>-->
+<!--    <template v-slot:activator="{ props: activatorProps }">-->
+<!--      <v-btn v-bind="activatorProps"> Open Dialog </v-btn>-->
+<!--    </template>-->
 
-    <v-card title="Use Google's location service?">
-      <template v-slot:actions>
-        <iframe v-if="pdfSrc" :src="pdfSrc" style="width: 100%; height: 500px"></iframe>
+<!--    <v-card title="Use Google's location service?">-->
+<!--      <template v-slot:actions>-->
+<!--        <iframe v-if="pdfSrc" :src="pdfSrc" style="width: 100%; height: 500px"></iframe>-->
 
-        <v-btn @click="dialog = false"> Disagree </v-btn>
+<!--        <v-btn @click="dialog = false"> Disagree </v-btn>-->
 
-        <v-btn @click="dialog = false"> Agree </v-btn>
-      </template>
-    </v-card>
-  </v-dialog>
+<!--        <v-btn @click="dialog = false"> Agree </v-btn>-->
+<!--      </template>-->
+<!--    </v-card>-->
+<!--  </v-dialog>-->
 </template>
 
 <script lang="js">
@@ -452,8 +452,8 @@ export default {
       try {
         if (payload.laborItems.length != 0) {
           payload.inventoryItems.push(['', '', '', ''])
-          payload.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Total'])
-          payload.inventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Total'])
+          payload.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount','Total',])
+          payload.inventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Discount','Total'])
           payload.inventoryItems = payload.inventoryItems.concat(payload.laborItems)
           payload.inventoryItems.push(['', '', '', ''])
         }
@@ -504,7 +504,7 @@ export default {
             invGenDate: `Invoice Date:  ${this.formatDate(payload.invoiceDate)}`,
             headerBorder: false,
             tableBodyBorder: false,
-            header: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }],
+            header: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }, { title: '' }],
             table: payload.inventoryItems,
             additionalRows: [
               {
@@ -620,12 +620,14 @@ export default {
                 obj.description,
                 obj.quantity,
                 obj.untiPrice,
+                obj.discount,
                 obj.total
               ]),
               laborItems: card.laborItems.map((obj) => [
                 obj.description,
                 obj.quantity,
                 obj.untiPrice,
+                obj.discount,
                 obj.total
               ])
             })

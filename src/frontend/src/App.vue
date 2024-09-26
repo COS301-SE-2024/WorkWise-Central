@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
 
+const toast = useToast()
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import { getMessaging, getToken, onMessage } from 'firebase/messaging'
@@ -20,11 +22,10 @@ const firebaseConfig = {
   appId: '1:950285135964:web:1778c46e488b5d20033699',
   measurementId: 'G-TVE6WF34J2'
 }
-// TODO: Change config to pull jwt from localStorage
 const config = {
   headers: {
     'Content-Type': 'application/json',
-    Authorization: ''
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
 }
 // Initialize Firebase
@@ -35,6 +36,15 @@ const app = initializeApp(firebaseConfig)
 const messaging = getMessaging()
 onMessage(messaging, (payload) => {
   console.log('Message received. ', payload)
+  if (payload) {
+    toast.add({
+      severity: 'info',
+      summary: payload?.notification?.title,
+      detail: payload?.notification?.body,
+      life: 10000,
+      closable: true
+    })
+  }
   // ...
 })
 

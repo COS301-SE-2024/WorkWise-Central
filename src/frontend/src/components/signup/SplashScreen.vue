@@ -926,7 +926,6 @@ import Toast from 'primevue/toast'
 import Tutorial from './Tutorial.vue'
 import { API_URL } from '@/main'
 
-
 export default defineComponent({
   components: {
     RegisterCompanyModal,

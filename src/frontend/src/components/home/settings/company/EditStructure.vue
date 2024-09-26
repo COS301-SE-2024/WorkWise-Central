@@ -218,6 +218,7 @@ export default defineComponent({
       selectedNodes: [],
       selectedEdges: [],
       subordinateItemNames: [],
+      superiorItemNames: [],
       roleItems: [],
       loading: false,
       nodeSize,
@@ -464,17 +465,49 @@ export default defineComponent({
     },
     async loadSubordinates() {
       const config = {
-        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        params: { currentEmployeeId: localStorage['employeeId'] }
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
       }
-
-      console.log(this.selectedEmployee._id)
       try {
         const sub_res = await axios.get(
-          API_URL + `employee/listPotentialSubordinates/${this.selectedEmployee.employeeId}`,
+          API_URL + `employee/listPotentialSubordinates/${this.selectedItem.id}`,
           config
         )
         console.log(sub_res)
+        for (let i = 0; i < sub_res.data.data.length; i++) {
+          console.log(sub_res.data)
+          let company_employee = {
+            name:
+              sub_res.data.data[i].userInfo.firstName +
+              ' ' +
+              sub_res.data.data[i].userInfo.surname +
+              ' (' +
+              sub_res.data.data[i].role.roleName +
+              ')',
+            employeeId: sub_res.data.data[i]._id
+          }
+
+          this.subordinateItemNames.push(company_employee)
+        }
+
+        const current_subs = await axios.get(
+          API_URL + `employee/detailed/id/${this.selectedItem.id}`,
+          config
+        )
+        console.log(current_subs.data.data)
+        for (let i = 0; i < current_subs.data.data.length; i++) {
+          if (this.req_obj.updateEmployeeDto.subordinates != undefined)
+            this.req_obj.updateEmployeeDto.subordinates.push(
+              current_subs.data.data[i].subordinates._id
+            )
+          this.req_obj.updateEmployeeDto.superiorId = current_subs.data.data.superiorId
+        }
+
         this.loading = false
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -485,14 +518,28 @@ export default defineComponent({
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
         params: { currentEmployeeId: localStorage['employeeId'] }
       }
-
-      console.log(this.selectedEmployee._id)
       try {
         const sup_res = await axios.get(
-          API_URL + `employee/listPotentialSuperiors/${this.selectedEmployee._id}`,
+          API_URL + `employee/listPotentialSuperiors/${this.selectedItem.id}`,
           config
         )
         console.log(sup_res)
+
+        for (let i = 0; i < sup_res.data.data.length; i++) {
+          console.log(sup_res.data)
+          let company_employee = {
+            name:
+              sup_res.data.data[i].userInfo.firstName +
+              ' ' +
+              sup_res.data.data[i].userInfo.surname +
+              ' (' +
+              sup_res.data.data[i].role.roleName +
+              ')',
+            employeeId: sup_res.data.data[i]._id
+          }
+
+          this.superiorItemNames.push(company_employee)
+        }
         this.loading = false
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -528,34 +575,154 @@ export default defineComponent({
     },
     async savechanges() {
       this.isDeleting = true // Indicate the start of the deletion process
+      let change_occured = false
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      console.log(this.this.selectedItem.id)
-      axios
-        .patch(API_URL + `employee/${this.this.selectedItem.id}`, this.req_obj, config)
-        .then((res) => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Employee updated successfully',
-            life: 3000
-          })
-          console.log(res)
-          this.employeeDialog = false
-          setTimeout(() => {
-            this.isDeleting = false
+      let API_URL = await this.getRequestUrl()
+
+      console.log('current subordinates: ' + this.currentSubordinates)
+      console.log('selected subordinates: ' + this.req_obj.updateEmployeeDto.subordinates)
+
+      const remove_sub_array = this.currentSubordinates?.filter(
+        (item) => !this.req_obj.updateEmployeeDto.subordinates?.includes(item)
+      )
+
+      const add_sub_array = this.req_obj.updateEmployeeDto.subordinates?.filter(
+        (item) => !this.currentSubordinates.includes(item)
+      )
+
+      console.log('Remove: ' + remove_sub_array)
+      console.log('Add: ' + add_sub_array)
+
+      let add_object = {
+        currentEmployeeId: localStorage['employeeId'],
+        subordinatesToBeAdded: add_sub_array
+      }
+
+      let remove_object = {
+        currentEmployeeId: localStorage['employeeId'],
+        subordinatesToBeRemoved: remove_sub_array
+      }
+
+      if (remove_sub_array?.length !== 0)
+        axios
+          .patch(
+            API_URL + `employee/removeSubordinate/${this.selectedItem.id}`,
+            remove_object,
+            config
+          )
+          .then((res) => {
+            change_occured = true
+            console.log(res)
             this.employeeDialog = false
-          }, 1500)
-        })
-        .catch((error) => {
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An error occurred while updating the employee',
-            life: 3000
+            setTimeout(() => {
+              this.employeeDialog = false
+            }, 1500)
+
+            console.log(res)
+            this.employeeDialog = false
+            setTimeout(() => {
+              this.employeeDialog = false
+            }, 1500)
           })
-          console.log(error)
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Remove subordinate employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      console.log(add_sub_array)
+
+      if (add_sub_array?.length !== 0)
+        axios
+          .patch(API_URL + `employee/addSubordinate/${this.selectedItem.id}`, add_object, config)
+          .then((res) => {
+            change_occured = true
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Add subordinate employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      if (
+        this.req_obj.updateEmployeeDto.roleId != this.currentRoleId &&
+        this.req_obj.updateEmployeeDto.roleId != '' &&
+        this.req_obj.updateEmployeeDto.roleId != null
+      )
+        axios
+          .patch(
+            API_URL + `employee/${this.selectedItem.id}`,
+            {
+              currentEmployeeId: localStorage['employeeId'],
+              roleId: this.req_obj.updateEmployeeDto.roleId
+            },
+            config
+          )
+          .then(() => {
+            change_occured = true
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Superior employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      if (
+        this.req_obj.updateEmployeeDto.superiorId != this.currentSuperior &&
+        this.req_obj.updateEmployeeDto.superiorId != '' &&
+        this.req_obj.updateEmployeeDto.superiorId != null
+      )
+        axios
+          .patch(
+            API_URL + `employee/${this.selectedItem.id}`,
+            {
+              currentEmployeeId: localStorage['employeeId'],
+              superiorId: this.req_obj.updateEmployeeDto.superiorId
+            },
+            config
+          )
+          .then(() => {
+            change_occured = true
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Superior employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      this.isDeleting = false
+      if (change_occured) {
+        console.log('were in')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Employee Edited Successfully',
+          life: 3000
         })
+        this.employeeDialog = false
+        window.location.reload()
+      }
     },
     updateLayout(direction) {
       this.layout(direction)
@@ -578,9 +745,11 @@ export default defineComponent({
 .graph {
   height: 700px;
 }
+
 .darkModeText {
   color: white;
 }
+
 .lightModeText {
   color: black;
 }

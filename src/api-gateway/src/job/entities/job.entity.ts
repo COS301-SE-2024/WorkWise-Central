@@ -94,19 +94,19 @@ export class RecordedDetails {
 export class AssignedEmployees {
   @Prop({
     type: [SchemaTypes.ObjectId],
-    required: false,
+    required: true,
     default: [],
     ref: Employee.name,
   })
-  employeeIds?: Types.ObjectId[] = [];
+  employeeIds: Types.ObjectId[] = [];
 
   @Prop({
     type: [SchemaTypes.ObjectId],
-    required: false,
+    required: true,
     ref: Team.name,
     default: [],
   })
-  teamIds?: Types.ObjectId[] = [];
+  teamIds: Types.ObjectId[] = [];
 }
 
 export class TaskItem {

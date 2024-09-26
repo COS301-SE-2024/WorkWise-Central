@@ -10,6 +10,7 @@ export class InventoryUsed {
     this.inventoryId = createInventoryDto.inventoryId;
     this.jobId = createInventoryDto.jobId;
     this.employeeId = createInventoryDto.employeeId;
+    this.amount = createInventoryDto.amount;
     this.createdAt = new Date();
   }
 

@@ -728,12 +728,7 @@ export default {
         this.error_message = 'A color should be selected'
         return
       }
-      // const column: Column = {
-      //   id: this.columns.length + 1,
-      //   status: this.new_column_name,
-      //   color: this.column_color,
-      //   cards: []
-      // }
+
       try {
         const config = {
           headers: {
@@ -815,7 +810,6 @@ export default {
         hit = false
       }
       this.columns.forEach((col: Column) => {
-        // this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
         col.cards.sort(
           (a: JobCardDataFormat, b: JobCardDataFormat) =>
             a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
@@ -825,37 +819,6 @@ export default {
     },
     async loadColumns() {
       console.log('load Column request')
-      // const config = {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Authorization: `Bearer ${localStorage.getItem('access_token')}`
-      //   }
-      // }
-      //
-      // try {
-      //   const loaded_tags_response = await axios.get(
-      //     API_URL + `job/status/all/${localStorage['currentCompany']}`,
-      //     config
-      //   )
-      //   console.log(loaded_tags_response)
-      //   loaded_tags_response.data.data.map((status: any) => {
-      //     console.log(status)
-      //     if (status.status === 'Archive') {
-      //       this.archive_status_id = status._id
-      //       return null
-      //     }
-      //     this.columns.push({
-      //       _id: status._id,
-      //       __v: status.__v,
-      //       status: status.status,
-      //       colour: status.colour,
-      //       companyId: status.companyId,
-      //       cards: [] as JobCardDataFormat[]
-      //     })
-      //   })
-      // } catch (error) {
-      //   console.log('Error fetching data:', error)
-      // }
 
       const config = {
         headers: {
@@ -870,9 +833,6 @@ export default {
           config
         )
         console.log(loaded_tags_response.data.data)
-        // loaded_tags_response.data.data.jobStatuses.forEach((col: any) => {
-        //   col['cards'] = [] as JobCardDataFormat[]
-        // })
 
         let archive_index = -1
         for (let i = 0; i < loaded_tags_response.data.data.jobStatuses.length; i++) {
@@ -933,29 +893,6 @@ export default {
         let loaded_tags_res = loaded_tags_response.data.data
         for (let i = 0; i < loaded_tags_res.length; i++) {
           if (loaded_tags_res[i].status.status === 'Archive') continue
-          // if (
-          //   loaded_tags_res[i]._id === undefined ||
-          //   loaded_tags_res[i].details.heading === undefined ||
-          //   loaded_tags_res[i].details.description === undefined ||
-          //   loaded_tags_res[i].details.startDate === undefined ||
-          //   loaded_tags_res[i].details.endDate === undefined ||
-          //   loaded_tags_res[i].status === undefined ||
-          //   loaded_tags_res[i].clientId === undefined ||
-          //   loaded_tags_res[i].clientId.details === undefined ||
-          //   loaded_tags_res[i].details.address === undefined ||
-          //   loaded_tags_res[i].details.address.street === undefined ||
-          //   loaded_tags_res[i].details.address.suburb === undefined ||
-          //   loaded_tags_res[i].details.address.city === undefined ||
-          //   loaded_tags_res[i].details.address.street.postalCode === undefined ||
-          //   loaded_tags_res[i].recordedDetails.imagesTaken === undefined ||
-          //   loaded_tags_res[i].recordedDetails.inventoryUsed === undefined ||
-          //   loaded_tags_res[i].taskList === undefined ||
-          //   loaded_tags_res[i].comments === undefined ||
-          //   loaded_tags_res[i].priorityTag === undefined ||
-          //   loaded_tags_res[i].tags === undefined ||
-          //   loaded_tags_res[i].coverImage === undefined
-          // )
-          //   continue
 
           this.starting_cards.push({
             jobId: loaded_tags_res[i]._id,

@@ -381,6 +381,7 @@ const patchJobDetails = async () => {
   } finally {
     req_loading.value = false
   }
+  emits('close')
 }
 
 // Event Handlers

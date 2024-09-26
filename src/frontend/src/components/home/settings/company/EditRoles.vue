@@ -188,7 +188,7 @@ export default defineComponent({
         .then((response) => {
           console.log(response.data.data.length)
 
-          for(const data of response.data.data) {
+          for (const data of response.data.data) {
             if (data.roleName) {
               this.roleUpdates.push({
                 _id: data._id,
@@ -225,7 +225,7 @@ export default defineComponent({
         .get(`${API_URL}role/allPermissions`, config)
         .then((response) => {
           console.log(response.data.data)
-          for(const data of response.data.data) {
+          for (const data of response.data.data) {
             this.permissions.push(data)
           }
         })

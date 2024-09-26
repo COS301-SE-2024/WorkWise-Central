@@ -1,187 +1,221 @@
 <template>
-  <form @submit.prevent="saveInventory" class="p-fluid">
-    <div class="p-field">
-      <AutoComplete
-          v-model="newInventory.name"
-          :suggestions="filteredInventoryOptions"
-          @complete="filterInventory"
-          field="name"
-          placeholder="Select Inventory Item"
-          class="mb-3 p-inputtext full-width"
-          @change="validateForm"
-      />
-    </div>
-    <div class="p-field">
-      <InputNumber
-          v-model="newInventory.quantity"
-          placeholder="Quantity"
-          :min="1"
-          class="mb-3 p-inputnumber full-width"
-          @input="validateForm"
-      />
-    </div>
+  <v-form @submit.prevent="saveInventory" class="pa-4">
+    <v-select
+        v-model="newInventory.name"
+        :items="inventoryOptions"
+        item-title="name"
+        item-value="name"
+        label="Select Inventory Item"
+        class="mb-3"
+        @update:model-value="handleInventorySelection"
+        variant="solo"
+        color="primary"
+        background-color="#f5f5f5"
+    ></v-select>
+
+    <v-text-field
+        v-model.number="newInventory.quantity"
+        label="Quantity"
+        type="number"
+        :min="1"
+        class="mb-3"
+        @input="validateForm"
+    ></v-text-field>
+
     <Button
         type="submit"
-        :label="isEditing ? 'Update Inventory' : 'Add Inventory'"
-        icon="fa: fa-solid fa-plus"
         :disabled="!formValid"
-        class="mb-3 p-button p-button-success"
+        label="Add Inventory"
+        icon="fa: fa-solid fa-plus"
+        class="mb-3 p-button-success"
+        v-if="!isEditing"
+
     />
+
+    <Button
+        type="submit"
+        :disabled="!formValid"
+        label="Update Inventory"
+        icon="fa: fa-solid fa-plus"
+        class="mb-3 p-button-success"
+        v-if="isEditing"
+    />
+
     <Button
         v-if="isEditing"
-        type="button"
         label="Cancel"
         icon="fa: fa-solid fa-times"
-        class="p-button p-button-secondary mb-3"
+        class="mb-3 ml-2 p-button-danger"
         @click="cancelEdit"
     />
-  </form>
+  </v-form>
 
-  <Divider />
+  <v-divider></v-divider>
 
-  <DataTable :value="paginatedInventory" responsiveLayout="scroll" class="mb-3 p-datatable">
-    <Column field="name" header="Item Name" class="p-column"></Column>
-    <Column field="quantity" header="Quantity Used" class="p-column"></Column>
-    <Column header="Action" class="p-column">
-      <template #body="slotProps">
-        <Button
-            icon="fa: fa-solid fa-pencil"
-            class="p-button-rounded p-button-warning mr-2"
-            @click="editInventory(slotProps.index)"
-        />
-        <Button
-            icon="fa: fa-solid fa-trash"
-            class="p-button-rounded p-button-danger"
-            @click="removeInventory(slotProps.index)"
-        />
-      </template>
-    </Column>
-  </DataTable>
+  <v-table class="left-align-table">
+    <thead>
+    <tr>
+      <th>Item Name</th>
+      <th>Quantity Used</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="(item, index) in paginatedInventory" :key="item.id">
+      <td>{{ item.name }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>
+        <v-btn
+            icon="mdi-pencil"
+            color="warning"
+            size="small"
+            class="mr-2"
+            @click="editInventory(index)"
+        ></v-btn>
+      </td>
+    </tr>
+    </tbody>
+  </v-table>
 
-  <Paginator
-      v-model:first="first"
-      :rows="itemsPerPage"
-      :totalRecords="inventoryList.length"
-      @page="onPageChange($event)"
-      class="p-paginator"
-  />
-
-  <Button
-      label="Log All Inventory"
-      icon="fa: fa-solid fa-check"
-      class="p-button p-button-success mt-3"
-      :disabled="!inventoryList.length"
-      @click="logInventory"
-  />
+  <v-pagination
+      v-model="page"
+      :length="Math.ceil(inventoryList.length / itemsPerPage)"
+      @update:model-value="onPageChange"
+      class="mt-3"
+      color="primary"
+  ></v-pagination>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, onMounted } from 'vue'
-import axios from 'axios'
-import AutoComplete from 'primevue/autocomplete'
-import InputNumber from 'primevue/inputnumber'
+import { ref, computed, onMounted } from 'vue'
 import Button from 'primevue/button'
-import Divider from 'primevue/divider'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Paginator from 'primevue/paginator'
 import { API_URL } from '@/main'
-
-const props = defineProps<{ jobID: string }>()
-
-const getInventoryInCompany = async() => {
-  try {
-    const response = await axios.get(`${API_URL}inventory/all/${localStorage.getItem('employeeId')}`)
-    inventoryOptions.value = response.data.data.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      quantity: item.currentStockLevel
-    }))
-  } catch (error) {
-    console.error('Error fetching inventory data:', error)
-  }
-}
+import axios from 'axios'
 
 interface InventoryItem {
   id: string;
   name: string;
   quantity: number;
+  inventoryUsedId: string;
 }
+
+interface InventoryOption {
+  id: string;
+  name: string;
+}
+
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  }
+}
+
+const props = defineProps<{
+  jobID: string;
+}>()
 
 const newInventory = ref<InventoryItem>({
   id: '',
   name: '',
-  quantity: 1
+  quantity: 0,
+  inventoryUsedId: ''
 })
 
 const inventoryList = ref<InventoryItem[]>([])
-const inventoryOptions = ref<InventoryItem[]>([])
-
-const filteredInventoryOptions = ref<InventoryItem[]>([])
-
+const inventoryOptions = ref<InventoryOption[]>([])
 const formValid = ref(false)
 const itemsPerPage = ref(5)
-const first = ref(0)
+const page = ref(1)
 const isEditing = ref(false)
 const editingIndex = ref(-1)
 
 const paginatedInventory = computed(() => {
-  const start = first.value
-  const end = Math.min(start + itemsPerPage.value, inventoryList.value.length)
+  const start = (page.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
   return inventoryList.value.slice(start, end)
 })
 
-// Fetch inventory data on component mount
-onMounted(async () => {
-  await fetchInventoryData()
-  await getInventoryInCompany()
-  console.log('Inventory Options:', inventoryOptions.value)
-})
-
-async function fetchInventoryData() {
+async function fetchInventoryOptions() {
   try {
-    const response = await axios.get(`${API_URL}inventory/stockUsed/${props.jobID}`)
+    const response = await axios.get(`${API_URL}inventory/all/${localStorage.getItem('employeeId')}`, config)
     inventoryOptions.value = response.data.data.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      quantity: item.currentStockLevel
+      id: item._id,
+      name: item.name
     }))
   } catch (error) {
-    console.error('Error fetching inventory data:', error)
+    console.error('Error fetching inventory options:', error)
   }
 }
 
+async function fetchStockUsed() {
+  try {
+    const response = await axios.get(`${API_URL}inventory/stockUsed/${props.jobID}`, config)
+    console.log('Stock use:', response)
+    console.log(response.data.data)
+    if (response.data.data.length > 0) {
+      inventoryList.value = response.data.data.map((item: any) => ({
+        id: item.inventoryId._id,
+        name: item.inventoryId.name,
+        quantity: item.amount,
+        inventoryUsedId: item._id
+      }))
+    }
+    console.log('Inventory list:', inventoryList.value)
+  } catch (error) {
+    console.error('Error fetching stock used:', error)
+  }
+}
 function validateForm() {
-  formValid.value = newInventory.value.name !== '' && newInventory.value.quantity > 0
+  formValid.value = newInventory.value.id !== '' && newInventory.value.quantity > 0
+}
+
+function handleInventorySelection(value: string) {
+  console.log('Selected value:', value);
+  console.log('Inventory options:', inventoryOptions.value);
+
+  const selectedInventory = inventoryOptions.value.find(inv => inv.name === value);
+  console.log('Selected inventory:', selectedInventory);
+
+  if (selectedInventory) {
+    newInventory.value.id = selectedInventory.id;
+    newInventory.value.name = selectedInventory.name;
+  }
+  validateForm();
 }
 
 async function saveInventory() {
   try {
     if (isEditing.value) {
-      // Update existing inventory item
-      const changeInAmount = newInventory.value.quantity - inventoryList.value[editingIndex.value].quantity
-      await axios.patch(`${API_URL}inventory/updateStockUse`, {
+      const itemToEdit = inventoryList.value[editingIndex.value]
+      console.log('Item to edit:', itemToEdit)
+      const payload = {
         listOfUsedInventory: [{
-          changeInAmount,
-          inventoryId: newInventory.value.id
+          changeInAmount: newInventory.value.quantity,
+          inventoryId: itemToEdit.id,
+          inventoryUsedId: itemToEdit.inventoryUsedId
         }],
         currentEmployeeId: localStorage.getItem('employeeId'),
-        jobId: props.jobID
-      })
-      inventoryList.value[editingIndex.value] = { ...newInventory.value }
-      isEditing.value = false
+        jobId: props.jobID,
+        companyId: localStorage.getItem('currentCompany')
+      }
+      console.log('Updating stock use...', payload)
+      await axios.post(`${API_URL}inventory/updateStockUse`, payload, config)
     } else {
-      // Add new inventory item
-      await axios.patch(`${API_URL}inventory/recordStockUse`, {
+      const payload = {
         listOfUsedInventory: [{
           amountUsed: newInventory.value.quantity,
           inventoryId: newInventory.value.id
         }],
         currentEmployeeId: localStorage.getItem('employeeId'),
-        jobId: props.jobID
-      })
-      inventoryList.value.push({ ...newInventory.value })
+        jobId: props.jobID,
+        companyId: localStorage.getItem('currentCompany')
+      }
+      console.log('Recording stock use...', payload)
+      await axios.post(`${API_URL}inventory/recordStockUse`, payload, config)
     }
+
+    await fetchStockUsed()
     resetForm()
   } catch (error) {
     console.error('Error saving inventory:', error)
@@ -189,7 +223,7 @@ async function saveInventory() {
 }
 
 function editInventory(index: number) {
-  const actualIndex = first.value + index
+  const actualIndex = (page.value - 1) * itemsPerPage.value + index
   const itemToEdit = inventoryList.value[actualIndex]
   newInventory.value = { ...itemToEdit }
   editingIndex.value = actualIndex
@@ -197,86 +231,31 @@ function editInventory(index: number) {
   validateForm()
 }
 
-async function removeInventory(index: number) {
-  try {
-    const actualIndex = first.value + index
-    const itemToRemove = inventoryList.value[actualIndex]
-    await axios.patch(`${API_URL}inventory/updateStockUse`, {
-      listOfUsedInventory: [{
-        changeInAmount: -itemToRemove.quantity,
-        inventoryId: itemToRemove.id
-      }],
-      currentEmployeeId: localStorage.getItem('employeeId'),
-      jobId: props.jobID
-    })
-    inventoryList.value.splice(actualIndex, 1)
-    if (paginatedInventory.value.length === 0 && first.value > 0) {
-      first.value -= itemsPerPage.value
-    }
-  } catch (error) {
-    console.error('Error removing inventory:', error)
-  }
-}
-
 function cancelEdit() {
   resetForm()
 }
 
 function resetForm() {
-  newInventory.value = { id: '', name: '', quantity: 1 }
+  newInventory.value = { id: '', name: '', quantity: 1, inventoryUsedId: ''}
   isEditing.value = false
   editingIndex.value = -1
   validateForm()
 }
 
-function onPageChange(event: any) {
-  first.value = event.first
+function onPageChange(newPage: number) {
+  page.value = newPage
 }
 
-async function logInventory() {
-  try {
-    const updatePromises = inventoryList.value.map(item =>
-        axios.patch(`${API_URL}inventory/updateStockUse`, {
-          listOfUsedInventory: [{
-            changeInAmount: item.quantity,
-            inventoryId: item.id
-          }],
-          currentEmployeeId: localStorage.getItem('employeeId'),
-          jobId: props.jobID
-        })
-    )
-    await Promise.all(updatePromises)
-    console.log('Inventory Logged:', inventoryList.value)
-    inventoryList.value = []
-    first.value = 0
-  } catch (error) {
-    console.error('Error logging inventory:', error)
-  }
-}
-
-function filterInventory(event: any) {
-  const query = event.query.toLowerCase()
-  filteredInventoryOptions.value = inventoryOptions.value.filter(option =>
-      option.name.toLowerCase().includes(query)
-  )
-}
+onMounted(async () => {
+  await fetchInventoryOptions()
+  await fetchStockUsed()
+  validateForm()
+})
 </script>
 
 <style scoped>
-.full-width {
-  width: 100%;
-}
-
-.p-button {
-  background-color: var(--v-primary-base);
-  color: var(--v-buttonText);
-}
-
-.p-button-danger {
-  background-color: var(--v-error-base);
-}
-
-.p-button-success {
-  background-color: var(--v-success-base);
+.left-align-table th,
+.left-align-table td {
+  text-align: left;
 }
 </style>

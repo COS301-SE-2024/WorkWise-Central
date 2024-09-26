@@ -59,7 +59,7 @@
 
             <!-- Actions slot -->
             <template v-slot:[`item.actions`]="{ item }">
-              <v-menu max-width="500px">
+              <v-menu max-width="500px" v-bind="menuProps">
                 <template v-slot:activator="{ props }">
                   <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)"
                   v-show="
@@ -126,7 +126,7 @@ export default defineComponent({
   data() {
     return {
       search: '',
-
+      menuVisible: false,
       teamHeaders: [
         { title: 'Team Name', value: 'teamName' },
         { title: 'Team Leader', value: 'teamLeaderId.userInfo.displayName' },
@@ -150,6 +150,13 @@ export default defineComponent({
       selectedItemID: '',
       actionsMenu: false,
       employeePermissions: [] as string[]
+    }
+  },
+  computed: {
+    menuProps() {
+      return {
+        'v-model': this.menuVisible // Bind the visibility state using v-bind
+      }
     }
   },
   methods: {
@@ -208,6 +215,7 @@ export default defineComponent({
       this.selectedItem = item
       this.selectedItemName = item.teamName
       this.selectedItemID = item._id
+      this.menuVisible = true // Open the menu
     },
     chipColor(numAssignments: number) {
       if (numAssignments > 0) {
@@ -234,6 +242,7 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
+      this.menuVisible = false
     },
     addTeam(newTeam: Team) {
       this.teamItems.push(newTeam)

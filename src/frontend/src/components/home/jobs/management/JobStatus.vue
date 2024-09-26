@@ -1,14 +1,14 @@
 <template>
   <v-select
-      v-model="selectedStatus"
-      label="Select"
-      :items="statusItems"
-      item-value="_id"
-      item-title="status"
-      variant="solo"
-      color="primary"
-      item-text="status"
-      @update:modelValue="updateStatus"
+    v-model="selectedStatus"
+    label="Select"
+    :items="statusItems"
+    item-value="_id"
+    item-title="status"
+    variant="solo"
+    color="primary"
+    item-text="status"
+    @update:modelValue="updateStatus"
   >
     <template #selection="{ item }">
       <v-chip :style="{ backgroundColor: item.raw.colour, color: 'white' }">

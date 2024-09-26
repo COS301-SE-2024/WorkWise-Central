@@ -70,7 +70,7 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-<v-spacer></v-spacer>
+    <v-spacer></v-spacer>
     <!-- Payment History Timeline -->
     <!-- <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">

@@ -22,93 +22,33 @@
           <v-spacer></v-spacer>
           <v-tabs-items v-model="activeTab" >
             <!-- Recent Jobs Completed Chart -->
-            <v-tab-item v-if="currentTab === 'Recent Jobs Completed'">
-              <v-card border="" rounded="md">
-                <v-card-title>
-                  <v-icon icon="fa: fa-solid fa-briefcase mr-2"></v-icon>
-                  Recent Jobs Completed
-                </v-card-title>
-                <v-card-text>
-                  <Chart
-                    type="bar"
-                    :data="recentJobsChartData"
-                    :options="chartOptions"
-                    height="600px"
-                  />
-                </v-card-text>
-              </v-card>
+            <v-tab-item v-if="currentTab === 'Client Breakdown'">
+              <ClientBreakdown />
             </v-tab-item>
 
             <!-- Most Active Employees Chart -->
-            <v-tab-item v-if="currentTab === 'Most Active Employees'">
-              <v-card border="md" rounded="md">
-                <v-card-title>
-                  <v-icon icon="fa: fa-solid fa-user-friends mr-2"></v-icon>
-                  Most Active Employees
-                </v-card-title>
-                <v-card-text>
-                  <Chart
-                    type="bar"
-                    :data="activeEmployeesChartData"
-                    :options="chartOptions"
-                    height="600px"
-                  />
-                </v-card-text>
-              </v-card>
+            <v-tab-item v-if="currentTab === 'Employee Breakdown'">
+              <EmployeeBreakdown />
             </v-tab-item>
 
             <!-- Hours Worked Chart -->
-            <v-tab-item v-if="currentTab === 'Hours Worked'">
-              <v-card border="md" rounded="md" height="700px">
-                <v-card-title>
-                  <v-icon icon="fa: fa-solid fa-clock mr-2"></v-icon>
-                  Hours Worked
-                </v-card-title>
-                <v-card-text>
-                  <Chart
-                    type="line"
-                    :data="hoursWorkedChartData"
-                    :options="chartOptions"
-                    height="600px"
-                  />
-                </v-card-text>
-              </v-card>
+            <v-tab-item v-if="currentTab === 'Job Breakdown'">
+              <JobBreakdown />
             </v-tab-item>
 
             <!-- Upcoming Appointments Chart -->
-            <v-tab-item v-if="currentTab === 'Upcoming Appointments'">
-              <v-card border="md" rounded="md" height="700px">
-                <v-card-title>
-                  <v-icon icon="fa: fa-solid fa-calendar-alt mr-2"></v-icon>
-                  Upcoming Appointments
-                </v-card-title>
-                <v-card-text>
-                  <Chart
-                    type="doughnut"
-                    :data="upcomingAppointmentsChartData"
-                    :options="chartOptions"
-                    height="600px"
-                  />
-                </v-card-text>
-              </v-card>
+            <v-tab-item v-if="currentTab === 'Inventory Breakdown'">
+              <InventoryBreakdown />
             </v-tab-item>
 
             <!-- Team Breakdown Chart -->
             <v-tab-item v-if="currentTab === 'Team Breakdown'">
-              <v-card border="md" rounded="md" height="700px">
-                <v-card-title>
-                  <v-icon icon="fa: fa-solid fa-users mr-2"></v-icon>
-                  Team Breakdown
-                </v-card-title>
-                <v-card-text>
-                  <Chart
-                    type="bar"
-                    :data="teamBreakdownChartData"
-                    :options="chartOptions"
-                    height="600px"
-                  />
-                </v-card-text>
-              </v-card>
+              <TeamBreakdown />
+            </v-tab-item>
+
+            <!-- Invoice Breakdown Chart -->
+            <v-tab-item v-if="currentTab === 'Invoice Breakdown'">
+              <InvoiceBreakdown />
             </v-tab-item>
           </v-tabs-items>
         </v-card>
@@ -119,85 +59,63 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 
-import Chart from 'primevue/chart'
+import ClientBreakdown from './ClientBreakdown.vue'
+import JobBreakdown from './JobBreakdown.vue'
+import EmployeeBreakdown from './EmployeeBreakdown.vue'
+import InventoryBreakdown from './InventoryBreakdown.vue'
+import InvoiceBreakdown from './InvoiceBreakdown.vue'
+import TeamBreakdown from './TeamBreakdown.vue'
 
 export default defineComponent({
   name: 'StatisticsDashboard',
   components: {
-    Chart
+    ClientBreakdown,
+    EmployeeBreakdown,
+    InventoryBreakdown,
+    InvoiceBreakdown,
+    JobBreakdown,
+    TeamBreakdown
   },
   data() {
     return {
       activeTab: 0,
-      currentTab: 'Recent Jobs Completed',
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      currentTab: 'Client Breakdown',
       tabs: [
-        'Recent Jobs Completed',
-        'Most Active Employees',
-        'Hours Worked',
-        'Upcoming Appointments',
-        'Team Breakdown'
-      ],
-      chartOptions: {
-        responsive: true,
-        maintainAspectRatio: false
-      },
-      recentJobsChartData: {
-        labels: ['Job 1', 'Job 2', 'Job 3'],
-        datasets: [
-          {
-            label: 'Jobs Completed',
-            backgroundColor: '#42A5F5',
-            data: [10, 15, 8]
-          }
-        ]
-      },
-      activeEmployeesChartData: {
-        labels: ['Alice', 'Bob', 'Charlie'],
-        datasets: [
-          {
-            data: [300, 50, 100],
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-            hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-          }
-        ]
-      },
-      hoursWorkedChartData: {
-        labels: ['Alice', 'Bob', 'Charlie'],
-        datasets: [
-          {
-            label: 'Hours Worked',
-            backgroundColor: '#42A5F5',
-            data: [40, 35, 30]
-          }
-        ]
-      },
-      upcomingAppointmentsChartData: {
-        labels: ['Client Meeting', 'Team Sync', 'Project Deadline'],
-        datasets: [
-          {
-            data: [5, 7, 9],
-            backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726'],
-            hoverBackgroundColor: ['#42A5F5', '#66BB6A', '#FFA726']
-          }
-        ]
-      },
-      teamBreakdownChartData: {
-        labels: ['Development', 'Marketing', 'Support'],
-        datasets: [
-          {
-            label: 'Team Members',
-            backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726'],
-            data: [10, 8, 6]
-          }
-        ]
-      }
+        'Client Breakdown',
+        'Employee Breakdown',
+        'Job Breakdown',
+        'Inventory Breakdown',
+        'Team Breakdown',
+        'Invoice Breakdown'
+      ]
     }
   },
   methods: {
     changeTab(tab: string) {
       this.currentTab = tab
+    },
+
+    async isLocalAvailable(localUrl: any) {
+      try {
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
+      } catch (error) {
+        return false
+      }
+    },
+    async getRequestUrl() {
+      const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return localAvailable ? this.localUrl : this.remoteUrl
     }
+  },
+  mounted() {
+    // this.getClients()
+    // this.getInventoryItems()
+    // this.getTeams()
   }
 })
 </script>

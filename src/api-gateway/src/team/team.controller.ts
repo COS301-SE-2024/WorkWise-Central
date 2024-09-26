@@ -54,7 +54,10 @@ export class TeamController {
   }
 
   async validateRequestWithCompanyId(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    console.log('userId: ', userId);
+    console.log('companyId: ', companyId);
     const user = await this.userService.getUserById(userId);
+    console.log('user: ', user);
     if (!user.joinedCompanies.find((joined) => joined.companyId.toString() === companyId.toString())) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -297,6 +300,7 @@ export class TeamController {
     try {
       data = await this.teamService.update(teamId, updateTeamDto);
     } catch (e) {
+      console.log('e: ', e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
 
@@ -341,7 +345,7 @@ export class TeamController {
     description: `The _id attribute of the ${className} to be updated.`,
     type: String,
   })
-  @ApiBody({ type: UpdateTeamDto })
+  @ApiBody({ type: AddTeamMembersDto })
   @Patch('add/:teamId')
   async addTeamMember(
     @Headers() headers: any,
@@ -397,20 +401,23 @@ export class TeamController {
     description: `The _id attribute of the ${className} to be updated.`,
     type: String,
   })
-  @ApiBody({ type: UpdateTeamDto })
+  @ApiBody({ type: RemoveTeamMembersDto })
   @Patch('remove/:teamId')
   async removeTeamMember(
     @Headers() headers: any,
     @Param('teamId') teamId: Types.ObjectId,
     @Body() removeTeamMembersDto: RemoveTeamMembersDto,
   ) {
+    console.log('In endpoint');
     const team = await this.teamService.findById(teamId);
     const userId = await extractUserId(this.jwtService, headers);
+    console.log('userId: ', userId);
     await this.validateRequestWithCompanyId(userId, team.companyId);
     let data;
     try {
       data = await this.teamService.removeTeamMembers(teamId, removeTeamMembersDto);
     } catch (e) {
+      console.log('e: ', e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return { data: data };

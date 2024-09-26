@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "https-localhost": "^4.7.1",
+    "k6": "^0.0.0",
     "vue-material-design-icons": "^5.3.0"
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpException, HttpStatus, Post, Query } from '@nestjs/common';
 import { TimeTrackerService } from './time-tracker.service';
 import { JwtService } from '@nestjs/jwt';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -15,6 +15,7 @@ import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { TimeTracker } from './entities/time-tracker.entity';
 import { TimeSpentDto } from './dto/time-spent.dto';
 import { TimeTrackerResponseDto, TimeTrackersResponseDto } from './dto/time-tracker-response.dto';
+import { Types } from 'mongoose';
 
 @ApiTags('Time-Tracker')
 @Controller('time-tracker')
@@ -144,17 +145,6 @@ export class TimeTrackerController {
     }
   }
 
-  /*  @Get('user/check-ins/current')
-  async getAllCurrentUserCheckins(@Headers() headers: any) {
-    try {
-      //validateObjectId(createJobDto.assignedBy, 'assignedBy');
-      const userId = extractUserId(this.jwtService, headers);
-      return { data: await this.timeTrackerService.getAllCurrentUserCheckins(userId) };
-    } catch (Error) {
-      throw new HttpException(Error, HttpStatus.CONFLICT);
-    }
-  }*/
-
   @Get('latest-checkin/')
   @ApiOperation({ summary: 'Get the latest check-in for an employee' })
   @ApiBody({ type: GeneralTimeTrackerDto })
@@ -187,5 +177,35 @@ export class TimeTrackerController {
         generalTimeTrackerDto.jobId,
       ),
     };
+  }
+
+  @Get('/sofar/total-time-spent')
+  @ApiOperation({ summary: `Get total time spent on a job so far for an employee` })
+  @ApiResponse({ type: TimeSpentDto })
+  async getTotalTimeSpentOnJobSoFar(
+    @Headers() headers: any,
+    @Query('empId') empId: string,
+    @Query('jobId') jId: string,
+  ) {
+    const userId = extractUserId(this.jwtService, headers);
+    const employeeId = new Types.ObjectId(empId);
+    const jobId = new Types.ObjectId(jId);
+    await this.timeTrackerService.userIdMatchesEmployeeId(userId, employeeId);
+    return {
+      data: await this.timeTrackerService.getTotalTimeSpentOnJobSoFar(employeeId, jobId),
+    };
+  }
+
+  @Get('employee/is-checked-in')
+  @ApiOperation({ summary: 'Check if an employee is currently checked in to a job' })
+  @ApiResponse({ status: 200, description: 'Check-in status retrieved successfully.', type: BooleanResponseDto })
+  @ApiResponse({ status: 404, description: 'Employee or job not found.' })
+  async isCheckedIn(@Headers() headers: any, @Query('empId') empId: string, @Query('jobId') jobId: string) {
+    const userId = extractUserId(this.jwtService, headers);
+    const employeeId = new Types.ObjectId(empId);
+    const jobIdObj = new Types.ObjectId(jobId);
+    await this.timeTrackerService.userIdMatchesEmployeeId(userId, employeeId);
+    const isCheckedIn = await this.timeTrackerService.isCheckedIn(employeeId, jobIdObj);
+    return { data: isCheckedIn };
   }
 }

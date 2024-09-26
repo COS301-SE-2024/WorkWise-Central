@@ -9,11 +9,6 @@ export class UpdateInventoryUsedDto {
   amount: number;
 }
 
-export class ExternalInventoryUpdateDto {
-  currentEmployeeId: Types.ObjectId;
-  updateInventoryDto: UpdateInventoryUsedDto;
-}
-
 export class updateInventoryResponseDto {
   response: { access_token: string; id: Types.ObjectId };
   constructor(message: { access_token: string; id: Types.ObjectId }) {
