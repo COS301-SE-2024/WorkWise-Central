@@ -112,9 +112,6 @@ const vuetify = createVuetify({
       class: 'bg-cardColor'
     },
 
-    VExpansionPanel: {
-      class: 'bg-cardColor'
-    },
     VStepper: {
       class: 'bg-cardColor'
     },

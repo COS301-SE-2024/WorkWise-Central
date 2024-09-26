@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row>
       <VueDraggable
-        class="d-flex flex-nowrap overflow-scroll flex flex-col gap-2 p-4 w-600px h-800px m-auto bg-gray-500/5 rounded overflow-auto"
+        class="d-flex flex-nowrap flex flex-col gap-2 p-4 w-600px h-800px m-auto bg-gray-500/5 rounded overflow-auto"
         ref="el"
         v-model="columns"
         :onUpdate="onColumnDragEnd"
@@ -20,7 +20,14 @@
           :sm="6"
           :cols="12"
         >
-          <v-card variant="flat" elevation="1" color="red" class="pa-2 ma-2" :min-width="350">
+          <v-card
+            variant="flat"
+            elevation="1"
+            color="red"
+            :min-width="350"
+            :max-height="800"
+            class="overflow-auto"
+          >
             <v-card-item
               class="font-weight-black text-h5"
               style="font-family: 'Nunito', sans-serif"
@@ -51,7 +58,7 @@
                   draggable="true"
                   aria-grabbed="true"
                   role="option"
-                  class="ga-2"
+                  class="my-5"
                 >
                   <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
                     ><b>{{ 'Invoice #' + item.invoiceNumber }}</b>
@@ -88,18 +95,27 @@
         </v-col>
       </VueDraggable>
     </v-row>
-    <iframe v-if="pdfSrc" :src="pdfSrc" style="width: 100%; height: 500px"></iframe>
   </v-container>
-  <v-dialog v-model="JobCardVisibility" max-width="1000px">
-    <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
+  <v-dialog v-model="dialog" max-width="400" persistent>
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-btn v-bind="activatorProps"> Open Dialog </v-btn>
+    </template>
+
+    <v-card title="Use Google's location service?">
+      <template v-slot:actions>
+        <iframe v-if="pdfSrc" :src="pdfSrc" style="width: 100%; height: 500px"></iframe>
+
+        <v-btn @click="dialog = false"> Disagree </v-btn>
+
+        <v-btn @click="dialog = false"> Agree </v-btn>
+      </template>
+    </v-card>
   </v-dialog>
 </template>
 
 <script lang="js">
-// import type { InvoiceCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
-import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
-// import { type SortableEvent, VueDraggable } from 'vue-draggable-plus'
+import { VueDraggable } from 'vue-draggable-plus'
 import axios from 'axios'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 import { API_URL } from '@/main'
@@ -107,11 +123,11 @@ import { API_URL } from '@/main'
 export default {
   name: 'InvoiceKanban',
   components: {
-    ViewJob,
     VueDraggable
   },
   data() {
     return {
+      dialog: false,
       pdfSrc: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -143,16 +159,11 @@ export default {
       error_message: '',
       column_color: '',
       SelectedEvent: {},
-      JobCardVisibility: false,
       order_of_sorting_in_columns: ['High', 'Medium', 'Low'],
       draggedCard: null,
       sourceColumn: null,
       dropTarget: null,
-      starting_cards: [],
-      column_name_rule: [
-        (v) => !!v || 'Column name is required',
-        (v) => (v && v.length <= 20) || 'Column name must be less than 20 characters'
-      ]
+      starting_cards: []
     }
   },
   methods: {
@@ -440,26 +451,17 @@ export default {
       console.log(this.column_color)
     },
     async clickedEvent(payload) {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-
       try {
-        const response = await axios.get(API_URL + `invoice/id/${payload.id}`, config)
-        const company_res = await axios.get(
-          API_URL + `company/id/${localStorage['currentCompany']}`,
-          config
-        )
-        console.log(payload)
+        if (payload.laborItems.length != 0) {
+          payload.inventoryItems.push(['', '', '', ''])
+          payload.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Total'])
+          payload.inventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Total'])
+          payload.inventoryItems = payload.inventoryItems.concat(payload.laborItems)
+          payload.inventoryItems.push(['', '', '', ''])
+        }
         const data = {
           outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
-          fileName: 'Invoice_2021',
+          fileName: `Invoice ${payload.companyName}`,
           orientationLandscape: false,
           compress: true,
           logo: {
@@ -504,8 +506,8 @@ export default {
             invGenDate: `Invoice Date:  ${this.formatDate(payload.invoiceDate)}`,
             headerBorder: false,
             tableBodyBorder: false,
-            header: [{ title: 'Paid' }, { title: 'Total' }],
-            table: [[payload.paid, payload.total]],
+            header: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }],
+            table: payload.inventoryItems,
             additionalRows: [
               {
                 col1: 'Total:',
@@ -517,7 +519,7 @@ export default {
               },
               {
                 col1: 'VAT:',
-                col2: '20',
+                col2: `${payload.taxPercentage}`,
                 col3: '%',
                 style: {
                   fontSize: 10
@@ -541,6 +543,8 @@ export default {
           pageEnable: true,
           pageLabel: 'Page '
         }
+        console.log(payload)
+        console.log(data)
         this.pdfSrc = URL.createObjectURL(jsPDFInvoiceTemplate(data).blob)
       } catch (error) {
         console.log('Error fetching data: ' + error)
@@ -553,25 +557,7 @@ export default {
     loading(cards) {
       console.log(cards.length)
       let hit = false
-      // for (let i = 0; i < cards.length; i++) {
-      //   this.columns.forEach((value: Column) => {
-      //     if (value.status === cards[i].status.status) {
-      //       console.log('hit')
-      //       hit = true
-      //       this.loadCardsInRespectiveColumns(cards[i], value)
-      //     }
-      //   })
-      //   if (!hit) this.loadCardsInRespectiveColumns(cards[i], this.columns[0])
-      //
-      //   hit = false
-      // }
-      // this.columns.forEach((col: Column) => {
-      //   // this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
-      //   col.cards.sort(
-      //     (a: InvoiceCardDataFormat, b: InvoiceCardDataFormat) =>
-      //       a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
-      //   )
-      // })
+
       console.log(this.columns[0].cards.length)
     },
     async loadData() {
@@ -631,7 +617,19 @@ export default {
                 card.companyId.address.postalCode,
               companyEmail: card.companyId.contactDetails.email,
               companyPhoneNumber: card.companyId.contactDetails.phoneNumber,
-              companyLogo: card.companyId.logo
+              companyLogo: card.companyId.logo,
+              inventoryItems: card.inventoryItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.untiPrice,
+                obj.total
+              ]),
+              laborItems: card.laborItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.untiPrice,
+                obj.total
+              ])
             })
           else
             unpaid_cards.push({
@@ -672,8 +670,22 @@ export default {
                 card.companyId.address.postalCode,
               companyEmail: card.companyId.contactDetails.email,
               companyPhoneNumber: card.companyId.contactDetails.phoneNumber,
-              companyLogo: card.companyId.logo
+              companyLogo: card.companyId.logo,
+              inventoryItems: card.inventoryItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.unitPrice,
+                obj.total
+              ]),
+              laborItems: card.laborItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.unitPrice,
+                obj.total
+              ])
             })
+
+          console.log()
         })
         this.columns[0].cards = unpaid_cards
         this.columns[1].cards = paid_cards

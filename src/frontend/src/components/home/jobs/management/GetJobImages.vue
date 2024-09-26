@@ -27,7 +27,7 @@
                 Image Actions
               </v-card-title>
               <v-card-actions class="d-flex flex-column">
-                <v-btn color="info" @click="changeImage(index)">
+                <v-btn color="info" @click="changeImage(index)" :loading="isDownloading">
                   <v-icon>
                     {{ 'fa: fa-solid fa-sync' }}
                   </v-icon>
@@ -39,7 +39,7 @@
                   </v-icon>
                   Download
                 </v-btn>
-                <v-btn color="error" @click="deleteImage(index)">
+                <v-btn color="error" @click="deleteImage(index)" :loading="isDeleting">
                   <v-icon>
                     {{ 'fa: fa-solid fa-trash' }}
                   </v-icon>
@@ -93,6 +93,9 @@ import { ref, defineProps, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import { API_URL } from '@/main'
+
+let isDeleting = ref<boolean>(false)
+let isDownloading = ref<boolean>(false)
 
 const toast = useToast()
 interface Image {
@@ -237,6 +240,7 @@ const changeImage = (index: number): void => {
             }
           }
           const url = `${API_URL}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
+          isDownloading.value = true
           try {
             const response = await axios.patch(url, formData, config)
             if (response.status === 200) {
@@ -255,6 +259,8 @@ const changeImage = (index: number): void => {
               detail: 'Failed to update image',
               life: 3000
             })
+          } finally {
+            isDownloading.value = false
           }
         }
       }
@@ -293,6 +299,7 @@ const deleteImage = async (index: number): Promise<void> => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
+  isDeleting.value = true
   try {
     const response = await axios.patch(url, body, config)
     if (response.status === 200) {
@@ -311,6 +318,8 @@ const deleteImage = async (index: number): Promise<void> => {
       detail: 'Failed to delete image',
       life: 3000
     })
+  } finally {
+    isDeleting.value = false
   }
 }
 const hasImages = computed(() => images.value.length > 0)
