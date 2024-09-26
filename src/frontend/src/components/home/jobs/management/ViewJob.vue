@@ -195,7 +195,7 @@
               <h5 ref="jobInvoiceSection">Generate Invoice</h5>
             </v-divider>
             <v-col>
-              <GenerateInvoice />
+              <GenerateInvoice :jobID="props.passedInJob?._id"/>
             </v-col>
             <v-divider>
               <h5 ref="jobTimeTrackerSection">Time tracking</h5>

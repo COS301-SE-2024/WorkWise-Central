@@ -248,21 +248,17 @@ const theKidIsNotMySon = (userId) => {
 }
 
 .chat-list li:hover {
-  background-color: var(--highlighter-color); /* Use theme highlighter color */
+  background-color: grey; /* Use theme highlighter color */
 }
 
 .chat-list li.selected {
-  background-color: var(--secondary-color); /* Use theme secondary color for selected state */
 }
 
 .chat-list li span {
   margin-left: 1rem;
-  color: var(--element-text-color); /* Use theme element text color */
 }
 
 :deep(.p-inputtext) {
-  background-color: var(--card-color); /* Use theme card background */
-  color: var(--element-text-color); /* Use theme text color */
 }
 
 .p-inputtext {

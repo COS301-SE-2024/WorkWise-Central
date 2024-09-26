@@ -160,8 +160,6 @@ const clearFiles = () => {
   display: flex;
   align-items: center;
   padding: 1rem;
-  background-color: var(--background); /* Use theme background */
-  border-top: 1px solid var(--highlighter-color); /* Theme border */
   position: sticky;
   bottom: 0;
 }
@@ -172,22 +170,15 @@ const clearFiles = () => {
 }
 
 :deep(.p-inputtext) {
-  background-color: var(--card-color); /* Theme card color */
-  color: var(--element-text-color); /* Theme element text color */
 }
 
 .p-button {
-  background-color: var(--primary-color); /* Theme primary color */
-  color: var(--button-text-color); /* Theme button text color */
 }
 
 .p-button:enabled:hover {
-  background-color: var(--secondary-color); /* Theme secondary color on hover */
 }
 
 .p-button:disabled {
-  background-color: var(--n-element-text-color); /* Theme disabled background color */
-  color: var(--button-text-color); /* Maintain button text color */
 }
 
 :deep(.p-fileupload-choose) {

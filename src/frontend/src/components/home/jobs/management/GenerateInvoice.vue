@@ -7,19 +7,51 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, defineProps } from 'vue'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 import Button from 'primevue/button'
+import axios from 'axios'
+import { API_URL } from '@/main'
 
+const props = defineProps({
+  jobID: String
+})
+
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  }
+}
+
+const formatDate = (date) => {
+  const date_passed_in = new Date(date)
+  const y = date_passed_in.getFullYear()
+  const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
+  const d = String(date_passed_in.getDate()).padStart(2, '0')
+  const h = String(date_passed_in.getHours()).padStart(2, '0')
+  const mn = String(date_passed_in.getMinutes()).padStart(2, '0')
+  const f_date = `${y}-${m}-${d} ${h}:${mn}`
+  return f_date
+}
 // Function to Generate PDF
-const generatePdf = () => {
-  const props = {
-    outputType: OutputType.Save,
-    fileName: 'Invoice_2021',
+const generatePdf = async () => {
+  let invoiceData
+  try {
+    const response = await axios.get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`,config)
+    invoiceData = response.data.data
+    console.log('Returned invoice:', invoiceData)
+  } catch (error) {
+    console.error(error)
+  }
+
+  const data = {
+    outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
+    fileName: `Invoice ${invoiceData.companyName}`,
     orientationLandscape: false,
     compress: true,
     logo: {
-      src: 'https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/logo.png',
+      src: invoiceData.companyLogo,
       type: 'PNG',
       width: 53.33,
       height: 26.66,
@@ -30,7 +62,7 @@ const generatePdf = () => {
     },
     stamp: {
       inAllPages: true,
-      src: 'https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/qr_code.jpg',
+      src: invoiceData.companyLogo,
       type: 'JPG',
       width: 20,
       height: 20,
@@ -40,54 +72,40 @@ const generatePdf = () => {
       }
     },
     business: {
-      name: 'Business Name',
-      address: '1234 Business Street, City, Country',
-      phone: '(+355) 069 11 11 111',
-      email: 'email@example.com',
-      email_1: 'info@example.al',
-      website: 'www.example.al'
+      name: invoiceData.companyName,
+      address: invoiceData.companyAddress,
+      phone: invoiceData.companyPhoneNumber,
+      email: invoiceData.companyEmail
     },
     contact: {
       label: 'Invoice issued for:',
-      name: 'Client Name',
-      address: '5678 Client Address, City, Country',
-      phone: '(+355) 069 22 22 222',
-      email: 'client@website.al',
+      name: invoiceData.clientName,
+      address: invoiceData.clientAddress,
+      phone: invoiceData.clientPhoneNumber,
+      email: invoiceData.clientEmail,
       otherInfo: 'www.website.al'
     },
     invoice: {
-      label: 'Invoice #: ',
+      label: `Invoice #: ${invoiceData.invoiceNumber}`,
       num: 19,
-      invDate: 'Payment Date: 01/01/2021 18:12',
-      invGenDate: 'Invoice Date: 02/02/2021 10:17',
+      invDate: `Payment Date: ${formatDate(invoiceData.paymentDate)}`,
+      invGenDate: `Invoice Date:  ${formatDate(invoiceData.invoiceDate)}`,
       headerBorder: false,
       tableBodyBorder: false,
-      header: [
-        { title: '#', style: { width: 10 } },
-        { title: 'Title', style: { width: 30 } },
-        { title: 'Description', style: { width: 80 } },
-        { title: 'Price' },
-        { title: 'Quantity' },
-        { title: 'Unit' },
-        { title: 'Total' }
-      ],
-      table: [
-        [1, 'Design Work', 'Initial design concept for website', 300, 2, 'hours', 600],
-        [2, 'Development', 'Frontend and backend development', 700, 5, 'hours', 3500],
-        [3, 'Testing', 'Testing and bug fixing', 200, 3, 'hours', 600]
-      ],
+      header: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }],
+      table: invoiceData.inventoryItems,
       additionalRows: [
         {
           col1: 'Total:',
-          col2: '4700.00',
-          col3: 'USD',
+          col2: `${invoiceData.total}`,
+          col3: 'R',
           style: {
             fontSize: 14
           }
         },
         {
           col1: 'VAT:',
-          col2: '20',
+          col2: `${invoiceData.taxPercentage}`,
           col3: '%',
           style: {
             fontSize: 10
@@ -95,8 +113,8 @@ const generatePdf = () => {
         },
         {
           col1: 'SubTotal:',
-          col2: '3760.00',
-          col3: 'USD',
+          col2: `${invoiceData.subTotal}`,
+          col3: 'R',
           style: {
             fontSize: 10
           }
@@ -113,9 +131,10 @@ const generatePdf = () => {
   }
 
   // Generate the PDF using the template
-  jsPDFInvoiceTemplate(props)
+  jsPDFInvoiceTemplate(data)
 }
 </script>
+
 
 <style scoped>
 /* No display-specific styles are needed since we're not displaying data */
