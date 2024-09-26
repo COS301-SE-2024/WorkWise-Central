@@ -32,6 +32,7 @@
         <v-card-text class="text-center">
           <div>
             <v-file-input
+              :disabled="isDeleting"
               class="pt-4"
               label="File input"
               prepend-icon="mdi-camera"
@@ -50,11 +51,15 @@
           <v-container
             ><v-row
               ><v-col cols="12" lg="6">
-                <v-btn @click="upload, (isActive.value = false)" color="success" block
+                <v-btn
+                  @click="upload, (isActive.value = false)"
+                  color="success"
+                  block
+                  :loading="isDeleting"
                   ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Upload</v-btn
                 ></v-col
               ><v-col cols="12" lg="6">
-                <v-btn @click="closeDialog" color="error" block
+                <v-btn @click="closeDialog" color="error" block :disabled="isDeleting"
                   ><v-icon icon="fa:fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
                 ></v-col
               ></v-row
@@ -89,7 +94,7 @@ interface UpdateRecordedDetails {
   imagesTaken: string[]
   inventoryUsed: InventoryUsed[]
 }
-
+let isDeleting = ref<boolean>(false)
 const props = defineProps<{
   recordedDetails: UpdateRecordedDetails
   jobID: string
@@ -135,6 +140,8 @@ const uploadFileInput = async (): Promise<string> => {
   } catch (error) {
     console.error('Error updating job:', error)
     return 'fail'
+  } finally {
+    isDeleting.value = false
   }
 }
 
@@ -197,6 +204,7 @@ const processSelectedFiles = async () => {
 }
 
 const upload = (): void => {
+  isDeleting.value = true
   if (selectedFiles.value.length > 0) {
     uploadFileInput()
   }

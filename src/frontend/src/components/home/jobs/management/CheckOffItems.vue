@@ -2,10 +2,15 @@
   <v-container>
     <!-- Button to create a new task -->
     <v-row class="justify-center mb-4">
-<!--      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"-->
-<!--        >Create New Task List</v-btn-->
-<!--      >-->
-      <Button label="Create New Task List" icon="fa: fa-solid fa-plus" @click="createNewTask" class="p-button-success" />
+      <!--      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"-->
+      <!--        >Create New Task List</v-btn-->
+      <!--      >-->
+      <Button
+        label="Create New Task List"
+        icon="fa: fa-solid fa-plus"
+        @click="createNewTask"
+        class="p-button-success"
+      />
     </v-row>
 
     <!-- Loop through tasks with pagination -->
@@ -24,14 +29,19 @@
             prepend-icon="fa: fa-solid fa-tasks"
             rows="1"
             class="mb-4"
+            :disabled="taskDeleteLoading"
           ></v-textarea>
           <template v-if="task.title.trim() !== ''">
-<!--            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">-->
-<!--              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>-->
-<!--            </v-btn>-->
-              <v-col cols="1">
-                <Button icon="fa: fa-solid fa-trash" @click="deleteTask(taskIndex)" class="p-button-danger" />
-              </v-col>
+            <!--            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">-->
+            <!--              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>-->
+            <!--            </v-btn>-->
+            <v-col cols="1">
+              <Button
+                icon="fa: fa-solid fa-trash"
+                @click="deleteTask(taskIndex)"
+                class="p-button-danger"
+              />
+            </v-col>
           </template>
         </v-row>
 
@@ -111,6 +121,9 @@
                                 variant="solo"
                                 hide-details
                                 v-model="selectedEmployees"
+                                :disabled="
+                                  isDeleting || isSaving || isSavingMembers || isDeletingItem
+                                "
                               ></v-select>
                             </v-card-text>
                             <v-card-actions class="d-flex flex-column">
@@ -119,6 +132,8 @@
                                   color="success"
                                   prepend-icon="fa: fa-solid fa-save"
                                   @click="saveMembers(taskIndex, itemIndex)"
+                                  :loading="isSavingMembers"
+                                  :disabled="isDeleting || isSaving || isDeletingItem"
                                 >
                                   Save
                                 </v-btn>
@@ -128,6 +143,9 @@
                                   color="error"
                                   @click="assignDialog = false"
                                   prepend-icon="fa: fa-solid fa-times"
+                                  :disabled="
+                                    isDeleting || isSaving || isSavingMembers || isDeletingItem
+                                  "
                                 >
                                   Cancel
                                 </v-btn>
@@ -146,13 +164,19 @@
                             color="error"
                             @click="deleteItem(taskIndex, itemIndex)"
                             class="mb-2"
+                            :loading="isDeletingItem"
+                            :disabled="isDeleting || isSaving || isSavingMembers"
                           >
                             <v-icon>{{ 'fa: fa-solid fa-trash' }}</v-icon>
                             Delete
                           </v-btn>
                         </v-defaults-provider>
                         <v-defaults-provider :defaults="{ VIcon: { color: 'warning' } }">
-                          <v-btn color="warning" @click="isActive.value = false">
+                          <v-btn
+                            color="warning"
+                            @click="isActive.value = false"
+                            :disabled="isDeleting || isSaving || isSavingMembers || isDeletingItem"
+                          >
                             <v-icon>{{ 'fa: fa-solid fa-times' }}</v-icon>
                             Cancel
                           </v-btn>
@@ -179,29 +203,37 @@
                 prepend-icon="fa: fa-solid fa-check"
                 rows="3"
                 class="mb-4"
+                :disabled="isDeleting || isSaving || isSavingMembers || isDeletingItem"
               ></v-textarea>
-<!--              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"-->
-<!--                >Add Item</v-btn-->
-<!--              >-->
-              <Button label="Add Item" icon="fa: fa-solid fa-plus" @click="addItem(taskIndex)" class="p-button-success" />
+              <!--              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"-->
+              <!--                >Add Item</v-btn-->
+              <!--              >-->
+              <Button
+                label="Add Item"
+                icon="fa: fa-solid fa-plus"
+                @click="addItem(taskIndex)"
+                class="p-button-success"
+                :loading="isDeleting"
+              />
             </v-col>
           </v-row>
 
           <!-- Save Task Button -->
           <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
             <v-row class="justify-center">
-<!--              <v-btn-->
-<!--                color="success"-->
-<!--                @click="saveTask(taskIndex)"-->
-<!--                prepend-icon="fa: fa-solid fa-save"-->
-<!--              >-->
-<!--                Save Task-->
-<!--              </v-btn>-->
+              <!--              <v-btn-->
+              <!--                color="success"-->
+              <!--                @click="saveTask(taskIndex)"-->
+              <!--                prepend-icon="fa: fa-solid fa-save"-->
+              <!--              >-->
+              <!--                Save Task-->
+              <!--              </v-btn>-->
               <Button
-                  label="Save Task"
-                  icon="fa: fa-solid fa-save"
-                  @click="saveTask(taskIndex)"
-                  class="p-button-success"
+                label="Save Task"
+                icon="fa: fa-solid fa-save"
+                @click="saveTask(taskIndex)"
+                :loading="isSaving"
+                class="p-button-success"
               />
             </v-row>
           </v-defaults-provider>
@@ -226,6 +258,12 @@ import { ref, computed, defineProps, onMounted } from 'vue'
 import Button from 'primevue/button'
 import axios from 'axios'
 import { API_URL } from '@/main'
+
+let isDeleting = ref<boolean>(false)
+let isSaving = ref<boolean>(false)
+let isDeletingItem = ref<boolean>(false)
+let isSavingMembers = ref<boolean>(false)
+let taskDeleteLoading = ref<boolean>(false)
 
 interface Task {
   title: string
@@ -294,6 +332,7 @@ const addItem = async (taskIndex: number) => {
   }
 
   try {
+    isDeleting.value = true
     const body = {
       employeeId: localStorage.getItem('employeeId') || '',
       jobId: props.jobID,
@@ -327,6 +366,8 @@ const addItem = async (taskIndex: number) => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    isDeleting.value = false
   }
 }
 
@@ -373,6 +414,7 @@ const updateTaskIntegration = async (taskIndex: number) => {
 
 const saveTask = async (taskIndex: number) => {
   try {
+    isSaving.value = true
     if (taskList.value[taskIndex]._id === '') {
       await createTaskIntegration(taskIndex)
     } else {
@@ -380,6 +422,8 @@ const saveTask = async (taskIndex: number) => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    isSaving.value = false
   }
 }
 
@@ -411,6 +455,7 @@ const getTeamMembers = async () => {
 const saveMembers = async (taskIndex: number, itemIndex: number) => {
   try {
     // Find members to remove
+    isSavingMembers.value = true
     const membersToRemove = originalSelectedMembers.value.filter(
       (originalMember) =>
         !selectedMembers.value.some((selectedMember) => selectedMember._id === originalMember._id)
@@ -472,6 +517,8 @@ const saveMembers = async (taskIndex: number, itemIndex: number) => {
     originalSelectedMembers.value = [...selectedMembers.value]
   } catch (error) {
     console.log(error)
+  } finally {
+    isSavingMembers.value = false
   }
 }
 

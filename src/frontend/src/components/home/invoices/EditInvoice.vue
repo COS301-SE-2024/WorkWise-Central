@@ -19,6 +19,7 @@
             <v-col>
               <small class="text-caption">Invoice Number</small>
               <v-text-field
+                :disabled="isDeleting"
                 v-model="localEditedInvoice.invoiceNumber"
                 color="secondary"
                 :rules="invoiceNumberRules"
@@ -28,6 +29,7 @@
             <v-col>
               <small class="text-caption">Date</small>
               <v-text-field
+                :disabled="isDeleting"
                 v-model="localEditedInvoice.creationDate"
                 color="secondary"
                 required
@@ -37,6 +39,7 @@
               <v-col cols="12" lg="6">
                 <small class="text-caption">Amount</small>
                 <v-text-field
+                  :disabled="isDeleting"
                   v-model="localEditedInvoice.total"
                   color="secondary"
                   required
@@ -45,6 +48,7 @@
               <v-col cols="12" lg="6">
                 <small class="text-caption">Status</small>
                 <v-select
+                  :disabled="isDeleting"
                   v-model="localEditedInvoice.paid"
                   :items="statusOptions"
                   color="secondary"
@@ -60,12 +64,18 @@
           <v-row justify="end">
             <v-col cols="12" lg="6">
               <v-btn @click="close" color="error" block>
-                <v-icon start color="error" size="small">mdi-cancel</v-icon>
+                <v-icon start color="error" size="small" :disabled="isDeleting">mdi-cancel</v-icon>
                 Cancel
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6">
-              <v-btn @click="updateInvoice" color="success" :disabled="!valid" block>
+              <v-btn
+                @click="updateInvoice"
+                color="success"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
+              >
                 <v-icon start color="success" size="small">mdi-content-save</v-icon>
                 Save
               </v-btn>
@@ -107,6 +117,7 @@ export default {
   },
   data() {
     return {
+      isDeleting: false,
       localEditedInvoice: {
         ...this.editedInvoice
       } as Invoice,
@@ -137,6 +148,7 @@ export default {
         return
       }
 
+      this.isDeleting = true
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` }
       }
@@ -164,6 +176,7 @@ export default {
             life: 3000
           })
         })
+      this.isDeleting = false
     },
     handleSubmission() {
       if (this.valid) {

@@ -4,7 +4,7 @@
     max-height="800"
     max-width="600"
     scrollable
-    :opacity="0.1"
+    :opacity="0.6"
     @click:outside="resetFields"
   >
     <template v-slot:activator="{ props: activatorProps }">
@@ -37,6 +37,7 @@
                   :rules="nameRules"
                   required
                   hide-details="auto"
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
               <v-col cols="12" lg="6">
@@ -46,6 +47,7 @@
                   color="secondary"
                   required
                   hide-details="auto"
+                  :disabled="isDeleting"
                 ></v-text-field></v-col
             ></v-row>
 
@@ -57,6 +59,7 @@
                   color="secondary"
                   required
                   hide-details="auto"
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
               <v-col cols="12" lg="4">
@@ -66,6 +69,7 @@
                   color="secondary"
                   required
                   hide-details="auto"
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
               <v-col cols="12" lg="4">
@@ -74,6 +78,7 @@
                   v-model="reorderLevel"
                   color="secondary"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field></v-col
             ></v-row>
           </v-col>
@@ -85,7 +90,7 @@
         ><v-container
           ><v-row justify="end"
             ><v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn @click="close(), resetFields()" color="error" block :loading="isDeleting"
+              <v-btn @click="close(), resetFields()" color="error" block :disabled="isDeleting"
                 ><v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                 >Cancel
               </v-btn></v-col
@@ -192,7 +197,7 @@ export default defineComponent({
 
         setTimeout(() => {
           this.addDialog = false
-          this.isDeleting = false
+
           this.resetFields()
           this.$emit('inventoryCreated', response.data.data)
         }, 1500)
@@ -204,6 +209,8 @@ export default defineComponent({
           detail: 'Failed to add inventory',
           life: 3000
         })
+      } finally {
+        this.isDeleting = false
       }
     },
     convertToNumber(value: string) {

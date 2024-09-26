@@ -27,14 +27,21 @@
             class="pt-4"
             :hint="new Date(comment.date).toLocaleDateString()"
             persistent-hint
+            :disabled="isAdding || isDeleting"
           ></v-text-field>
         </v-col>
         <v-col cols="1">
           <!-- Delete comment button -->
-<!--          <v-btn @click="deleteComment(index)">-->
-<!--            <v-icon color="red" class="fa fa-trash pt-1"></v-icon>-->
-<!--          </v-btn>-->
-          <Button icon="fa: fa-solid fa-trash" class="p-button-danger" @click="deleteComment(index)" />
+          <!--          <v-btn @click="deleteComment(index)">-->
+          <!--            <v-icon color="red" class="fa fa-trash pt-1"></v-icon>-->
+          <!--          </v-btn>-->
+          <Button
+            icon="fa: fa-solid fa-trash"
+            class="p-button-danger"
+            :disabled="isAdding"
+            :loading="isDeleting"
+            @click="deleteComment(index)"
+          />
         </v-col>
       </v-row>
 
@@ -56,12 +63,20 @@
         hide-details
         prepend-icon="fa: fa-solid fa-comment"
         rows="3"
+        :disabled="isAdding || isDeleting"
       ></v-textarea>
 
       <!-- Submit button -->
-<!--      <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>-->
+      <!--      <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>-->
       <div class="pt-2">
-        <Button label="Comment" icon="mdi mdi-comment-plus" class="p-button-success" @click="addComment" />
+        <Button
+          label="Comment"
+          icon="mdi mdi-comment-plus"
+          class="p-button-success"
+          @click="addComment"
+          :disabled="isDeleting"
+          :loading="isAdding"
+        />
       </div>
     </v-container>
   </div>
@@ -74,7 +89,8 @@ import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import { API_URL } from '@/main'
 
-
+let isAdding = ref<boolean>(false)
+let isDeleting = ref<boolean>(false)
 const toast = useToast()
 
 // Request Config
@@ -183,6 +199,7 @@ const addComment = async () => {
     })
     return
   }
+  isAdding.value = true
   const addedComment = ref<{ employeeId: string; jobId: string; newComment: string }>({
     employeeId: localStorage.getItem('employeeId') || '',
     jobId: props.id,
@@ -211,6 +228,8 @@ const addComment = async () => {
       detail: 'An error occurred while commenting on this job',
       life: 3000
     })
+  } finally {
+    isAdding.value = false
   }
 }
 
@@ -225,6 +244,7 @@ const deleteComment = async (index: number) => {
     (_, i) => i !== index + (currentPage.value - 1) * commentsPerPage
   )
   try {
+    isDeleting.value = true
     await axios.delete(`${API_URL}job/comment`, {
       data: commentBody.value,
       headers: config.headers
@@ -236,6 +256,8 @@ const deleteComment = async (index: number) => {
     }
   } catch (error) {
     console.error('Error deleting comment', error)
+  } finally {
+    isDeleting.value = false
   }
 }
 

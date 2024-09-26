@@ -22,7 +22,14 @@
         <v-container
           ><v-row justify="end">
             <v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn label="Cancel" color="secondary" text @click="clientDialog = false" block
+              <v-btn
+                label="Cancel"
+                color="secondary"
+                text
+                @click="clientDialog = false"
+                block
+                :disabled="isDeleting"
+              >
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" start size="small"></v-icon
                 >Cancel
               </v-btn></v-col
@@ -79,7 +86,6 @@ export default {
       // Consider removing this for SPA behavior
     },
     async deleteClient() {
-      this.isDeleting = true // Indicate the start of the deletion process
       console.log('meow', this.client_id)
       console.log(localStorage.getItem('employeeId'))
       const config = {
@@ -107,7 +113,6 @@ export default {
             life: 3000
           })
           setTimeout(() => {
-            this.clientDialog = false
             this.$emit('deleteClient', this.client_id)
           }, 1500)
         })

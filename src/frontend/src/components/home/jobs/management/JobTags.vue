@@ -1,34 +1,39 @@
 <template>
   <v-combobox
-      v-model="selectedTags"
-      :items="companyLabels"
-      item-value="_id"
-      item-title="label"
-      label="Select some tags you would like to assign to this job"
-      multiple
-      required
-      color="primary"
-      variant="solo"
-      clearable
-      data-testid="tags-multi-select"
-      searchable
-      @update:modelValue="saveTags"
+    v-model="selectedTags"
+    :items="companyLabels"
+    item-value="_id"
+    item-title="label"
+    label="Select some tags you would like to assign to this job"
+    multiple
+    required
+    color="primary"
+    variant="solo"
+    clearable
+    data-testid="tags-multi-select"
+    searchable
+    @update:modelValue="saveTags"
   >
     <template #selection="{ item }">
       <v-chip
-          :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
-          @click="openEditDialog(item)"
+        :style="{ backgroundColor: item.raw.colour, color: getContrastingColor(item.raw.colour) }"
+        @click="openEditDialog(item)"
       >
         {{ item.title }}
       </v-chip>
     </template>
   </v-combobox>
 
-<!--  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>-->
-<!--    <v-icon class="fas fa-plus"></v-icon>-->
-<!--    Create Tag-->
-<!--  </v-btn>-->
-  <Button label="Create Tag" icon="fa: fa-solid fa-plus" class="mt-4 p-button-success" @click="openCreateDialog" />
+  <!--  <v-btn color="success" class="mt-4" @click="openCreateDialog" block>-->
+  <!--    <v-icon class="fas fa-plus"></v-icon>-->
+  <!--    Create Tag-->
+  <!--  </v-btn>-->
+  <Button
+    label="Create Tag"
+    icon="fa: fa-solid fa-plus"
+    class="mt-4 p-button-success"
+    @click="openCreateDialog"
+  />
   <!-- Label Creation/Edit Dialog -->
   <v-dialog v-model="dialog" max-width="400px">
     <v-card class="bg-cardColor">
@@ -38,13 +43,13 @@
         <!-- Title Input -->
         <v-label class="pb-0">Title</v-label>
         <v-text-field
-            v-model="labelTitle"
-            label="Label Title"
-            outlined
-            dense
-            class="mt-4 pt-0"
-            hint="Enter the title for the label"
-            persistent-hint
+          v-model="labelTitle"
+          label="Label Title"
+          outlined
+          dense
+          class="mt-4 pt-0"
+          hint="Enter the title for the label"
+          persistent-hint
         ></v-text-field>
 
         <!-- Color Palette -->
@@ -57,9 +62,9 @@
 
         <!-- Selected Color Block with Label Title -->
         <div
-            v-if="labelTitle"
-            class="d-flex justify-center align-center mt-4"
-            :style="{
+          v-if="labelTitle"
+          class="d-flex justify-center align-center mt-4"
+          :style="{
             backgroundColor: selectedColor,
             color: getContrastingColor(selectedColor),
             width: '100%',
@@ -72,7 +77,7 @@
       </v-card-text>
 
       <v-card-actions class="d-flex flex-column">
-        <v-btn color="success" @click="handleClick">
+        <v-btn color="success" @click="handleClick" :loading="isEditingLabel">
           <v-icon class="fas fa-save"></v-icon>
           {{ dialogTitle === 'Create Label' ? 'Create' : 'Save' }}
         </v-btn>
@@ -112,6 +117,8 @@ const selectedTagId = ref<string>('')
 const selectedTags = ref<Label[]>([])
 const labels = ref<Label[]>([])
 const companyLabels = ref<Label[]>([])
+
+let isEditingLabel = ref<boolean>(false)
 
 const getJobTags = async () => {
   try {
@@ -170,6 +177,7 @@ const editLabel = async () => {
     }
   }
   try {
+    isEditingLabel.value = true
     const body = {
       companyId: localStorage.getItem('currentCompany') || '',
       label: labelTitle.value,
@@ -188,6 +196,8 @@ const editLabel = async () => {
   } catch (error) {
     editTagFailure()
     console.log(error)
+  } finally {
+    isEditingLabel.value = false
   }
   labelTitle.value = ''
   selectedColor.value = ''

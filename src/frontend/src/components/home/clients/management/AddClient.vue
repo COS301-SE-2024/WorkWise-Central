@@ -233,7 +233,14 @@
         <v-spacer></v-spacer>
         <v-row class="fixed">
           <v-col cols="12" lg="6" order="last" order-lg="first">
-            <v-btn color="error" width="100%" height="35" variant="text" @click="close">
+            <v-btn
+              color="error"
+              width="100%"
+              height="35"
+              variant="text"
+              @click="close"
+              :disabled="request_loading"
+            >
               <v-icon icon="fa: fa-solid fa-ban" color="error" start></v-icon> Cancel
             </v-btn>
           </v-col>
@@ -533,7 +540,6 @@ export default defineComponent({
             detail: 'Client created successfully',
             life: 3000
           })
-          this.request_loading = false
           setTimeout(() => {
             this.addDialog = false
             this.isDeleting = false
@@ -546,6 +552,7 @@ export default defineComponent({
           console.log('Client creation failed')
           console.log(res)
         })
+      this.request_loading = false
     },
     resetFields() {
       this.req_obj = {

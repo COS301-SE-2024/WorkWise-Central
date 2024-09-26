@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0.1">
+  <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0.6">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
@@ -26,7 +26,7 @@
         <v-container
           ><v-row justify="end"
             ><v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn label="Cancel" color="secondary" @click="close" block
+              <v-btn label="Cancel" color="secondary" @click="close" block :disabled="isDeleting"
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
             >
@@ -94,7 +94,6 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.deleteDialog = false
-            this.isDeleting = false
             this.$emit('deleteInventory', this.inventory_id)
           }, 3000)
         })
@@ -106,6 +105,8 @@ export default defineComponent({
           detail: 'An error occurred while deleting the inventory',
           life: 3000
         })
+      } finally {
+        this.isDeleting = false
       }
     },
     close() {

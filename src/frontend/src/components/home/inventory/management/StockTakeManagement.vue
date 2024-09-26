@@ -125,34 +125,39 @@
                 label="Name"
                 v-model="selectedItem.name"
                 :rules="nameRules"
-              ></v-text-field>
+                :disabled="isDeleting"
+            ></v-text-field>
 
               <v-textarea
                 label="Description"
                 v-model="selectedItem.description"
                 :rules="descriptionRules"
-              ></v-textarea>
+                :disabled="isDeleting"
+            ></v-textarea>
 
               <v-text-field
                 label="Cost Price"
                 v-model="selectedItem.costPrice"
                 type="number"
                 :rules="costPriceRules"
-              ></v-text-field>
+                :disabled="isDeleting"
+            ></v-text-field>
 
               <v-text-field
                 label="Recorded Stock Level"
                 v-model="selectedItem.currentStockLevel"
                 type="number"
                 :rules="currentStockLevelRules"
-              ></v-text-field>
+                :disabled="isDeleting"
+            ></v-text-field>
 
               <v-text-field
                 label="Current Stock Level"
                 v-model="selectedItem.reorderLevel"
                 type="number"
                 :rules="reorderLevelRules"
-              ></v-text-field>
+                :disabled="isDeleting"
+            ></v-text-field>
 
               <v-file-input
                 v-model="selectedItem.images"
@@ -168,19 +173,20 @@
                 required
                 clearable
                 data-testid="company-logo-file-input"
-              ></v-file-input>
+                :disabled="isDeleting"
+            ></v-file-input>
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-container
               ><v-row>
                 <v-col cols="12" lg="6" order-lg="2" order="1">
-                  <v-btn color="success" @click="submitStockTake" block
+                  <v-btn color="success" @click="submitStockTake" block :loading="isDeleting"
                     ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
                   ></v-col
                 >
                 <v-col cols="12" lg="6" order-lg="1" order="2">
-                  <v-btn color="error" @click="showDialog = false" block
+                  <v-btn color="error" @click="showDialog = false" block :disabled="isDeleting"
                     ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
                   ></v-col
                 >
@@ -220,6 +226,9 @@ import { API_URL } from '@/main'
 export default {
   data() {
     return {
+      isDeleting: false,
+      localUrl: 'http://localhost:3000/',
+      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       currentDate: new Date().toISOString().substr(0, 10),
       isUpdating: false,
       searchQuery: '',
@@ -228,6 +237,7 @@ export default {
       headers: [
         { title: 'Name', value: 'name' },
 
+        { title: 'Current Stock Level', value: 'reorderLevel' },
         { title: 'Current Stock Level', value: 'reorderLevel' },
         { title: 'Recorded Stock Level', value: 'currentStockLevel' },
         { title: '', value: 'actions', sortable: false }
@@ -256,6 +266,8 @@ export default {
       ],
       currentStockLevelRules: [
         (v) => !!v || 'Recorded Stock Level is required',
+        (v) =>
+          /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Recorded Stock Level must be a valid number',
         (v) =>
           /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Recorded Stock Level must be a valid number',
         (v) => !/^0\d/.test(v) || 'Recorded Stock Level cannot have leading zeros'
@@ -341,6 +353,7 @@ export default {
       }
     },
     submitStockTake() {
+      this.isDeleting = true
       // Convert the images string to an array
       // const imagesArray = this.newStockItem.images.split(',').map((img) => img.trim())
       // this.newStockItem.images = imagesArray
@@ -349,6 +362,8 @@ export default {
       console.log('New Stock Item:', this.newStockItem)
 
       // Close the dialog
+      this.isDeleting = false
+
       this.showDialog = false
 
       // Reset the form
@@ -421,8 +436,17 @@ export default {
         items: [],
         updateInventory: this.updateInventory
       }
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        companyId: localStorage.getItem('currentCompany'),
+        date: new Date(this.currentDate).toISOString(),
+        items: [],
+        updateInventory: this.updateInventory
+      }
       this.filteredInventoryItems.forEach((item) => {
         data.items.push({
+          inventoryId: item._id,
+          recordedStockLevel: item.currentStockLevel
+        })
           inventoryId: item._id,
           recordedStockLevel: item.currentStockLevel
         })
@@ -432,7 +456,9 @@ export default {
         const response = await axios.post(`${API_URL}stocktake/create`, data, config)
         console.log('Response:', response)
         console.log('Hello world!')
+        console.log('Hello world!')
       } catch (error) {
+        console.log('Failure to update stock take', error)
         console.log('Failure to update stock take', error)
       }
     },
@@ -558,6 +584,9 @@ export default {
       })
 
       autoTable(doc, {
+        head: [
+          ['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level', 'Difference']
+        ],
         head: [
           ['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level', 'Difference']
         ],

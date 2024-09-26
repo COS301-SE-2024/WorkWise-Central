@@ -14,7 +14,11 @@
           <v-row>
             <v-col cols="6">
               <small class="text-caption font-weight-bold"> Name </small>
-              <v-text-field v-model="localEditedItem.firstName" :rules="nameRules"></v-text-field>
+              <v-text-field
+                v-model="localEditedItem.firstName"
+                :rules="nameRules"
+                :disabled="isDeleting"
+              ></v-text-field>
             </v-col>
             <v-col cols="6">
               <small class="text-caption font-weight-bold"> Surname </small>
@@ -22,6 +26,7 @@
                 v-model="localEditedItem.lastName"
                 :rules="surnameRules"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-text-field> </v-col
           ></v-row>
 
@@ -32,6 +37,7 @@
                 v-model="localEditedItem.contactInfo.phoneNumber"
                 :rules="phoneRules"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-text-field>
             </v-col>
             <v-col cols="6">
@@ -40,6 +46,7 @@
                 v-model="localEditedItem.contactInfo.email"
                 :rules="emailRules"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-text-field> </v-col
           ></v-row>
 
@@ -50,6 +57,7 @@
                 v-model="localEditedItem.address.street"
                 :rules="streetRules"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-text-field
             ></v-col>
             <v-col cols="6">
@@ -58,6 +66,7 @@
                 v-model="localEditedItem.address.suburb"
                 :rules="suburbRules"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-text-field> </v-col
           ></v-row>
 
@@ -68,6 +77,7 @@
                 v-model="localEditedItem.address.city"
                 :rules="cityRules"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-text-field>
             </v-col>
             <v-col cols="6">
@@ -76,6 +86,7 @@
                 v-model="localEditedItem.address.postalCode"
                 :rules="postalCodeRules"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-text-field></v-col
           ></v-row>
 
@@ -86,6 +97,7 @@
                 theme="cardColor"
                 v-model="localEditedItem.address.complex"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-text-field
             ></v-col>
             <v-col cols="6">
@@ -93,6 +105,7 @@
               <v-text-field
                 v-model="localEditedItem.address.houseNumber"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-text-field></v-col
           ></v-row>
           <v-row>
@@ -103,6 +116,7 @@
                 v-model="localEditedItem.preferred_Language"
                 variant="solo"
                 hide-details="auto"
+                :disabled="isDeleting"
               ></v-select>
             </v-col>
           </v-row>
@@ -113,7 +127,15 @@
         <v-container>
           <v-row align-self="center" justify="end"
             ><v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn color="error" width="85%" height="35" variant="text" @click="close" block>
+              <v-btn
+                color="error"
+                width="85%"
+                height="35"
+                variant="text"
+                @click="close"
+                block
+                :disabled="isDeleting"
+              >
                 <v-icon icon="fa:fa-solid fa-cancel" color="error" start d size="small"></v-icon>
                 Cancel
               </v-btn> </v-col
@@ -279,7 +301,6 @@ export default {
           life: 3000
         })
         setTimeout(() => {
-          this.isDeleting = false
           this.clientDialog = false
           this.$emit('clientUpdated', response.data.data)
         }, 3000)
@@ -294,6 +315,8 @@ export default {
           life: 3000
         })
         return false
+      } finally {
+        this.isDeleting = false
       }
     },
     allRulesPass() {

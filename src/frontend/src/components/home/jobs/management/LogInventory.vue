@@ -1,10 +1,10 @@
 <template>
   <Dialog
-      v-model:visible="inventoryDialog"
-      modal
-      header="Log Inventory"
-      :style="{ width: '50vw' }"
-      :breakpoints="{ '960px': '75vw', '641px': '100vw' }"
+    v-model:visible="inventoryDialog"
+    modal
+    header="Log Inventory"
+    :style="{ width: '50vw' }"
+    :breakpoints="{ '960px': '75vw', '641px': '100vw' }"
   >
     <div class="p-fluid">
       <div v-for="(item, index) in inventory" :key="index" class="p-field p-grid p-mb-2">
@@ -23,12 +23,23 @@
     <Button label="Add Item" icon="pi pi-plus" @click="addItem" class="p-mt-3" />
 
     <template #footer>
-      <Button label="Save All" icon="pi pi-check" @click="saveAllItems" autofocus />
+      <Button
+        label="Save All"
+        icon="pi pi-check"
+        @click="saveAllItems"
+        autofocus
+        :loading="req_loading"
+      />
       <Button label="Cancel" icon="pi pi-times" @click="closeDialog" class="p-button-text" />
     </template>
   </Dialog>
 
-  <Button label="Log Inventory" icon="pi pi-box" @click="openInventoryDialog" class="p-button-outlined" />
+  <Button
+    label="Log Inventory"
+    icon="pi pi-box"
+    @click="openInventoryDialog"
+    class="p-button-outlined"
+  />
 </template>
 
 <script setup lang="ts">
@@ -39,6 +50,7 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Button from 'primevue/button'
+import { API_URL } from '@/main'
 import { API_URL } from '@/main'
 
 const toast = useToast()
@@ -93,6 +105,8 @@ const saveItem = (index: number) => {
   }
 }
 
+let req_loading = ref<boolean>(false)
+
 const saveAllItems = async () => {
   if (inventory.value.length === 0) {
     toast.add({
@@ -118,6 +132,7 @@ const saveAllItems = async () => {
   }))
 
   try {
+    req_loading.value = true
     const response = await axios.patch(`${API_URL}job/${props.jobID}`, updatedInventory, config)
     console.log(response)
     toast.add({
@@ -135,6 +150,8 @@ const saveAllItems = async () => {
       detail: 'An error occurred while logging the inventory item',
       life: 3000
     })
+  } finally {
+    req_loading.value = false
   }
 }
 </script>
