@@ -1,6 +1,6 @@
 export type EventTime = {
   start: string
-  end: string
+  end?: string
 }
 
 export type Event = {
@@ -13,6 +13,30 @@ export type Event = {
   id: string
   description: string
 }
+type Tag = {
+  _id: string
+  label: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
+type Status = {
+  _id: string
+  status: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
+type PriorityTag = {
+  _id: string
+  label: string
+  priorityLevel: number
+  colour: string
+  companyId: string
+  __v: number
+}
 
 export type JobCardDataFormat = {
   jobId: string
@@ -20,7 +44,6 @@ export type JobCardDataFormat = {
   jobDescription: string
   startDate: string
   endDate: string
-  status: string
   clientName: string
   street: string
   suburb: string
@@ -32,6 +55,9 @@ export type JobCardDataFormat = {
   inventoryUsed: string[]
   taskList: string[]
   comments: string[]
+  tags: Tag[]
+  status: Status
+  priorityTag: PriorityTag
 }
 
 export type Job = {
@@ -102,7 +128,13 @@ export type Job = {
       superiorId: string
     }[]
   }
-  status: string
+  status: {
+    _id: string
+    status: string
+    colour: string
+    companyId: string
+    __v: number
+  }
   tags: {
     _id: string
     label: string

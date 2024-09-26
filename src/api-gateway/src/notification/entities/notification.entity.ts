@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SchemaTypes, Types } from 'mongoose';
+import { User } from '../../users/entities/user.entity';
 
 export class Message {
   constructor(title: string, body: string, data?: any, token?: string) {
@@ -21,15 +22,27 @@ export class Message {
 
 @Schema()
 export class Notification {
-  constructor(senderId: Types.ObjectId, recipientId: Types.ObjectId, message: Message) {
+  //TODO: Link with tokens properly
+  constructor(
+    senderId: Types.ObjectId,
+    recipientId: Types.ObjectId,
+    message: Message,
+    companyName?: string | null,
+    jobRelated?: boolean,
+  ) {
     this.senderId = senderId;
     this.recipientId = recipientId;
     this.message = message;
+    if (jobRelated) this.isJobRelated = jobRelated;
+    else this.isJobRelated = false;
+    if (companyName) this.companyName = companyName;
+    else this.companyName = null;
   }
 
   @Prop({
     type: SchemaTypes.ObjectId,
     required: false /*, ref: Employee.name */,
+    ref: User.name, //TODO: Maybe remove
   })
   senderId?: Types.ObjectId;
 
@@ -41,6 +54,15 @@ export class Notification {
 
   @Prop({ type: Boolean, required: true, default: false })
   isRead: boolean = false;
+
+  @Prop({ type: Boolean, required: true, default: false })
+  isJobRelated: boolean = false;
+
+  @Prop({ type: String, required: true, default: null })
+  companyName: string = null;
+
+  @Prop({ type: String, default: 'ACTIVE' })
+  status: string = 'ACTIVE';
 
   @Prop({ type: Date, default: new Date() })
   createdAt: Date;

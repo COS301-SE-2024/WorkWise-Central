@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import { MultipleDeviceNotificationDTO } from './dto/multipleDeviceNotification.dto';
+import { NotificationDto } from './dto/notification.dto';
 
 @Injectable()
 export class FcmNotificationService {
@@ -22,6 +24,25 @@ export class FcmNotificationService {
       await admin.messaging().sendToDevice(token, payload);
     } catch (error) {
       console.error('Error sending notification:', error);
+    }
+  }
+
+  async sendNotificationToUser({ token, title, body, icon }: NotificationDto) {
+    try {
+      const response = await admin.messaging().send({
+        token,
+        webpush: {
+          notification: {
+            title,
+            body,
+            icon,
+          },
+        },
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -53,5 +74,28 @@ export class FcmNotificationService {
           success: false,
         };
       });
+  }
+
+  async sendNotificationToMultipleTokens({ tokens, title, body, icon }: MultipleDeviceNotificationDTO) {
+    const message = {
+      notification: {
+        title,
+        body,
+        icon,
+      },
+      tokens,
+    };
+
+    try {
+      const response = await admin.messaging().sendEachForMulticast(message);
+      console.log('Successfully sent messages:', response);
+      return {
+        success: true,
+        message: `Successfully sent ${response.successCount} messages; ${response.failureCount} failed.`,
+      };
+    } catch (error) {
+      console.log('Error sending messages:', error);
+      return { success: false, message: 'Failed to send notifications' };
+    }
   }
 }

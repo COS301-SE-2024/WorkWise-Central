@@ -8,6 +8,24 @@ export class UpdateTeamDto {
   @IsString()
   teamName?: string;
 
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  teamLeaderId?: Types.ObjectId;
+
+  @IsArray()
+  @IsMongoId({ each: true })
+  @ApiProperty()
+  @IsOptional()
+  currentJobAssignments?: Types.ObjectId[];
+}
+
+export class InternalUpdateTeamDto {
+  @IsOptional()
+  @ApiProperty()
+  @IsString()
+  teamName?: string;
+
   @IsArray()
   @IsMongoId({ each: true })
   @ApiProperty()
@@ -24,6 +42,22 @@ export class UpdateTeamDto {
   @ApiProperty()
   @IsOptional()
   currentJobAssignments?: Types.ObjectId[];
+}
+
+export class AddTeamMembersDto {
+  @IsArray()
+  @IsMongoId({ each: true })
+  @ApiProperty()
+  @IsOptional()
+  newTeamMembers?: Types.ObjectId[];
+}
+
+export class RemoveTeamMembersDto {
+  @IsArray()
+  @IsMongoId({ each: true })
+  @ApiProperty()
+  @IsOptional()
+  teamMembersToBeRemoved?: Types.ObjectId[];
 }
 
 export class updateTeamResponseDto {

@@ -1,15 +1,15 @@
 <template>
-  <v-dialog
-    v-model="deleteDialog"
-    max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-  >
+  <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
+      <v-btn
+        class="text-none font-weight-regular hello"
+        color="error"
+        v-bind="activatorProps"
+        :disabled="Disabled"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Delete Priority</span>
@@ -29,14 +29,12 @@
       <v-card-actions>
         <v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6"
-              ><Toast position="bottom-center" />
+            ><v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn label="Cancel" color="secondary" @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" end color="secondary" size="small"></v-icon
-                >Cancel
+                ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
             >
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 label="Delete"
                 color="error"
@@ -57,17 +55,20 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'DeleteTags',
   props: {
     pritorityName: String,
-    tagId: String
+    tagId: String,
+    Disabled: Boolean
   },
   data() {
     return {
       deleteDialog: false,
       isDeleting: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
@@ -89,18 +90,32 @@ export default defineComponent({
           companyId: localStorage.getItem('currentCompany')
         }
       }
-      const apiURL = await this.getRequestUrl()
-      axios.delete(`${apiURL}job/tags/p`, config)
-      setTimeout(() => {
-        this.isDeleting = false
-        this.deleteDialog = false
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Tag Deleted',
-          life: 3000
+      axios
+        .delete(`${API_URL}job/tags/p`, config)
+        .then((response) => {
+          this.isDeleting = true
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Priority Deleted',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.deleteDialog = false
+            this.isDeleting = false
+            this.$emit('DeletedPriority', response.data.data)
+          }, 3000)
         })
-      }, 1500)
+        .catch((err) => {
+          console.error(err)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred',
+            life: 3000
+          })
+          this.deleteDialog = false
+        })
     },
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)

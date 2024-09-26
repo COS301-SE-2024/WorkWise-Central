@@ -1,30 +1,24 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600" :theme="isdarkmode === true ? 'dark' : 'light'">
+  <v-dialog v-model="dialog" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="success" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>View</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Inventory Details</span>
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="4">
+          <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Product Name</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{ inventoryItem.name }}</small>
           </v-col>
-          <v-col cols="4">
-            <label class="font-weight-light" style="font-size: 20px"> Description</label
-            ><v-spacer></v-spacer
-            ><small class="text-caption" style="font-size: 12px">{{
-              inventoryItem.description
-            }}</small>
-          </v-col>
-          <v-col cols="4">
+
+          <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Cost Price</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{
@@ -55,27 +49,39 @@
             <label class="font-weight-light" style="font-size: 20px"> Date Added</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{
-              inventoryItem.createdAt
+              formatDate(inventoryItem.createdAt)
             }}</small>
           </v-col>
           <v-col cols="6">
             <label class="font-weight-light" style="font-size: 20px"> Updated Date</label
             ><v-spacer></v-spacer
             ><small class="text-caption" style="font-size: 12px">{{
-              inventoryItem.updatedAt
+              formatDate(inventoryItem.updatedAt)
             }}</small>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="12">
+            <label class="font-weight-light" style="font-size: 20px"> Description</label
+            ><v-spacer></v-spacer
+            ><small class="text-caption" style="font-size: 12px">{{
+              inventoryItem.description
+            }}</small>
+          </v-col></v-row
+        >
         <v-divider></v-divider>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <Toast position="top-center" />
-        <v-col cols="12">
-          <v-btn label="Close" color="secondary" text @click="close"
-            ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
-            >Close</v-btn
-          ></v-col
+        <v-container
+          ><v-row
+            ><Toast position="top-center" />
+            <v-col cols="12">
+              <v-btn label="Close" color="error" text @click="close" block
+                ><v-icon icon="fa:fa-solid fa-cancel" color="error" start size="small"></v-icon
+                >Close</v-btn
+              ></v-col
+            ></v-row
+          ></v-container
         >
       </v-card-actions>
     </v-card>
@@ -97,7 +103,7 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {
@@ -108,6 +114,9 @@ export default defineComponent({
         detail: 'Inventory Added',
         life: 3000
       })
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleDateString()
     },
     close() {
       this.dialog = false

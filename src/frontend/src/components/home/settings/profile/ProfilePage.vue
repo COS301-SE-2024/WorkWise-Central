@@ -9,7 +9,7 @@
             </v-avatar>
           </v-btn>
         </template>
-        <v-card>
+        <v-card class="bg-cardColor">
           <v-card-text>
             <div class="mx-auto text-center">
               <v-avatar color="brown">
@@ -31,7 +31,7 @@
 <script>
 export default {
   data: () => ({
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false
   }),
   props: {
     user: Object

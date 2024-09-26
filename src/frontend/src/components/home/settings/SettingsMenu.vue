@@ -1,6 +1,6 @@
 <template>
-  <v-card class="elevation-0">
-    <v-list class="bg-cardColor">
+  <v-card class="elevation-0 bg-background" border="md">
+    <v-list class="bg-background">
       <v-list-subheader class="text-center">User Settings</v-list-subheader>
       <!-- Render the list items -->
       <v-list-item-group>
@@ -8,7 +8,7 @@
           <!-- Handle sections with nested items -->
           <template v-if="item.items">
             <v-list-item-group v-for="(subItem, j) in item.items" :key="j">
-              <v-list-item @click="navigate(subItem.route)">
+              <v-list-item @click="navigate(subItem.route)" class="bg-secondary">
                 <template v-slot:prepend>
                   <v-icon :icon="subItem.icon" color="primary"></v-icon>
                 </template>
@@ -53,16 +53,11 @@ const items = ref([
         icon: 'fa: fa-solid fa-user',
         route: '/userSettings'
       },
-      {
-        label: 'Preferences',
-        icon: 'fa: fa-solid fa-sliders-h',
-        route: '/preferenceSettings'
-      },
-      {
-        label: 'Notifications',
-        icon: 'fa: fa-solid fa-bell',
-        route: '/notificationSettings'
-      }
+      // {
+      //   label: 'Notifications',
+      //   icon: 'fa: fa-solid fa-bell',
+      //   route: '/notificationSettings'
+      // }
     ]
   }
 ])

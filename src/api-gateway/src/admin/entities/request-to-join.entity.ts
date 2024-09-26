@@ -3,6 +3,7 @@ import { SchemaTypes, Types } from 'mongoose';
 import { User } from '../../users/entities/user.entity';
 import { Role } from '../../role/entity/role.entity';
 import { currentDate } from '../../utils/Utils';
+import { Company } from '../../company/entities/company.entity';
 
 const ONEWEEK = 604800;
 
@@ -22,7 +23,7 @@ export class UserJoinRequest {
     if (roleName) this.roleName = roleName;
   }
 
-  @Prop({ required: false, type: SchemaTypes.ObjectId, ref: 'Company' })
+  @Prop({ required: false, type: SchemaTypes.ObjectId, ref: Company.name })
   companyId: Types.ObjectId;
 
   @Prop({ required: false, type: String })

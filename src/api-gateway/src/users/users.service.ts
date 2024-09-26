@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
 import { JoinUserDto, UpdateUserDto } from './dto/update-user.dto';
@@ -21,40 +22,53 @@ import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { isPhoneNumber } from 'class-validator';
 import { CompanyService } from '../company/company.service';
 import { FileService } from '../file/file.service';
-import { FileResponseDto } from '../shared/dtos/api-response.dto';
+import { JobService } from '../job/job.service';
+import { UserResetPasswordDto } from './dto/user-reset-password.dto';
+import { UserPasswordReset } from './entities/user-password-reset.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userRepository: UsersRepository,
+
     @InjectModel(UserConfirmation.name)
     private readonly userConfirmationModel: Model<UserConfirmation>,
+
+    @InjectModel(UserPasswordReset.name)
+    private readonly userPasswordResetModel: Model<UserPasswordReset>,
+
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
+
     @Inject(forwardRef(() => EmployeeService))
     private employeeService: EmployeeService,
+
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
+
     private emailService: EmailService,
 
     @Inject(forwardRef(() => FileService))
     private fileService: FileService,
+
+    @Inject(forwardRef(() => JobService))
+    private jobService: JobService,
   ) {}
 
-  async create(createUserDto: CreateUserDto, profilePicture?: Express.Multer.File) {
+  async create(createUserDto: CreateUserDto) {
     const inputValidated = await this.createUserValid(createUserDto);
     if (!inputValidated.isValid) throw new ConflictException(inputValidated.message);
 
     //Save files In Bucket, and store URLs (if provided)
     let secureUrl: string = '';
-    if (profilePicture) {
+    if (createUserDto.profilePicture) {
       console.log('Uploading image');
-      const picture = await this.fileService.uploadFile(profilePicture);
+      const picture = await this.fileService.uploadBase64Image(createUserDto.profilePicture);
       if (picture.secure_url != null) {
         secureUrl = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
     }
-    // else default
+    // Create the user
     const newUserObj = new User(createUserDto);
     if (secureUrl !== '') newUserObj.profile.displayImage = secureUrl;
     const result = await this.userRepository.save(newUserObj);
@@ -82,6 +96,26 @@ export class UsersService {
     return this.userRepository.verifyUser(email);
   }
 
+  async createUserPasswordResetRequest(email: string) {
+    const user = await this.getUserByEmail(email);
+    if (!user) throw new NotFoundException('User not found');
+    const passwordResetRequest: UserPasswordReset = {
+      email: email,
+      token: randomStringGenerator(),
+    };
+    const req = await this.userPasswordResetModel.create(passwordResetRequest);
+    await req.save();
+    await this.emailService.sendResetPasswordRequest(
+      {
+        userId: user._id,
+        emailAddress: email,
+        name: user.personalInfo.firstName,
+      },
+      req.token,
+    );
+    return true;
+  }
+
   async getAllUsers(): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
     return this.userRepository.findAll();
   }
@@ -91,8 +125,23 @@ export class UsersService {
     return this.userRepository.findAll(populatedFields);
   }
 
-  async getAllUsersInCompany(companyId: Types.ObjectId): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+  async getAllUsersInCompany(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    if (!(await this.userIsInCompany(userId, companyId)))
+      throw new UnauthorizedException('You must be a member of the company');
     return this.userRepository.findAllInCompany(companyId);
+  }
+
+  async getAllUsersInCompanyInternal(
+    companyId: Types.ObjectId,
+  ): Promise<(FlattenMaps<User> & { _id: Types.ObjectId })[]> {
+    return this.userRepository.findAllInCompany(companyId);
+  }
+
+  async userWithEmailExistsInCompany(companyId: Types.ObjectId, email: string) {
+    return this.userRepository.userIsInCompanyWithEmail(companyId, email);
   }
 
   async usernameExists(identifier: string): Promise<boolean> {
@@ -121,6 +170,10 @@ export class UsersService {
 
   async getUserByUsername(identifier: string) {
     return this.userRepository.findByUsername(identifier);
+  }
+
+  async getUserByEmail(identifier: string) {
+    return this.userRepository.findByEmail(identifier);
   }
 
   async updateJoinedCompanies(
@@ -182,6 +235,17 @@ export class UsersService {
     return updatedUser;
   }
 
+  async removeJoinedCompanyWithoutValidation(
+    userId: Types.ObjectId,
+    companyId: Types.ObjectId,
+  ): Promise<FlattenMaps<User> & { _id: Types.ObjectId }> {
+    const updatedUser = await this.userRepository.removeJoinedCompany(userId, companyId);
+    if (updatedUser == null) {
+      throw new NotFoundException('failed to update user');
+    }
+    return updatedUser;
+  }
+
   async changeCurrentEmployee(userId: Types.ObjectId, companyId: Types.ObjectId) {
     const user = await this.userRepository.findById(userId);
     const joinedCompany = user.joinedCompanies.filter(
@@ -212,10 +276,24 @@ export class UsersService {
     if (updatedUser == null) {
       throw new NotFoundException('failed to update user');
     }
+    if (updateUserDto.systemDetails || updateUserDto.personalInfo) {
+      const updatePromises = updatedUser.joinedCompanies.map((joinedCompany) =>
+        this.employeeService.internalUpdate(joinedCompany.employeeId, {
+          userInfo: {
+            firstName: updatedUser.personalInfo.firstName,
+            surname: updatedUser.personalInfo.surname,
+            username: updatedUser.systemDetails.username,
+            displayName: updatedUser.profile.displayName,
+            displayImage: updatedUser.profile.displayImage,
+          },
+        }),
+      );
+      await Promise.all(updatePromises);
+    }
     return updatedUser;
   }
 
-  async uploadProfilePic(file: Express.Multer.File): Promise<FileResponseDto> {
+  /*  async uploadProfilePic(file: Express.Multer.File): Promise<FileResponseDto> {
     //TODO: Add validation
     const uploadApiResponse = await this.fileService.uploadFile(file);
     let newUrl: string;
@@ -228,7 +306,7 @@ export class UsersService {
       return new FileResponseDto({ url: null });
     }
     return new FileResponseDto({ url: newUrl });
-  }
+  }*/
 
   async updateProfilePic(userId: Types.ObjectId, file: Express.Multer.File) {
     //TODO: Add validation
@@ -257,6 +335,21 @@ export class UsersService {
     if (!userToDelete) {
       throw new NotFoundException('Error: User not found, please verify your user');
     }
+    //Remove All joinedCompanies
+    const removalPromises = userToDelete.joinedCompanies.map((joinedCompany) => {
+      return Promise.all([
+        this.jobService.removeAllReferencesToEmployee(joinedCompany.employeeId),
+        this.employeeService.remove(joinedCompany.employeeId),
+      ]);
+    });
+
+    await Promise.all(removalPromises);
+
+    this.emailService.sendGoodbye({
+      name: userToDelete.personalInfo.firstName,
+      emailAddress: userToDelete.personalInfo.contactInfo.email,
+    });
+
     const result = await this.userRepository.delete(id);
     if (result == null) {
       throw new InternalServerErrorException('Internal server Error');
@@ -266,6 +359,10 @@ export class UsersService {
     console.log(deleteRelatedEmployees);*/
     //TODO:Relinquish ownership of company to someone else
     return true;
+  }
+
+  async updateJoinedCompanyName(companyId: Types.ObjectId, newName: string) {
+    await this.userRepository.updateJoinedCompanyName(companyId, newName);
   }
 
   async createUserValid(createUserDto: CreateUserDto): Promise<ValidationResult> {
@@ -309,19 +406,6 @@ export class UsersService {
     return userJoinedCompany != null;
   }
 
-  async userIsValid(user: User): Promise<ValidationResult> {
-    if (user.joinedCompanies) {
-      for (const joinedCompany of user.joinedCompanies) {
-        const exists = await this.employeeService.employeeExists(joinedCompany.employeeId);
-        if (!exists) return new ValidationResult(false, `Invalid Employee ID: ${joinedCompany.employeeId}`);
-      }
-    }
-    if (user.currentEmployee) {
-      const exists = await this.employeeService.employeeExists(user.currentEmployee);
-      if (!exists) return new ValidationResult(false, `Invalid currentEmployee: ${user.currentEmployee}`);
-    }
-  }
-
   async updateUserValid(id: Types.ObjectId, user: UpdateUserDto): Promise<ValidationResult> {
     if (!user) {
       return new ValidationResult(false, `user cannot be undefined`);
@@ -354,15 +438,22 @@ export class UsersService {
 
   async userIsInSameCompanyAsEmployee(userId: Types.ObjectId, employeeId: Types.ObjectId) {
     const user = await this.getUserById(userId);
-    const companyWithEmployee = await this.companyService.getCompanyWithEmployee(employeeId);
-
-    if (!companyWithEmployee || !user) {
+    console.log(user);
+    if (!user) {
       throw new ConflictException('User or Employee is Null');
     }
     for (const joinedCompany of user.joinedCompanies) {
-      if (joinedCompany.companyId.equals(companyWithEmployee._id)) return true;
+      console.log(joinedCompany);
+      if (joinedCompany.employeeId.toString() === employeeId.toString()) return true;
     }
 
     return false;
+  }
+
+  async resetPassword(userId: Types.ObjectId, userResetPasswordDto: UserResetPasswordDto) {
+    const user = await this.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
+    await this.userRepository.updatePassword(userId, userResetPasswordDto.newPassword);
+    return true;
   }
 }

@@ -8,11 +8,11 @@
     </v-row>
     <v-container class="d-flex flex-column align-center justify-center">
       <v-row>
-        <v-col cols="12" md="3" class="text-center" sm="12" order-sm="1" order-md="0" order="1">
+        <v-col cols="12" md="5" class="text-center" sm="12" order-sm="1" order-md="0" order="1">
           <userAvatar ref="UserAvatar" />
         </v-col>
         <!-- Personal Information -->
-        <v-col cols="12" md="5" order-sm="2" order-md="1" order="2">
+        <v-col cols="12" md="7" order-sm="2" order-md="1" order="2">
           <v-form ref="form" @submit.prevent>
             <v-row>
               <!-- Personal Information Header -->
@@ -178,13 +178,9 @@
             </div>
           </v-form>
         </v-col>
-        <!-- This should not be visible for       -->
-        <v-col cols="12" md="4" order-sm="0" order-md="2" order="0" class="pt-8">
-          <settingsMenu />
-        </v-col>
       </v-row>
     </v-container>
-    <Toast />
+    <Toast position="top-center" />
   </v-container>
 </template>
 
@@ -198,7 +194,6 @@ import { useToast } from 'primevue/usetoast'
 
 const emit = defineEmits(['UploadImage'])
 // Use router
-
 // API URLs
 const localUrl: string = 'http://localhost:3000/'
 const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
@@ -259,7 +254,7 @@ const getUserData = async () => {
     user.value.address.postalCode = data.personalInfo.address.postalCode || ''
     user.value.address.complex = data.personalInfo.address.complex || ''
     user.value.address.houseNumber = data.personalInfo.address.houseNumber || ''
-    // user.value.address.preferredProvince = data.personalInfo.address.province || ''
+    user.value.address.preferredProvince = data.personalInfo.address.province || ''
   } catch (error) {
     console.error('Error fetching user data:', error)
   }
@@ -287,8 +282,8 @@ const patchUser = async () => {
         city: user.value.address.city,
         postalCode: user.value.address.postalCode,
         complex: user.value.address.complex,
-        houseNumber: user.value.address.houseNumber
-        // province: user.value.address.preferredProvince
+        houseNumber: user.value.address.houseNumber,
+        province: user.value.address.preferredProvince
       },
       contactInfo: {
         phoneNumber: user.value.contactInfo.phone,
@@ -304,8 +299,6 @@ const patchUser = async () => {
     return 'fail'
   }
 }
-
-//Use primevue toasts to notify the user
 
 const toast = useToast()
 

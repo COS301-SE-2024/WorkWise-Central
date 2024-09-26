@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    max-height="800"
-    max-width="600"
-    style="font-family: Nunito, sans-serif"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-  >
+  <v-dialog max-height="800" max-width="600" style="font-family: Nunito, sans-serif">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -15,36 +10,43 @@
           text="Add Employee"
           variant="elevated"
           color="secondary"
+          block
           v-bind="activatorProps"
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-center" style="font-family: Nunito, sans-serif"
         >Add Employee</v-card-title
       >
       <v-card-text>
-        <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
+        <v-form ref="form" v-model="valid" @submit.prevent="validate">
           <v-col>
             <v-row>
               <v-col :cols="12">
                 <small
                   class="text-caption font-weight-regular"
                   style="font-family: Nunito, sans-serif"
-                  >Add employee using employee username</small
-                >
+                  >Add employee using employee email
+                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </small>
 
                 <v-text-field
-                  bg-color="background"
-                  v-model="req_obj.newUserUsername"
-                  placeholder="Employee Username"
+                  v-model="req_obj.emailToInvite"
+                  placeholder="Employee email"
                   rounded="md"
                   required
+                  :rules="rules.email_rules"
                   data-testid="username-textfield"
                 ></v-text-field>
               </v-col>
 
               <v-col :cols="12">
+                <small
+                  class="text-caption font-weight-regular"
+                  style="font-family: Nunito, sans-serif"
+                  >Choose role
+                </small>
                 <v-select
                   clearable
                   label="Company Role"
@@ -61,6 +63,11 @@
                 ></v-select>
               </v-col>
               <v-col :cols="12">
+                <small
+                  class="text-caption font-weight-regular"
+                  style="font-family: Nunito, sans-serif"
+                  >Choose superior
+                </small>
                 <v-select
                   clearable
                   label="Superior"
@@ -89,8 +96,9 @@
                 height="35"
                 variant="text"
                 :disabled="click_create_client"
+                :loading="isDeleting"
                 style="font-family: Nunito, sans-serif"
-                >Add<v-icon icon="fa:fa-solid fa-plus" color="success" size="small" end></v-icon>
+                ><v-icon icon="fa:fa-solid fa-plus" color="success" size="small" start></v-icon>Add
               </v-btn>
             </v-col>
           </v-col>
@@ -105,7 +113,8 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
-// import router from '@/router'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'RegisterCompanyModal',
   components: {
@@ -114,23 +123,32 @@ export default defineComponent({
   data: () => ({
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+    rules: {
+      email_rules: [(v: string) => !!v || 'Email is required'],
+      role: [(v: any) => !!v || 'Role is required'],
+      superior: [(v: any) => !!v || 'Superior is required']
+    },
     valid: false,
     dialog: false,
+    isDeleting: false,
+    role_rules: [(v: string) => !!v || 'Role is required'],
+    superior_rules: [(v: string) => !!v || 'Superior is required'],
     roleItems: [] as RoleItem[],
     subordinateItemNames: [] as EmployeeInformation2[],
-    isdarkmode: localStorage['theme'] !== 'false',
+    isDarkMode: localStorage['theme'] !== 'false',
     click_create_client: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
     req_obj: {
-      adminId: localStorage['employeeId'],
+      employeeId: localStorage['employeeId'],
       currentCompany: localStorage['currentCompany'],
-      newUserUsername: '',
+      emailToInvite: '',
       superiorId: '',
       roleId: ''
-    }
+    },
+    request_load: false
   }),
   methods: {
     selected_supirior() {
@@ -138,33 +156,30 @@ export default defineComponent({
     },
     change_roles() {
       console.log(this.req_obj.roleId)
+      console.log(this.roleItems)
     },
     async loadSubordinates() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
+
       try {
-        const sub_res = await axios(
-          apiURL + `company/all/employees/${localStorage.getItem('currentCompany')}`,
+        const sub_res = await axios.get(
+          API_URL + `employee/detailed/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(sub_res)
         for (let i = 0; i < sub_res.data.data.length; i++) {
-          const employee_details = await axios.get(
-            apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
-            config
-          )
-
           let company_employee: EmployeeInformation2 = {
             name:
-              employee_details.data.data.userId.personalInfo.firstName +
+              sub_res.data.data[i].userId.personalInfo.firstName +
               ' ' +
-              employee_details.data.data.userId.personalInfo.surname +
+              sub_res.data.data[i].userId.personalInfo.surname +
               ' (' +
-              employee_details.data.data.role.roleName +
+              sub_res.data.data[i].role.roleName +
               ')',
-            employeeId: employee_details.data.data._id
+            employeeId: sub_res.data.data[i]._id
           }
 
+          console.log(company_employee)
           this.subordinateItemNames.push(company_employee)
         }
       } catch (error) {
@@ -173,35 +188,72 @@ export default defineComponent({
     },
     async loadRoles() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+
+      console.log(API_URL)
       try {
         let roles_response = await axios.get(
-          apiURL + `role/all/${localStorage['currentCompany']}`,
+          API_URL + `role/all/${localStorage['currentCompany']}`,
           config
         )
+        console.log(roles_response)
         let roles_data: Role[] = roles_response.data.data
         for (let i = 0; i < roles_data.length; i++) {
+          if (roles_data[i].roleName === 'Owner') continue
           this.roleItems.push({
             roleName: roles_data[i].roleName,
-            roleId: roles_data[i].roleId
+            roleId: roles_data[i]._id
           })
         }
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     },
+    async validateSubmit() {
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+
+      //this will be the request to check
+      //if the username that was entered exists
+      // in the company, waiting on jess to create endpoint
+      // const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      //
+      // try {
+      //   const res = await axios.post(
+      //     API_URL + 'employee/exists/username',
+      //     { username: this.req_obj.newUserUsername },
+      //     config
+      //   )
+      //   if (res.status > 199 && res.status > 300 && res.data.data == true)
+      //     validate || (await this.handleSubmit())
+      // } catch (error) {
+      //   console.log(error)
+      // }
+    },
+    async validate() {
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+      if (validate) {
+        this.request_load = true
+        await this.handleSubmit()
+      }
+    },
     async handleSubmit() {
+      this.req_obj.employeeId = localStorage['employeeId']
+      this.req_obj.currentCompany = localStorage['currentCompany']
+
+      console.log(this.req_obj)
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       axios
-        .post(apiURL + 'company/add', this.req_obj, config)
+        .post(API_URL + 'admin/invite/create', this.req_obj, config)
         .then((response) => {
+          this.request_load = false
           console.log(response)
           this.$toast.add({
             severity: 'success',
@@ -209,7 +261,10 @@ export default defineComponent({
             detail: 'Employee Added Successfully',
             life: 3000
           })
-          window.location.reload()
+          setTimeout(() => {
+            this.isDeleting = false
+            this.dialog = false
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)
@@ -219,6 +274,7 @@ export default defineComponent({
             detail: 'Failed to add employee',
             life: 3000
           })
+          this.request_load = false
         })
     },
     async isLocalAvailable(localUrl: string) {
@@ -235,7 +291,6 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.req_obj.adminId = localStorage['employeeId']
     this.req_obj.currentCompany = localStorage['currentCompany']
     this.loadRoles()
     this.loadSubordinates()

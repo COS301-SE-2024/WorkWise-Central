@@ -1,13 +1,20 @@
-import { Global, Injectable } from '@nestjs/common';
+import { forwardRef, Global, Inject, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserConfirmation } from '../users/entities/user-confirmation.entity';
 import { InviteToJoin } from '../admin/entities/invite-to-join.entity';
 import { Types } from 'mongoose';
+import { EmailInfoDto, PasswordResetDto } from './dto/emailInfo.dto';
+import { NotificationService } from '../notification/notification.service';
+import { Message } from '../notification/entities/notification.entity';
 
 @Global()
 @Injectable()
 export class EmailService {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly mailerService: MailerService,
+    @Inject(forwardRef(() => NotificationService))
+    private readonly notificationService: NotificationService,
+  ) {}
 
   async sendUserConfirmation(userConfirmation: UserConfirmation) {
     console.log('sendUserConfirmation', userConfirmation);
@@ -51,7 +58,18 @@ export class EmailService {
   }*/
 
   async sendEmailConfirmation(details: { name: string; surname: string; email: string }, token: string) {
-    const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
+    const url = `example.com/auth/confirm?token=${encodeURIComponent(token)}`; //TODO:confirm
+
+    /*    const user = await this.userService.getUserByEmail(details.email);
+    if (user) {
+      this.notificationService.create({
+        recipientIds: [user._id],
+        message: new Message(
+          'Please confirm you email address',
+          `Please go to your email, and you should have received a confirmation email.`,
+        ),
+      });
+    }*/
 
     const result = await this.mailerService.sendMail({
       to: details.email,
@@ -68,32 +86,116 @@ export class EmailService {
     console.log(result);
   }
 
-  async sendMail() {
-    const message = `Forgot your password? If you didn't forget your password, please ignore this email!`;
-
-    await this.mailerService.sendMail({
-      from: `WorkWise Admin <practicalsix@gmail.com>`,
-      to: 'dokuzuku@gmail.com',
-      subject: `How to Send Emails with Nodemailer`,
-      text: message,
-    });
-  }
-  async sendInvite(inviteDto: InviteToJoin, inviteId: Types.ObjectId) {
-    const subject = `Invite to Join ${inviteDto.companyName}`;
-    const newUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
-    const existingUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
+  async sendGoodbye(details: EmailInfoDto, token?: string) {
+    //?const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
+    console.log(token);
+    const ourEmail = '<support@workwise.com>';
     const result = await this.mailerService.sendMail({
-      to: inviteDto.emailBeingInvited,
-      from: '"Support Team" <support@workwise.com>',
-      subject: subject,
-      template: './inviteToCompany',
+      to: details.emailAddress,
+      from: `"Support Team" ${ourEmail}`,
+      subject: 'Farewell from WorkWise',
+      template: './goodbye',
       context: {
-        companyName: inviteDto.companyName,
-        userName: 'there',
-        roleName: inviteDto.roleName,
-        supportEmail: 'support@workwise.com',
-        newUserLink: newUserLink,
-        existingUserLink: existingUserLink,
+        name: details.name,
+        ourEmail: ourEmail,
+      },
+    });
+    console.log(result);
+  }
+
+  async sendResetPasswordRequest(resetDto: PasswordResetDto, token: string) {
+    const serverUrl = `http://localhost:5173`; //TODO:Point to Deployment
+    const url = `${serverUrl}/new-password?uId=${encodeURIComponent(resetDto.userId.toString())}&tok=${encodeURIComponent(token)}`;
+    console.log(token);
+    const ourEmail = '<support@workwise.com>';
+    const result = await this.mailerService.sendMail({
+      to: resetDto.emailAddress,
+      from: `"Support Team" ${ourEmail}`,
+      subject: 'Password Reset',
+      template: './password-reset',
+      context: {
+        name: resetDto.name,
+        ourEmail: ourEmail,
+        resetUrl: url,
+      },
+    });
+    console.log(result);
+  }
+
+  async sendInvite(inviteDto: InviteToJoin, inviteId: Types.ObjectId, hasAccount: boolean, userId?: Types.ObjectId) {
+    const subject = `Invite to Join ${inviteDto.companyName}`;
+    // const newUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;//TODO:Point to Deployment
+    // const existingUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
+
+    const tempUrl = `http://localhost:5173`;
+    const newUserLink = `${tempUrl}/?inviteId=${encodeURIComponent(inviteId.toString())}`;
+    const existingUserLink = `${tempUrl}/company-invites?inviteId=${encodeURIComponent(inviteId.toString())}`;
+
+    if (hasAccount) {
+      if (userId) {
+        this.notificationService.create({
+          recipientIds: [userId],
+          message: new Message('New invite to Company!', `You have been invited to join ${inviteDto.companyName}`, {
+            inviteId: inviteId,
+          }),
+        });
+      }
+
+      const result = await this.mailerService.sendMail({
+        to: inviteDto.emailBeingInvited,
+        from: '"Support Team" <support@workwise.com>',
+        subject: subject,
+        template: './inviteExistingToCompany',
+        context: {
+          companyName: inviteDto.companyName,
+          userName: 'there',
+          roleName: inviteDto.roleName,
+          supportEmail: 'support@workwise.com',
+          url: existingUserLink,
+        },
+      });
+      console.log(result);
+    } else {
+      const result = await this.mailerService.sendMail({
+        to: inviteDto.emailBeingInvited,
+        from: '"Support Team" <support@workwise.com>',
+        subject: subject,
+        template: './inviteToCompany',
+        context: {
+          companyName: inviteDto.companyName,
+          userName: 'there',
+          roleName: inviteDto.roleName,
+          supportEmail: 'support@workwise.com',
+          newUserLink: newUserLink,
+        },
+      });
+      console.log(result);
+    }
+  }
+
+  async sendClientPortalLink(
+    clientId: Types.ObjectId,
+    clientEmail: string,
+    clientName: string,
+    clientSurname: string,
+    companyName: string,
+    jobTitle: string,
+  ) {
+    const serverUrl = `http://localhost:5173`; //TODO: Point to Deployment <!-- https://tuksui.sharpsoftwaresolutions.net?clientid=clientid-->
+    const url = `${serverUrl}/client-portal?cId=${encodeURIComponent(clientId.toString())}`;
+    const ourEmail = '<support@workwise.com>';
+
+    const result = await this.mailerService.sendMail({
+      to: clientEmail,
+      from: `"Support Team" ${ourEmail}`,
+      subject: 'New Job Alert',
+      template: './client-portal',
+      context: {
+        name: clientName,
+        surname: clientSurname,
+        companyName: companyName,
+        jobTitle: jobTitle,
+        link: url,
       },
     });
     console.log(result);

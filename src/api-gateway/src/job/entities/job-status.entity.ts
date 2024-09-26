@@ -1,7 +1,7 @@
 import { SchemaTypes, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export const defaultTagColour: string = '#FAF9F6';
+export const defaultTagColour: string = '#1a89c4';
 
 @Schema()
 export class JobStatus {
@@ -12,7 +12,7 @@ export class JobStatus {
   }
   @Prop({ type: String, required: true })
   status: string;
-  @Prop({ type: String, required: false, default: '#fbfffc' })
+  @Prop({ type: String, required: false, default: '#1a89c4' })
   colour: string = defaultTagColour; //Will be hex value
   @Prop({
     type: SchemaTypes.ObjectId,
@@ -21,5 +21,7 @@ export class JobStatus {
   })
   companyId: Types.ObjectId;
 }
+
+//export const protectedStatuses = ['No status', 'Archive', 'To Do', 'In Progress', 'Complete'];
 
 export const JobStatusSchema = SchemaFactory.createForClass(JobStatus);

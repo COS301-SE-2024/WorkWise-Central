@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNotEmptyObject, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateRoleDto {
@@ -13,6 +13,22 @@ export class UpdateRoleDto {
   @ApiProperty()
   @IsString()
   roleName?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  hourlyRate?: number;
+}
+
+export class ExternalUpdateRoleDto {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsMongoId()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsNotEmptyObject()
+  @ApiProperty()
+  updateRoleDto: UpdateRoleDto;
 }
 
 export class updateRoleResponseDto {
@@ -23,20 +39,23 @@ export class updateRoleResponseDto {
 }
 
 export class BulkUpdateRoleDto {
-  @IsArray()
   @IsNotEmptyObject()
   @ApiProperty()
-  roleUpdates: UpdateRoleDto[];
+  updateRoleDto: UpdateRoleDto;
 
   @IsNotEmpty()
   @IsMongoId()
   @ApiProperty()
-  roleIds: Types.ObjectId[];
+  roleId: Types.ObjectId;
 }
 
-// export class BulkUpdateRoleResponseDto {
-//   response: { access_token: string; id: Types.ObjectId }[];
-//   constructor(message: { access_token: string; id: Types.ObjectId }) {
-//     this.response = [message];
-//   }
-// }
+export class ExternalBulkUpdateRoleDto {
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsMongoId()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  bulkUpdateRoleDto: BulkUpdateRoleDto[];
+}

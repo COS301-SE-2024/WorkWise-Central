@@ -1,4 +1,4 @@
-import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty, OmitType } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import {
   IsBoolean,
@@ -10,19 +10,18 @@ import {
   //IsPhoneNumber,
   IsString,
   MaxLength,
-  MinLength,
+  //MinLength,
   Validate,
   ValidateNested,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { Company } from '../entities/company.entity';
-import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
-import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
+import { RegistrationNumber, VatNumber } from '../../utils/Custom Validators/RegistrationNumber';
 
 export class ContactDetails {
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
+  //@Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber: string;
 
@@ -64,6 +63,15 @@ export class Address {
   postalCode: string;
 }
 
+export class AccountDetails {
+  @IsOptional()
+  @IsString()
+  merchantId?: string;
+  @IsOptional()
+  @IsString()
+  merchantKey?: string;
+}
+
 export class CreateCompanyDto {
   @IsNotEmpty()
   @IsMongoId()
@@ -77,9 +85,9 @@ export class CreateCompanyDto {
   registrationNumber?: string;
 
   @ApiProperty()
-  @IsString()
   @IsOptional()
-  @MinLength(10)
+  @IsString()
+  @Validate(VatNumber)
   @MaxLength(10)
   vatNumber?: string;
 
@@ -93,10 +101,10 @@ export class CreateCompanyDto {
   @IsString()
   type?: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'A Base64 URI string' })
   @IsOptional()
   @IsString()
-  @Validate(Base64ContentIsImage)
+  // @Validate(Base64ContentIsImage)
   logo?: string;
 
   @ApiProperty()
@@ -113,6 +121,12 @@ export class CreateCompanyDto {
 
   @ApiProperty()
   @IsOptional()
+  @ValidateNested()
+  @Type(() => AccountDetails)
+  accountDetails?: AccountDetails;
+
+  @ApiProperty()
+  @IsOptional()
   @IsBoolean()
   private?: boolean = false;
 }
@@ -121,10 +135,54 @@ export class findCompanyResponseDto {
   data: Company & { _id: Types.ObjectId }[];
 }
 
-export class CreateCompanyResponseDto {
-  data: Company & { _id: Types.ObjectId };
+export class CompanyApiCreateObject {
+  @ApiProperty()
+  ownerId: Types.ObjectId;
 
-  constructor(data: Company & { _id: Types.ObjectId }) {
+  @ApiProperty()
+  _id: Types.ObjectId;
+
+  @ApiProperty()
+  registrationNumber?: string;
+
+  @ApiProperty()
+  vatNumber?: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  type?: string;
+
+  @ApiProperty()
+  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+
+  @ApiProperty()
+  contactDetails: ContactDetails;
+
+  @ApiProperty()
+  address: Address;
+
+  @ApiProperty()
+  accountDetails: AccountDetails;
+
+  @ApiProperty()
+  private: boolean;
+
+  @ApiHideProperty()
+  public createdAt: Date;
+
+  @ApiHideProperty()
+  public updatedAt: Date;
+
+  @ApiHideProperty()
+  public deletedAt: Date;
+}
+
+export class CreateCompanyResponseDto {
+  data: CompanyApiCreateObject;
+
+  constructor(data: CompanyApiCreateObject) {
     this.data = data;
   }
 }
@@ -132,6 +190,7 @@ export class CreateCompanyResponseDto {
 class FilteredAddress extends OmitType(Address, ['street']) {}
 
 class CompanyAllType {
+  _id: Types.ObjectId;
   registrationNumber?: string;
   vatNumber?: string;
   name: string;

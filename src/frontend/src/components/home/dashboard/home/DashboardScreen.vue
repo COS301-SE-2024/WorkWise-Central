@@ -1,29 +1,26 @@
 <template>
   <v-container fluid fill-height>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">Dashboard</h2>
+      </v-col>
+      <v-divider></v-divider>
+    </v-row>
     <v-row justify="center">
       <v-col>
-        <v-card
-          height="auto"
-          class="pa-16 ma-0 bg-background"
-          rounded="md"
-          :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-          border="md"
-          elevation="0"
-        >
-          <!-- Calendar Card -->
-          <v-col cols="12">
-            <v-card max-height="auto" border="md" rounded="xl" class="bg-cardColor">
-              <v-icon icon="fa:fa-solid fa-calender-alt"></v-icon>
-              <v-card-title>Calendar</v-card-title>
+        <!-- Calendar Card -->
+        <v-col cols="12">
+          <v-card :max-height="1500" border="md" rounded="lg" class="bg-cardColor">
+            <v-icon icon="fa:fa-solid fa-calender-alt"></v-icon>
+            <v-card-title>Calendar</v-card-title>
 
-              <v-card-item>
-                <div class="calendar-container-dark is-light-mode" :style="{ height: '700px' }">
-                  <Qalendar />
-                </div>
-              </v-card-item>
-            </v-card>
-          </v-col>
-        </v-card>
+            <v-card-item>
+              <div class="calendar-container-dark is-light-mode" :style="{ height: '700px' }">
+                <Qalendar />
+              </div>
+            </v-card-item>
+          </v-card>
+        </v-col>
       </v-col>
     </v-row>
   </v-container>
@@ -62,7 +59,7 @@ export default {
         { name: 'Marketing Team', members: 8 },
         { name: 'Support Team', members: 6 }
       ],
-      isdarkmode: sessionStorage.getItem('isdarkmode') === 'true' ? true : false
+      isDarkMode: sessionStorage.getItem('isDarkMode') === 'true' ? true : false
     }
   },
   methods: {
@@ -121,7 +118,7 @@ export default {
   font-weight: bold;
 }
 
-.calendar-container-dark {
+/* .calendar-container-dark {
   background-color: transparent;
   color: grey;
 }
@@ -129,5 +126,5 @@ export default {
 .calendar-container-light {
   background-color: transparent;
   color: darkslategrey;
-}
+} */
 </style>

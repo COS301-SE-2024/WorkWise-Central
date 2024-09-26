@@ -1,9 +1,10 @@
-import { Address, ContactDetails } from '../entities/company.entity';
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
+  IsEmail,
   IsMongoId,
   IsNotEmpty,
+  IsNumberString,
   IsOptional,
   IsString,
   MaxLength,
@@ -14,9 +15,64 @@ import {
 import { Type } from 'class-transformer';
 import { RegistrationNumber } from '../../utils/Custom Validators/RegistrationNumber';
 import { Types } from 'mongoose';
+import { Base64ContentIsImage } from '../../utils/Custom Validators/Base64ContentIsImage';
 
-class UpdateContactDetails extends PartialType(ContactDetails) {}
-class UpdateAddress extends PartialType(Address) {}
+export class ContactDetails {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @IsEmail()
+  email?: string;
+}
+
+export class Address {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  street?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  province?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  suburb?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  city?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumberString()
+  @MaxLength(20)
+  postalCode?: string;
+}
+
+export class AccountDetails {
+  @IsOptional()
+  @IsString()
+  merchantId?: string;
+  @IsOptional()
+  @IsString()
+  merchantKey?: string;
+  @IsOptional()
+  @IsString()
+  passPhrase?: string;
+}
 
 export class UpdateCompanyDto {
   @ApiProperty()
@@ -38,22 +94,29 @@ export class UpdateCompanyDto {
   @IsOptional()
   type?: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Must be converted to Base64' })
   @IsString()
   @IsOptional()
-  logo?: string = 'https://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=mp';
+  @Validate(Base64ContentIsImage)
+  logo?: string;
 
   @ApiProperty()
   @IsOptional()
   @ValidateNested()
-  @Type(() => UpdateContactDetails)
-  contactDetails?: UpdateContactDetails;
+  @Type(() => ContactDetails)
+  contactDetails?: ContactDetails;
 
   @ApiProperty()
   @IsOptional()
   @ValidateNested()
-  @Type(() => UpdateAddress)
-  address?: UpdateAddress;
+  @Type(() => Address)
+  address?: Address;
+
+  @ApiProperty()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AccountDetails)
+  accountDetails?: AccountDetails;
 
   @ApiProperty()
   @IsOptional()

@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
-import { IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsMongoId, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { UserInfo } from '../entities/employee.entity';
 
 export class CreateEmployeeDto {
@@ -19,7 +19,7 @@ export class CreateEmployeeDto {
   @ApiProperty()
   userId: Types.ObjectId;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @IsMongoId()
   userInfo?: UserInfo;
 
@@ -27,6 +27,47 @@ export class CreateEmployeeDto {
   @IsMongoId()
   @ApiProperty()
   companyId: Types.ObjectId;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  hourlyRate?: number;
+}
+
+export class ExternalCreateEmployeeDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  currentEmployeeId: Types.ObjectId;
+
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  roleId?: Types.ObjectId;
+
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty()
+  superiorId?: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  userId: Types.ObjectId;
+
+  @ApiHideProperty()
+  @IsMongoId()
+  userInfo?: UserInfo;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  companyId: Types.ObjectId;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  hourlyRate?: number;
 }
 
 export class CreateEmployeeResponseDto {

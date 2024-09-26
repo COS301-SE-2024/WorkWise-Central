@@ -1,16 +1,11 @@
 <template>
-  <v-dialog
-    v-model="deleteDialog"
-    max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-    :opacity="0.1"
-  >
+  <v-dialog v-model="deleteDialog" max-width="500px">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa:fa-solid fa-users"></v-icon>
         <span>Delete Team</span>
@@ -29,13 +24,13 @@
       <v-card-actions>
         <v-container>
           <v-row justify="end">
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn color="secondary" @click="close" block>
-                <v-icon icon="fa:fa-solid fa-times" start color="secondary" size="small"></v-icon>
+                <v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon>
                 Cancel
               </v-btn>
             </v-col>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn color="error" :loading="isDeleting" block @click="deleteTeam">
                 <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>
                 Delete
@@ -65,13 +60,14 @@ export default defineComponent({
   data: () => ({
     deleteDialog: false,
     isDeleting: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
     async deleteTeam() {
-      console.log('Deleting team with ID:', this.team_id)
+      console.log(this.teamName)
+      console.log(this.team_id)
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +80,7 @@ export default defineComponent({
       const apiURL = await this.getRequestUrl()
       try {
         this.isDeleting = true
-        await axios.delete(`${apiURL}teams/${this.team_id}`, config)
+        await axios.delete(`${apiURL}team/${this.team_id}`, config)
         console.log('Team deleted successfully')
         this.$toast.add({
           severity: 'success',
@@ -92,7 +88,12 @@ export default defineComponent({
           detail: 'Team deleted successfully',
           life: 3000
         })
-        this.deleteDialog = false
+        setTimeout(() => {
+          this.isDeleting = false
+          this.deleteDialog = false
+          // Emit the event to the parent component after deletion
+          this.$emit('teamDeleted', this.team_id)
+        }, 1500)
       } catch (error) {
         console.error('Error deleting team:', error)
         this.$toast.add({

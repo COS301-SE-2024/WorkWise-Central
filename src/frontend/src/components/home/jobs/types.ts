@@ -72,7 +72,7 @@ type User = {
 
 export type EmployeeJoined = {
   _id: string
-  roleId: Role
+  role: Role
   currentJobAssignments: any[]
   subordinates: any[]
   subordinateTeams: any[]
@@ -133,13 +133,6 @@ export type Card = {
   status: string
 }
 
-export type Column = {
-  id: number
-  status: string
-  color: string
-  cards: JobCardDataFormat[]
-}
-
 export type JobTag = {
   _id: string
   label: string
@@ -164,13 +157,37 @@ export type JobStatuses = {
   __v: number
 }
 
+type Tag = {
+  _id: string
+  label: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
+type Status = {
+  _id: string
+  status: string
+  colour: string
+  companyId: string
+  __v: number
+}
+
+type PriorityTag = {
+  _id: string
+  label: string
+  priorityLevel: number
+  colour: string
+  companyId: string
+  __v: number
+}
+
 export type JobCardDataFormat = {
   jobId: string
   heading: string
   jobDescription: string
   startDate: string
   endDate: string
-  status: string
   clientName: string
   street: string
   suburb: string
@@ -178,13 +195,12 @@ export type JobCardDataFormat = {
   postalCode: string
   complex?: string
   houseNumber?: string
-  imagesTaken: string[]
-  inventoryUsed: string[]
   taskList: string[]
   comments: string[]
-  //tell hamza to add these new one here
-  priority: string
-  tags: string[]
+  tags: Tag[]
+  status: Status
+  priorityTag: PriorityTag
+  coverImage: string
 }
 
 export type Job = {
@@ -258,7 +274,13 @@ export type Job = {
     employeeIds?: string[]
     teamIds?: string[]
   }
-  status: string
+  status: {
+    _id: string
+    status: string
+    colour: string
+    companyId: string
+    __v: number
+  }
   tags?: string[]
   priorityTag?: string
   attachments: string[]
@@ -316,3 +338,19 @@ export type Job = {
   createdAt: string
   updatedAt: string
 }
+
+export type Column = {
+  _id: string
+  __v: 0
+  status: string
+  colour: string
+  companyId: string
+  cards: JobCardDataFormat[]
+}
+
+// export type Column = {
+//   id: number
+//   status: string
+//   color: string
+//   cards: JobCardDataFormat[]
+// }

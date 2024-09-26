@@ -19,6 +19,7 @@ const vuetify = createVuetify({
   defaults: {
     VDialog: {
       scrollable: true,
+      opacity: '0',
       VCard: {
         height: '70vh',
         VCardTitle: {
@@ -46,16 +47,15 @@ const vuetify = createVuetify({
       elevation: 2,
       rounded: 'md',
       height: 'auto',
-
+      class: 'bg-background',
       VCardTitle: {
         class: 'h5 font-weight-regular  d-flex justify-center bg-cardColor text-secondary'
       },
       VCardText: {
-        class: 'bg-cardColor',
         VList: {
-          class: 'bg-cardColor',
+          class: 'bg-background',
           VListItem: {
-            class: 'bg-cardColor'
+            class: 'bg-background'
           }
         }
       },
@@ -112,11 +112,14 @@ const vuetify = createVuetify({
       class: 'bg-cardColor'
     },
 
-    VExpansionPanel: {
-      class: 'bg-cardColor'
-    },
     VStepper: {
       class: 'bg-cardColor'
+    },
+    VList: {
+      class: 'bg-background',
+      VListItem: {
+        class: 'bg-background'
+      }
     }
   },
   directives,
@@ -159,7 +162,8 @@ const vuetify = createVuetify({
           cardColor: '#F1F2F4',
           elementTextColor: '#4C9FC3', // most important color for text
           headingTextColor: '#091E42',
-          n_elementTextColor: '#8C9BAB', // most nonImportant color for text
+          n_elementTextColor: '#8C9BAB',
+          chip: '#FAF9F6', // most nonImportant color for text
           highlighter: '#DEE4EA',
           tableRowColor: '#8C9BAB',
           firstPlace: '#E2B203',

@@ -1,16 +1,11 @@
 <template>
-  <v-dialog
-    v-model="deleteDialog"
-    max-width="500px"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-    :opacity="0.1"
-  >
+  <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0.6">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-plus</v-icon>
         <span>Delete Inventory</span>
@@ -30,14 +25,12 @@
       <v-card-actions>
         <v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6"
-              ><Toast position="bottom-center" />
-              <v-btn label="Cancel" color="secondary" @click="close" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="secondary" size="small"></v-icon
-                >Cancel
+            ><v-col cols="12" lg="6" order="last" order-lg="first">
+              <v-btn label="Cancel" color="secondary" @click="close" block :disabled="isDeleting"
+                ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn></v-col
             >
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn
                 label="Delete"
                 color="error"
@@ -59,6 +52,7 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'DeleteInventory',
@@ -73,12 +67,13 @@ export default defineComponent({
     deleteDialog: false,
     clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
     isDeleting: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     localUrl: 'http://localhost:3000/',
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
     async deleteInventory() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log('meow', this.inventory_id)
       console.log(localStorage.getItem('employeeId'))
       const config = {
@@ -90,17 +85,30 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
-        await axios.delete(`${apiURL}inventory/${this.inventory_id}`, config)
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Inventory deleted successfully',
-          life: 3000
+        await axios.delete(`${API_URL}inventory/${this.inventory_id}`, config).then((response) => {
+          console.log(response.data)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Inventory deleted successfully',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.deleteDialog = false
+            this.$emit('deleteInventory', this.inventory_id)
+          }, 3000)
         })
       } catch (error) {
         console.error(error)
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'An error occurred while deleting the inventory',
+          life: 3000
+        })
+      } finally {
+        this.isDeleting = false
       }
     },
     close() {

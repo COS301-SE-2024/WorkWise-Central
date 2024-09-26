@@ -32,6 +32,8 @@ services:
     environment:
       SERVER_LOGIN:
         mongodb://mongo_db:27017/${MONGO_INIT_ROOT_DATABASE}?retryWrites=true&w=majority
+#    volumes:
+#      - workwise_file_volume:/api-gateway/uploads/
 
   mongo_db:
     restart: unless-stopped
@@ -57,6 +59,7 @@ services:
 volumes:
   workwise_prod_volume:
   mongo_db_config:
+# workwise_file_volume:
 
 networks:
   webnet:

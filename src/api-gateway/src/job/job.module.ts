@@ -20,6 +20,11 @@ import { JobTagRepository } from './job-tag.repository';
 import { JobStatus, JobStatusSchema } from './entities/job-status.entity';
 import { InventoryModule } from '../inventory/inventory.module';
 import { InventoryService } from '../inventory/inventory.service';
+import { StockTakeModule } from '../stocktake/stocktake.module';
+import { StockMovementsModule } from '../stockmovements/stockmovements.module';
+import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
+import { EmailModule } from '../email/email.module';
+import { TeamService } from '../team/team.service';
 
 @Module({
   imports: [
@@ -38,6 +43,10 @@ import { InventoryService } from '../inventory/inventory.service';
     forwardRef(() => JwtModule),
     forwardRef(() => FileModule),
     forwardRef(() => InventoryModule),
+    forwardRef(() => StockTakeModule),
+    forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryUsedModule),
+    forwardRef(() => EmailModule),
   ],
   providers: [
     JobService,
@@ -48,6 +57,7 @@ import { InventoryService } from '../inventory/inventory.service';
     JwtService,
     FileService,
     InventoryService,
+    TeamService,
   ],
   controllers: [JobController],
   exports: [JobService, MongooseModule, JobRepository, JobTagRepository],

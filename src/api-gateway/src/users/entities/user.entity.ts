@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import * as bcrypt from 'bcryptjs';
+//import * as bcrypt from 'bcryptjs';
 import { ApiHideProperty, ApiProperty, OmitType } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -101,9 +101,9 @@ export class JoinedCompany {
     this.companyName = companyName;
   }
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: Employee.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Employee' })
   employeeId: Types.ObjectId;
-  @Prop({ type: SchemaTypes.ObjectId, ref: Company.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Company' })
   companyId: Types.ObjectId;
   @Prop({ type: String })
   companyName: string;
@@ -167,7 +167,7 @@ export class User {
   deviceIds?: string[] = [];
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Employee.name })
+  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: 'Employee' })
   public currentEmployee?: Types.ObjectId;
 
   @ApiProperty()
@@ -265,7 +265,7 @@ export const userJoinedCompaniesField = {
   populate: [
     {
       path: 'employeeId',
-      model: Employee.name,
+      model: 'Employee',
     },
     {
       path: 'companyId',
@@ -276,12 +276,12 @@ export const userJoinedCompaniesField = {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-UserSchema.pre('save', async function (next) {
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.systemDetails.password = await bcrypt.hash(this.systemDetails.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+// UserSchema.pre('save', async function (next) {
+//   try {
+//     const salt = await bcrypt.genSalt(10);
+//     this.systemDetails.password = await bcrypt.hash(this.systemDetails.password, salt);
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// });

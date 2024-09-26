@@ -25,7 +25,6 @@ import { EmployeeService } from '../employee/employee.service';
 import { RoleService } from '../role/role.service';
 import { NotificationService } from '../notification/notification.service';
 import { Role } from '../role/entity/role.entity';
-import { ciEquals } from '../utils/Utils';
 import { InviteToJoin } from './entities/invite-to-join.entity';
 import { EmailService } from '../email/email.service';
 
@@ -97,16 +96,20 @@ export class AdminService {
     const employees = await this.employeeService.findAllInCompany(requestToJoin.companyId);
     //TODO: If they have company settings permissions
     //employees = employees.filter((x) => {x.permissionSuite.includes('can edit company')})
-    const empIds: Types.ObjectId[] = [];
+    const userIds: Types.ObjectId[] = [];
     for (const employee of employees) {
-      empIds.push(employee._id);
+      userIds.push(employee.userId);
     }
 
     //Get needed information for message
     const user = await this.usersService.getUserById(userId);
 
-    this.notificationService.create({
-      recipientIds: empIds,
+    if (user == null) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.notificationService.create({
+      recipientIds: userIds,
       message: {
         title: `New Request to join ${company.name}`,
         body: `${user.personalInfo.firstName} ${user.personalInfo.surname} would like to join ${company.name},
@@ -115,6 +118,8 @@ export class AdminService {
           type: 'requestToJoin',
         },
       },
+      isJobRelated: false,
+      companyName: company.name,
     });
     return savedReq;
   }
@@ -127,19 +132,22 @@ export class AdminService {
     if (!(await this.usersService.userIdExists(userId))) {
       throw new BadRequestException('userId Invalid');
     }
+
     const employee = await this.employeeService.findById(userInviteRequestDto.employeeId);
     if (employee.userId.toString() !== userId.toString()) throw new UnauthorizedException('UserId not in employee');
+
     const company = await this.companyService.getCompanyById(employee.companyId);
     if (company == null) throw new NotFoundException('Company Invalid');
 
     // Someone with the email address already exists
-    const allUsers = await this.usersService.getAllUsersInCompany(company._id);
-    for (const user of allUsers) {
-      if (ciEquals(user.personalInfo.contactInfo.email, userInviteRequestDto.emailToInvite))
-        throw new ConflictException('User with email already in company');
+    const userAlreadyInCompany = await this.usersService.userWithEmailExistsInCompany(
+      company._id,
+      userInviteRequestDto.emailToInvite,
+    );
+    if (userAlreadyInCompany) {
+      throw new ConflictException('User with email already in company');
     }
     // get user
-
     const invitesToUser: (FlattenMaps<InviteToJoin> & {
       _id: Types.ObjectId;
     })[] = await this.adminRepository.findInvitesForUser(userInviteRequestDto.emailToInvite);
@@ -162,6 +170,13 @@ export class AdminService {
         ? await this.roleService.findOneInCompany('Worker', company._id)
         : await this.roleService.findById(userInviteRequestDto.roleId);
 
+    let superior: Types.ObjectId;
+    if (userInviteRequestDto.superiorId == null) {
+      superior = (await this.employeeService.findAllInCompanyWithRoleName(company._id, 'Owner'))[0]._id;
+    } else {
+      superior = userInviteRequestDto.superiorId;
+    }
+
     //
     const newInvite = new InviteToJoin(
       company._id,
@@ -169,10 +184,12 @@ export class AdminService {
       role._id,
       role.roleName,
       userInviteRequestDto.emailToInvite,
+      superior,
     );
     const result = await this.adminRepository.saveInvite(newInvite);
 
-    await this.emailService.sendInvite(newInvite, result._id);
+    const hasAccount = await this.usersService.emailExists(userInviteRequestDto.emailToInvite);
+    await this.emailService.sendInvite(newInvite, result._id, hasAccount, userId);
 
     return result;
   }
@@ -338,6 +355,8 @@ export class AdminService {
           body: `Congratulations, ${fName} ${lName}! You have been accepted into ${companyName} in the role: ${roleName}`,
         },
         recipientIds: [acceptRequestDto.userToJoinId],
+        isJobRelated: false,
+        companyName: company.name,
       });
       //remove request
       await this.adminRepository.acceptRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
@@ -355,6 +374,8 @@ export class AdminService {
           body: `Good day, ${fName} ${lName}. You have unfortunately been rejected from ${companyName}.`,
         },
         recipientIds: [acceptRequestDto.userToJoinId],
+        isJobRelated: false,
+        companyName: company.name,
       });
       await this.adminRepository.rejectRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
       return true;

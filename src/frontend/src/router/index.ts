@@ -14,7 +14,6 @@ import ClientView from '@/views/ClientEmployee.vue'
 import ClientEmployeeView from '@/views/home/employees/EmployeeDesk.vue'
 import ClientEmployee from '@/components/ClientEmployeeView.vue'
 import Dashboard from '@/views/home/dashboard/DashboardView.vue'
-import Kanban from '@/components/home/jobs/Kanban.vue'
 import ManagerView from '@/views/ManagerView.vue'
 import ProfilePage from '@/components/home/settings/profile/ProfilePage.vue'
 import CompanySettings from '@/components/home/settings/company/CompanySettings.vue'
@@ -41,14 +40,21 @@ import EditTags from '@/components/home/settings/company/EditTags.vue'
 import EditPriority from '@/components/home/settings/company/EditPriority.vue'
 import EditStatus from '@/components/home/settings/company/EditStatus.vue'
 import TeamView from '@/views/home/teams/TeamView.vue'
+import CompanyRequestView from '@/views/home/company/CompanyRequestView.vue'
+import InvitesCompanyView from '@/views/home/company/InvitesCompanyView.vue'
+import NewPasswordView from '@/views/signup/NewPasswordView.vue'
+import ClientPortal from '@/views/home/clients/ClientPortalView.vue'
+import InvoicesView from '@/views/home/invoices/InvoicesView.vue'
+import InvoiceCenter from '@/views/home/invoices/InvoiceCenter.vue'
+import HourlyRate from '@/components/home/settings/company/HourlyRate.vue'
+import SetupPaymentGateway from '@/components/home/settings/company/SetupPaymentGateway.vue'
+import SuccessfulPayment from '@/components/home/clients/client_portal/SuccessfulPayment.vue'
+import VideoMeetings from '@/views/notfications/VideoMeetings.vue'
+import GoogleMapsView from '@/views/home/map/GoogleMapsView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/kanban',
-      name: 'kanban',
-      component: Kanban
-    },
     {
       path: '/register-company',
       name: 'registercompany',
@@ -299,8 +305,8 @@ const router = createRouter({
       path: '/tutorial',
       name: 'tutorial',
       component: () => import('@/components/home/help/tutorial/Tutorial.vue')
-},
-                            {
+    },
+    {
       path: '/edit-tags',
       name: 'edit-tags',
       component: EditTags
@@ -319,8 +325,104 @@ const router = createRouter({
       path: '/teams',
       name: 'teams',
       component: TeamView
+    },
+    {
+      path: '/company-requests',
+      name: 'company-requests',
+      component: CompanyRequestView
+    },
+    {
+      path: '/company-invites',
+      name: 'company-invites',
+      component: InvitesCompanyView
+    },
+    {
+      path: '/new-password',
+      name: 'new-password',
+      component: NewPasswordView
+    },
+    {
+      path: '/splash/tutorial',
+      name: 'splash-tutorial',
+      component: () => import('@/components/signup/Tutorial.vue')
+    },
+    {
+      path: '/backlog/archive',
+      name: 'backlog-archive',
+      component: () => import('@/views/home/jobs/Archive.vue')
+    },
+    {
+      path: '/chat',
+      name: 'Chat',
+      component: () => import('@/views/UserChats.vue'),
+      props: {
+        currentUser: `${localStorage.getItem('id')}`,
+        onLogout: () => console.log('Logged out')
+      }
+    },
+    {
+      path: '/client-portal',
+      name: 'client-portal',
+      component: ClientPortal,
+      props: route => ({ cid: route.query.cid })
+    },
+    {
+      path: '/invoices',
+      name: 'invoices',
+      component: InvoicesView
+    },
+    {
+      path: '/invoice-center',
+      name: 'invoice-center',
+      component: InvoiceCenter
+    },
+    {
+      path: '/hourly-rate',
+      name: 'hourly-rate',
+      component: HourlyRate
+    },
+    {
+      path: '/companySettingsView/setup-payment-gateway',
+      name: 'setup-payment-gateway',
+      component: SetupPaymentGateway
+    },
+    {
+      path: '/client-portal/successful-payment',
+      name: 'successful-payment',
+      component: SuccessfulPayment
+    },
+    {
+      path: '/video-meetings',
+      name: 'video-meetings',
+      component: VideoMeetings
+    },
+    {
+      path: '/inv-kanban',
+      name: 'invoice-kanban',
+      component: () => import('@/views/home/invoices/InvoiceBacklog.vue')
+    },
+    {
+      path: '/map',
+      name: 'map',
+      component: GoogleMapsView
+    },
+    {
+      path: '/chatHome',
+      name: 'chatHome',
+      component: () => import('@/views/home/chat/ChatHome.vue'),
     }
   ]
 })
 
+router.beforeEach((to, from, next) => {
+  const accessToken = localStorage.getItem('access_token')
+
+  if (to.name !== 'splash' && !accessToken && to.name !== 'new-password') {
+    next({ name: 'splash' }) // Redirect to splash page if no access_token and trying to access a protected route
+  } else if (to.name === 'splash' && accessToken) {
+    next({ name: 'dashboard' }) // Optional: Redirect to a protected route if already logged in and trying to access splash page
+  } else {
+    next() // Proceed to the route
+  }
+})
 export default router

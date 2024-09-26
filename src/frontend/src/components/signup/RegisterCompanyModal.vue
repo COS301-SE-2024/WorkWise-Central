@@ -1,30 +1,21 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-height="800"
-    max-width="600"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-  >
+  <v-dialog v-model="dialog" max-height="800" opacity="0.6" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
         variant="elevated"
-        color="secondary"
+        :color="buttonColor ? buttonColor : 'secondary'"
         v-bind="activatorProps"
+        block
         >Register Company</v-btn
       >
     </template>
-    <v-sheet
-      elevation="14"
-      rounded="md"
-      max-width="600"
-      :theme="isdarkmode === true ? 'dark' : 'light'"
-    >
+    <v-sheet elevation="14" rounded="md" max-width="600">
       <v-form
         ref="form"
         v-model="valid"
-        @submit.prevent="registrationHandler"
+        @submit.prevent="validateRegistration"
         class="bg-background"
       >
         <v-col>
@@ -36,14 +27,15 @@
           <v-spacer></v-spacer>
           <v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company Name</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company Name
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's name"
                 v-model="req_obj.name"
-                :rules="company_name_rules"
                 rounded="md"
                 variant="solo"
                 required
@@ -51,7 +43,7 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Type of business*</label>
+              <label style="font-size: 14px; font-weight: lighter">Type of business </label>
               <v-autocomplete
                 density="compact"
                 color="primary"
@@ -59,7 +51,6 @@
                 v-model="req_obj.type"
                 rounded="md"
                 variant="solo"
-                :rules="business_type_rules"
                 :items="[
                   'Agricultural Labor',
                   'Automotive Repair',
@@ -137,10 +128,12 @@
             </v-col>
 
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company email address</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company email address
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
 
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's email adress"
@@ -154,10 +147,12 @@
               ></v-text-field
             ></v-col>
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company phone number*</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Company phone number
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
 
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's phone number"
@@ -171,11 +166,10 @@
             ></v-col>
             <v-col>
               <label style="font-size: 14px; font-weight: lighter"
-                >Company registration number*</label
+                >Company registration number</label
               >
 
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's registration number"
@@ -189,10 +183,9 @@
             ></v-col>
 
             <v-col>
-              <label style="font-size: 14px; font-weight: lighter">Company VAT number*</label>
+              <label style="font-size: 14px; font-weight: lighter">Company VAT number</label>
 
               <v-text-field
-                @update:focused="setUserId"
                 density="compact"
                 color="cardColor"
                 placeholder="Enter the company's VAT number"
@@ -207,7 +200,6 @@
             <v-col>
               <small class="text-caption">Company logo</small>
               <v-file-input
-                :theme="isdarkmode === true ? 'dark' : 'light'"
                 variant="solo"
                 accept="image/*"
                 width="100%"
@@ -218,17 +210,21 @@
                 color="black"
                 rounded="md"
                 required
-                :rules="company_logo_rules"
                 data-testid="company-logo-file-input"
               ></v-file-input>
             </v-col>
-            <label style="font-size: 14px; font-weight: lighter">Company address*</label>
+            <label style="font-size: 14px; font-weight: lighter"
+              >Company address
+              <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+            </label>
 
             <v-row class="d-flex flex-wrap">
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Street</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Street
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
-                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Street"
@@ -241,9 +237,11 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Suburb</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Suburb
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
-                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Suburb"
@@ -256,14 +254,16 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Province</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Province
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-autocomplete
                   density="compact"
                   placeholder="Province"
                   color="cardColor"
                   v-model="req_obj.address.province"
                   rounded="md"
-                  type="houseNumber"
                   variant="solo"
                   :items="[
                     'Eastern Cape',
@@ -282,9 +282,11 @@
                 ></v-autocomplete
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">City/Town</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >City/Town
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
-                  @update:focused="setUserId"
                   density="compact"
                   placeholder="City"
                   rounded="md"
@@ -297,9 +299,11 @@
                 ></v-text-field
               ></v-col>
               <v-col sm="6" cols="12">
-                <label style="font-size: 11px; font-weight: lighter">Postal Code</label>
+                <label style="font-size: 11px; font-weight: lighter"
+                  >Postal Code
+                  <label style="font-size: 14px; font-weight: lighter; color: red">* </label>
+                </label>
                 <v-text-field
-                  @update:focused="setUserId"
                   density="compact"
                   color="cardColor"
                   placeholder="Postal Code"
@@ -321,70 +325,48 @@
                   v-model="req_obj.address.complex"
                   variant="solo"
                   required
-                  :rules="complex_or_building_rules"
                   hint="Complex or Building Name, unit number or floor"
                   persistent-hint
                   data-testid="complex-field"
                 ></v-text-field
               ></v-col>
             </v-row>
-            <!--            <v-row>-->
-            <!--              <v-col-->
-            <!--                > <v-text-field
-                @update:focused = "setUserId"-->
-            <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
-            <!--                  density="compact"-->
-            <!--                  color="grey-lighten-4"-->
-            <!--                  placeholder="Complex"-->
-            <!--                  rounded="md"-->
-            <!--                  v-model="req_obj.address.complex"-->
-            <!--                  variant="solo"-->
-            <!--                  required-->
-            <!--                ></v-text-field-->
-            <!--              ></v-col>-->
-            <!--              <v-col-->
-            <!--                > <v-text-field
-                @update:focused = "setUserId"-->
-            <!--                  :theme="isdarkmode === true ? 'dark' : 'light'"-->
-            <!--                  density="compact"-->
-            <!--                  color="grey-lighten-4"-->
-            <!--                  placeholder="House number"-->
-            <!--                  rounded="md"-->
-            <!--                  v-model="req_obj.address.houseNumber"-->
-            <!--                  variant="solo"-->
-            <!--                  required-->
-            <!--                ></v-text-field-->
-            <!--              ></v-col>-->
-            <!--            </v-row>-->
           </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <Toast />
-            <v-btn
-              color="primary"
-              type="submit"
-              rounded="md"
-              boarder="md"
-              width="60%"
-              height="35"
-              variant="elevated"
-              :disabled="click_create_client"
-              data-testid="continue-button"
-              >Continue</v-btn
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn
+                  color="secondary"
+                  @click="close"
+                  rounded="md"
+                  boarder="xl"
+                  size="large"
+                  height="35"
+                  variant="elevated"
+                  data-testid="back-button"
+                  block
+                  >Back</v-btn
+                >
+              </v-col>
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                <Toast position="top-center" />
+                <v-btn
+                  color="primary"
+                  type="submit"
+                  rounded="md"
+                  boarder="md"
+                  size="large"
+                  height="35"
+                  variant="elevated"
+                  :disabled="click_create_client"
+                  block
+                  data-testid="continue-button"
+                  :loading="register_request_loading"
+                  >Continue</v-btn
+                >
+              </v-col></v-row
             >
-          </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <v-btn
-              color="secondary"
-              @click="close"
-              rounded="md"
-              boarder="xl"
-              width="60%"
-              height="35"
-              variant="elevated"
-              data-testid="back-button"
-              >Back</v-btn
-            >
-          </v-col>
+          </v-container>
         </v-col>
       </v-form>
     </v-sheet>
@@ -394,6 +376,31 @@
 <script lang="ts">
 import axios from 'axios'
 import Toast from 'primevue/toast'
+
+type ContactDetails = {
+  email: string
+  phoneNumber: string
+}
+
+type Address = {
+  province: string
+  street: string
+  suburb: string
+  city: string
+  postalCode: string
+  complex?: string
+}
+
+type RequestBody = {
+  userId: string | null
+  name: string
+  type?: string
+  registrationNumber?: string
+  vatNumber?: string
+  logo?: string
+  contactDetails: ContactDetails
+  address: Address
+}
 const email_reg = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 
 export default {
@@ -401,10 +408,13 @@ export default {
   components: {
     Toast
   },
+  props: {
+    buttonColor: String
+  },
   data() {
     return {
       dialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       click_create_client: false,
       valid: true,
       dark: '#2b2b2b',
@@ -421,14 +431,17 @@ export default {
           /^[A-Z][a-zA-Z &-]{0,48}[a-zA-Z]$/.test(v) ||
           'Company name can contain both capital and lowercase letters, spaces, "&", or "-"'
       ],
-      email_rules: [(val: string) => email_reg.test(val) || 'Email should contain an @ symbol'],
+      email_rules: [
+        (val: string) => !!val || 'Email is requered',
+        (val: string) => email_reg.test(val) || 'Email should contain an @ symbol'
+      ],
       vat_number_rules: [
-        (v: string) => !!v || 'VAT number is required',
-        (v: string) => /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
+        (v: string) =>
+          !v || /^\d{10}$/.test(v) || 'VAT number must be a valid South African VAT number'
       ],
       company_registration_number_rules: [
-        (v: string) => !!v || 'Company registration number is required',
         (v: string) =>
+          !v ||
           /^\d{4}\/\d{6}\/\d{2}$/.test(v) ||
           'Company registration number must be a valid South African number format: YYYY/NNNNNN/XX'
       ],
@@ -444,9 +457,7 @@ export default {
       suburb_rules: [(v: string) => !!v || 'Suburb is required'],
       province_rules: [(v: string) => !!v || 'Province is required'],
       city_rules: [(v: string) => !!v || 'City is required'],
-      complex_or_building_rules: [(v: string) => !!v || 'Complex/Buidling is required'],
-      business_type_rules: [(v: string) => !!v || 'Business type required'],
-      company_logo_rules: [(v: string) => !!v || 'Company logo is required'],
+      register_request_loading: false,
       req_obj: {
         userId: localStorage.getItem('id'),
         name: '',
@@ -464,17 +475,32 @@ export default {
           suburb: '',
           city: '',
           postalCode: '',
-          complex: '',
-          houseNumber: ''
+          complex: ''
         }
-        // employees: [],
-        // inventoryItems: [],
-        // private: false
-      }
+      } as RequestBody
     }
   },
   methods: {
-    async registrationHandler() {
+    async validateRegistration() {
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+
+      this.req_obj.registrationNumber || delete this.req_obj.registrationNumber
+      this.req_obj.vatNumber || delete this.req_obj.vatNumber
+      this.req_obj.address.complex || delete this.req_obj.address.complex
+      this.req_obj.logo || delete this.req_obj.logo
+      this.req_obj.type || delete this.req_obj.type
+
+      console.log('hello')
+      console.log(validate)
+      this.req_obj.userId = localStorage['id']
+      if (validate.valid) {
+        this.register_request_loading = true
+        await this.registrationHandler()
+      }
+    },
+
+    async registrationHandler(): Promise<void> {
       console.log(JSON.stringify(this.req_obj))
       console.log(this.req_obj)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -483,30 +509,20 @@ export default {
       axios
         .post(apiURL + 'company/create', this.req_obj, config)
         .then((res) => {
+          console.log(res)
+          localStorage['currentCompany'] = res.data._id
+          localStorage['currentCompanyName'] = res.data.data.name
+          localStorage['employeeId'] = res.data.ownerId
+          this.register_request_loading = false
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Company registered successfully',
+            detail: 'Company Registered Successfully',
             life: 3000
           })
-          console.log(res.data.data.id)
-
-          localStorage['currentCompany'] = res.data.data._id
-          // localStorage['employeeId'] = res.data.data.employees[0]
-
-          console.log(res.data)
-
-          axios
-            .get(apiURL + 'company/id/' + res.data.data._id, config)
-            .then((res) => {
-              console.log(res.data.data)
-              localStorage['employeeId'] = res.data.data.employees[0]
-            })
-            .catch((error) => {
-              console.log('Error occured when storing employeeId: ', error)
-            })
-
-          this.$router.push('/dashboard')
+          setTimeout(() => {
+            this.$router.push({ name: 'dashboard' })
+          }, 3000)
         })
         .catch((res) => {
           this.$toast.add({
@@ -516,6 +532,7 @@ export default {
             life: 3000
           })
           console.log(res)
+          this.register_request_loading = false
         })
     },
 
@@ -548,22 +565,7 @@ export default {
         reader.readAsDataURL(file)
       }
       console.log(this.req_obj.logo)
-    },
-    print_base64_link() {
-      console.log(this.req_obj.logo)
-    },
-    setUserId() {
-      this.req_obj.userId = localStorage['id']
-      console.log('userid set')
     }
-
-    // base64image() {
-    //   let read = new FileReader()
-    //   read.readAsDataURL(this.req_obj.image)
-    //   read.onload = () => {
-    //     this.req_obj.image = read.result
-    //   }
-    // }
   },
   mounted() {
     this.req_obj.userId = localStorage['id']

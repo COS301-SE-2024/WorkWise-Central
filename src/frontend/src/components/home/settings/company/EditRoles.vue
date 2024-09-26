@@ -1,7 +1,21 @@
 <template>
   <v-container>
-    <v-card>
-      <v-card-title class="text-primary font-bold text-center"> Roles </v-card-title>
+    <v-card class="bg-cardColor">
+      <v-card-title
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
+        ><v-row align="center" justify="space-between"
+          ><v-col cols="12" lg="6">
+            <v-label
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Roles</v-label
+            ></v-col
+          ><v-col cols="12" lg="6"><CreateRoles @CreatedRoles="getRoles" /></v-col
+        ></v-row>
+      </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
         <v-data-table
@@ -24,25 +38,32 @@
               :items="permissions"
               label="Permissions"
               chips
+              :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
               multiple
               variant="default"
             ></v-select>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu>
-              <template v-slot:activator="{ props }" v-if="item.roleName !== 'Owner'">
-                <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  rounded="xl"
+                  variant="plain"
+                  v-bind="props"
+                  @click="selectItem(item)"
+                  :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
+                >
                   <v-icon color="primary">mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
               <v-list>
-                <!-- <v-list-item @click="selectItem(item)">
+                <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item @click="selectItem(item)">
-                  <DeleteRole :tag-id="item._id" />
+                  <DeleteRole :roleId="item._id" @DeletedRole="getRoles" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -55,14 +76,14 @@
           ><v-row justify="end">
             <Toast position="top-center" />
             <v-col align="center" cols="12" lg="6">
-              <v-btn color="success" @click="updateRole" block>
+              <v-btn color="success" @click="bulkRoleUpdate" block :loading="isDeleting">
                 <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>
                 Save</v-btn
               >
             </v-col>
 
             <v-col align="center" cols="12" lg="6"
-              ><v-btn color="error" @click="cancel" block>
+              ><v-btn color="error" @click="cancel" block :loading="isDeleting">
                 <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon> Cancel
               </v-btn></v-col
             ></v-row
@@ -70,6 +91,39 @@
         >
       </v-card-actions>
     </v-card>
+    <v-dialog v-model="dialog" persistent max-width="500px">
+      <v-card class="bg-cardColor">
+        <v-card-title class="text-h5"> Edit Role </v-card-title>
+
+        <v-card-text>
+          <v-text-field v-model="selectedItem.roleName" label="Role Name" outlined></v-text-field>
+
+          <v-select
+            v-model="selectedItem.permissionSuite"
+            :items="permissions"
+            label="Permissions"
+            chips
+            multiple
+          ></v-select>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn color="error" @click="cancel" block>
+                  <v-icon start icon="fa:fa-solid fa-times-circle" color="error"></v-icon> Cancel
+                </v-btn></v-col
+              ><v-col cols="12" lg="6" order="first" order-lg="last">
+                <v-btn color="success" @click="updateRole" :loading="isDeleting" block>
+                  <v-icon start icon="fa:fa-solid fa-floppy-disk" color="success"></v-icon> Save
+                </v-btn></v-col
+              ></v-row
+            ></v-container
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -78,6 +132,9 @@ import axios from 'axios'
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import DeleteRole from './DeleteRole.vue'
+import CreateRoles from './CreateRoles.vue'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   props: {
     Company: Object,
@@ -85,22 +142,21 @@ export default defineComponent({
   },
   components: {
     Toast,
-    DeleteRole
+    DeleteRole,
+
+    CreateRoles
   },
   data: () => ({
+    localUrl: 'http://localhost:3000/',
+    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dialog: false,
     items: [],
-
+    isDeleting: false,
     roleNames: [],
     rolePermissions: [],
     permissions: [],
     value: [],
-    roleUpdates: [
-      {
-        permissionSuite: [],
-        roleName: ''
-      }
-    ],
+    roleUpdates: [],
     roleIds: [{}],
     headers: [
       { title: 'Role', key: 'roleName' },
@@ -108,7 +164,13 @@ export default defineComponent({
       { title: 'Actions', key: 'actions' }
     ],
 
-    companyID: ''
+    companyID: '',
+    selectedItem: {
+      _id: '',
+      permissionSuite: [],
+      roleName: ''
+    },
+    bulkRoleUpdateDto: []
   }),
 
   methods: {
@@ -128,17 +190,20 @@ export default defineComponent({
         .then((response) => {
           console.log(response.data.data.length)
 
-          for (let i = 0; i < response.data.data.length; i++) {
-            if (response.data.data[i].roleName) {
+          for(const data of response.data.data) {
+            if (data.roleName) {
               this.roleUpdates.push({
-                roleName: response.data.data[i].roleName,
-                permissionSuite: response.data.data[i].permissionSuite
+                _id: data._id,
+                roleName: data.roleName,
+                permissionSuite: data.permissionSuite
               })
-              this.roleIds.push(response.data.data[i]._id)
+              this.roleIds.push(data._id)
             }
           }
 
           console.log(this.roleUpdates)
+          //removing the first element of the array
+          // this.roleUpdates.shift();
         })
         .catch((error) => {
           console.log(error)
@@ -159,16 +224,11 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${this.companyID}`, config)
+        .get(`http://localhost:3000/role/allPermissions`, config)
         .then((response) => {
-          for (let i = 0; i < response.data.data.length; i++) {
-            if (response.data.data[i].roleName === 'Owner') {
-              for (let j = 0; j < response.data.data[i].permissionSuite.length; j++) {
-                this.permissions.push(response.data.data[i].permissionSuite[j])
-                console.log(response.data.data[i].permissionSuite[j])
-              }
-              break
-            }
+          console.log(response.data.data)
+          for(const data of response.data.data) {
+            this.permissions.push(data)
           }
         })
         .catch((error) => {
@@ -176,25 +236,44 @@ export default defineComponent({
         })
     },
     async updateRole(roleID) {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+      }
+
+      const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        updateRoleDto: {
+          roleName: this.selectedItem.roleName,
+          permissionSuite: this.selectedItem.permissionSuite
         }
       }
-      console.log(this.items[roleID].role)
-      console.log(this.items[roleID].permission)
-      const data = {
-        roleName: this.items[roleID].role,
-        permissionSuite: this.items[roleID].permission
-      }
+      console.log(JSON.stringify(data))
       await axios
-        .patch(`http://localhost:3000/role/${roleID}`, config, data)
+        .patch(`http://localhost:3000/role/${this.selectedItem._id}`, config, data)
         .then((response) => {
           console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Role updated',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.isDeleting = false
+            this.dialog = false
+            this.getRoles()
+          }, 1500)
         })
         .catch((error) => {
           console.log(error)
+          this.isDeleting = false
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
+          })
         })
     },
     viewRoles() {
@@ -206,17 +285,51 @@ export default defineComponent({
       }
     },
     async bulkRoleUpdate() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const data = {
-        roleUpdates: this.roleUpdates,
-        roleIds: this.roleIds
+      for (let i = 1; i < this.roleUpdates.length; i++) {
+        this.bulkRoleUpdateDto.push({
+          roleId: this.roleUpdates[i]._id,
+          updateRoleDto: {
+            roleName: this.roleUpdates[i].roleName,
+            permissionSuite: this.roleUpdates[i].permissionSuite
+          }
+        })
       }
-      await axios.patch(`${this.getRequestUrl}role/bulkUpdate/${this.companyID}`, config, data)
+      const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        bulkUpdateRoleDto: this.bulkRoleUpdateDto
+      }
+      console.log(JSON.stringify(data))
+      await axios
+        .patch(`${API_URL}role/bulkUpdate/${this.companyID}`, config, data)
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Roles updated',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.isDeleting = false
+          }, 1500)
+        })
+        .catch((error) => {
+          this.isDeleting = false
+          console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred while updating roles',
+            life: 3000
+          })
+        })
     },
     getRowProps({ index }) {
       return {
@@ -224,13 +337,7 @@ export default defineComponent({
       }
     },
     cancel() {
-      this.$emit('cancel')
-      this.$toast.add({
-        severity: 'info',
-        summary: 'Info',
-        detail: 'Company update cancelled',
-        life: 3000
-      })
+      this.dialog = false
     },
     saveChanges() {
       this.$emit('save', this.company)
@@ -255,6 +362,10 @@ export default defineComponent({
     },
     selectItem(item) {
       console.log(item)
+      this.selectedItem = item
+    },
+    addRoleToBulkUpdateDto(role) {
+      this.bulkRoleUpdateDto.push(role)
     }
   },
   mounted() {
@@ -262,7 +373,7 @@ export default defineComponent({
     this.getPermissions()
     this.removeOwnerRoleFromArray()
     this.companyID = localStorage.getItem('currentCompany')
-    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
   }
 })
 </script>

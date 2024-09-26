@@ -1,37 +1,27 @@
+c
 <template class="emply-mng-container">
-  <v-app :style="isdarkmode === true ? 'dark' : 'light'">
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
     <v-container fluid fill-height>
       <v-row justify="center" xs="6" sm="6" md="12">
         <v-col cols="12">
           <v-row justify="center">
             <v-col cols="12" xs="12" sm="12" md="12">
-              <v-card
-                height="auto"
-                class="pa-11 ma-0 bg-cardColor"
-                rounded="md"
-                :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-                border="md"
-              >
+              <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
                 <v-card-title
                   class="d-flex align-center pe-2"
                   style="font-family: Nunito, sans-serif; font-size: 25px; font-weight: lighter"
                 >
                   <v-row align="center" justify="space-between">
-                    <v-col cols="12" md="4" sm="6" xs="12" class="d-flex align-center">
+                    <v-col cols="12" lg="4" class="d-flex align-center">
                       <v-icon icon="mdi-account-hard-hat"></v-icon>
                       <v-label
-                        class="ms-2 text-h4 text-headingTextColor"
-                        style="
-                          font-size: 15px;
-                          font-family: Nunito, sans-serif;
-                          font-weight: lighter;
-                        "
+                        class="ms-2 h2 font-family-Nunito text-headingTextColor"
                         height="auto"
                         width="auto"
                         >Employee Details</v-label
-                      >&nbsp;
+                      >
                     </v-col>
-                    <v-col cols="12" md="4" sm="6" xs="12">
+                    <v-col cols="12" lg="4">
                       <v-text-field
                         v-model="search"
                         density="compact"
@@ -40,9 +30,9 @@
                         variant="outlined"
                         flat
                         color="primary"
-                        width="100%"
+                        width="80%"
                         style="
-                          font-family: Nunito, sans-serif;
+                          font-family: 'Lato', sans-serif;
                           font-size: 15px;
                           font-weight: lighter;
                         "
@@ -50,8 +40,8 @@
                         single-line
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="4" sm="12" xs="12" class="d-flex justify-end">
-                      <AddEmployee />
+                    <v-col cols="12" lg="4" class="d-flex justify-end">
+                      <AddEmployee v-if="permissions.includes('add new employees')" />
                     </v-col>
                   </v-row>
                 </v-card-title>
@@ -62,6 +52,10 @@
                   <div style="height: auto; overflow-y: auto">
                     <v-col cols="12" xs="12" sm="12" md="12">
                       <v-data-table
+                        v-if="
+                          permissions.includes('view all employees') ||
+                          permissions.includes('view employees under me')
+                        "
                         :headers="headers"
                         :items="EmployeeDetails2"
                         :search="search"
@@ -106,7 +100,7 @@
                           </v-chip>
                         </template>
                         <template v-slot:[`item.actions`]="{ item }">
-                          <v-menu max-width="500px" :theme="isdarkmode === true ? 'dark' : 'light'">
+                          <v-menu max-width="500px" v-if="item.roleName != 'Owner'">
                             <template v-slot:activator="{ props }"
                               ><v-btn
                                 rounded="xl"
@@ -118,21 +112,22 @@
                                 <v-icon color="primary">mdi-dots-horizontal</v-icon>
                               </v-btn></template
                             >
-                            <v-list>
+                            <v-list class="bg-background">
                               <v-list-item
-                                ><EmployeeDetails
-                                  v-model="clientDialog"
-                                  colors="colors"
-                                  :EmployeeDetails="selectedItem"
+                                ><EmployeeDetails colors="colors" :EmployeeDetails="selectedItem"
                               /></v-list-item>
 
                               <v-list-item>
                                 <EditEmployee
+                                  v-if="permissions.includes('edit employees')"
                                   @update:item="selectedItem = $event"
                                   :editedItem="selectedItem"
+                                  :Disabled="false"
                               /></v-list-item>
 
-                              <v-list-item><DeleteEmployee :details="selectedItem" /></v-list-item>
+                              <v-list-item v-if="permissions.includes('delete employees')"
+                                ><DeleteEmployee :details="selectedItem"
+                              /></v-list-item>
                             </v-list>
                           </v-menu>
                         </template>
@@ -162,6 +157,7 @@ import type {
   Person,
   EmployeePersonalInfo
 } from '@/components/home/employees/types'
+import { API_URL } from '@/main'
 
 export default {
   name: 'ClientDesk',
@@ -175,8 +171,9 @@ export default {
     remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     selectedItemSurname: '',
     loading_data: true,
+    permissions: [] as string[],
     selectedItem: {} as any,
-    isdarkmode: localStorage['theme'] !== 'false',
+    isDarkMode: true,
     clientDialog: false,
     deleteDialog: false,
     editDialog: false,
@@ -185,6 +182,7 @@ export default {
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
     modal_light_theme_color: '#FFFFFF',
+    addEmployeeVisibility: false,
     sortBy: [
       { key: 'name', order: 'asc' },
       { key: 'email', order: 'asc' },
@@ -209,7 +207,7 @@ export default {
       },
       { title: 'Phone', value: 'contactInfo.phoneNumber', key: 'contactInfo.phoneNumber' },
       { title: 'Email', value: 'contactInfo.email', key: 'contactInfo.email' },
-      { title: 'Role', value: 'role.', key: 'roleName' },
+      { title: 'Role', value: 'roleName', key: 'roleName' },
       { title: '', value: 'actions', key: 'actions', sortable: false }
     ] as any[],
     search: '',
@@ -234,10 +232,15 @@ export default {
     }
   },
   mounted() {
+    this.loadPermissions()
     this.getEmployees()
     this.loading_data = false
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
   },
   methods: {
+    openDialog() {
+      this.addEmployeeVisibility = true
+    },
     selectItem(item: Person) {
       this.selectedItem = item
       this.selectedItemName = item.firstName
@@ -279,22 +282,44 @@ export default {
     callPhone(item: any) {
       window.location.href = 'tel:' + item.phoneNumber
     },
+    async loadPermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      console.log(localStorage['employeeId'])
+
+      try {
+        const employee_response = await axios.get(
+          API_URL + `employee/id/${localStorage['employeeId']}`,
+          config
+        )
+        console.log(employee_response.data.data)
+        this.permissions = employee_response.data.data.role.permissionSuite
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+    },
     async getEmployees() {
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-
         data: {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+      console.log(localStorage['employeeId'])
 
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/detailed/all/${localStorage['currentCompany']}`,
+          API_URL + `employee/detailed/all/${localStorage['employeeId']}`,
           config
         )
 
@@ -328,7 +353,7 @@ export default {
               preferredLanguage: employee_all_data[i].userId.personalInfo.preferredLanguage,
               dateOfBirth: employee_all_data[i].userId.personalInfo.dateOfBirth,
               gender: employee_all_data[i].userId.personalInfo.gender,
-              roleId: employee_all_data[i].role.roleId,
+              roleId: employee_all_data[i].role._id,
               roleName: employee_all_data[i].role.roleName,
               employeeId: employee_all_data[i]._id,
               userId: employee_all_data[i].userId._id
@@ -368,90 +393,6 @@ export default {
       } catch (error) {
         console.log('Error fetching data:', error)
       }
-
-      // try {
-      //   const employee_response = await axios.get(
-      //     apiURL + `employee/all/${localStorage['currentCompany']}`,
-      //     config
-      //   )
-      //   let employee_all_data: Employee[] = employee_response.data.data
-      //
-      //   let company_employee_arr: EmployeePersonalInfo[] = []
-      //   for (let i = 0; i < employee_all_data.length; i++) {
-      //     let users_response = await axios.get(
-      //       apiURL + `users/id/${employee_all_data[i].userId}`,
-      //       config
-      //     )
-      //
-      //     const user_data: User = users_response.data
-      //
-      //     if (user_data.data.personalInfo.address === undefined) continue
-      //
-      //     if (employee_all_data[i].roleId !== undefined) {
-      //       let role = await axios.get(apiURL + `role/id/${employee_all_data[i].roleId}`, config)
-      //
-      //       if (role.status < 300 && role.status > 199) {
-      //         let company_employee: EmployeePersonalInfo = {
-      //           address: {
-      //             street: user_data.data.personalInfo.address.street,
-      //             suburb: user_data.data.personalInfo.address.suburb,
-      //             city: user_data.data.personalInfo.address.city,
-      //             postalCode: user_data.data.personalInfo.address.postalCode,
-      //             complex: user_data.data.personalInfo.address.complex,
-      //             houseNumber: user_data.data.personalInfo.address.houseNumber
-      //           },
-      //           contactInfo: {
-      //             phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
-      //             email: user_data.data.personalInfo.contactInfo.email
-      //           },
-      //           firstName: user_data.data.personalInfo.firstName,
-      //           surname: user_data.data.personalInfo.surname,
-      //           preferredLanguage: user_data.data.personalInfo.preferredLanguage,
-      //           dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-      //           gender: user_data.data.personalInfo.gender,
-      //           roleId: employee_all_data[i].roleId,
-      //           roleName: role.data.data.roleName,
-      //           employeeId: employee_all_data[i]._id,
-      //           userId: employee_all_data[i].userId
-      //         }
-      //
-      //         company_employee_arr.push(company_employee)
-      //       } else {
-      //         console.log('And unsuccessfull requets was made')
-      //       }
-      //     } else {
-      //       let company_employee: EmployeePersonalInfo = {
-      //         address: {
-      //           street: user_data.data.personalInfo.address.street,
-      //           suburb: user_data.data.personalInfo.address.suburb,
-      //           city: user_data.data.personalInfo.address.city,
-      //           postalCode: user_data.data.personalInfo.address.postalCode,
-      //           complex: user_data.data.personalInfo.address.complex,
-      //           houseNumber: user_data.data.personalInfo.address.houseNumber
-      //         },
-      //         contactInfo: {
-      //           phoneNumber: user_data.data.personalInfo.contactInfo.phoneNumber,
-      //           email: user_data.data.personalInfo.contactInfo.email
-      //         },
-      //         firstName: user_data.data.personalInfo.firstName,
-      //         surname: user_data.data.personalInfo.surname,
-      //         preferredLanguage: user_data.data.personalInfo.preferredLanguage,
-      //         dateOfBirth: user_data.data.personalInfo.dateOfBirth,
-      //         gender: user_data.data.personalInfo.gender,
-      //         roleId: '',
-      //         roleName: '',
-      //         employeeId: employee_all_data[i]._id,
-      //         userId: employee_all_data[i].userId
-      //       }
-
-      //       company_employee_arr.push(company_employee)
-      //     }
-      //   }
-      //   console.log(company_employee_arr)
-      //   this.EmployeeDetails2 = company_employee_arr
-      // } catch (error) {
-      //   console.log('Error fetching data:', error)
-      // }
     },
     toggleExpand(item: never) {
       // Check if the item is already expanded
@@ -464,13 +405,13 @@ export default {
       }
     },
     toggleDarkMode() {
-      console.log(this.isdarkmode)
-      if (this.isdarkmode === true) {
-        this.isdarkmode = false
-        console.log(this.isdarkmode)
+      console.log(this.isDarkMode)
+      if (this.isDarkMode === true) {
+        this.isDarkMode = false
+        console.log(this.isDarkMode)
       } else {
-        this.isdarkmode = true
-        console.log(this.isdarkmode)
+        this.isDarkMode = true
+        console.log(this.isDarkMode)
       }
     },
     getColor(value: string) {

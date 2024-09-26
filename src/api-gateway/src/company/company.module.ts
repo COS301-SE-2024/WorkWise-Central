@@ -20,7 +20,14 @@ import { FileModule } from '../file/file.module';
 import { FileService } from '../file/file.service';
 import { InventoryModule } from '../inventory/inventory.module';
 import { InventoryService } from '../inventory/inventory.service';
-import { EmployeeRepository } from '../employee/employee.repository';
+import { ClientService } from '../client/client.service';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationModule } from '../notification/notification.module';
+import { EmployeeModule } from '../employee/employee.module';
+import { StockTakeModule } from '../stocktake/stocktake.module';
+import { StockTakeService } from '../stocktake/stocktake.service';
+import { StockMovementsModule } from '../stockmovements/stockmovements.module';
+import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
 
 @Module({
   imports: [
@@ -33,6 +40,11 @@ import { EmployeeRepository } from '../employee/employee.repository';
     forwardRef(() => EmailModule),
     forwardRef(() => FileModule),
     forwardRef(() => InventoryModule),
+    forwardRef(() => NotificationModule),
+    forwardRef(() => EmployeeModule),
+    forwardRef(() => StockTakeModule),
+    forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryUsedModule),
   ],
   controllers: [CompanyController],
   providers: [
@@ -46,7 +58,9 @@ import { EmployeeRepository } from '../employee/employee.repository';
     JwtService,
     FileService,
     InventoryService,
-    EmployeeRepository,
+    ClientService,
+    NotificationService,
+    StockTakeService,
   ],
   exports: [CompanyService, CompanyRepository, MongooseModule],
 })
