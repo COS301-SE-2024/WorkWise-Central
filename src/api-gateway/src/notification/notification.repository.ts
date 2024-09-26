@@ -32,6 +32,7 @@ export class NotificationRepository {
   }
 
   async saveToken(token: NotificationToken) {
+    await this.notificationTokenModel.deleteMany({ userId: token.userId }).exec();
     const tokenModel = new this.notificationTokenModel(token);
     return await tokenModel.save();
   }
@@ -66,5 +67,10 @@ export class NotificationRepository {
 
   markAsUnread(notificationId: Types.ObjectId) {
     return this.notificationModel.updateOne({ _id: notificationId }, { isRead: false }).lean().exec();
+  }
+
+  async haveNewNotifications(userId: Types.ObjectId) {
+    const id = await this.notificationModel.exists({ recipientId: userId, isRead: false }).exec();
+    return id != null;
   }
 }

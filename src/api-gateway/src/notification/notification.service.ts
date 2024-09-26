@@ -161,4 +161,8 @@ export class NotificationService implements OnModuleInit {
     if (!user) throw new NotFoundException('Invalid UserId');
     return this.notificationRepository.markAsUnread(notificationId);
   }
+
+  async haveNewNotifications(userId: Types.ObjectId) {
+    return this.notificationRepository.haveNewNotifications(userId);
+  }
 }

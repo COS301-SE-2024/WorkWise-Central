@@ -31,6 +31,7 @@
                 color="secondary"
                 :rules="nameRules"
                 required
+                :disabled="isDeleting"
               ></v-text-field
             ></v-col>
             <v-col>
@@ -39,6 +40,7 @@
                 v-model="localEditedItem.description"
                 color="secondary"
                 required
+                :disabled="isDeleting"
               ></v-text-field
             ></v-col>
             <v-row
@@ -48,6 +50,7 @@
                   v-model="localEditedItem.costPrice"
                   color="secondary"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
               <v-col cols="12" lg="4">
@@ -56,6 +59,7 @@
                   v-model="localEditedItem.currentStockLevel"
                   color="secondary"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
               <v-col cols="12" lg="4">
@@ -64,6 +68,7 @@
                   v-model="localEditedItem.reorderLevel"
                   color="secondary"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field></v-col
             ></v-row>
           </v-col>
@@ -74,13 +79,7 @@
           <v-row justify="end">
             <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn @click="close" color="error" block
-                ><v-icon
-                  icon="fa:fa-solid fa-cancel"
-                  color="error"
-                  start
-                  size="small"
-                  :loading="isDeleting"
-                ></v-icon
+                ><v-icon icon="fa:fa-solid fa-cancel" color="error" start size="small"></v-icon
                 >Cancel</v-btn
               ></v-col
             >
@@ -111,6 +110,7 @@
 <script>
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
   name: 'EditInventory',
@@ -199,8 +199,7 @@ export default {
 
         setTimeout(() => {
           this.addDialog = false
-          this.isDeleting = false
-          this.resetFields()
+
           this.$emit('updateInventory', response.data.data)
         }, 1500)
       } catch (error) {
@@ -211,6 +210,8 @@ export default {
           detail: 'Failed to add inventory',
           life: 3000
         })
+      } finally {
+        this.isDeleting = false
       }
     },
     allRulesPass() {

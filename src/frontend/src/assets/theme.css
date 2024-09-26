@@ -9,7 +9,7 @@
     --success-color: #1F845A;
     --warning-color: #E2B203;
     --card-color: #F1F2F4;
-    --element-text-color: #4C9FC3;
+    --element-text-color: #FFFFFF;
     --heading-text-color: #091E42;
     --n-element-text-color: #8C9BAB;
     --chip-color: #FAF9F6;
@@ -35,7 +35,7 @@ body.dark-mode {
     --success-color: #81C784;
     --warning-color: #FFD54F;
     --card-color: #22272B;
-    --element-text-color: #B6C2CF;
+    --element-text-color: #000000;
     --heading-text-color: #DCDFE4;
     --n-element-text-color: #8C9BAB;
     --highlighter-color: #DEE4EA;

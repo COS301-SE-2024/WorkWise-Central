@@ -45,6 +45,12 @@
           class="bg-cardColor"
         >
           <template v-slot:[`item.total`]="{ item }">R{{ item.total }}</template>
+          <template v-slot:[`item.creationDate`]="{ item }">{{
+            formatDate(item.creationDate)
+          }}</template>
+          <template v-slot:[`item.paymentDate`]="{ item }">{{
+            formatDate(item.paymentDate)
+          }}</template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu max-width="500px">
               <template v-slot:activator="{ props }">
@@ -65,7 +71,7 @@
                   <EditInvoice :editedInvoice="selectedItem" :invoice_id="selectedItem._id" />
                 </v-list-item>
                 <v-list-item>
-                  <DeleteInvoice :invoice_id="selectedItem._id" />
+                  <DeleteInvoice :invoice_id="selectedItem._id" @InvoiceDeleted="getRequests" />
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -86,8 +92,8 @@ import ViewInvoice from './ViewInvoices.vue'
 interface Invoice {
   _id: string
   invoiceNumber: string
-  creationDate: string
-  paymentDate: string
+  creationDate: Date
+  paymentDate: Date
   total: number
   paid: boolean
   clientName: string
@@ -131,6 +137,11 @@ export default defineComponent({
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
+    formatDate(dateString: any) {
+      const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' }
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', options)
+    },
     async getRequests() {
       // Getting all the jobs for the company
       const config = {
@@ -154,8 +165,8 @@ export default defineComponent({
             this.invoiceItems.push({
               _id: invoice._id,
               invoiceNumber: invoice.invoiceNumber,
-              creationDate: invoice.invoiceDate,
-              paymentDate: invoice.paymentDate,
+              creationDate: this.formatDate(invoice.invoiceDate) as any,
+              paymentDate: this.formatDate(invoice.paymentDate) as any,
               total: invoice.total,
               paid: invoice.paid,
               clientName:

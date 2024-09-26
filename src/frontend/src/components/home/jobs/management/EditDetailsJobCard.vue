@@ -10,6 +10,7 @@
           color="grey-lighten-4"
           rounded="l"
           required
+          :disabled="isDeleting"
         ></v-text-field>
         <v-label>Job Description</v-label>
         <v-textarea
@@ -19,6 +20,7 @@
           density="compact"
           color="grey-lighten-4"
           rounded="l"
+          :disabled="isDeleting"
           required
         ></v-textarea>
         <!--                <v-row>-->
@@ -40,6 +42,7 @@
               color="grey-lighten-4"
               rounded="l"
               required
+              :disabled="isDeleting"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -51,6 +54,7 @@
               color="grey-lighten-4"
               rounded="l"
               required
+              :disabled="isDeleting"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -64,6 +68,7 @@
               color="grey-lighten-4"
               rounded="l"
               required
+              :disabled="isDeleting"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -75,6 +80,7 @@
               color="grey-lighten-4"
               rounded="l"
               required
+              :disabled="isDeleting"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -87,6 +93,7 @@
               variant="solo"
               density="compact"
               color="grey-lighten-4"
+              :disabled="isDeleting"
               rounded="l"
             ></v-text-field>
           </v-col>
@@ -98,6 +105,7 @@
               density="compact"
               color="grey-lighten-4"
               rounded="l"
+              :disabled="isDeleting"
               required
             ></v-text-field>
           </v-col>
@@ -109,6 +117,7 @@
               v-model="job.details.address.province"
               variant="solo"
               :items="provinceOptions"
+              :disabled="isDeleting"
             ></v-select>
           </v-col>
         </v-row>
@@ -128,9 +137,10 @@
               data-testid="job-start-date-datepicker"
               :min="minDate"
               style="height: 475px"
+              :disabled="isDeleting"
             ></v-date-picker>
           </v-col>
-          <v-col cols="12" md="6" align="center">
+          <v-colE cols="12" md="6" align="center">
             <v-time-picker
               format="24hr"
               :allowed-hours="allowedHours"
@@ -139,8 +149,9 @@
               data-testid="job-start-time-timepicker"
               elevation="5"
               style="height: 475px"
+              :disabled="isDeleting"
             ></v-time-picker>
-          </v-col>
+          </v-colE>
           <v-col align="center" cols="12" md="6">
             <v-date-picker
               title="SELECT END DATE"
@@ -156,6 +167,7 @@
               data-testid="job-end-date-datepicker"
               :min="minDate"
               style="height: 475px"
+              :disabled="isDeleting"
             ></v-date-picker>
           </v-col>
           <v-col cols="12" md="6" align="center">
@@ -166,11 +178,12 @@
               v-model="endTime"
               data-testid="job-end-time-timepicker"
               elevation="5"
+              :disabled="isDeleting"
             ></v-time-picker>
           </v-col>
         </v-row>
         <v-row cols="12" class="justify-center">
-          <v-btn color="success" @click="patchJobDetails"
+          <v-btn color="success" @click="patchJobDetails" :loading="isDeleting"
             ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save
           </v-btn>
         </v-row>
@@ -188,6 +201,8 @@ import { API_URL } from '@/main'
 // import Editor from 'primevue/editor'
 
 const toast = useToast()
+
+let isDeleting = ref<boolean>(false)
 
 interface Address {
   street: string
@@ -251,6 +266,7 @@ const patchJobDetails = async () => {
     }
   }
   try {
+    isDeleting.value = true
     if (startDate.value != null && startTime.value != null) {
       const startDateTime = new Date(`${startDate.value}T${startTime.value}`)
       job.value.details.startDate = startDateTime.toISOString()
@@ -275,6 +291,8 @@ const patchJobDetails = async () => {
   } catch (error) {
     console.error('Error getting editing job details', error)
     showEditError()
+  } finally {
+    isDeleting.value = false
   }
 }
 

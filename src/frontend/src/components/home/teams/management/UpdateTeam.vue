@@ -27,9 +27,9 @@
               <small class="text-caption">Team Name</small>
               <v-text-field
                 v-model="localEditedItem.teamName"
-                color="secondary"
                 :rules="teamNameRules"
                 required
+                color="secondary"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -37,11 +37,13 @@
               <v-select
                 v-model="selectedTeamMembers"
                 :items="teamMemberNames"
-                color="secondary"
                 :rules="teamMembersRules"
                 multiple
                 chips
                 required
+                variant="solo"
+                color="primary"
+                background-color="#f5f5f5"
               ></v-select>
             </v-col>
             <v-col>
@@ -49,9 +51,25 @@
               <v-select
                 v-model="localEditedItem.teamLeaderId.userInfo.displayName"
                 :items="teamMemberNames"
-                color="secondary"
                 :rules="teamLeaderIdRules"
                 required
+                variant="solo"
+                color="primary"
+                background-color="#f5f5f5"
+              ></v-select>
+            </v-col>
+            <v-col>
+              <small class="text-caption">Assign Job</small>
+              <v-select
+                  v-model="selectedJobs"
+                  :items="jobList"
+                  multiple
+                  item-title="details.heading"
+                  item-value="_id"
+                  required
+                  variant="solo"
+                  color="primary"
+                  background-color="#f5f5f5"
               ></v-select>
             </v-col>
           </v-col>
@@ -101,6 +119,7 @@
 
 <script>
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 import axios from 'axios'
 
 export default {
@@ -114,6 +133,9 @@ export default {
   },
   data() {
     return {
+      selectedJobs: [],
+      assignedJobs: [],
+      jobList: [],
       localEditedItem: this.editedItem,
       initalTeamName: this.editedItem.teamName,
       intialTeamLeader: this.editedItem.teamLeaderId,
@@ -133,9 +155,11 @@ export default {
       teamLeaderIdRules: [(v) => !!v || 'Team Leader is required']
     }
   },
-  created() {
+  async created() {
     this.localEditedItem = this.deepCopy(this.editedItem)
-    this.getEmployees()
+    await this.getEmployees()
+    await this.getJobInCompany()
+    await this.getCurrentJobAssignments()
     this.initialTeamMembers = [...this.localEditedItem.teamMembers] // Store the initial members
   },
   watch: {
@@ -199,117 +223,70 @@ export default {
       ) {
         const data = {
           teamName: this.localEditedItem.teamName,
-          teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader)
-        }
-        console.log(data)
-        console.log('hi')
-        axios
-          .patch(`${apiURL}team/${this.teamId}`, data, config)
-          .then((response) => {
-            console.log(response)
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Team updated successfully',
-              life: 3000
-            })
-            setTimeout(() => {
-              this.isDeleting = false
-              this.editDialog = false
-              // Emit the event to the parent component with the updated team data
-              this.$emit('teamUpdated', response.data.data)
-            }, 1500)
-          })
-          .catch((error) => {
-            console.error(error)
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'An error occurred while updating the team',
-              life: 3000
-            })
-            setTimeout(() => {
-              this.isDeleting = false
-            }, 1500)
-          })
+          teamMembers: this.selectedTeamMembers.map((name) => this.getEmployeeIdByName(name)),
+          teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader),
+          companyId: localStorage.getItem('currentCompany')
+        },
+        currentEmployeeId: localStorage.getItem('employeeId')
       }
-      //Updating the team member info
-      const { addedMembers, removedMembers } = this.compareTeamMembers()
+      console.log(data)
 
-      //checking if members were added
-      if (addedMembers.length != 0) {
-        const newTeamMembersData = {
-          newTeamMembers: addedMembers.map((member) => this.getEmployeeIdByName(member))
+      // Unassign if the job has been removed
+
+      for (const job of this.assignedJobs) {
+        if (!this.selectedJobs.includes(job)) {
+          console.log('Removing job... :', job)
+          await axios.patch(`${API_URL}job/team`, {
+                employeeId: localStorage.getItem('employeeId'),
+                teamId: this.teamId,
+                jobId: job
+              }, config
+          )
         }
-        console.log('newTeamMembersData: ', newTeamMembersData)
-
-        axios
-          .patch(`${apiURL}team/add/${this.teamId}`, newTeamMembersData, config)
-          .then((response) => {
-            console.log(response)
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Team updated successfully',
-              life: 3000
-            })
-            setTimeout(() => {
-              this.isDeleting = false
-              this.editDialog = false
-              // Emit the event to the parent component with the updated team data
-              this.$emit('teamUpdated', response.data.data)
-            }, 1500)
-          })
-          .catch((error) => {
-            console.error(error)
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'An error occurred while updating the team',
-              life: 3000
-            })
-            setTimeout(() => {
-              this.isDeleting = false
-            }, 1500)
-          })
       }
 
-      //checking if members were removed
-      if (removedMembers.length != 0) {
-        const removeTeamMembersData = {
-          teamMembersToBeRemoved: removedMembers.map((member) => member._id) // Assuming _id represents the team member's ID
+      // Assign new jobs to the team
+      for (const job of this.selectedJobs) {
+        if (!this.assignedJobs.includes(job)) {
+          await axios.put(`${API_URL}job/team`, {
+            employeeId: localStorage.getItem('employeeId'),
+            teamId: this.teamId,
+            jobId: job
+          }, config)
         }
-        console.log('removeTeamMembersData: ', removeTeamMembersData)
-        axios
-          .patch(`${apiURL}team/remove/${this.teamId}`, removeTeamMembersData, config)
-          .then((response) => {
-            console.log(response)
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Team updated successfully',
-              life: 3000
-            })
-            setTimeout(() => {
-              this.isDeleting = false
-              this.editDialog = false
-              // Emit the event to the parent component with the updated team data
-              this.$emit('teamUpdated', response.data.data)
-            }, 1500)
-          })
-          .catch((error) => {
-            console.error(error)
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'An error occurred while updating the team',
-              life: 3000
-            })
-            setTimeout(() => {
-              this.isDeleting = false
-            }, 1500)
-          })
       }
+
+      await this.getCurrentJobAssignments()
+
+      axios
+        .patch(`${apiURL}team/${this.teamId}`, data, config)
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Team updated successfully',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.isDeleting = false
+            this.editDialog = false
+            // Emit the event to the parent component with the updated team data
+            this.$emit('teamUpdated', response.data.data)
+          }, 1500)
+        })
+        .catch((error) => {
+          console.error(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred while updating the team',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.isDeleting = false
+          }, 1500)
+        })
     },
     getEmployeeIdByName(name) {
       const index = this.teamMemberNames.indexOf(name)
@@ -318,6 +295,49 @@ export default {
     populateCurrentTeamMembers() {
       for (let i = 0; i < this.localEditedItem.teamMembers.length; i++) {
         this.selectedTeamMembers.push(this.editedItem.teamMembers[i].userInfo.displayName)
+      }
+    },
+    async getCurrentJobAssignments() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      try {
+        const response = await axios.get(
+            `${API_URL}team/id/${this.teamId}`,
+            config
+        )
+        for (const job of response.data.data.currentJobAssignments) {
+          this.assignedJobs.push(job)
+        }
+        for (const job of this.jobList) {
+          if (this.assignedJobs.some(assignedJob => assignedJob === job._id)) {
+            this.selectedJobs.push(job._id)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch current job assignments:', error)
+      }
+    },
+    async getJobInCompany() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      try {
+        const response = await axios.get(
+            `${API_URL}job/all/company/${localStorage.getItem('currentCompany')}`,
+            config
+        )
+        response.data.data.forEach((job) => {
+          this.jobList.push(job)
+        })
+      } catch (error) {
+        console.error(error)
       }
     },
     async getEmployees() {
