@@ -429,7 +429,7 @@ export class JobService {
     const result = await this.jobRepository.unassignTeam(unassignDto.teamId, unassignDto.jobId, team.teamMembers);
     //team.currentJobAssignments.pull(job._id);
     team.currentJobAssignments = team.currentJobAssignments.filter(
-      (id) => id.toString() !== unassignDto.teamId.toString(),
+      (id) => id.toString() !== unassignDto.jobId.toString(),
     );
     team.currentJobAssignments = [...new Set(team.currentJobAssignments)];
     await this.teamService.update(team._id, {
