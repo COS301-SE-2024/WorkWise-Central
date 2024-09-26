@@ -162,35 +162,25 @@ const clearFiles = () => {
   padding: 1rem;
   position: sticky;
   bottom: 0;
-  background-color: antiquewhite; /* Light mode card color */
 }
 
 .p-inputtext {
   flex-grow: 1;
   margin-right: 0.5rem;
-  background-color: var(--second-place-color); /* A shade darker than card color in light mode */
-  color: var(--element-text-color); /* Text should be white */
 }
 
 .p-button {
-  background-color: var(--secondary-color); /* Button corresponds to secondary color */
-  color: var(--button-text-color); /* Button text should remain white */
 }
 
 .p-button:enabled:hover {
   opacity: 0.8; /* Subtle hover effect */
-  color: var(--secondary-color);
 }
 
 .p-button:disabled {
-  background-color: var(--highlighter-color); /* Disabled button background */
-  color: var(--n-element-text-color); /* Muted text for disabled button */
 }
 
 /* Deep selectors for third-party components */
 :deep(.p-inputtext) {
-  color: black; /* Ensure text remains white */
-  background-color: floralwhite; /* Shade darker than card color */
 }
 
 :deep(.p-fileupload-choose) {

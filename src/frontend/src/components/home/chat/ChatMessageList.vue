@@ -274,7 +274,7 @@ const downloadAttachment = (url) => {
 }
 
 .message-content {
-  background-color: #000000;
+  background-color: lightskyblue;
   border-radius: 12px;
   padding: 0.5rem 1rem;
   position: relative;

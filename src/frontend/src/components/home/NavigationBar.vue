@@ -123,11 +123,9 @@ export default defineComponent({
       console.log(this.isdarkmode)
       if (this.isdarkmode) {
         this.isdarkmode = false
-        this.$primevue.changeTheme('aura-dark-blue', 'aura-dark-blue', 'aura-dark-blue-link', () => {})
         console.log(this.isdarkmode)
       } else {
         this.isdarkmode = true
-        this.$primevue.changeTheme('aura-light-blue', 'aura-light-blue', 'aura-light-blue-link', () => {})
         console.log(this.isdarkmode)
       }
       localStorage.setItem('theme', this.isdarkmode.toString()) // save the theme to session storage

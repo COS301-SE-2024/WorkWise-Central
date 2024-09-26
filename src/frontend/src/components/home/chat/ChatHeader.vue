@@ -84,12 +84,10 @@ function toggleTheme() {
 
 <style scoped>
 .chat-header {
-  background-color: var(--background); /* Use theme background */
   padding: 10px;
   border-radius: 8px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--highlighter-color); /* Adapted border for theme */
   transition: background-color 0.3s ease;
 }
 
