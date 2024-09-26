@@ -54,6 +54,15 @@
                 required
               ></v-select>
             </v-col>
+            <v-col>
+              <small class="text-caption">Assigned Job</small>
+              <v-select
+                  v-model="selectedJob"
+                  :items="teamMemberNames"
+                  color="secondary"
+                  required
+              ></v-select>
+            </v-col>
           </v-col>
         </v-form>
       </v-card-text>
@@ -114,6 +123,7 @@ export default {
   },
   data() {
     return {
+      selectedJob: '',
       localEditedItem: this.editedItem,
       editDialog: false,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
