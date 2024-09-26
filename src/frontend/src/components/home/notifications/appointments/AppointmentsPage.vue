@@ -132,21 +132,21 @@
 
               <v-col cols="12">
                 <h6>Meeting Date</h6>
-                <v-date-picker v-model="newAppointment.date" header="Meeting start date" border="md" width="unset"
+                <v-text-field type="date" v-model="newAppointment.date" header="Meeting start date" border="md" width="unset"
                   max-width="350" elevation="5" :rules="startDateRule" :min="minDate" class="mb-4"
-                  required></v-date-picker>
+                  required></v-text-field>
               </v-col>
 
               <v-col cols="6">
                 <h6>Start Time</h6>
-                <v-time-picker v-model="newAppointment.startTime" format="24hr" :allowed-hours="allowedHours"
-                  :allowed-minutes="allowedMinutes" class="mb-4"></v-time-picker>
+                <v-text-field type="time"  v-model="newAppointment.startTime" format="24hr" :allowed-hours="allowedHours"
+                  :allowed-minutes="allowedMinutes" class="mb-4"></v-text-field>
               </v-col>
 
               <v-col cols="6">
                 <h6>End Time</h6>
-                <v-time-picker v-model="newAppointment.endTime" format="24hr" :allowed-hours="allowedHours2"
-                  :allowed-minutes="allowedMinutes2"></v-time-picker>
+                <v-text-field type="time" v-model="newAppointment.endTime" format="24hr" :allowed-hours="allowedHours2"
+                  :allowed-minutes="allowedMinutes2"></v-text-field>
               </v-col>
 
               <v-col cols="12">
@@ -168,7 +168,7 @@
         <v-container>
           <v-row>
             <v-col cols="12" lg="6">
-              <v-btn color="error" @click="closeEditDialog" block>
+              <v-btn color="error" @click="showCreate = false" block>
                 <v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>
                 Cancel
               </v-btn>
@@ -198,19 +198,36 @@
             <v-row>
               <v-col cols="12">
                 <h6>Meeting Title</h6>
-                <v-text-field v-model="fuck.title" label="Title" :rules="titleRules" required></v-text-field>
+                <v-text-field v-model="selectedAppointment.title" label="Title" :rules="titleRules" required></v-text-field>
               </v-col>
 
+              <v-col cols="12">
+                <h6>Meeting Date</h6>
+                <v-text-field type="date" v-model="selectedAppointment.date" header="Meeting start date" border="md" width="unset"
+                  max-width="350" elevation="5" :rules="startDateRule" :min="minDate" class="mb-4"
+                  required></v-text-field>
+              </v-col>
 
+              <v-col cols="6">
+                <h6>Start Time</h6>
+                <v-text-field type="time"  v-model="selectedAppointment.startTime" format="24hr" :allowed-hours="allowedHours"
+                  :allowed-minutes="allowedMinutes" class="mb-4"></v-text-field>
+              </v-col>
+
+              <v-col cols="6">
+                <h6>End Time</h6>
+                <v-text-field type="time" v-model="selectedAppointment.endTime" format="24hr" :allowed-hours="allowedHours2"
+                  :allowed-minutes="allowedMinutes2"></v-text-field>
+              </v-col>
 
               <v-col cols="12">
                 <h6>Details</h6>
-                <v-text-field v-model="fuck.details" label="Details"></v-text-field>
+                <v-text-field v-model="selectedAppointment.details" label="Details"></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <h6>Choose Participants</h6>
-                <v-select v-model="fuck.participants" :items="teamMemberNames" item-value="employeeId" item-title="name"
+                <v-select v-model="selectedAppointment.participants" :items="teamMemberNames" item-value="employeeId" item-title="name"
                   clearable multiple chips label="Participants"
                   hint="Select the employee you'd like to join the meeting" persistent-hint></v-select>
               </v-col>
@@ -229,7 +246,7 @@
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6">
-              <v-btn color="success" @click="editAppointment" block :loading="isGenerating" :disabled="!valid">
+              <v-btn color="success" @click="createAppointment" block :loading="isGenerating" :disabled="!valid">
                 <v-icon icon="fa: fa-solid fa-floppy-disk" color="success" start></v-icon>
                 Save
               </v-btn>
@@ -262,7 +279,7 @@ export default defineComponent({
       deleteDialog: false,
       isDeleting: false,
       appointmentId: '',
-      fuck: {},
+      selectedAppointment: {},
       showEdit: false,
       showDialog: false,
       search: '',
@@ -315,7 +332,7 @@ export default defineComponent({
     },
     selectItem(item) {
       console.log(item)
-      this.fuck = item
+      this.selectedAppointment = item
     },
     closeEditDialog() {
       this.showEdit = false
