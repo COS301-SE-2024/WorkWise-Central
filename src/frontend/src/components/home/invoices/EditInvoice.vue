@@ -19,6 +19,7 @@
             <v-col>
               <small class="text-caption">Invoice Number</small>
               <v-text-field
+                :disabled="isDeleting"
                 v-model="localEditedInvoice.invoiceNumber"
                 color="secondary"
                 :rules="invoiceNumberRules"
@@ -26,10 +27,11 @@
               ></v-text-field>
             </v-col>
             <v-col>
-              <small class="text-caption">Date</small>
+              <small class="text-caption">Date of Payment</small>
               <v-text-field
-                v-model="localEditedInvoice.creationDate"
+                v-model="localEditedInvoice.paymentDate"
                 color="secondary"
+                type="date"
                 required
               ></v-text-field>
             </v-col>
@@ -37,14 +39,17 @@
               <v-col cols="12" lg="6">
                 <small class="text-caption">Amount</small>
                 <v-text-field
+                  :disabled="isDeleting"
                   v-model="localEditedInvoice.total"
                   color="secondary"
+                  type="number"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" lg="6">
-                <small class="text-caption">Status</small>
+                <small class="text-caption">Status of Payment</small>
                 <v-select
+                  :disabled="isDeleting"
                   v-model="localEditedInvoice.paid"
                   :items="statusOptions"
                   color="secondary"
@@ -60,12 +65,18 @@
           <v-row justify="end">
             <v-col cols="12" lg="6">
               <v-btn @click="close" color="error" block>
-                <v-icon start color="error" size="small">mdi-cancel</v-icon>
+                <v-icon start color="error" size="small" :disabled="isDeleting">mdi-cancel</v-icon>
                 Cancel
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6">
-              <v-btn @click="updateInvoice" color="success" :disabled="!valid" block>
+              <v-btn
+                @click="updateInvoice"
+                color="success"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
+              >
                 <v-icon start color="success" size="small">mdi-content-save</v-icon>
                 Save
               </v-btn>
@@ -85,8 +96,8 @@ import { API_URL } from '@/main'
 interface Invoice {
   _id: string
   invoiceNumber: string
-  creationDate: string
-  paymentDate: string
+  creationDate: Date
+  paymentDate: Date
   total: number
   paid: boolean
   clientName: string
@@ -107,12 +118,13 @@ export default {
   },
   data() {
     return {
+      isDeleting: false,
       localEditedInvoice: {
         ...this.editedInvoice
       } as Invoice,
       editDialog: false,
       valid: false,
-      statusOptions: ['Paid', 'Unpaid', 'Pending'] as any[],
+      statusOptions: [true, false] as boolean[],
       invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
       dateRules: [(v: string) => !!v || 'Date is required'],
       amountRules: [
@@ -137,12 +149,13 @@ export default {
         return
       }
 
+      this.isDeleting = true
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` }
       }
-
+      console.log(this.localEditedInvoice)
       axios
-        .patch(`${API_URL}/invoices/${this.invoice_id}`, this.localEditedInvoice, config)
+        .patch(`${API_URL}invoice/${this.invoice_id}`, this.localEditedInvoice, config)
         .then((response) => {
           this.$toast.add({
             severity: 'success',
@@ -164,6 +177,7 @@ export default {
             life: 3000
           })
         })
+      this.isDeleting = false
     },
     handleSubmission() {
       if (this.valid) {
@@ -173,6 +187,7 @@ export default {
     close() {
       this.editDialog = false
     },
+    change(status: any) {},
     deepCopy(obj: any) {
       return JSON.parse(JSON.stringify(obj))
     },

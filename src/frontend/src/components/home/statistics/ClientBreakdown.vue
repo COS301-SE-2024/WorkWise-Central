@@ -14,23 +14,11 @@
 
     <!-- Search bar for v-data-table -->
     <v-card-text>
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        variant="outlined"
-        color="primary"
-        label="Search Clients"
-        class="mb-4"
-        @keyup="applyFilter"
-      />
+      <v-text-field v-model="search" append-icon="mdi-magnify" variant="outlined" color="primary" label="Search Clients"
+        class="mb-4" @keyup="applyFilter" />
       <!-- Client Data Table -->
-      <v-data-table
-        :items="clientDetails"
-        :headers="headers"
-        class="bg-background"
-        :search="search"
-        :item-class="getItemClass"
-      >
+      <v-data-table :items="clientDetails" :headers="headers" class="bg-background" :search="search"
+        :row-props="getItemClass">
         <!-- Actions Column -->
         <template v-slot:[`item.actions`]="{ item }">
           <v-menu max-width="500px">
@@ -41,7 +29,7 @@
             </template>
             <v-list>
               <v-list-item>
-                <v-btn @click="showBreakdown(item)">
+                <v-btn @click="showBreakdown(item)" :loading="isloading">
                   <v-icon icon="fa: fa-solid fa-chart-simple"></v-icon>
                   View Breakdown
                 </v-btn>
@@ -49,120 +37,53 @@
             </v-list>
           </v-menu>
         </template>
+        <template v-slot:[`item.firstName`]="{ item }">
+          <v-chip :color="selectedClient === item ? 'success' : 'secondary'">{{ item.firstName }}</v-chip>
+        </template>
       </v-data-table>
 
       <!-- Breakdown Section (Appears after clicking View Breakdown) -->
-      <v-card
-        v-if="
-          showStats || !(!jobsData && !invoiceData && totalRatings !== 0 && totalJobRatings !== 0)
-        "
-      >
+      <!-- Breakdown Section (Appears after clicking View Breakdown) -->
+      <v-card v-if="showStats">
         <v-card-title>Client Breakdown for {{ selectedClient.firstName }}</v-card-title>
         <v-card-text>
           <!-- Bar chart for number of jobs -->
           <v-container>
-            <v-row
-              ><v-col cols="12" lg="6" v-if="!jobsData">
+            <v-row>
+              <!-- Jobs chart - only show if job data is not all zeros -->
+              <v-col cols="12" lg="6" v-if="jobsData.datasets[0].data.some(value => value > 0)">
                 <h5>Breakdown of the Jobs for {{ selectedClient.firstName }}</h5>
-                <Chart
-                  type="pie"
-                  :data="jobsData"
-                  :options="jobsChartOptions"
-                  @chart-click="onChartClick"
-                /> </v-col
-              ><v-col cols="12" lg="6" v-if="!invoiceData">
+                <Chart type="pie" :data="jobsData" @chart-click="onChartClick" />
+              </v-col>
+
+              <!-- Invoices chart - only show if invoice data is not all zeros -->
+              <v-col cols="12" lg="6" v-if="invoiceData.datasets[0].data.some(value => value > 0)">
                 <h5>Breakdown of the Invoices for {{ selectedClient.firstName }}</h5>
-                <Chart
-                  type="pie"
-                  :data="invoiceData"
-                  :options="invoiceChartOptions"
-                  @chart-click="onChartClick"
-                /> </v-col></v-row
-          ></v-container>
+                <Chart type="pie" :data="invoiceData" @chart-click="onChartClick" />
+              </v-col>
+            </v-row>
+          </v-container>
 
           <!-- Customer Service Rating Section -->
           <v-container>
             <v-row>
+              <!-- Only show if there are customer service ratings -->
               <v-col cols="12" lg="6" v-if="totalRatings !== 0">
                 <h5>Average Customer Service ratings given by {{ selectedClient.firstName }}</h5>
-                <v-card
-                  class="d-flex flex-column mx-auto py-4"
-                  elevation="10"
-                  height="auto"
-                  width="360"
-                >
+                <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
                   <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
                   <div class="d-flex align-center flex-column my-auto">
                     <div class="text-h2 mt-5">
                       {{ overallCustomerRating }}
                       <span class="text-h6 ml-n3">/5</span>
                     </div>
-                    <v-rating
-                      :model-value="overallRating"
-                      color="yellow-darken-3"
-                      half-increments
-                    ></v-rating>
+                    <v-rating :model-value="overallCustomerRating" color="yellow-darken-3" half-increments></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
-                  <v-list
-                    bg-color="transparent"
-                    class="d-flex flex-column-reverse"
-                    density="compact"
-                  >
+                  <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                     <v-list-item v-for="(rating, i) in 5" :key="i">
-                      <v-progress-linear
-                        :model-value="rating * ratingValueFactor"
-                        class="mx-n5"
-                        color="yellow-darken-3"
-                        height="20"
-                        rounded
-                      ></v-progress-linear>
-                      <template v-slot:prepend>
-                        <span>{{ rating }}</span>
-                        <v-icon class="mx-3" icon="mdi-star"></v-icon>
-                      </template>
-                      <template v-slot:append>
-                        <div class="rating-values">
-                          <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
-                        </div>
-                      </template>
-                    </v-list-item>
-                  </v-list>
-                </v-card> </v-col
-              ><v-col cols="12" lg="6" v-if="totalJobRatings !== 0">
-                <h5>Average Job quality ratings given by {{ selectedClient.firstName }}</h5>
-                <v-card
-                  class="d-flex flex-column mx-auto py-4"
-                  elevation="10"
-                  height="auto"
-                  width="360"
-                >
-                  <div class="d-flex justify-center mt-auto text-h5">Job Quality Rating</div>
-                  <div class="d-flex align-center flex-column my-auto">
-                    <div class="text-h2 mt-5">
-                      {{ overallRating }}
-                      <span class="text-h6 ml-n3">/5</span>
-                    </div>
-                    <v-rating
-                      :model-value="overallRating"
-                      color="yellow-darken-3"
-                      half-increments
-                    ></v-rating>
-                    <div class="px-3">{{ totalRatings }} ratings</div>
-                  </div>
-                  <v-list
-                    bg-color="transparent"
-                    class="d-flex flex-column-reverse"
-                    density="compact"
-                  >
-                    <v-list-item v-for="(rating, i) in 5" :key="i">
-                      <v-progress-linear
-                        :model-value="rating * ratingValueFactor"
-                        class="mx-n5"
-                        color="yellow-darken-3"
-                        height="20"
-                        rounded
-                      ></v-progress-linear>
+                      <v-progress-linear :model-value="rating * ratingValueFactor" class="mx-n5" color="yellow-darken-3"
+                        height="20" rounded></v-progress-linear>
                       <template v-slot:prepend>
                         <span>{{ rating }}</span>
                         <v-icon class="mx-3" icon="mdi-star"></v-icon>
@@ -175,11 +96,43 @@
                     </v-list-item>
                   </v-list>
                 </v-card>
-              </v-col></v-row
-            ></v-container
-          >
+              </v-col>
+
+              <!-- Job Quality Rating Section - only show if there are job quality ratings -->
+              <v-col cols="12" lg="6" v-if="totalJobRatings !== 0">
+                <h5>Average Job quality ratings given by {{ selectedClient.firstName }}</h5>
+                <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+                  <div class="d-flex justify-center mt-auto text-h5">Job Quality Rating</div>
+                  <div class="d-flex align-center flex-column my-auto">
+                    <div class="text-h2 mt-5">
+                      {{ overallRating }}
+                      <span class="text-h6 ml-n3">/5</span>
+                    </div>
+                    <v-rating :model-value="overallRating" color="yellow-darken-3" half-increments></v-rating>
+                    <div class="px-3">{{ totalRatings }} ratings</div>
+                  </div>
+                  <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
+                    <v-list-item v-for="(rating, i) in 5" :key="i">
+                      <v-progress-linear :model-value="rating * ratingValueFactor" class="mx-n5" color="yellow-darken-3"
+                        height="20" rounded></v-progress-linear>
+                      <template v-slot:prepend>
+                        <span>{{ rating }}</span>
+                        <v-icon class="mx-3" icon="mdi-star"></v-icon>
+                      </template>
+                      <template v-slot:append>
+                        <div class="rating-values">
+                          <span class="d-flex justify-end">{{ ratingCounts[i] }}</span>
+                        </div>
+                      </template>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card-text>
       </v-card>
+
     </v-card-text>
   </v-card>
 </template>
@@ -195,6 +148,7 @@ export default {
       totalClients: 0, // Example data, replace with actual
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      isloading: false,
       selectedItemId: '',
       search: '',
       clientStats: '',
@@ -309,6 +263,7 @@ export default {
       )
     },
     async showBreakdown(client) {
+      this.isloading = true
       this.selectedClient = client
       for (let i = 0; i < this.clientDetails.length; i++) {
         if (this.clientDetails[i] === this.selectedClient) {
@@ -318,6 +273,7 @@ export default {
       console.log('Deleting client' + this.selectedItemId)
 
       await this.getClientStats(this.selectedItemId)
+      this.isloading = false
     },
 
     getItemClass(client) {
@@ -416,18 +372,16 @@ export default {
         })
     },
 
-    calculateRatingCounts(ratingsArray) {
-      // Calculate the number of 5-star, 4-star, etc. ratings from the customerServiceRating array
-      const ratingCounts = [0, 0, 0, 0, 0] // Initialize counts for 5, 4, 3, 2, 1 stars
-
-      ratingsArray.forEach((rating) => {
-        if (rating >= 1 && rating <= 5) {
-          ratingCounts[5 - rating]++
+    calculateRatingCounts(ratings) {
+      const counts = [0, 0, 0, 0, 0]; // Array to hold counts for ratings 1 to 5
+      ratings?.forEach((rating) => {
+        if (rating.rating >= 1 && rating.rating <= 5) {
+          counts[Math.floor(rating.rating) - 1]++; // Adjust index for 0-based array
         }
-      })
-
-      return ratingCounts
-    },
+      });
+      return counts;
+    }
+    ,
     async getClients() {
       const config = {
         headers: {
@@ -474,19 +428,32 @@ export default {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
     },
-    onChartClick(chartType, datasetIndex, index) {
-      // Handle the chart click event based on chart type and the clicked item
-      if (chartType === 'jobsData') {
-        console.log(`Clicked on Job dataset: ${datasetIndex}, index: ${index}`)
-        // You can trigger a modal or a detailed view for the clicked job
-      } else if (chartType === 'jobRatingData') {
-        console.log(`Clicked on Job Rating dataset: ${datasetIndex}, index: ${index}`)
-        // Show job rating breakdown or other details
-      } else if (chartType === 'invoiceData') {
-        console.log(`Clicked on Invoice dataset: ${datasetIndex}, index: ${index}`)
-        // Show invoice details, such as payment info
+    onChartClick(type, index) {
+      if (type === 'jobs') {
+        if (index === 0) {
+          // Show active jobs in dialog
+          console.log('jkefh')
+          this.dialogTitle = `Active Jobs for ${this.selectedClient.firstName}`
+          this.dialogItems = this.clientStats.activeJobs
+        } else if (index === 1) {
+          // Show completed jobs in dialog
+          this.dialogTitle = `Completed Jobs for ${this.selectedClient.firstName}`
+          this.dialogItems = this.clientStats.completedJobs
+        }
+      } else if (type === 'invoices') {
+        if (index === 0) {
+          // Show paid invoices in dialog
+          this.dialogTitle = `Paid Invoices for ${this.selectedClient.firstName}`
+          this.dialogItems = this.clientStats.invoicesPaid
+        } else if (index === 1) {
+          // Show unpaid invoices in dialog
+          this.dialogTitle = `Unpaid Invoices for ${this.selectedClient.firstName}`
+          this.dialogItems = this.clientStats.invoicesUnpaid
+        }
       }
-    }
+      // Show the dialog
+      this.dialog = true
+    },
   },
   async mounted() {
     await this.getClients()

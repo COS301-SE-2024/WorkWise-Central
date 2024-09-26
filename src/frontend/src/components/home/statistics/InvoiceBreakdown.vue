@@ -14,25 +14,26 @@
 
     <v-card-text>
       <div>
-        <!-- Pie Chart for Paid vs Unpaid Invoices -->
-        <p><strong>Paid vs Unpaid Invoices:</strong></p>
-        <Chart type="pie" :data="paidVsUnpaidChartData" :options="chartOptions" height="300px" />
+        <!-- Conditionally Render Pie Chart for Paid vs Unpaid Invoices -->
+        <v-container v-if="invoiceStats.numPaid || invoiceStats.numUnpaid">
+          <v-row>
+            <v-col cols="12" lg="6">
+              <p><strong>Paid vs Unpaid Invoices:</strong></p>
+              <Chart type="pie" :data="paidVsUnpaidChartData" height="300px" />
+            </v-col>
 
-        <!-- Bar Chart for Revenue Per Month -->
-        <!-- <div>
-          <p><strong>Revenue Per Month:</strong></p>
-          <v-select
-            v-model="selectedMonth"
-            :items="months"
-            label="Select Month"
-            @change="fetchRevenueForMonth"
-          ></v-select>
-          <Chart type="bar" :data="revenueChartData" :options="chartOptions" height="300px" />
-        </div> -->
+            <!-- Conditionally Render Bar Chart for Revenue Per Month -->
+            <v-col cols="12" lg="6" v-if="revenueChartHasData">
+              <p><strong>Revenue Per Month:</strong></p>
+              <Chart type="bar" :data="revenueChartData" :options="chartOptions" height="300px" />
+            </v-col>
+          </v-row>
+        </v-container>
       </div>
     </v-card-text>
   </v-card>
 </template>
+
 
 <script>
 import Chart from 'primevue/chart'
@@ -42,8 +43,7 @@ export default {
   components: { Chart },
   data() {
     return {
-      currentTab: 'Invoice Breakdown', // Example tab name
-      selectedMonth: null, // Selected month for revenue breakdown
+      currentTab: 'Invoice Breakdown',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       invoiceStats: {
@@ -54,64 +54,56 @@ export default {
         unpaidInvoices: [],
         revenue: 0
       },
-      months: [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ],
       paidVsUnpaidChartData: {}, // Data for pie chart (paid vs unpaid invoices)
       revenueChartData: {}, // Data for bar chart (revenue per month)
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false
-      } // Chart options for customization
+      }
+    }
+  },
+  computed: {
+    // Computed property to check if revenue chart data has meaningful values
+    revenueChartHasData() {
+      return this.revenueChartData.datasets?.[0]?.data?.some((value) => value > 0);
     }
   },
   mounted() {
-    this.getInvoiceStats()
+    this.getInvoiceStats();
   },
   methods: {
     async isLocalAvailable(localUrl) {
       try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
+        const res = await axios.get(localUrl);
+        return res.status < 300 && res.status > 199;
       } catch (error) {
-        return false
+        return false;
       }
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      const localAvailable = await this.isLocalAvailable(this.localUrl);
+      return localAvailable ? this.localUrl : this.remoteUrl;
     },
     fetchRevenueForMonth(month) {
-      // Example data fetching logic for revenue per month
-      const revenueData = {
-        January: [5000, 7000, 6000],
-        February: [4500, 6000, 6500],
-        March: [4000, 5500, 7000]
-        // Add data for other months...
-      }
+      const monthlyRevenue = this.invoiceStats.revenue;
 
-      // Example data for revenue bar chart (replace with actual data)
+      // Extract the data for the chart
+      const months = monthlyRevenue.map((entry) => entry.month);
+      const numUnpaid = monthlyRevenue.map((entry) => entry.numUnpaid);
+
+      // Update the chart with the data
       this.revenueChartData = {
-        labels: ['Week 1', 'Week 2', 'Week 3'], // Example weekly labels
+        labels: months,
         datasets: [
           {
-            label: `Revenue for ${month}`,
-            data: revenueData[month] || [0, 0, 0], // Example revenue data
-            backgroundColor: '#36A2EB'
+            label: 'Revenue',
+            data: numUnpaid,
+            backgroundColor: '#FF6384',
+            borderColor: '#FF6384',
+            borderWidth: 1
           }
         ]
-      }
+      };
     },
     async getInvoiceStats() {
       const config = {
@@ -122,12 +114,12 @@ export default {
         params: {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
-      }
-      const apiURL = await this.getRequestUrl()
+      };
+      const apiURL = await this.getRequestUrl();
       axios
         .get(`${apiURL}stats/invoiceStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          this.invoiceStats = response.data.data
+          this.invoiceStats = response.data.data;
 
           // Update the pie chart data with API response
           this.paidVsUnpaidChartData = {
@@ -138,17 +130,18 @@ export default {
                 backgroundColor: ['#42A5F5', '#FF6384']
               }
             ]
-          }
+          };
 
-          // Fetch initial revenue data for the current month (replace with actual logic)
-          this.fetchRevenueForMonth('January')
+          // Fetch revenue data for all months (replace with actual logic if needed)
+          this.fetchRevenueForMonth('January');
         })
         .catch((error) => {
-          console.error('Failed to fetch invoice stats:', error)
-        })
+          console.error('Failed to fetch invoice stats:', error);
+        });
     }
   }
-}
+};
+
 </script>
 
 <style scoped>

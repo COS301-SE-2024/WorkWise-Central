@@ -104,11 +104,11 @@
                       </template>
 
                       <template v-slot:[`item.startDate`]="{ item }">
-                        {{ formatDate(item?.details?.startDate) }}
+                        {{ new Date(item?.details?.startDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ item }">
-                        {{ item?.details?.endDate ? formatDate(item.details.endDate) : '' }}
+                        {{ new Date(item?.details?.endDate || '').toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
                       </template>
 
                       <!-- Actions slot -->
@@ -372,12 +372,13 @@ interface Job {
 // Define state variables with types
 const selectedJob = ref<Job | null>(null)
 const deleteDialog = ref(false)
-const isDeleting = ref(false)
 const detailedJobData = ref<Job[]>([])
 const search = ref('')
 const isDarkMode = ref(localStorage.getItem('theme') === 'true' ? true : false)
 const viewJobDialogVisible = ref(false)
 const viewManagerJobCardVisible = ref(false)
+
+let isDeleting = ref<boolean>(false)
 
 const openJobCardDialog = () => {
   viewManagerJobCardVisible.value = true
@@ -499,11 +500,9 @@ const confirmDelete = async () => {
       })
       setTimeout(() => {
         deleteDialog.value = false
-        isDeleting.value = false
       }, 3000)
       closeDialog()
     } catch (error) {
-      isDeleting.value = false
       toast.add({
         severity: 'error',
         summary: 'Delete Error',
@@ -512,6 +511,7 @@ const confirmDelete = async () => {
       })
     } finally {
       localStorage.setItem('jobDeleted', 'true')
+      isDeleting.value = false
     }
   }
 }
