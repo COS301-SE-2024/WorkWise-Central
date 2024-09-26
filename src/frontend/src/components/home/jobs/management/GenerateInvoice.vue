@@ -55,8 +55,6 @@ const generatePdf = async () => {
     invoiceData.inventoryItems.push(['', '', '', '', ''])
   }
 
-  console.log(data)
-
   const data = {
     outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
     fileName: `Invoice ${invoiceData.companyId.name}`,
