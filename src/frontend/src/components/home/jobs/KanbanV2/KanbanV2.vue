@@ -918,7 +918,7 @@ export default {
 
       try {
         const loaded_tags_response = await axios.get(
-          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}`,
+          API_URL + `job/all/employee/${localStorage['employeeId']}`,
           config
         )
         console.log(loaded_tags_response)
