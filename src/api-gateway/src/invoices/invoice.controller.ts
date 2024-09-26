@@ -304,6 +304,42 @@ export class InvoiceController {
   @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiOperation({
+    summary: `Find an ${className}`,
+    description: `Returns the ${className} instance with the given id.`,
+  })
+  @ApiOkResponse({
+    type: InvoiceResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className} to be retrieved.`,
+  })
+  @Get('detailed/id/:id')
+  async findByIdDetailed(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    if (!currentEmployeeId) {
+      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
+    }
+    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // if (currentEmployee.role.permissionSuite.includes('view all Invoice')) {
+    const data = await this.invoiceService.findByIdDetailed(id);
+    return { data: data };
+    // } else {
+    //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    // }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
     status: HttpStatus.BAD_REQUEST,
   })
   @ApiOperation({

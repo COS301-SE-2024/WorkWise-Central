@@ -196,6 +196,10 @@ export class InvoiceService {
     return await this.invoiceRepository.findById(id);
   }
 
+  async findByIdDetailed(id: Types.ObjectId) {
+    return await this.invoiceRepository.findByIdDetailed(id);
+  }
+
   async InvoiceExists(id: Types.ObjectId): Promise<boolean> {
     return await this.invoiceRepository.InvoiceExists(id);
   }
