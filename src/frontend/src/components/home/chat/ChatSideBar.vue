@@ -221,15 +221,11 @@ const theKidIsNotMySon = (userId) => {
 <style scoped>
 .chat-sidebar {
   width: 300px;
-  background-color: rgba(34, 125, 155, 0.2); /* Adjusted to theme secondary color with transparency */
-  border-right: 1px solid var(--highlighter-color); /* Use theme highlighter color */
   padding: 1rem;
   height: 100%;
 }
 
 .new-chat-dialog {
-  background-color: var(--card-color); /* Use theme card color */
-  border: 1px solid var(--highlighter-color); /* Use theme highlighter color */
   padding: 1rem;
 }
 
@@ -248,21 +244,17 @@ const theKidIsNotMySon = (userId) => {
 }
 
 .chat-list li:hover {
-  background-color: var(--highlighter-color); /* Use theme highlighter color */
+  background-color: grey; /* Use theme highlighter color */
 }
 
 .chat-list li.selected {
-  background-color: var(--secondary-color); /* Use theme secondary color for selected state */
 }
 
 .chat-list li span {
   margin-left: 1rem;
-  color: var(--element-text-color); /* Use theme element text color */
 }
 
 :deep(.p-inputtext) {
-  background-color: var(--card-color); /* Use theme card background */
-  color: var(--element-text-color); /* Use theme text color */
 }
 
 .p-inputtext {
