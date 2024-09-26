@@ -419,7 +419,7 @@ const fetchData = async () => {
   }
   try {
     const response = await axios.get(
-      `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+      `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
       config
     )
     if (response.status > 199 && response.status < 300) {

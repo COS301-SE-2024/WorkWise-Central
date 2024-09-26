@@ -85,7 +85,7 @@ export default defineComponent({
       }
       try {
         const response = await axios.get(
-          `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)

@@ -1416,4 +1416,14 @@ export class JobService {
     const statusId = finalStatus.jobStatuses[finalStatus.jobStatuses.length - 1];
     return this.jobRepository.findCompletedForClient(clientId, statusId._id);
   }
+
+  async getAllJobBelowMe(employeeId: Types.ObjectId) {
+    const list = await this.employeeService.deptFirstTraversalId(employeeId);
+    return this.jobRepository.findAllForEmployees(list);
+  }
+
+  async getAllJobBelowMeDetailed(employeeId: Types.ObjectId) {
+    const list = await this.employeeService.deptFirstTraversalId(employeeId);
+    return this.jobRepository.findAllForEmployeesDetailed(list);
+  }
 }

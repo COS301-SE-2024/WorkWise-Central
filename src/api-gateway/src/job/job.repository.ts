@@ -224,6 +224,28 @@ export class JobRepository {
     return await this.jobModel.find(filter).lean().exec();
   }
 
+  async findAllForEmployeesDetailed(employeeIds: Types.ObjectId[]) {
+    const filter = {
+      $and: [
+        {
+          $or: [
+            { 'assignedEmployees.employeeIds': { $in: employeeIds } },
+            { 'taskList.items.assignedEmployees': { $in: employeeIds } },
+          ],
+        },
+        isNotDeleted,
+      ],
+    };
+    return await this.jobModel
+      .find(filter)
+      .populate(defaultPopulatedFields)
+      .populate(jobAssignedEmployees)
+      .populate(employeeComments)
+      .populate(jobTaskListItems)
+      .lean()
+      .exec();
+  }
+
   async findAllForEmployeeDetailed(employeeId: Types.ObjectId) {
     const filter = {
       $and: [
