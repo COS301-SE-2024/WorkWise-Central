@@ -194,26 +194,27 @@ export default {
       // Unassign if the job has been removed
 
       for (const job of this.assignedJobs) {
-        if (!this.selectedJobs.find(job)) {
-          console.log('Removing job... :', job._id)
+        if (!this.selectedJobs.includes(job)) {
+          console.log('Removing job... :', job)
           await axios.patch(`${API_URL}job/team`, {
-              employeeId: localStorage.getItem('employeeId'),
-              teamId: this.teamId,
-              jobId: job._id
-            }, config
+                employeeId: localStorage.getItem('employeeId'),
+                teamId: this.teamId,
+                jobId: job
+              }, config
           )
         }
       }
 
       // Assign new jobs to the team
-
       for (const job of this.selectedJobs) {
         console.log('Job id:', job)
-        await axios.put(`${API_URL}job/team`, {
-          employeeId: localStorage.getItem('employeeId'),
-          teamId: this.teamId,
-          jobId: job
-        }, config)
+        if (!this.assignedJobs.includes(job)) {
+          await axios.put(`${API_URL}job/team`, {
+            employeeId: localStorage.getItem('employeeId'),
+            teamId: this.teamId,
+            jobId: job
+          }, config)
+        }
       }
 
       axios
