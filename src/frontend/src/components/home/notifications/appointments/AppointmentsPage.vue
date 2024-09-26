@@ -42,7 +42,7 @@
                   </v-btn>
                 </v-list-item>
                 <v-list-item>
-                  <v-btn color="warning" width="100%" @click.stop="openEditDialog(item)">
+                  <v-btn color="warning" width="100%" @click.stop="openEditDialog(), selectItem(item)">
                     <v-icon icon="fa:fa-solid fa-pencil" start color="warning" size="small"></v-icon>
                     Edit
                   </v-btn>
@@ -191,48 +191,34 @@
       <v-card-title>
         <span class="headline">{{ 'Edit Appointment' }}</span>
       </v-card-title>
+
       <v-card-text>
         <v-form v-model="valid">
           <v-container>
             <v-row>
               <v-col cols="12">
                 <h6>Meeting Title</h6>
-                <v-text-field v-model="selectedItem.title" label="Title" :rules="titleRules" required></v-text-field>
+                <v-text-field v-model="fuck.title" label="Title" :rules="titleRules" required></v-text-field>
               </v-col>
-              <v-col cols="12" align="center">
-                <h6>Meeting Date</h6>
-                <v-date-picker title="START DATE" header="Meeting start date" border="md" width="unset" max-width="350"
-                  v-model="selectedItem.date" elevation="5" required :rules="startDateRule" :min="minDate"
-                  class="mb-4"></v-date-picker>
-              </v-col>
-              <v-row>
-                <v-col cols="6">
-                  <h6>Start Time</h6>
-                  <v-time-picker format="24hr" :allowed-hours="allowedHours" :allowed-minutes="allowedMinutes"
-                    v-model="selectedItem.startTime" class="mb-4"></v-time-picker>
-                </v-col>
-                <v-col cols="6">
-                  <h6>End Time</h6>
-                  <v-time-picker :allowed-hours="allowedHours2" :allowed-minutes="allowedMinutes2" format="24hr"
-                    v-model="selectedItem.endTime"></v-time-picker>
-                </v-col>
-              </v-row>
+
+
+
               <v-col cols="12">
                 <h6>Details</h6>
-                <v-text-field v-model="selectedItem.details" label="Details"></v-text-field>
+                <v-text-field v-model="fuck.details" label="Details"></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <h6>Choose Participants</h6>
-                <v-select clearable label="Participants" hint="Select the employee you'd like to join the meeting"
-                  persistent-hint @update:model-value="selected_participants" v-model="newAppointment.participants"
-                  item-value="employeeId" item-title="name" :items="teamMemberNames" multiple chips
-                  bg-color="background" variant="solo"></v-select>
+                <v-select v-model="fuck.participants" :items="teamMemberNames" item-value="employeeId" item-title="name"
+                  clearable multiple chips label="Participants"
+                  hint="Select the employee you'd like to join the meeting" persistent-hint></v-select>
               </v-col>
             </v-row>
           </v-container>
         </v-form>
       </v-card-text>
+
       <v-card-actions>
         <v-container>
           <v-row>
@@ -253,6 +239,7 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
 
 </template>
 <script>
@@ -275,12 +262,13 @@ export default defineComponent({
       deleteDialog: false,
       isDeleting: false,
       appointmentId: '',
+      fuck: {},
       showEdit: false,
       showDialog: false,
       search: '',
       showCreate: false,
       selectedRoom: {},
-      selectedItem: '',
+      selectedItem: {},
       isEditing: false,
       joinRoom: true,
       conference: false,
@@ -320,10 +308,14 @@ export default defineComponent({
       this.deleteDialog = false
       this.appointmentId = ''
     },
-    openEditDialog(appointment) {
+    openEditDialog() {
       this.showEdit = true
 
-      console.log(appointment)
+
+    },
+    selectItem(item) {
+      console.log(item)
+      this.fuck = item
     },
     closeEditDialog() {
       this.showEdit = false
@@ -340,9 +332,7 @@ export default defineComponent({
           console.error('Error deleting appointment:', error)
         })
     },
-    selected_participants(a) {
-      //console.log(a)
-    },
+
     async getRequests() {
       const config = {
         headers: {
@@ -448,12 +438,13 @@ export default defineComponent({
       }
 
       const data = {
-        title: this.newAppointment.title,
-        scheduledTime: this.newAppointment.date,
-        details: this.newAppointment.details,
+        title: this.selectedItem.title,
+        scheduledTime: this.selectedItem.date,
+        details: this.selectedItem.details,
         participants: await this.selectTeamMembers(),
         companyId: this.companyId
       }
+      console.log(data)
       const id = this.newAppointment._id
       await axios
         .patch(`${API_URL}videoCalls/${id}`, data, config)
