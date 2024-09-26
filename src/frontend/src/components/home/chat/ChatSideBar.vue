@@ -55,14 +55,14 @@
       class="new-chat-dialog"
     >
       <div class="p-fluid pt-5 pb-5">
-        <v-row>
-          <v-col>
-            <label for="chatName">Chat Name</label>
-          </v-col>
-          <v-col>
-            <InputText id="chatName" v-model="newChatName" />
-          </v-col>
-        </v-row>
+          <v-row>
+            <v-col>
+              <label for="chatName">Chat Name</label>
+            </v-col>
+            <v-col>
+              <InputText id="chatName" v-model="newChatName" />
+            </v-col>
+          </v-row>
 
         <v-row>
           <v-col>
@@ -70,11 +70,11 @@
           </v-col>
           <v-col>
             <MultiSelect
-              id="participants"
-              v-model="selectedParticipants"
-              :options="availableUsers"
-              optionLabel="systemDetails.username"
-              placeholder="Select participants"
+                id="participants"
+                v-model="selectedParticipants"
+                :options="availableUsers"
+                optionLabel="systemDetails.username"
+                placeholder="Select participants"
             />
           </v-col>
         </v-row>
@@ -87,16 +87,16 @@
             <input type="file" accept="image/*" @change="handleFileChange" ref="fileInput" />
           </v-col>
         </v-row>
-        <!-- File input for images -->
+          <!-- File input for images -->
       </div>
 
       <template #footer>
         <div class="pt-5">
           <Button
-            label="Cancel"
-            icon="fa: fa-solid fa-times"
-            @click="closeNewChatDialog"
-            class="p-button-text"
+              label="Cancel"
+              icon="fa: fa-solid fa-times"
+              @click="closeNewChatDialog"
+              class="p-button-text"
           />
           <Button label="Create" icon="fa: fa-solid fa-check" @click="createNewChat" autofocus />
         </div>
@@ -221,20 +221,11 @@ const theKidIsNotMySon = (userId) => {
 <style scoped>
 .chat-sidebar {
   width: 300px;
-  background-color: rgba(
-    34,
-    125,
-    155,
-    0.2
-  ); /* Adjusted to theme secondary color with transparency */
-  border-right: 1px solid var(--highlighter-color); /* Use theme highlighter color */
   padding: 1rem;
   height: 100%;
 }
 
 .new-chat-dialog {
-  background-color: var(--card-color); /* Use theme card color */
-  border: 1px solid var(--highlighter-color); /* Use theme highlighter color */
   padding: 1rem;
 }
 
@@ -253,21 +244,17 @@ const theKidIsNotMySon = (userId) => {
 }
 
 .chat-list li:hover {
-  background-color: var(--highlighter-color); /* Use theme highlighter color */
+  background-color: grey; /* Use theme highlighter color */
 }
 
 .chat-list li.selected {
-  background-color: var(--secondary-color); /* Use theme secondary color for selected state */
 }
 
 .chat-list li span {
   margin-left: 1rem;
-  color: var(--element-text-color); /* Use theme element text color */
 }
 
 :deep(.p-inputtext) {
-  background-color: var(--card-color); /* Use theme card background */
-  color: var(--element-text-color); /* Use theme text color */
 }
 
 .p-inputtext {

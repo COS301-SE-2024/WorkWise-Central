@@ -28,13 +28,13 @@ export class Items {
 @Schema()
 export class Invoice {
   constructor(createInvoiceDto: CreateInvoiceDto) {
-    this.invoiceNumber = createInvoiceDto.invoiceNumber;
-    this.invoiceDate = createInvoiceDto.invoiceDate;
-    this.subTotal = createInvoiceDto.subTotal;
-    this.total = createInvoiceDto.total;
-    this.taxAmount = createInvoiceDto.taxAmount;
-    this.taxPercentage = createInvoiceDto.taxPercentage;
-    this.paid = createInvoiceDto.paid;
+    this.invoiceNumber = createInvoiceDto.invoiceNumber ? createInvoiceDto.invoiceNumber : 0;
+    this.invoiceDate = createInvoiceDto.invoiceDate ? createInvoiceDto.invoiceDate : new Date();
+    this.subTotal = createInvoiceDto.subTotal ? createInvoiceDto.subTotal : 0;
+    this.total = createInvoiceDto.total ? createInvoiceDto.total : 0;
+    this.taxAmount = createInvoiceDto.taxAmount ? createInvoiceDto.taxAmount : 0;
+    this.taxPercentage = createInvoiceDto.taxPercentage ? createInvoiceDto.taxPercentage : 0;
+    this.paid = createInvoiceDto.paid ? createInvoiceDto.paid : false;
     this.clientId = createInvoiceDto.clientId;
     this.jobId = createInvoiceDto.jobId;
     this.companyId = createInvoiceDto.companyId;
@@ -72,6 +72,10 @@ export class Invoice {
   @ApiProperty()
   @Prop({ type: Boolean, required: true, default: false })
   paid: boolean;
+
+  @ApiProperty()
+  @Prop({ required: true, default: new Date() })
+  receiptOfPaymentDate: Date;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Client' })

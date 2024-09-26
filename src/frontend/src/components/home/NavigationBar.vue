@@ -6,7 +6,6 @@ const isVisible = ref(false)
 const drawer = ref(true)
 
 const open = ref(['Dashboard'])
-
 const dashboardSubItems = ref([
   { title: 'Calender', icon: 'fa: fa-solid fa-house', routeName: 'dashboard' },
   { title: 'Statistics', icon: 'fa: fa-solid fa-chart-line', routeName: 'statisticView' }
