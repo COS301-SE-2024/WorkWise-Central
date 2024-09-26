@@ -207,7 +207,6 @@ export default {
 
       // Assign new jobs to the team
       for (const job of this.selectedJobs) {
-        console.log('Job id:', job)
         if (!this.assignedJobs.includes(job)) {
           await axios.put(`${API_URL}job/team`, {
             employeeId: localStorage.getItem('employeeId'),
@@ -277,7 +276,6 @@ export default {
             `${API_URL}team/id/${this.teamId}`,
             config
         )
-        console.log('Selected Jobs:', response.data.data)
         for (const job of response.data.data.currentJobAssignments) {
           this.assignedJobs.push(job)
         }
@@ -305,7 +303,6 @@ export default {
         response.data.data.forEach((job) => {
           this.jobList.push(job)
         })
-        console.log('Job List:', this.jobList)
       } catch (error) {
         console.error(error)
       }
