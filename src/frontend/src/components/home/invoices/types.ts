@@ -37,6 +37,8 @@ export type InvoiceCardDataFormat = {
   companyEmail: string
   companyPhoneNumber: string
   companyLogo: string
+  inventoryItems: []
+  laborItems: []
 }
 
 type Item = {
