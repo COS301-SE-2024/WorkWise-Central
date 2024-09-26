@@ -162,30 +162,12 @@ const leftCompanyHeaders = [
 // Table Data
 const companies = ref<Company[]>([])
 
-// API URLs and configs
-// const localUrl = API_URL
-// const remoteUrl = API_URL
 const config = {
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
 }
-
-// Utility functions
-// const isLocalAvailable = async (url: string): Promise<boolean> => {
-//   try {
-//     const res = await axios.get(url)
-//     return res.status >= 200 && res.status < 300
-//   } catch (error) {
-//     return false
-//   }
-// }
-//
-// const getRequestUrl = async (): Promise<string> => {
-//   const localAvailable = await isLocalAvailable(localUrl)
-//   return localAvailable ? localUrl : remoteUrl
-// }
 
 const getRowProps = ({ index }: any) => ({
   class: index % 2 ? 'bg-secondRowColor' : ''

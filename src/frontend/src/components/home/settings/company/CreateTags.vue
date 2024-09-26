@@ -92,8 +92,6 @@ export default defineComponent({
         colour: '',
         companyId: localStorage.getItem('currentCompany')
       } as Tag,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
       nameRules: [(v: string) => !!v || 'Name is required'],
       labelRules: [(v: string) => !!v || 'Label is required'],
@@ -181,18 +179,6 @@ export default defineComponent({
           console.error(error)
         })
       console.log('Creating Tag')
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     close() {
       this.dialog = false

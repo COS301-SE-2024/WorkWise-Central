@@ -61,6 +61,7 @@ import { UpdateStatus, UpdateStatusDto } from './dto/job-status.dto';
 import { AddTaskDto, RemoveTaskDto, UpdateTaskDto } from './dto/job-tasks.dto';
 import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-task-item.dto';
 import { ConvertItemToJobDto } from './dto/convert-item-to-job.dto';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Job';
 
@@ -70,6 +71,7 @@ export class JobController {
   constructor(
     private readonly jobService: JobService,
     private jwtService: JwtService,
+    private readonly employeeService: EmployeeService,
   ) {}
   validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
     let data: string;
@@ -154,15 +156,48 @@ export class JobController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all/company/:cid')
-  async findAllInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
-    try {
-      validateObjectId(companyId);
-      const userId = extractUserId(this.jwtService, headers);
-      return {
-        data: await this.jobService.getAllJobsInCompany(userId, new Types.ObjectId(companyId)),
-      };
-    } catch (Error) {
-      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+  async findAllInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('view all jobs')) {
+      try {
+        validateObjectId(companyId);
+        const userId = extractUserId(this.jwtService, headers);
+        return {
+          data: await this.jobService.getAllJobsInCompany(userId, new Types.ObjectId(companyId)),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view jobs under me')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(userId);
+
+        const employeeId = new Types.ObjectId(currentEmployeeId);
+        return {
+          data: await this.jobService.getAllJobBelowMe(employeeId),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view jobs assigned to me')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(userId);
+
+        const employeeId = new Types.ObjectId(currentEmployeeId);
+        return {
+          data: await this.jobService.getAllJobsForEmployee(userId, employeeId),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      return {};
     }
   }
 
@@ -176,15 +211,48 @@ export class JobController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all/company/detailed/:cid')
-  async findDetailedAllInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
-    try {
-      const userId = extractUserId(this.jwtService, headers);
-      validateObjectId(companyId);
-      return {
-        data: await this.jobService.getAllDetailedJobsInCompany(userId, new Types.ObjectId(companyId)),
-      };
-    } catch (Error) {
-      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+  async findDetailedAllInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('view all jobs')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(companyId);
+        return {
+          data: await this.jobService.getAllDetailedJobsInCompany(userId, new Types.ObjectId(companyId)),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view jobs under me')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(userId);
+
+        const employeeId = new Types.ObjectId(currentEmployeeId);
+        return {
+          data: await this.jobService.getAllJobBelowMeDetailed(employeeId),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view jobs assigned to me')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(userId);
+
+        const employeeId = new Types.ObjectId(currentEmployeeId);
+        return {
+          data: await this.jobService.getAllDetailedJobsForEmployee(userId, employeeId),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      return {};
     }
   }
 

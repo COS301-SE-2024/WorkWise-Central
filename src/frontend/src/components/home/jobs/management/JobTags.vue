@@ -95,6 +95,7 @@ import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
+import { API_URL } from '@/main'
 
 const toast = useToast()
 
@@ -119,30 +120,10 @@ const companyLabels = ref<Label[]>([])
 
 let isEditingLabel = ref<boolean>(false)
 
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
-
 const getJobTags = async () => {
-  const apiUrl = await getRequestUrl()
   try {
     const response = await axios.get(
-      `${apiUrl}job/tags/${localStorage.getItem('currentCompany')}`,
+      `${API_URL}job/tags/${localStorage.getItem('currentCompany')}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
@@ -160,12 +141,11 @@ const getJobTags = async () => {
 }
 
 const saveTags = async () => {
-  const apiUrl = await getRequestUrl()
   try {
     const updatedTags = selectedTags.value.map((tag) => tag._id)
     console.log('Selected tags:', updatedTags)
     const response = await axios.patch(
-      `${apiUrl}job/update/${props.jobID}`,
+      `${API_URL}job/update/${props.jobID}`,
       { tags: updatedTags },
       {
         headers: {
@@ -190,7 +170,6 @@ const handleClick = () => {
 }
 
 const editLabel = async () => {
-  const apiUrl = await getRequestUrl()
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -205,7 +184,7 @@ const editLabel = async () => {
       colour: selectedColor.value,
       tagId: selectedTagId.value
     }
-    const response = await axios.patch(`${apiUrl}job/tags`, body, config)
+    const response = await axios.patch(`${API_URL}job/tags`, body, config)
     editTagSuccess()
     console.log('Edit tag:', response)
     // Update the selectedTags array with the new values
@@ -249,7 +228,6 @@ const saveLabel = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
 
   if (dialogTitle.value === 'Create Label') {
     try {
@@ -258,7 +236,7 @@ const saveLabel = async () => {
         label: labelTitle.value,
         colour: selectedColor.value
       }
-      const response = await axios.post(`${apiUrl}job/tags/add`, tag, config)
+      const response = await axios.post(`${API_URL}job/tags/add`, tag, config)
       const updatedTags = [...props.tags.map((tag) => tag._id), response.data.data._id]
       console.log(response)
       if (response.status > 199 && response.status < 300) {
@@ -267,7 +245,7 @@ const saveLabel = async () => {
           console.log('Job id', props.jobID)
           console.log('Tag body', tag)
           let response = await axios.patch(
-            `${apiUrl}job/update/${props.jobID}`,
+            `${API_URL}job/update/${props.jobID}`,
             { tags: updatedTags },
             config
           )
@@ -305,7 +283,6 @@ const saveLabel = async () => {
 }
 
 const deleteLabel = async () => {
-  const apiUrl = await getRequestUrl()
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -317,7 +294,7 @@ const deleteLabel = async () => {
       tagId: selectedTagId.value,
       companyId: localStorage.getItem('currentCompany')
     }
-    const response = await axios.delete(`${apiUrl}job/tags`, {
+    const response = await axios.delete(`${API_URL}job/tags`, {
       data: body,
       headers: config.headers
     })

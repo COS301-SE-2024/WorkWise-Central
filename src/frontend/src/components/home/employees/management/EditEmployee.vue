@@ -182,8 +182,6 @@ export default {
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
       modal_light_theme_color: '#FFFFFF',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       backendselectedSubs: [] as string[],
       loading: true,
       req_obj: {
@@ -391,7 +389,6 @@ export default {
       let change_occured = false
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      let API_URL = await this.getRequestUrl()
       console.log(this.localEditedItem.employeeId)
 
       console.log('current subordinates: ' + this.currentSubordinates)
@@ -542,35 +539,6 @@ export default {
         window.location.reload()
       }
     },
-    // async update() {
-    //   await axios
-    //     .patch(`http://localhost:3000/employee/${this.id}`)
-    //     .then((response) => {
-    //       console.log(response)
-    //       alert('Client updated')
-    //       return true
-    //     })
-    //     .catch((error) => {
-    //       console.log(error)
-    //       alert('Error updating client')
-    //       return false
-    //     })
-    //     .finally(() => {
-    //       this.employeeDialog = false
-    //     })
-    // },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   created() {
     this.showlocalvalues()

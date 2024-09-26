@@ -7,17 +7,19 @@
         width="100%"
       >
         <v-row align="center" justify="space-between">
+          <!-- Invoice Label -->
           <v-col cols="12" lg="4" class="d-flex align-center">
-            <v-icon icon="fa: fa-solid fa-file-invoice"></v-icon>
+            <v-icon icon="fa: fa-solid fa-file"></v-icon>
             <v-label
               class="ms-2 h2 font-family-Nunito text-headingTextColor"
               height="auto"
               width="auto"
-              >Company Invoices</v-label
+              >Invoice Details</v-label
             >
           </v-col>
 
-          <v-col cols="12" lg="4" class="d-flex align-center">
+          <!-- Centered Search Bar -->
+          <v-col cols="12" lg="4" class="d-flex justify-center">
             <v-text-field
               v-model="search"
               density="compact"
@@ -34,6 +36,8 @@
         </v-row>
       </v-card-title>
       <v-divider></v-divider>
+
+      <!-- Table Content -->
       <v-card-text>
         <v-data-table
           :headers="invoiceHeaders"
@@ -82,12 +86,14 @@
   </v-container>
 </template>
 
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import DeleteInvoice from './DeleteInvoice.vue'
 import EditInvoice from './EditInvoice.vue'
 import ViewInvoice from './ViewInvoices.vue'
+import { API_URL } from '@/main'
 
 interface Invoice {
   _id: string
@@ -116,8 +122,6 @@ export default defineComponent({
       ],
       invoiceItems: [] as Invoice[],
       search: '',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       selectedItem: {} as Invoice,
       companyId: '',
       currentEmployee: ''
@@ -125,18 +129,6 @@ export default defineComponent({
   },
   components: { DeleteInvoice, EditInvoice, ViewInvoice },
   methods: {
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
     formatDate(dateString: any) {
       const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' }
       const date = new Date(dateString)
@@ -150,7 +142,7 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
+      
       if (localStorage.getItem('currentCompany') !== null) {
         this.companyId = localStorage.getItem('currentCompany') as string
       }
@@ -158,7 +150,7 @@ export default defineComponent({
         this.currentEmployee = localStorage.getItem('employeeId') as string
       }
       await axios
-        .get(`${url}invoice/all/detailed/${this.currentEmployee}`, config)
+        .get(`${API_URL}invoice/all/detailed/${this.currentEmployee}`, config)
         .then((response) => {
           console.log('response: ', response)
           for (const invoice of response.data.data) {

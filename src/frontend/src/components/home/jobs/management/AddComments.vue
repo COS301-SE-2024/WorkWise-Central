@@ -87,14 +87,11 @@ import { defineProps, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
+import { API_URL } from '@/main'
 
 let isAdding = ref<boolean>(false)
 let isDeleting = ref<boolean>(false)
 const toast = useToast()
-
-// API URLs
-const localUrl = 'http://localhost:3000/'
-const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
 // Request Config
 const config = {
@@ -177,24 +174,9 @@ const getInitials = (firstName: string, surname: string): string => {
   return `${firstInitial}${lastInitial}`
 }
 
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status >= 200 && res.status < 300
-  } catch {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
-
 const getUserData = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
+    const response = await axios.get(`${API_URL}users/id/${localStorage.getItem('id')}`, config)
     if (response.status > 199 && response.status < 300) {
       const userData = response.data.data
       console.log('User data', userData)
@@ -218,14 +200,13 @@ const addComment = async () => {
     return
   }
   isAdding.value = true
-  const apiUrl = await getRequestUrl()
   const addedComment = ref<{ employeeId: string; jobId: string; newComment: string }>({
     employeeId: localStorage.getItem('employeeId') || '',
     jobId: props.id,
     newComment: newComment.value
   })
   try {
-    const response = await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
+    const response = await axios.put(`${API_URL}job/comment`, addedComment.value, config)
     const commentId: string =
       response.data.data.comments[response.data.data.comments.length - 1]._id
     comments.value.push({
@@ -253,7 +234,6 @@ const addComment = async () => {
 }
 
 const deleteComment = async (index: number) => {
-  const apiUrl = await getRequestUrl()
   const commentToBeRemoved = paginatedComments.value[index]
   const commentBody = ref<{ employeeId: string; jobId: string; commentId: string }>({
     employeeId: commentToBeRemoved.employeeId,
@@ -265,7 +245,7 @@ const deleteComment = async (index: number) => {
   )
   try {
     isDeleting.value = true
-    await axios.delete(`${apiUrl}job/comment`, {
+    await axios.delete(`${API_URL}job/comment`, {
       data: commentBody.value,
       headers: config.headers
     })

@@ -86,6 +86,7 @@
 import { defineComponent, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import axios from 'axios'
 import { io, Socket } from 'socket.io-client'
+import { API_URL } from '@/main'
 
 import router from '@/router'
 
@@ -108,8 +109,6 @@ export default defineComponent({
     const peers = ref<{ id: string; connection: RTCPeerConnection }[]>([])
     let socket: Socket
     let localStream: MediaStream | null = null
-    const localUrl = 'http://localhost:3000/'
-    const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
     const roomId = localStorage.getItem('RoomId')
     const employeeId = localStorage.getItem('employeeId')
     const roomName = ref(localStorage.getItem('RoomName') || 'Default Room Name')
@@ -171,19 +170,6 @@ export default defineComponent({
         localStream.getTracks().forEach((track) => track.stop())
       }
     })
-    const getRequestUrl = async () => {
-      const localAvailable = await isLocalAvailable(localUrl)
-      return localAvailable ? localUrl : remoteUrl
-    }
-
-    const isLocalAvailable = async (localUrl: string) => {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    }
 
     const scheduleCall = async () => {
       console.log('Scheduled time:', new Date(scheduledTime.value))
@@ -193,10 +179,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await getRequestUrl()
       try {
         await axios.post(
-          `${apiURL}video-calls/schedule`,
+          `${API_URL}video-calls/schedule`,
           {
             title: title.value,
             scheduledTime: new Date(scheduledTime.value)

@@ -79,8 +79,6 @@ export default defineComponent({
       },
       testRoute: '' as any,
       companyId: '',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       merchant_id: '',
       merchant_key: '',
       passPhrase: '',
@@ -194,14 +192,6 @@ export default defineComponent({
         .catch((error) => {
           console.error(error)
         })
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
     },
     formatDate(date: string) {
       const date_passed_in = new Date(date)

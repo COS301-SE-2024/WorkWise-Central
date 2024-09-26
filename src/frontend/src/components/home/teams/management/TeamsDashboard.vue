@@ -9,7 +9,7 @@
         >
           <v-row align="center" justify="space-between">
             <v-col cols="12" lg="4" class="d-flex align-center">
-              <v-icon icon="fa: fa-solid fa-users"></v-icon>
+              <v-icon icon="fa: fa-solid fa-people-group"></v-icon>
               <v-label
                 class="ms-2 h4 font-family-Nunito text-headingTextColor"
                 height="auto"
@@ -33,7 +33,8 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" lg="4" class="d-flex justify-end">
+            <v-col cols="12" lg="4" class="d-flex justify-end"
+             v-if="checkPermission('add new teams')">
               <CreateTeam @teamCreated="getTeams" />
             </v-col>
           </v-row>
@@ -55,25 +56,36 @@
                 {{ item.currentJobAssignments.length }}
               </v-chip>
             </template>
+
+            <!-- Actions slot -->
             <template v-slot:[`item.actions`]="{ item }">
               <v-menu max-width="500px" v-bind="menuProps">
                 <template v-slot:activator="{ props }">
-                  <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
+                  <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)"
+                  v-show="
+                          checkPermission('view teams') ||
+                          checkPermission('edit teams') ||
+                          checkPermission('delete teams') ">
                     <v-icon color="primary">mdi-dots-horizontal</v-icon>
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item>
+                  <v-list-item
+                  v-show="checkPermission('view teams') "
+                  >
                     <ViewTeam :team="selectedItem" />
                   </v-list-item>
-                  <v-list-item>
+                  <v-list-item
+                  v-show="checkPermission('edit teams') ">
                     <UpdateTeam
                       @teamUpdated="getTeams"
                       :teamId="selectedItemID"
                       :editedItem="selectedItem"
                     />
                   </v-list-item>
-                  <v-list-item>
+                  <v-list-item
+                  v-show="checkPermission('delete teams') "
+                  >
                     <DeleteTeam
                       @teamDeleted="getTeams"
                       :team_id="selectedItemID"
@@ -97,6 +109,8 @@ import ViewTeam from './ViewTeam.vue'
 import UpdateTeam from './UpdateTeam.vue'
 import DeleteTeam from './DeleteTeam.vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 interface Team {
   _id: string
   companyId: string
@@ -135,8 +149,7 @@ export default defineComponent({
       selectedItemName: '',
       selectedItemID: '',
       actionsMenu: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+      employeePermissions: [] as string[]
     }
   },
   computed: {
@@ -152,6 +165,29 @@ export default defineComponent({
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
+    },
+    async getEmployeePermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      axios
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .then((response) => {
+          console.log(response.data.data.role.permissionSuite)
+          this.employeePermissions = response.data.data.role.permissionSuite
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
+    },
+    checkPermission(permission: string) {
+      return this.employeePermissions.includes(permission)
     },
     updateTeamInList(updatedTeam: Team) {
       const index = this.teamItems.findIndex((team) => team._id === updatedTeam._id)
@@ -195,10 +231,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
           config
         )
         console.log(response.data.data)
@@ -222,10 +257,9 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -246,9 +280,8 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}employee/detailed/id/${this.teamLeaderId}`, config)
+        .get(`${API_URL}employee/detailed/id/${this.teamLeaderId}`, config)
         .then((response) => {
           console.log(response.data.data.userInfo.displayName)
           this.teamLeaderName = response.data.data.userInfo.displayName
@@ -257,25 +290,13 @@ export default defineComponent({
           console.error('Failed to fetch employees:', error)
         })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    
   },
   mounted() {
     this.getTeams()
     this.populateTeamTable()
     this.getTeamLeaderName()
     this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
+    this.getEmployeePermissions()
   }
 })
 </script>

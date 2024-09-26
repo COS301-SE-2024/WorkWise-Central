@@ -81,6 +81,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'ViewTeam',
@@ -103,14 +104,34 @@ export default defineComponent({
     close() {
       this.dialog = false
     },
-    async getRequestUrl() {
-      const localUrl = 'http://localhost:3000/'
-      const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
-      const isLocalAvailable = await axios
-        .get(localUrl)
-        .then(() => true)
-        .catch(() => false)
-      return isLocalAvailable ? localUrl : remoteUrl
+    async fetchTeamLeaderAndMembers() {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      try {
+        const leaderResponse = await axios.get(
+          `${API_URL}employee/${this.team.teamLeaderId}`,
+          config
+        )
+        this.teamLeaderName = leaderResponse.data.userInfo.displayName
+
+        const memberResponses = await Promise.all(
+          this.team.teamMembers.map((memberId) =>
+            axios.get(`${API_URL}employee/${memberId}`, config)
+          )
+        )
+        this.teamMemberNames = memberResponses.map((res) => res.data.userInfo.displayName)
+      } catch (error) {
+        console.error('Failed to fetch team leader or members:', error)
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch team leader or members',
+          life: 3000
+        })
+      }
     },
     formatDate(date) {
       return new Date(date).toLocaleDateString()

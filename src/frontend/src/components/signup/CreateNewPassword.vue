@@ -60,6 +60,8 @@
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'CreateNewPassword',
   props: {
@@ -70,8 +72,6 @@ export default defineComponent({
   },
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       password: '',
       confirmPassword: '',
       valid: false,
@@ -99,18 +99,6 @@ export default defineComponent({
     }
   },
   methods: {
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
     async submit() {
       if (this.password !== this.confirmPassword) {
         alert('Passwords do not match')
@@ -128,9 +116,8 @@ export default defineComponent({
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
-        const apiUrl = await this.getRequestUrl()
         const response = await axios.post(
-          `${apiUrl}users/reset-pass`,
+          `${API_URL}users/reset-pass`,
           {
             userId: userId,
             token: token,

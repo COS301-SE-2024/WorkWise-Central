@@ -115,8 +115,6 @@ export default defineComponent({
     return {
       search: '' as string,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
-      // localUrl: 'http://localhost:3000/',
-      // remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       headers: [
         { title: 'Company Name', value: 'companyName' },
         { title: 'Email Being Invited', value: 'emailBeingInvited' },
@@ -141,10 +139,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = this.getRequestUrl()
+    
       await axios
         .patch(
-          `${url}admin/invite/decide`,
+          `${API_URL}admin/invite/decide`,
           {
             companyId: invite.companyId,
             emailBeingInvited: invite.emailBeingInvited,
@@ -183,10 +181,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = this.getRequestUrl()
+      
       await axios
         .patch(
-          `${url}admin/invite/decide`,
+          `${API_URL}admin/invite/decide`,
           {
             companyId: invite.companyId,
             emailBeingInvited: invite.emailBeingInvited,
@@ -215,9 +213,8 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
       await axios
-        .get(`${url}admin/invite/all/e/${localStorage.getItem('employeeId')}`, config)
+        .get(`${API_URL}admin/invite/all/e/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
           console.log(response)
           this.invites = response.data.data
@@ -226,17 +223,6 @@ export default defineComponent({
           console.error(error)
         })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      return API_URL
-    }
   },
   mounted() {
     this.getInvites()

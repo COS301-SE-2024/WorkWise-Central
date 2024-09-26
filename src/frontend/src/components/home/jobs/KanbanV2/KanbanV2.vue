@@ -1,13 +1,19 @@
 <template>
   <v-container fluid>
-    <!--    <v-row justify="end"-->
-    <!--      ><v-col cols="auto">-->
-    <!--        <v-btn size="x-large" align="right" @click="redirectToArchivePage">-->
-    <!--          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>-->
-    <!--        </v-btn>-->
-    <!--      </v-col></v-row-->
-    <!--    >-->
-    <v-row class="flex">
+    <!-- <v-row class="align-center">
+      <v-col cols="auto"></v-col>
+
+      <v-col class="text-center">
+        <h4>Job Board</h4>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn size="x-large" @click="redirectToArchivePage">
+          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row> -->
+
+    <v-row>
       <VueDraggable
         ref="el"
         v-model="columns"
@@ -433,8 +439,6 @@ export default {
   data() {
     return {
       nostatusID: '',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       delete_all_jobs_dialog: false,
       add_column_dialog: false,
       delete_column_dialog: false,
@@ -878,7 +882,7 @@ export default {
 
       try {
         const loaded_tags_response = await axios.get(
-          API_URL + `job/all/employee/${localStorage['employeeId']}`,
+          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(loaded_tags_response)
@@ -1000,18 +1004,6 @@ export default {
         return tracker1 - tracker2
       })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))

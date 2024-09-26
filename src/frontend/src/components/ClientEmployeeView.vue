@@ -165,7 +165,7 @@ export default {
         }
       }
       axios
-        .get('http://localhost:3000/client/all', config)
+        .get('${API_URL}client/all', config)
         .then((response) => {
           console.log(response.data)
           this.clients = response.data.data

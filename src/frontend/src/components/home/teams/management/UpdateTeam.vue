@@ -148,8 +148,6 @@ export default {
       initialTeamMembers: [],
       selectedTeamLeader: '',
       teamMemberIds: [],
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       teamNameRules: [(v) => !!v || 'Team Name is required'],
       teamMembersRules: [(v) => (Array.isArray(v) && v.length > 0) || 'Team Members are required'],
       teamLeaderIdRules: [(v) => !!v || 'Team Leader is required']
@@ -214,7 +212,6 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
 
       //updating the all the team info except the teamMember info
       if (
@@ -259,7 +256,7 @@ export default {
       await this.getCurrentJobAssignments()
 
       axios
-        .patch(`${apiURL}team/${this.teamId}`, data, config)
+        .patch(`${API_URL}team/${this.teamId}`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -350,10 +347,9 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
         response.data.data.forEach((employee) => {
@@ -377,18 +373,6 @@ export default {
     close() {
       this.editDialog = false
     },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   }
 }
 </script>

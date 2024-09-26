@@ -317,8 +317,6 @@ export default defineComponent({
   },
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       valid: false,
       isDeleting: false,
       addDialog: this.showDialog,
@@ -490,7 +488,7 @@ export default defineComponent({
     phhoneNumberCheck() {
       if (this.req_obj.details.contactInfo.phoneNumber != '') {
         axios
-          .get('http://localhost:3000/client/checkPhoneNumber', {
+          .get('${API_URL}client/checkPhoneNumber', {
             params: {
               phoneNumber: this.req_obj.details.contactInfo.phoneNumber
             }
@@ -555,18 +553,6 @@ export default defineComponent({
           console.log(res)
         })
       this.request_loading = false
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     resetFields() {
       this.req_obj = {

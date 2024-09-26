@@ -132,7 +132,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import DeletePriority from './DeletePriority.vue'
-
 import CreatePriority from './CreatePriority.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
@@ -188,9 +187,6 @@ export default defineComponent({
         return r < 240 || g < 240 || b < 240 || 'Colors close to white are not allowed'
       }
     ],
-
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     colorOptions: [
       '#FFB74D',
       '#FFD54F',
@@ -255,18 +251,6 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     selectItem(item: any) {
       console.log(item)

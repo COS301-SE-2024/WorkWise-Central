@@ -186,7 +186,6 @@ function handleInventorySelection(value: string) {
 
 async function saveInventory() {
   try {
-    console.log(newInventory.value)
     if (isEditing.value) {
       const itemToEdit = inventoryList.value[editingIndex.value]
       console.log('Item to edit:', itemToEdit)

@@ -121,8 +121,6 @@ export default {
       jobRating: 0,
       feedback: '',
       customerServiceRating: 0,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       selectedJob: {
         details: { heading: '' },
         status: { status: '' }
@@ -132,18 +130,6 @@ export default {
     }
   },
   methods: {
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    // async getRequestUrl() {
-    //   const localAvailable = await this.isLocalAvailable(this.localUrl)
-    //   return localAvailable ? this.localUrl : this.remoteUrl
-    // },
     async getRequests() {
       if (localStorage.getItem('clientId') !== null) {
         this.clientId = localStorage.getItem('clientId') as string

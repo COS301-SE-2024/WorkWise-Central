@@ -137,6 +137,7 @@
 <script lang="ts">
 import Chart from 'primevue/chart'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 // Define interfaces
 interface Invoice {
@@ -271,8 +272,6 @@ export default {
       showInvoiceModal: false,
       selectedInvoice: {} as Partial<Invoice>,
       totalInvoices2: 0,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       invoiceItems: [] as Invoice[],
       totalPaid2: 0,
       totalUnpaid2: 0,
@@ -319,18 +318,6 @@ export default {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
     async getRequests() {
       // Getting all the jobs for the company
       const config = {
@@ -339,7 +326,6 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
       if (localStorage.getItem('currentCompany') !== null) {
         this.companyId = localStorage.getItem('currentCompany') as string
       }
@@ -347,7 +333,7 @@ export default {
         this.currentEmployee = localStorage.getItem('employeeId') as string
       }
       await axios
-        .get(`${url}invoice/all/detailed/${this.currentEmployee}`, config)
+        .get(`${API_URL}invoice/all/detailed/${this.currentEmployee}`, config)
         .then((response) => {
           console.log('response: ', response)
           for (const invoice of response.data.data) {

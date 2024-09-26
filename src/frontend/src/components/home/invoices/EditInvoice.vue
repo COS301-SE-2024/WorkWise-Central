@@ -191,9 +191,6 @@ export default {
     deepCopy(obj: any) {
       return JSON.parse(JSON.stringify(obj))
     },
-    getRequestUrl() {
-      return 'https://your-api-url.com'
-    }
   }
 }
 </script>

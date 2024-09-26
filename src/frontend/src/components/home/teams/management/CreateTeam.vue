@@ -106,6 +106,7 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'CreateTeam',
@@ -126,8 +127,6 @@ export default defineComponent({
     selectedTeamMembers: [] as string[],
     teamLeaderId: '',
     teamLeaderName: '',
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     teamNameRules: [(v: string) => !!v || 'Team Name is required'],
     teamMembersRules: [(v: string) => !!v || 'Team Members are required'],
     teamLeaderIdRules: [(v: string) => !!v || 'Team Leader ID is required']
@@ -139,7 +138,6 @@ export default defineComponent({
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         params: { currentEmployeeId: localStorage.getItem('employeeId') }
       }
-      const apiURL = await this.getRequestUrl()
       const data = {
         teamName: this.teamName,
         teamMembers: await this.selectTeamMembers(),
@@ -148,7 +146,7 @@ export default defineComponent({
       }
       console.log(JSON.stringify(data))
       try {
-        const response = await axios.post(`${apiURL}team/create`, data, config)
+        const response = await axios.post(`${API_URL}team/create`, data, config)
         this.$toast.add({
           severity: 'success',
           summary: 'Success',
@@ -182,10 +180,9 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiURL}employee/all/${localStorage.getItem('employeeId')}`,
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -222,18 +219,6 @@ export default defineComponent({
     close() {
       this.addDialog = false
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.getEmployees()

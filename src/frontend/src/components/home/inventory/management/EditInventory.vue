@@ -134,8 +134,6 @@ export default {
       costPrice: '',
       currentStockLevel: '',
       reorderLevel: '',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       nameRules: [(v) => !!v || 'Name is required'],
       descriptionRules: [(v) => !!v || 'Description is required'],
       costPriceRules: [
@@ -237,18 +235,6 @@ export default {
     },
     close() {
       this.addDialog = false
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     deepCopy(obj) {
       return JSON.parse(JSON.stringify(obj))

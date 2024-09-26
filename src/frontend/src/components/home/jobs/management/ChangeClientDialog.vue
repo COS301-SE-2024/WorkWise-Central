@@ -100,9 +100,6 @@ const selectedClient = ref<Client>({
 })
 const clientData = ref<Client[]>([])
 
-// API URLs and config
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 const config = {
   headers: {
     'Content-Type': 'application/json',
@@ -110,20 +107,6 @@ const config = {
   }
 }
 
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
 
 const showClientChangeSuccess = () => {
   toast.add({

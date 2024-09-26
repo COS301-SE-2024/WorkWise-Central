@@ -431,6 +431,12 @@ export class JobService {
     return this.jobRepository.findAllForEmployee(employeeId);
   }
 
+  async findAllJobsForEmployees(
+    employeeIds: Types.ObjectId[],
+  ): Promise<(FlattenMaps<Job> & { _id: Types.ObjectId })[]> {
+    return await this.jobRepository.findAllForEmployees(employeeIds);
+  }
+
   async getAllDetailedJobsForEmployee(
     userId: Types.ObjectId,
     employeeId: Types.ObjectId,
@@ -1556,5 +1562,15 @@ export class JobService {
     console.log(finalStatus);
     const statusId = finalStatus.jobStatuses[finalStatus.jobStatuses.length - 1];
     return this.jobRepository.findCompletedForClient(clientId, statusId._id);
+  }
+
+  async getAllJobBelowMe(employeeId: Types.ObjectId) {
+    const list = await this.employeeService.deptFirstTraversalId(employeeId);
+    return this.jobRepository.findAllForEmployees(list);
+  }
+
+  async getAllJobBelowMeDetailed(employeeId: Types.ObjectId) {
+    const list = await this.employeeService.deptFirstTraversalId(employeeId);
+    return this.jobRepository.findAllForEmployeesDetailed(list);
   }
 }

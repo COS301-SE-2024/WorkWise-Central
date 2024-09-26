@@ -204,8 +204,6 @@ const nodeSize = 40
 export default defineComponent({
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       color: 'primary',
       isLoading: false,
       selectedItem: '',
@@ -724,20 +722,6 @@ export default defineComponent({
         })
         this.employeeDialog = false
         window.location.reload()
-      }
-    },
-    async getRequestUrl() {
-      console.log(this.localUrl)
-      console.log(this.remoteUrl)
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
       }
     },
     updateLayout(direction) {

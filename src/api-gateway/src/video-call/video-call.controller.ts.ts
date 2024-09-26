@@ -157,10 +157,12 @@ export class VideoCallController {
     @Param('id') id: Types.ObjectId,
     @Body() updateVideoCallDto: UpdateVideoCallDto,
   ) {
+    console.log('updateVideoCallDto', updateVideoCallDto);
     let data;
     try {
       data = await this.videoCallService.update(id, updateVideoCallDto);
     } catch (e) {
+      console.log('Error', e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return { data: data };

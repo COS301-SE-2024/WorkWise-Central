@@ -121,8 +121,6 @@ export default defineComponent({
     Toast
   },
   data: () => ({
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     rules: {
       email_rules: [(v: string) => !!v || 'Email is required'],
       role: [(v: any) => !!v || 'Role is required'],
@@ -277,18 +275,6 @@ export default defineComponent({
           this.request_load = false
         })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.req_obj.currentCompany = localStorage['currentCompany']
