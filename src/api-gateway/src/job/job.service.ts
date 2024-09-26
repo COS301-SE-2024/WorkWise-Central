@@ -399,7 +399,7 @@ export class JobService {
     const result = await this.jobRepository.assignTeam(assignDto.teamId, assignDto.jobId, team.teamMembers);
     team.currentJobAssignments.push(job._id);
     team.currentJobAssignments = [...new Set(team.currentJobAssignments)];
-    await this.employeeService.internalUpdate(team._id, {
+    await this.teamService.update(team._id, {
       currentJobAssignments: team.currentJobAssignments,
     });
     if (user) {
@@ -422,10 +422,25 @@ export class JobService {
       throw new UnauthorizedException('User not in company');
     }
 
-    const teamMembers = (await this.teamService.findById(unassignDto.teamId))?.teamMembers;
+    // Get team
+    const team = await this.teamService.findById(unassignDto.teamId);
+    if (!team) throw new NotFoundException('Team not found');
+
+    const result = await this.jobRepository.unassignTeam(unassignDto.teamId, unassignDto.jobId, team.teamMembers);
+    //team.currentJobAssignments.pull(job._id);
+    team.currentJobAssignments = team.currentJobAssignments.filter(
+      (id) => id.toString() !== unassignDto.teamId.toString(),
+    );
+    team.currentJobAssignments = [...new Set(team.currentJobAssignments)];
+    await this.teamService.update(team._id, {
+      currentJobAssignments: team.currentJobAssignments,
+    });
+
+    const teamMembers = team.teamMembers;
     if (!teamMembers) throw new NotFoundException('Team not found');
 
     this.unassignEmployeesInternal(teamMembers, unassignDto.jobId);
+    return result;
   }
 
   async assignEmployee(userId: Types.ObjectId, jobAssignDto: JobAssignDto) {
