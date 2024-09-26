@@ -121,7 +121,6 @@
 import Toast from 'primevue/toast'
 import { API_URL } from '@/main'
 import axios from 'axios'
-import { API_URL } from '@/main'
 
 export default {
   name: 'UpdateTeam',

@@ -30,7 +30,6 @@ import { ref, computed, defineProps, onUnmounted, onMounted, watch } from 'vue'
 import Button from 'primevue/button'
 import axios from 'axios'
 import { API_URL } from '@/main'
-import { API_URL } from '@/main'
 
 const config = {
   headers: {
@@ -147,7 +146,7 @@ const toggleJobRunning = async () => {
 }
 
 const getTotalTimeSpent = async () => {
-  const baseUrl = await getRequestUrl()
+  // const baseUrl = await getRequestUrl()
   const employeeId = getEmployeeId()
   if (!employeeId) {
     console.error('Employee ID not found')
@@ -156,7 +155,7 @@ const getTotalTimeSpent = async () => {
 
   try {
     const response = await axios.get(
-      `${baseUrl}time-tracker/sofar/total-time-spent?empId=${employeeId}&jobId=${props.jobID}`,
+      `${API_URL}time-tracker/sofar/total-time-spent?empId=${employeeId}&jobId=${props.jobID}`,
       { headers: config.headers }
     )
 

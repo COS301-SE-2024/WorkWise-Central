@@ -61,8 +61,8 @@
             :row-props="getRowProps"
             :header-props="{ class: 'bg-secondRowColor h6' }"
           >
-            <template v-slot:[`item.currentStockLevel`]="{ item }">
-              <v-text-field type="number" v-model="item.currentStockLevel"></v-text-field>
+            <template v-slot:[`item.reorderLevel`]="{ item }">
+              <v-text-field type="number" v-model="item.newReorderLevel"> </v-text-field>
             </template>
           </v-data-table>
 
@@ -82,7 +82,6 @@
                 width="100%"
               ></v-text-field>
             </v-col>
-
           </v-row>
         </v-card-text>
       </v-card>
@@ -126,14 +125,14 @@
                 v-model="selectedItem.name"
                 :rules="nameRules"
                 :disabled="isDeleting"
-            ></v-text-field>
+              ></v-text-field>
 
               <v-textarea
                 label="Description"
                 v-model="selectedItem.description"
                 :rules="descriptionRules"
                 :disabled="isDeleting"
-            ></v-textarea>
+              ></v-textarea>
 
               <v-text-field
                 label="Cost Price"
@@ -141,7 +140,7 @@
                 type="number"
                 :rules="costPriceRules"
                 :disabled="isDeleting"
-            ></v-text-field>
+              ></v-text-field>
 
               <v-text-field
                 label="Recorded Stock Level"
@@ -149,7 +148,7 @@
                 type="number"
                 :rules="currentStockLevelRules"
                 :disabled="isDeleting"
-            ></v-text-field>
+              ></v-text-field>
 
               <v-text-field
                 label="Current Stock Level"
@@ -157,7 +156,7 @@
                 type="number"
                 :rules="reorderLevelRules"
                 :disabled="isDeleting"
-            ></v-text-field>
+              ></v-text-field>
 
               <v-file-input
                 v-model="selectedItem.images"
@@ -174,7 +173,7 @@
                 clearable
                 data-testid="company-logo-file-input"
                 :disabled="isDeleting"
-            ></v-file-input>
+              ></v-file-input>
             </v-form>
           </v-card-text>
           <v-card-actions>
@@ -227,8 +226,6 @@ export default {
   data() {
     return {
       isDeleting: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       currentDate: new Date().toISOString().substr(0, 10),
       isUpdating: false,
       searchQuery: '',
@@ -236,8 +233,7 @@ export default {
       stockTakeDate: new Date(),
       headers: [
         { title: 'Name', value: 'name' },
-
-        { title: 'Current Stock Level', value:  'currentStockLevel'},
+        { title: 'Current Stock Level', value: 'currentStockLevel' },
         { title: 'Recorded Stock Level', value: 'reorderLevel' },
         { title: '', value: 'actions', sortable: false }
       ],
@@ -432,26 +428,18 @@ export default {
         items: [],
         updateInventory: this.updateInventory
       }
-        currentEmployeeId: localStorage.getItem('employeeId'),
-        companyId: localStorage.getItem('currentCompany'),
-        date: new Date(this.currentDate).toISOString(),
-        items: [],
-        updateInventory: this.updateInventory
-      }
       this.filteredInventoryItems.forEach((item) => {
         data.items.push({
           "inventoryId": item._id,
           "recordedStockLevel": item.newReorderLevel === null ? item.currentStockLevel : item.newReorderLevel
-        });
+        })
       })
       console.log('Data', data)
       try {
         const response = await axios.post(`${API_URL}stocktake/create`, data, config)
         console.log('Response:', response)
         console.log('Hello world!')
-        console.log('Hello world!')
       } catch (error) {
-        console.log('Failure to update stock take', error)
         console.log('Failure to update stock take', error)
       }
     },
@@ -580,9 +568,6 @@ export default {
         head: [
           ['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level', 'Difference']
         ],
-        head: [
-          ['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level', 'Difference']
-        ],
         body: tableBody,
         startY: 40,
         theme: 'grid'
@@ -656,10 +641,10 @@ export default {
           config
         )
         console.log(response.data.data)
-        this.inventoryItems = response.data.data.map(item => ({
+        this.inventoryItems = response.data.data.map((item) => ({
           ...item,
           newReorderLevel: null // Initialize newReorderLevel
-        }));
+        }))
       } catch (error) {
         console.error(error)
       }

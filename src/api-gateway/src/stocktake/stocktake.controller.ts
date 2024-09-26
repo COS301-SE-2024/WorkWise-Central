@@ -84,11 +84,11 @@ export class StockTakeController {
     if (currentEmployee.role.permissionSuite.includes('record stock take')) {
       let data;
       try {
-        if (body.currentEmployeeId && currentEmployee.role.permissionSuite.includes('edit inventory')) {
-          data = await this.stockTakeService.create(body);
-        } else {
-          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
+        // if (body.currentEmployeeId && currentEmployee.role.permissionSuite.includes('edit inventory')) {
+        data = await this.stockTakeService.create(body);
+        // } else {
+        //   throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        // }
       } catch (e) {
         console.log(e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
