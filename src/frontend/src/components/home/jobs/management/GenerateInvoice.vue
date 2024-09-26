@@ -24,7 +24,7 @@ const config = {
   }
 }
 
-const formatDate = (date) => {
+const formatDate = (date: string) => {
   const date_passed_in = new Date(date)
   const y = date_passed_in.getFullYear()
   const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
@@ -40,7 +40,7 @@ const generatePdf = async () => {
   try {
     let response = await axios.get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`,config)
     let invoiceId = response.data.data._id
-    response = await axios.get(`${API_URL}invoice/detailed/id/${invoiceId}&currentEmployeeId=${localStorage.getItem('employeeId')}`,config)
+    response = await axios.get(`${API_URL}invoice/detailed/id/${invoiceId}?currentEmployeeId=${localStorage.getItem('employeeId')}`,config)
     invoiceData = response.data.data
     console.log('Returned invoice:', invoiceData)
   } catch (error) {
@@ -49,11 +49,11 @@ const generatePdf = async () => {
 
   const data = {
     outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
-    fileName: `Invoice ${invoiceData.companyName}`,
+    fileName: `Invoice ${invoiceData.companyId.name}`,
     orientationLandscape: false,
     compress: true,
     logo: {
-      src: invoiceData.companyLogo,
+      src: invoiceData.companyId.logo,
       type: 'PNG',
       width: 53.33,
       height: 26.66,
@@ -64,7 +64,7 @@ const generatePdf = async () => {
     },
     stamp: {
       inAllPages: true,
-      src: invoiceData.companyLogo,
+      src: invoiceData.companyId.logo,
       type: 'JPG',
       width: 20,
       height: 20,
@@ -74,17 +74,17 @@ const generatePdf = async () => {
       }
     },
     business: {
-      name: invoiceData.companyName,
-      address: invoiceData.companyAddress,
-      phone: invoiceData.companyPhoneNumber,
-      email: invoiceData.companyEmail
+      name: invoiceData.companyId.name,
+      address: `${invoiceData.companyId.address.street} ${invoiceData.companyId.address.suburb} ${invoiceData.companyId.address.city} ${invoiceData.companyId.address.province} ${invoiceData.companyId.address.postalCode}`,
+      phone: invoiceData.companyId.contactDetails.phoneNumber,
+      email: invoiceData.companyId.email
     },
     contact: {
       label: 'Invoice issued for:',
-      name: invoiceData.clientName,
-      address: invoiceData.clientAddress,
-      phone: invoiceData.clientPhoneNumber,
-      email: invoiceData.clientEmail,
+      name: `${invoiceData.clientId.details.firstName} ${invoiceData.clientId.details.lastName}`,
+      address: `${invoiceData.clientId.details.address.street} ${invoiceData.clientId.details.address.suburb} ${invoiceData.clientId.details.address.city} ${invoiceData.clientId.details.address.province} ${invoiceData.clientId.details.address.postalCode}`,
+      phone: invoiceData.clientId.details.contactInfo.phoneNumber,
+      email: invoiceData.clientId.details.contactInfo.email,
       otherInfo: 'www.website.al'
     },
     invoice: {
@@ -94,7 +94,7 @@ const generatePdf = async () => {
       invGenDate: `Invoice Date:  ${formatDate(invoiceData.invoiceDate)}`,
       headerBorder: false,
       tableBodyBorder: false,
-      header: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }],
+      header: [{ title: 'Description' }, { title: 'Discount' }, { title: 'Quantity' }, { title: 'Total in ZA' }, {title: 'Unit Price in ZA'}],
       table: invoiceData.inventoryItems,
       additionalRows: [
         {
@@ -131,7 +131,6 @@ const generatePdf = async () => {
     pageEnable: true,
     pageLabel: 'Page '
   }
-
   // Generate the PDF using the template
   jsPDFInvoiceTemplate(data)
 }
