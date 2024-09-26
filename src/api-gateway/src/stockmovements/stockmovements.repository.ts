@@ -35,6 +35,20 @@ export class StockMovementsRepository {
     }).lean();
   }
 
+  async getUsageForInventoryItem(identifier: Types.ObjectId) {
+    console.log('identifier', identifier);
+    return await this.StockMovementsModel.find({
+      $and: [
+        {
+          'inventoryItem.inventoryId': identifier,
+        },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    }).lean();
+  }
+
   async findById(identifier: Types.ObjectId) {
     return this.StockMovementsModel.findOne({
       $and: [

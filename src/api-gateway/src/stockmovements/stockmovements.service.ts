@@ -63,6 +63,18 @@ export class StockMovementsService {
     return await this.stockMovementsRepository.findAllInCompany(companyId);
   }
 
+  async getUsageForInventoryItem(inventoryId: Types.ObjectId) {
+    const stockMovements = await this.stockMovementsRepository.getUsageForInventoryItem(inventoryId);
+    let result = 0;
+
+    for (const movement of stockMovements) {
+      if (movement.movement < 0) {
+        result += movement.movement * -1;
+      }
+    }
+    return result;
+  }
+
   async findById(id: Types.ObjectId) {
     return await this.stockMovementsRepository.findById(id);
   }

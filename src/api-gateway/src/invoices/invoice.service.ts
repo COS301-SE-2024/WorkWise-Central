@@ -176,6 +176,10 @@ export class InvoiceService {
     return await this.invoiceRepository.findAllInCompany(companyId);
   }
 
+  async findAllForJob(jobId: Types.ObjectId) {
+    return await this.invoiceRepository.findAllForJob(jobId);
+  }
+
   async detailedFindAllInCompany(companyId: Types.ObjectId) {
     //checking if the company exist
     if (!(await this.companyService.companyIdExists(companyId))) {
