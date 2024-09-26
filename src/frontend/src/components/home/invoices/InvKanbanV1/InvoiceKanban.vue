@@ -114,10 +114,7 @@
 </template>
 
 <script lang="js">
-// import type { InvoiceCardDataFormat, Column } from '../types'
 import '@mdi/font/css/materialdesignicons.css'
-import ViewJob from '@/components/home/jobs/management/ViewJob.vue'
-// import { type Sortable , VueDraggable } from 'vue-draggable-plus'
 import { VueDraggable } from 'vue-draggable-plus'
 import axios from 'axios'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
@@ -126,11 +123,11 @@ import { API_URL } from '@/main'
 export default {
   name: 'InvoiceKanban',
   components: {
-    ViewJob,
     VueDraggable
   },
   data() {
     return {
+      dialog: false,
       pdfSrc: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
