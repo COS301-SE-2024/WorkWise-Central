@@ -156,7 +156,7 @@ export default {
     this.localEditedItem = this.deepCopy(this.editedItem)
     await this.getEmployees()
     await this.getJobInCompany()
-    await this.getCurrentJobAssignment()
+    await this.getCurrentJobAssignments()
   },
   methods: {
     async updateTeam() {
@@ -217,6 +217,8 @@ export default {
         }
       }
 
+      await this.getCurrentJobAssignments()
+
       axios
         .patch(`${apiURL}team/${this.teamId}`, data, config)
         .then((response) => {
@@ -263,7 +265,7 @@ export default {
         this.selectedTeamMembers.push(this.editedItem.teamMembers[i].userInfo.displayName)
       }
     },
-    async getCurrentJobAssignment() {
+    async getCurrentJobAssignments() {
       const config = {
         headers: {
           'Content-Type': 'application/json',
