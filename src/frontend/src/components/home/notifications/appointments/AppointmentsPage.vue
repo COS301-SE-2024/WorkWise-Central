@@ -60,10 +60,10 @@
             {{ formatDate(item.date) }}
           </template>
           <template v-slot:[`item.startTime`]="{ item }">
-            {{ formatTime(item.startTime) }}
+            {{ (item.startTime) }}
           </template>
           <template v-slot:[`item.endTime`]="{ item }">
-            {{ formatTime(item.endTime) }}
+            {{ (item.endTime) }}
           </template>
 
           <template v-slot:no-data>
@@ -224,9 +224,8 @@
               <v-col cols="12">
                 <h6>Choose Participants</h6>
                 <v-select clearable label="Participants" hint="Select the employee you'd like to join the meeting"
-                  persistent-hint @update:model-value="selected_participants" v-model="newAppointment.participants"
-                  item-value="employeeId" item-title="name" :items="teamMemberNames" multiple chips
-                  bg-color="background" variant="solo"></v-select>
+                  persistent-hint v-model="newAppointment.participants" item-value="employeeId" item-title="name"
+                  :items="teamMemberNames" multiple chips bg-color="background" variant="solo"></v-select>
               </v-col>
             </v-row>
           </v-container>
@@ -236,7 +235,7 @@
         <v-container>
           <v-row>
             <v-col cols="12" lg="6">
-              <v-btn color="error" @click="closeEditDialog" block>
+              <v-btn color="error" @click="showEdit = false" block>
                 <v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>
                 Cancel
               </v-btn>
@@ -279,7 +278,13 @@ export default defineComponent({
       search: '',
       showCreate: false,
       selectedRoom: {},
-      selectedItem: '',
+      selectedItem: {
+        title: '',
+        details: '',
+        endTime: '',
+        startTime: '',
+        date: ''
+      },
       isEditing: false,
       joinRoom: true,
       conference: false,
@@ -320,10 +325,10 @@ export default defineComponent({
       this.appointmentId = ''
     },
     openEditDialog(appointment) {
-      this.showEdit = true
-      this.selectedItem.title = appointment.title
-      this.selectedItem.details = appointment.details
-      console.log(appointment)
+      console.log(appointment);
+      this.showEdit = true;
+      this.selectedItem = { ...appointment }; // Assign all properties from the appointment to selectedItem
+
     },
     closeEditDialog() {
       this.showEdit = false
@@ -377,11 +382,9 @@ export default defineComponent({
           this.appointments.push({
             _id: appointment._id,
             title: appointment.title,
-            date: appointment.scheduledStartTime,
-            startTime: appointment.scheduledStartTime,
-            endTime: appointment.scheduledEndTime
-              ? appointment.scheduledEndTime
-              : '',
+            date: appointment.date,
+            startTime: appointment.startTime,
+            endTime: appointment.endTime,
             details: appointment.details,
             participants: participants,
             roomId: appointment.roomId
