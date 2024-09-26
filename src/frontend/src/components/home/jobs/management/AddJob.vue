@@ -693,7 +693,6 @@ export default defineComponent({
         console.log(update)
         this.date_validation_error_alert = !update
         if (update) {
-          this.request_load = true
           await this.handleSubmission()
         }
       }
@@ -719,6 +718,8 @@ export default defineComponent({
       return `${year}-${month}-${day}`
     },
     async handleSubmission() {
+      this.request_load = true
+
       console.log(this.req_obj)
 
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -733,8 +734,6 @@ export default defineComponent({
               summary: 'Success',
               detail: 'Job Added Successfully'
             })
-            this.createClientLoadClicked = false
-            window.location.reload()
           }
           axios
             .put(

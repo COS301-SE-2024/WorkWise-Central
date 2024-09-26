@@ -204,6 +204,10 @@ export class JobRepository {
         ],
       })
       .lean()
+      .populate(defaultPopulatedFields)
+      .populate(jobAssignedEmployees)
+      .populate(employeeComments)
+      .populate(jobTaskListItems)
       .exec();
   }
 
@@ -232,6 +236,7 @@ export class JobRepository {
   }
 
   async assignEmployee(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
+    employeeId = new Types.ObjectId(employeeId);
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -255,6 +260,10 @@ export class JobRepository {
   }
 
   async assignEmployees(employeeIds: Types.ObjectId[], jobId: Types.ObjectId) {
+    const arr = [];
+    for (const e of employeeIds) {
+      arr.push(new Types.ObjectId(e));
+    }
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -266,7 +275,7 @@ export class JobRepository {
           ],
         },
         {
-          $addToSet: { 'assignedEmployees.employeeIds': { $each: employeeIds } },
+          $addToSet: { 'assignedEmployees.employeeIds': { $each: arr } },
           updatedAt: currentDate(),
         },
         {
@@ -296,7 +305,7 @@ export class JobRepository {
 
     const task = job.taskList.find((t) => t._id.toString() === taskId.toString());
     const item = task.items.find((i) => i._id.toString() === itemId.toString());
-    item.assignedEmployees.push(employeeId);
+    item.assignedEmployees.push(new Types.ObjectId(employeeId));
     job.markModified('taskList');
     return (await job.save()).toObject();
   }
@@ -367,6 +376,10 @@ export class JobRepository {
   }
 
   async assignTeam(teamId: Types.ObjectId, jobId: Types.ObjectId, teamMemberIds: Types.ObjectId[]) {
+    const arr: Types.ObjectId[] = [];
+    for (const teamMemberId of teamMemberIds) {
+      arr.push(new Types.ObjectId(teamMemberId));
+    }
     return await this.jobModel
       .findOneAndUpdate(
         {
@@ -378,7 +391,7 @@ export class JobRepository {
           ],
         },
         {
-          $addToSet: { 'assignedEmployees.teamIds': teamId, 'assignedEmployees.employeeIds': { $each: teamMemberIds } },
+          $addToSet: { 'assignedEmployees.teamIds': teamId, 'assignedEmployees.employeeIds': { $each: arr } },
           updatedAt: new Date(),
         },
         {
