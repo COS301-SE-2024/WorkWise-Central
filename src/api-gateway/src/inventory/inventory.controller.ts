@@ -331,10 +331,12 @@ export class InventoryController {
       try {
         data = await this.inventoryService.updateStockUse(listOfUsedInventory);
       } catch (e) {
+        console.log(e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
     } else {
+      console.log('Invalid permission');
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
   }

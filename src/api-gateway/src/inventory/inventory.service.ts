@@ -149,6 +149,7 @@ export class InventoryService {
       const inventory = await this.findById(item.inventoryId);
       const dto = new ExternalInventoryUpdateDto();
       dto.currentEmployeeId = listOfUsedInventory.currentEmployeeId;
+      dto.updateInventoryDto = new CreateInventoryDto();
       dto.updateInventoryDto.currentStockLevel = inventory.currentStockLevel - item.changeInAmount;
       dto.updateInventoryDto.reason =
         employee.userInfo.displayName + ' updated the amount of this item used in ' + job.details.heading;
