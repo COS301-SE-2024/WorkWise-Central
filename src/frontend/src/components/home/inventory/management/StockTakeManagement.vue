@@ -29,6 +29,20 @@
                 single-line
               ></v-text-field>
             </v-col>
+            <!-- Save button -->
+            <v-col cols="12" lg="4" class="d-flex align-center justify-end">
+              <v-btn
+                class="text-none font-weight-regular hello"
+                color="success"
+                v-bind="activatorProps"
+                block
+                variant="elevated"
+                @click="saveAllStockTake"
+              >
+                <v-icon icon="fa: fa-solid fa-floppy-disk" color="white"></v-icon>
+                Save
+              </v-btn>
+            </v-col>
           </v-row>
         </v-card-title>
 
@@ -69,20 +83,6 @@
               ></v-text-field>
             </v-col>
 
-            <!-- Save button -->
-            <v-col cols="12" class="d-flex align-center justify-end">
-              <v-btn
-                class="text-none font-weight-regular hello"
-                color="success"
-                v-bind="activatorProps"
-                block
-                variant="elevated"
-                @click="saveAllStockTake"
-              >
-                <v-icon icon="fa: fa-solid fa-floppy-disk" color="white"></v-icon>
-                Save
-              </v-btn>
-            </v-col>
           </v-row>
         </v-card-text>
       </v-card>
