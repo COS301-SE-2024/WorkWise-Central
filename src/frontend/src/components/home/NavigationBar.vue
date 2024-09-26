@@ -114,6 +114,12 @@ export default defineComponent({
   //   ...mapGetters(['isDarkMode'])
   // },
   methods: {
+    redirectToDashBoard() {
+      if (this.$route.path !== '/dashboard') this.$router.push('/dashboard')
+    },
+    redirectToArchivePage() {
+      this.$router.push('/backlog/archive')
+    },
     toggleDarkMode() {
       console.log(this.isdarkmode)
       if (this.isdarkmode) {
@@ -199,7 +205,7 @@ export default defineComponent({
       <CompanyMain />
       <v-spacer></v-spacer>
 
-      <v-toolbar-title class="d-flex justify-center">
+      <v-toolbar-title class="d-flex justify-center" @click="redirectToDashBoard">
         <v-label class="text-primary h4">Work</v-label>
         <v-label class="text-secondary h4">Wise</v-label>
       </v-toolbar-title>
@@ -207,6 +213,9 @@ export default defineComponent({
       <v-spacer class="d-none d-sm-flex"></v-spacer>
 
       <div class="d-flex align-center">
+        <v-btn size="small" @click="redirectToArchivePage" v-if="$route.path === '/backlog'">
+          <v-icon size="x-large">{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+        </v-btn>
         <UserAvatar />
         <v-icon
           class="icon-padding mr-5"
@@ -391,7 +400,13 @@ export default defineComponent({
       >
         <!--        <v-list-item-title> Notifications </v-list-item-title>-->
         <template v-slot:append>
-          <v-icon color="green" size="x-small" v-if="new_notification">mdi-circle</v-icon>
+          <v-icon
+            color="light-green-accent-4"
+            :style="{ fontSize: '10px' }"
+            size="x-small"
+            v-if="new_notification"
+            >mdi-circle</v-icon
+          >
         </template>
       </v-list-item>
 
