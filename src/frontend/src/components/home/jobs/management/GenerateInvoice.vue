@@ -24,7 +24,7 @@ const config = {
   }
 }
 
-const formatDate = (date: string) => {
+const formatDate = (date : string) => {
   const date_passed_in = new Date(date)
   const y = date_passed_in.getFullYear()
   const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
@@ -46,6 +46,16 @@ const generatePdf = async () => {
   } catch (error) {
     console.error(error)
   }
+
+  if (invoiceData.laborItems.length != 0) {
+    invoiceData.inventoryItems.push(['', '', '', '', ''])
+    invoiceData.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount','Total',])
+    invoiceData.inventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Discount','Total'])
+    invoiceData.inventoryItems = invoiceData.inventoryItems.concat(invoiceData.laborItems)
+    invoiceData.inventoryItems.push(['', '', '', '', ''])
+  }
+
+  console.log(data)
 
   const data = {
     outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
@@ -94,7 +104,7 @@ const generatePdf = async () => {
       invGenDate: `Invoice Date:  ${formatDate(invoiceData.invoiceDate)}`,
       headerBorder: false,
       tableBodyBorder: false,
-      header: [{ title: 'Description' }, { title: 'Discount' }, { title: 'Quantity' }, { title: 'Total in ZA' }, {title: 'Unit Price in ZA'}],
+      header: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }, { title: '' }],
       table: invoiceData.inventoryItems,
       additionalRows: [
         {
