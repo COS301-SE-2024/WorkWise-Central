@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row>
       <VueDraggable
-        class="d-flex flex-nowrap overflow-scroll flex flex-col gap-2 p-4 w-600px h-800px m-auto bg-gray-500/5 rounded overflow-auto"
+        class="d-flex flex-nowrap flex flex-col gap-2 p-4 w-600px h-800px m-auto bg-gray-500/5 rounded overflow-auto"
         ref="el"
         v-model="columns"
         :onUpdate="onColumnDragEnd"
@@ -20,7 +20,14 @@
           :sm="6"
           :cols="12"
         >
-          <v-card variant="flat" elevation="1" color="red" class="pa-2 ma-2" :min-width="350">
+          <v-card
+            variant="flat"
+            elevation="1"
+            color="red"
+            :min-width="350"
+            :max-height="800"
+            class="overflow-auto"
+          >
             <v-card-item
               class="font-weight-black text-h5"
               style="font-family: 'Nunito', sans-serif"
@@ -51,7 +58,7 @@
                   draggable="true"
                   aria-grabbed="true"
                   role="option"
-                  class="ga-2"
+                  class="my-5"
                 >
                   <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
                     ><b>{{ 'Invoice #' + item.invoiceNumber }}</b>
