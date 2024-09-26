@@ -12,7 +12,7 @@ import {
 } from './dto/create-time-tracker.dto';
 import { Employee } from '../employee/entities/employee.entity';
 import { TimeTrackerRepository } from './time-tracker.repository';
-import { TimeInterval } from './entities/time-tracker.entity';
+import { TimeInterval, TimeTracker } from './entities/time-tracker.entity';
 import { TimeSpentDto } from './dto/time-spent.dto';
 import { currentDate } from '../utils/Utils';
 
@@ -170,5 +170,18 @@ export class TimeTrackerService {
     const employee: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeService.findById(employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
     if (employee.userId.toString() !== userId.toString()) throw new UnauthorizedException('Inconsistent userId');
+  }
+
+  isRunning(t: TimeTracker) {
+    return t.pauses.length > 0 && t.pauses[t.pauses.length - 1].end != null;
+  }
+
+  async isCheckedIn(employeeId: Types.ObjectId, jobId: Types.ObjectId) {
+    const time = await this.timeTrackerRepository.getLatestCheckin(employeeId, jobId);
+    if (!time) return { isCheckedIn: false, isRunning: false };
+    return {
+      isCheckedIn: time.checkInTime != null && time.checkOutTime == null,
+      isRunning: this.isRunning(time),
+    };
   }
 }
