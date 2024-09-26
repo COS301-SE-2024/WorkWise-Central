@@ -129,24 +129,26 @@
                 <h6>Meeting Title</h6>
                 <v-text-field v-model="newAppointment.title" label="Title" :rules="titleRules" required></v-text-field>
               </v-col>
-              <v-col cols="12" align="center">
+
+              <v-col cols="12">
                 <h6>Meeting Date</h6>
-                <v-date-picker title="START DATE" header="Meeting start date" border="md" width="unset" max-width="350"
-                  v-model="newAppointment.date" elevation="5" required :rules="startDateRule" :min="minDate"
-                  class="mb-4"></v-date-picker>
+                <v-date-picker v-model="newAppointment.date" header="Meeting start date" border="md" width="unset"
+                  max-width="350" elevation="5" :rules="startDateRule" :min="minDate" class="mb-4"
+                  required></v-date-picker>
               </v-col>
-              <v-row>
-                <v-col cols="6">
-                  <h6>Start Time</h6>
-                  <v-time-picker format="24hr" :allowed-hours="allowedHours" :allowed-minutes="allowedMinutes"
-                    v-model="newAppointment.startTime" class="mb-4"></v-time-picker>
-                </v-col>
-                <v-col cols="6">
-                  <h6>End Time</h6>
-                  <v-time-picker :allowed-hours="allowedHours2" :allowed-minutes="allowedMinutes2" format="24hr"
-                    v-model="newAppointment.endTime"></v-time-picker>
-                </v-col>
-              </v-row>
+
+              <v-col cols="6">
+                <h6>Start Time</h6>
+                <v-time-picker v-model="newAppointment.startTime" format="24hr" :allowed-hours="allowedHours"
+                  :allowed-minutes="allowedMinutes" class="mb-4"></v-time-picker>
+              </v-col>
+
+              <v-col cols="6">
+                <h6>End Time</h6>
+                <v-time-picker v-model="newAppointment.endTime" format="24hr" :allowed-hours="allowedHours2"
+                  :allowed-minutes="allowedMinutes2"></v-time-picker>
+              </v-col>
+
               <v-col cols="12">
                 <h6>Details</h6>
                 <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
@@ -154,10 +156,9 @@
 
               <v-col cols="12">
                 <h6>Choose Participants</h6>
-                <v-select clearable label="Participants" hint="Select the employee you'd like to join the meeting"
-                  persistent-hint @update:model-value="selected_participants" v-model="newAppointment.participants"
-                  item-value="employeeId" item-title="name" :items="teamMemberNames" multiple chips
-                  bg-color="background" variant="solo"></v-select>
+                <v-select v-model="newAppointment.participants" :items="teamMemberNames" item-value="employeeId"
+                  item-title="name" clearable multiple chips label="Participants"
+                  hint="Select the employee you'd like to join the meeting" persistent-hint></v-select>
               </v-col>
             </v-row>
           </v-container>
@@ -224,8 +225,9 @@
               <v-col cols="12">
                 <h6>Choose Participants</h6>
                 <v-select clearable label="Participants" hint="Select the employee you'd like to join the meeting"
-                  persistent-hint v-model="newAppointment.participants" item-value="employeeId" item-title="name"
-                  :items="teamMemberNames" multiple chips bg-color="background" variant="solo"></v-select>
+                  persistent-hint @update:model-value="selected_participants" v-model="newAppointment.participants"
+                  item-value="employeeId" item-title="name" :items="teamMemberNames" multiple chips
+                  bg-color="background" variant="solo"></v-select>
               </v-col>
             </v-row>
           </v-container>
@@ -278,13 +280,7 @@ export default defineComponent({
       search: '',
       showCreate: false,
       selectedRoom: {},
-      selectedItem: {
-        title: '',
-        details: '',
-        endTime: '',
-        startTime: '',
-        date: ''
-      },
+      selectedItem: '',
       isEditing: false,
       joinRoom: true,
       conference: false,
@@ -325,10 +321,9 @@ export default defineComponent({
       this.appointmentId = ''
     },
     openEditDialog(appointment) {
-      console.log(appointment);
-      this.showEdit = true;
-      this.selectedItem = { ...appointment }; // Assign all properties from the appointment to selectedItem
+      this.showEdit = true
 
+      console.log(appointment)
     },
     closeEditDialog() {
       this.showEdit = false
