@@ -110,6 +110,8 @@ export class TeamRepository {
       })
       .lean();
 
+    console.log('In repository. Result: ', result);
+
     return result;
   }
 

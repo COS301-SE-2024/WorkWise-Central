@@ -137,12 +137,15 @@ export default {
       assignedJobs: [],
       jobList: [],
       localEditedItem: this.editedItem,
+      initalTeamName: this.editedItem.teamName,
+      intialTeamLeader: this.editedItem.teamLeaderId,
       editDialog: false,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       valid: false,
       isDeleting: false,
       teamMemberNames: [],
       selectedTeamMembers: [],
+      initialTeamMembers: [],
       selectedTeamLeader: '',
       teamMemberIds: [],
       localUrl: 'http://localhost:3000/',
@@ -157,8 +160,41 @@ export default {
     await this.getEmployees()
     await this.getJobInCompany()
     await this.getCurrentJobAssignments()
+    this.initialTeamMembers = [...this.localEditedItem.teamMembers] // Store the initial members
+  },
+  watch: {
+    selectedTeamMembers(newMembers) {
+      // Ensure team leader is always part of the selected team members
+      if (!newMembers.includes(this.selectedTeamLeader)) {
+        newMembers.push(this.selectedTeamLeader)
+      }
+    }
   },
   methods: {
+    compareTeamMembers() {
+      const addedMembers = this.selectedTeamMembers.filter(
+        (member) =>
+          !this.initialTeamMembers.some(
+            (initialMember) => initialMember.userInfo.displayName === member
+          )
+      )
+
+      const removedMembers = this.initialTeamMembers.filter(
+        (initialMember) => !this.selectedTeamMembers.includes(initialMember.userInfo.displayName)
+      )
+
+      return { addedMembers, removedMembers }
+    },
+    isTeamLeader(name) {
+      return name === this.selectedTeamLeader // Disable if the name is the team leader
+    },
+    populateTeamLeaderName() {
+      const teamLeader = this.localEditedItem.teamMembers.find(
+        (member) => member === this.localEditedItem.teamLeaderId
+      )
+      this.selectedTeamLeader =
+        this.teamMemberNames[this.localEditedItem.teamMembers.indexOf(teamLeader)]
+    },
     async updateTeam() {
       this.isDeleting = true
 
@@ -180,14 +216,18 @@ export default {
       }
       const apiURL = await this.getRequestUrl()
 
-      const data = {
-        updateTeamDto: {
+      //updating the all the team info except the teamMember info
+      if (
+        this.localEditedItem.teamName !== this.initalTeamName ||
+        this.getEmployeeIdByName(this.selectedTeamLeader !== this.intialTeamLeader)
+      ) {
+        const data = {
           teamName: this.localEditedItem.teamName,
           teamMembers: this.selectedTeamMembers.map((name) => this.getEmployeeIdByName(name)),
           teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader),
           companyId: localStorage.getItem('currentCompany')
         },
-        currentEmployeeId: localStorage.getItem('employeeId')
+        currentEmployeeId = localStorage.getItem('employeeId')
       }
       console.log(data)
 
@@ -251,13 +291,6 @@ export default {
     getEmployeeIdByName(name) {
       const index = this.teamMemberNames.indexOf(name)
       return this.teamMemberIds[index]
-    },
-    populateTeamLeaderName() {
-      const teamLeader = this.localEditedItem.teamMembers.find(
-        (member) => member === this.localEditedItem.teamLeaderId
-      )
-      this.selectedTeamLeader =
-        this.teamMemberNames[this.localEditedItem.teamMembers.indexOf(teamLeader)]
     },
     populateCurrentTeamMembers() {
       for (let i = 0; i < this.localEditedItem.teamMembers.length; i++) {
