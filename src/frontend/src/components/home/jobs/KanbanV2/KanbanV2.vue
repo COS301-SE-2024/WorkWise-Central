@@ -1,13 +1,13 @@
 <template>
   <v-container fluid>
-    <v-row justify="end"
-      ><v-col cols="auto">
-        <v-btn size="x-large" align="right" @click="redirectToArchivePage">
-          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-        </v-btn>
-      </v-col></v-row
-    >
-    <v-row>
+    <!--    <v-row justify="end"-->
+    <!--      ><v-col cols="auto">-->
+    <!--        <v-btn size="x-large" align="right" @click="redirectToArchivePage">-->
+    <!--          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>-->
+    <!--        </v-btn>-->
+    <!--      </v-col></v-row-->
+    <!--    >-->
+    <v-row class="flex">
       <VueDraggable
         ref="el"
         v-model="columns"
@@ -23,12 +23,20 @@
           :key="column._id"
           role="listbox"
           aria-dropeffect="move"
+          :xl="2"
           :lg="3"
           :md="4"
           :sm="6"
           :cols="12"
         >
-          <v-card variant="flat" elevation="1" color="red" :min-width="350">
+          <v-card
+            variant="flat"
+            elevation="1"
+            color="red"
+            :min-width="350"
+            :max-height="800"
+            class="overflow-auto"
+          >
             <v-card-item
               class="font-weight-black text-h5"
               style="font-family: 'Nunito', sans-serif"
@@ -54,7 +62,7 @@
                     </v-btn>
                   </v-list-item>
                   <v-list-item>
-                    <v-dialog v-model="delete_all_jobs_dialog" max-width="500px">
+                    <v-dialog :opacity="0.6" v-model="delete_all_jobs_dialog" max-width="500px">
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props">
                           <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>
@@ -103,7 +111,12 @@
                   <v-list-subheader v-if="column.status !== 'No Status'">Column</v-list-subheader>
 
                   <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog max-height="700" max-width="500" v-model="edit_column_details_dialog">
+                    <v-dialog
+                      :opacity="0.6"
+                      max-height="700"
+                      max-width="500"
+                      v-model="edit_column_details_dialog"
+                    >
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props"
                           ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
@@ -184,7 +197,7 @@
                     </v-dialog>
                   </v-list-item>
                   <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog v-model="delete_column_dialog" max-width="500px">
+                    <v-dialog :opacity="0.6" v-model="delete_column_dialog" max-width="500px">
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props"
                           ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
@@ -227,14 +240,14 @@
               </v-menu>
             </v-card-item>
 
-            <!--            <v-virtual-scroll-->
-            <!--              :items="column.cards"-->
-            <!--              class="kanban-column-scroller"-->
-            <!--              :max-height="700"-->
-            <!--              :max-width="500"-->
-            <!--            >-->
-            <!--              <template #default="{ item }">-->
             <v-card-text>
+              <!--              <v-virtual-scroll-->
+              <!--                :items="column.cards"-->
+              <!--                class="kanban-column-scroller"-->
+              <!--                :max-height="700"-->
+              <!--                :max-width="500"-->
+              <!--              >-->
+              <!--                <template v-slot:default>-->
               <VueDraggable
                 class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
                 v-model="column.cards"
@@ -244,6 +257,7 @@
                 :onAdd="(event) => onCardStatusAdd(event, column)"
               >
                 <v-card
+                  class="my-5"
                   v-for="item in column.cards"
                   :key="item.jobId"
                   @click="clickedEvent(item)"
@@ -264,7 +278,7 @@
                       </template>
                       <v-list :border="true" bg-color="background" rounded="lg">
                         <v-list-item>
-                          <v-btn :elevation="0" @click="ArchiveJob(item)">
+                          <v-btn :elevation="0" @click="ArchiveJob(item, column)">
                             <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
                             {{ 'Archive' }}
                           </v-btn>
@@ -300,7 +314,7 @@
                     ></v-card-item
                   >
 
-                  <v-card-text v-if="item.tags.length != 0">
+                  <v-card-item v-if="item.tags.length != 0">
                     <v-chip
                       :color="item.tags[i].colour"
                       class=""
@@ -308,18 +322,20 @@
                       :key="i"
                       ><b>{{ item.tags[i].label }}</b></v-chip
                     >
-                  </v-card-text>
+                  </v-card-item>
                 </v-card>
               </VueDraggable>
+              <!--                </template>-->
+              <!--              </v-virtual-scroll>-->
             </v-card-text>
-            <!--              </template>-->
-            <!--            </v-virtual-scroll>-->
           </v-card>
         </v-col>
         <v-col cols="auto">
-          <v-dialog max-height="600" max-width="500" v-model="add_column_dialog">
+          <v-dialog :opacity="0.6" max-height="600" max-width="500" v-model="add_column_dialog">
             <template v-slot:activator="{ props }">
-              <v-btn icon="fa: fa-solid fa-plus" v-bind="props"></v-btn>
+              <v-btn v-bind="props" size="small"
+                ><v-icon size="x-large" icon="fa: fa-solid fa-plus"></v-icon
+              ></v-btn>
             </template>
             <v-card elevation="14" rounded="md" max-height="700" max-width="900">
               <v-card-title class="text-center">New Column</v-card-title>
@@ -395,7 +411,7 @@
       </VueDraggable>
     </v-row>
   </v-container>
-  <v-dialog v-model="JobCardVisibility" max-width="1000px">
+  <v-dialog :opacity="0.6" v-model="JobCardVisibility" max-width="1000px">
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
@@ -416,6 +432,7 @@ export default {
   },
   data() {
     return {
+      nostatusID: '',
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       delete_all_jobs_dialog: false,
@@ -505,7 +522,7 @@ export default {
           console.log(error)
         })
     },
-    async ArchiveJob(payload: JobCardDataFormat) {
+    async ArchiveJob(payload: JobCardDataFormat, col: Column) {
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -519,7 +536,7 @@ export default {
         .patch(API_URL + `job/update/${payload.jobId}`, { status: this.archive_status_id }, config)
         .then((res) => {
           console.log(res.data.data)
-          window.location.reload()
+          col.cards = col.cards.filter((item) => item.jobId !== payload.jobId)
         })
         .catch((error) => console.log(error))
     },
@@ -566,23 +583,20 @@ export default {
           }
         }
 
-        let res = await axios.delete(API_URL + 'job/status', config)
-
-        for (let i = 0; i < col.cards.length; i++) {
-          this.columns[0].cards.push(col.cards[i])
-          col.cards[i].status.status = this.columns[0].status
-          console.log(col.cards[i].status)
-        }
-
-        this.columns[0].cards.sort(
-          (a: JobCardDataFormat, b: JobCardDataFormat) =>
-            a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
-        )
+        const obj = { status: this.nostatusID } as any
+        await axios.delete(API_URL + 'job/status', config).then(() => {
+          for (let i = 0; i < col.cards.length; i++) {
+            axios.patch(API_URL + `job/update/${col.cards[i].jobId}`, obj, config)
+          }
+          for (let i = 0; i < this.columns.length; i++) {
+            if (this.columns[i]._id == this.nostatusID) {
+              this.columns[i].cards.concat(col.cards)
+            }
+          }
+        })
 
         this.columns.splice(this.columns.indexOf(col), 1)
         this.delete_column_dialog = false
-
-        console.log(res)
       } catch (error) {
         console.log(error)
       }
@@ -745,11 +759,9 @@ export default {
             })
             this.add_column_dialog = false
           })
-        this.add_column_dialog = false
       } catch (error) {
         console.log(error)
       }
-      this.add_column_dialog = !this.add_column_dialog
       // this.columns.push(column)
     },
     addColorPickerUpdate() {
@@ -859,6 +871,9 @@ export default {
           if (loaded_tags_response.data.data.jobStatuses[i].status === 'Archive') {
             archive_index = i
           }
+          if (loaded_tags_response.data.data.jobStatuses[i].status === 'No Status') {
+            this.nostatusID = loaded_tags_response.data.data.jobStatuses[i]._id
+          }
           loaded_tags_response.data.data.jobStatuses[i]['cards'] = []
         }
 
@@ -903,7 +918,7 @@ export default {
 
       try {
         const loaded_tags_response = await axios.get(
-          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}`,
+          API_URL + `job/all/employee/${localStorage['employeeId']}`,
           config
         )
         console.log(loaded_tags_response)
