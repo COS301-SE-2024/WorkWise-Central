@@ -10,13 +10,18 @@ export class CreateVideoCallDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  @IsDateString()
-  scheduledStartTime: Date;
+  @IsString()
+  date: string;
 
   @IsNotEmpty()
   @ApiProperty()
-  @IsDateString()
-  scheduledEndTime: Date;
+  @IsString()
+  startTime: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  endTime: string;
 
   @IsArray()
   @IsNotEmpty()
