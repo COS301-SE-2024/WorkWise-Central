@@ -333,7 +333,9 @@
         <v-col cols="auto">
           <v-dialog :opacity="0.6" max-height="600" max-width="500" v-model="add_column_dialog">
             <template v-slot:activator="{ props }">
-              <v-btn icon="fa: fa-solid fa-plus" v-bind="props"></v-btn>
+              <v-btn v-bind="props" size="small"
+                ><v-icon size="x-large" icon="fa: fa-solid fa-plus"></v-icon
+              ></v-btn>
             </template>
             <v-card elevation="14" rounded="md" max-height="700" max-width="900">
               <v-card-title class="text-center">New Column</v-card-title>
