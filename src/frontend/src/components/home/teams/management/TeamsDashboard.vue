@@ -186,7 +186,7 @@ export default defineComponent({
           console.error('Failed to fetch employees:', error)
         })
     },
-    checkPermission(permission) {
+    checkPermission(permission: string) {
       return this.employeePermissions.includes(permission)
     },
     updateTeamInList(updatedTeam: Team) {

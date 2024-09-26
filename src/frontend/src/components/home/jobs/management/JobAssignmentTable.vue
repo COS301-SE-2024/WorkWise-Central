@@ -412,7 +412,7 @@ const closeEditJob = async () => {
   await fetchData()
 }
 
-const checkPermission = (permission) =>{
+const checkPermission = (permission: string) =>{
       return employeePermissions.value.includes(permission)
 }
 

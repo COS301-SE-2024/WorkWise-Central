@@ -51,7 +51,6 @@ import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Button from 'primevue/button'
 import { API_URL } from '@/main'
-import { API_URL } from '@/main'
 
 const toast = useToast()
 const inventoryDialog = ref(false)
