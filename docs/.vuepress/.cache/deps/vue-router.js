@@ -19,7 +19,7 @@ import {
   unref,
   watch,
   watchEffect
-} from "./chunk-NRR3UUIY.js";
+} from "./chunk-PAUCAATC.js";
 
 // node_modules/vue-router/dist/vue-router.mjs
 var isBrowser = typeof document !== "undefined";
@@ -423,7 +423,7 @@ function useHistoryStateNavigation(base) {
 
 history.replaceState(history.state, '', url)
 
-You can find more information at https://next.router.vuejs.org/guide/migration/#usage-of-history-state.`);
+You can find more information at https://router.vuejs.org/guide/migration/#Usage-of-history-state`);
     }
     changeLocation(currentState.current, currentState, true);
     const state = assign({}, buildState(currentLocation.value, to, null), { position: currentState.position + 1 }, data);
@@ -972,7 +972,7 @@ function createRouterMatcher(routes, globalOptions) {
         normalizedRecord.path = parent.record.path + (path && connectingSlash + path);
       }
       if (normalizedRecord.path === "*") {
-        throw new Error('Catch all routes ("*") must now be defined using a param with a custom regexp.\nSee more at https://next.router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes.');
+        throw new Error('Catch all routes ("*") must now be defined using a param with a custom regexp.\nSee more at https://router.vuejs.org/guide/migration/#Removed-star-or-catch-all-routes.');
       }
       matcher = createRouteRecordMatcher(normalizedRecord, parent, options);
       if (parent && path[0] === "/")
@@ -2150,7 +2150,7 @@ function createRouter(options) {
   const stringifyQuery$1 = options.stringifyQuery || stringifyQuery;
   const routerHistory = options.history;
   if (!routerHistory)
-    throw new Error('Provide the "history" option when calling "createRouter()": https://next.router.vuejs.org/api/#history.');
+    throw new Error('Provide the "history" option when calling "createRouter()": https://router.vuejs.org/api/interfaces/RouterOptions.html#history');
   const beforeGuards = useCallbacks();
   const beforeResolveGuards = useCallbacks();
   const afterGuards = useCallbacks();
@@ -2736,7 +2736,7 @@ export {
 
 vue-router/dist/vue-router.mjs:
   (*!
-    * vue-router v4.4.0
+    * vue-router v4.4.3
     * (c) 2024 Eduardo San Martin Morote
     * @license MIT
     *)
