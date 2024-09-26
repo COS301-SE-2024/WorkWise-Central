@@ -1,48 +1,110 @@
 <template>
   <v-container fluid fill-height>
-    <v-row class="justify-center align-center">
-      <v-col cols="12" class="text-center">
-        <h4>Inventory Movements</h4>
-      </v-col>
-    </v-row>
+    <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
+      <v-card-title
+        class="d-flex align-center pe-2 text-h5 font-weight-regular"
+        height="auto"
+        width="100%"
+      >
+        <v-row align="center" justify="space-between">
+          <v-col cols="12" lg="4" class="d-flex align-center">
+            <v-icon icon="fa: fa-solid fa-boxes"></v-icon>
+            <v-label
+              class="ms-2 h2 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+            >
+              Inventory Movements
+            </v-label>
+          </v-col>
 
-    <v-row>
-      <v-col cols="12">
-        <v-tabs-items v-model="activeTab">
-          <!-- Stock Movement Report -->
-          <v-card class="bg-cardColor">
-            <v-card-text>
-              <v-container fluid fill-height>
-                <v-col>
-                  <v-btn
-                    variant="elevated"
-                    color="primary"
-                    block
-                    :loading="isGenerating"
-                    @click="generatePDF()"
-                    ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
-                    PDF</v-btn
-                  ></v-col
-                >
-              </v-container>
-            </v-card-text>
-            <v-data-table
-              :headers="stockMovementHeaders"
-              :items="stockMovements"
-              class="elevation-1 bg-cardColor"
-              :header-props="{ class: 'bg-cardColor h6' }"
-            />
-          </v-card>
-        </v-tabs-items>
-      </v-col>
-    </v-row>
+          <!-- <v-col cols="12" lg="4" class="d-flex align-center">
+            <v-text-field
+              v-model="search"
+              density="compact"
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              flat
+              color="primary"
+              width="100%"
+              hide-details="auto"
+              single-line
+            ></v-text-field>
+          </v-col> -->
+
+          <v-col cols="12" lg="4" class="d-flex align-center">
+            <v-btn
+              variant="elevated"
+              color="secondary"
+              block
+              :loading="isGenerating"
+              @click="generatePDF()"
+            >
+              <v-icon color="white" icon="fa:fa-solid fa-file"></v-icon>
+              Generate PDF
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card-title>
+
+      <v-divider></v-divider>
+
+      <v-card-text>
+        <v-row class="mb-3">
+          <v-col cols="12" lg="4">
+            <v-text-field
+              v-model="startDate"
+              type="date"
+              label="Start Date"
+              color="primary"
+              variant="outlined"
+              flat
+              hide-details="auto"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" lg="4">
+            <v-text-field
+              v-model="endDate"
+              type="date"
+              label="End Date"
+              color="primary"
+              variant="outlined"
+              flat
+              hide-details="auto"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" lg="4" class="d-flex align-center">
+            <v-btn
+              variant="elevated"
+              color="primary"
+              block
+              @click="filterByDateRange"
+              style="color: white !important;"
+            >
+              <v-icon color="white" icon="mdi-calendar-range"></v-icon>
+              Filter
+            </v-btn>
+          </v-col>
+        </v-row>
+
+        <v-data-table
+          :headers="stockMovementHeaders"
+          :items="filteredStockMovements"
+          :search="search"
+          height="auto"
+          class="bg-cardColor"
+          :row-props="getRowProps"
+        >
+        </v-data-table>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
 import axios from 'axios'
-
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { API_URL } from '@/main'
@@ -52,8 +114,6 @@ export default defineComponent({
     return {
       activeTab: 0,
       isGenerating: false,
-      locationTab: null,
-      currentInventoryItem: '',
       stockMovementHeaders: [
         { title: 'Item', value: 'item' },
         { title: 'Reason', value: 'reason' },
@@ -61,7 +121,10 @@ export default defineComponent({
         { title: 'Employee', value: 'employee' },
         { title: 'Date', value: 'date' }
       ],
-      stockMovements: []
+      stockMovements: [],
+      startDate: '',
+      endDate: '',
+      filteredStockMovements: []
     }
   },
   methods: {
@@ -76,7 +139,7 @@ export default defineComponent({
       let tableRows = []
 
       tableColumns = ['Item', 'Reason', 'Quantity', 'Employee', 'Date']
-      tableRows = this.stockMovements.map((item) => [
+      tableRows = this.filteredStockMovements.map((item) => [
         item.item,
         item.reason,
         item.quantity,
@@ -92,10 +155,23 @@ export default defineComponent({
       })
 
       // Save the PDF
-      doc.save(`${reportType.toLowerCase().replace(/ /g, '_')}_report.pdf`)
+      doc.save(`stock_movement_report.pdf`)
       this.isGenerating = false
     },
-    formatDate (dateString) {
+    filterByDateRange() {
+      if (this.startDate && this.endDate) {
+        const start = new Date(this.startDate)
+        const end = new Date(this.endDate)
+        this.filteredStockMovements = this.stockMovements.filter((item) => {
+          const itemDate = new Date(item.date)
+          return itemDate >= start && itemDate <= end
+        })
+      } else {
+        // If no dates are selected, show all stock movements
+        this.filteredStockMovements = this.stockMovements
+      }
+    },
+    formatDate(dateString) {
       const options = { day: 'numeric', month: 'long', year: 'numeric' }
       const date = new Date(dateString)
       return date.toLocaleDateString('en-US', options)
@@ -112,9 +188,7 @@ export default defineComponent({
           `${API_URL}StockMovements/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        console.log('response.data.data: ', response.data.data)
         for (const item of response.data.data) {
-          console.log('item: ', item)
           this.stockMovements.push({
             date: this.formatDate(item.movementDate),
             type: item.type,
@@ -124,6 +198,8 @@ export default defineComponent({
             reason: item.reason
           })
         }
+        // Initialize filtered stock movements to show all by default
+        this.filteredStockMovements = this.stockMovements
       } catch (error) {
         console.error(error)
       }
