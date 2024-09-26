@@ -67,7 +67,7 @@ export class InvoiceService {
   }
 
   async create(createInvoiceDto: CreateInvoiceDto) {
-    console.log('checkpoint6');
+    console.log('in create invoice');
     const validation = await this.validateCreateInvoice(createInvoiceDto);
     console.log('checkpoint7');
     if (!validation.isValid) {
@@ -75,51 +75,49 @@ export class InvoiceService {
     }
     console.log('checkpoint8');
     const newInvoice = new Invoice(createInvoiceDto);
+    newInvoice.inventoryItems = [];
     for (const item of createInvoiceDto.inventoryItems) {
       newInvoice.inventoryItems.push({
-        description: item.description,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        discount: item.discount,
-        total: item.total,
-      });
-    }
-    for (const item of createInvoiceDto.laborItems) {
-      newInvoice.laborItems.push({
-        description: item.description,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        discount: item.discount,
-        total: item.total,
+        description: item.description ? item.description : '',
+        quantity: item.quantity ? item.quantity : 0,
+        unitPrice: item.unitPrice ? item.unitPrice : 0,
+        discount: item.discount ? item.discount : 0,
+        total: item.total ? item.total : 0,
       });
     }
     console.log('checkpoint9');
+    newInvoice.laborItems = [];
+    for (const item of createInvoiceDto.laborItems) {
+      newInvoice.laborItems.push({
+        description: item.description ? item.description : '',
+        quantity: item.quantity ? item.quantity : 0,
+        unitPrice: item.unitPrice ? item.unitPrice : 0,
+        discount: item.discount ? item.discount : 0,
+        total: item.total ? item.total : 0,
+      });
+    }
+    console.log('checkpoint10');
     return await this.invoiceRepository.save(newInvoice);
   }
 
   async generate(jobId: Types.ObjectId) {
-    console.log('jobId: ', jobId);
+    console.log('in generate invoice');
     const dto = new CreateInvoiceDto();
     dto.jobId = jobId;
     const job = await this.jobService.getJobById(jobId);
-    console.log('checkpoint1');
     dto.clientId = job.clientId;
     dto.companyId = job.companyId;
     const number = await this.invoiceRepository.findLastInvoiceNumber(job.companyId);
-    console.log('checkpoint2');
     if (number === null) {
       dto.invoiceNumber = 1;
     } else {
       dto.invoiceNumber = number + 1;
     }
-
+    console.log('checkpoint1');
     dto.invoiceDate = new Date();
     dto.inventoryItems = [];
     dto.laborItems = [];
     let total = 0;
-
-    console.log('checkpoint3');
-
     //Adding the inventory items used for the job
     const inventoryUsedList = await this.inventoryUsedService.findAllForJob(jobId);
     for (const inventoryUsed of inventoryUsedList) {
@@ -139,8 +137,7 @@ export class InvoiceService {
       total = total + item.total;
       dto.inventoryItems.push(item);
     }
-
-    console.log('checkpoint4');
+    console.log('checkpoint2');
 
     //TODO: add labor to invoice
     for (const employeeId of job.assignedEmployees.employeeIds) {
@@ -155,14 +152,13 @@ export class InvoiceService {
       total = total + item.total;
       dto.laborItems.push(item);
     }
+    console.log('checkpoint3');
 
     dto.paid = false;
-    dto.taxPercentage = 15; //VAT percentage in South Africa
+    dto.taxPercentage = 15;
     dto.taxAmount = total * (15 / 115);
     dto.subTotal = total - dto.taxAmount;
-
     dto.total = dto.total + dto.taxAmount;
-
     console.log('checkpoint5');
 
     return await this.create(dto);

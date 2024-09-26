@@ -119,7 +119,7 @@ export class InvoiceController {
     name: 'id',
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
-  @Post('/generate/:currentEmployeeId/:jobId')
+  @Get('/generate/:currentEmployeeId/:jobId')
   async generate(
     @Headers() headers: any,
     @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
