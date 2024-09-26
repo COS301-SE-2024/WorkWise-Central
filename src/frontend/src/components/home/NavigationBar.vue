@@ -13,7 +13,7 @@ const CommunicationSubItems = ref([
     icon: 'fa: fa-solid fa-comments',
     routeName: 'chatHome'
   },
-  { title: 'Video Calls', icon: 'fa: fa-solid fa-video', routeName: 'appointments' }
+  { title: 'Meetings', icon: 'fa: fa-solid fa-video', routeName: 'appointments' }
 ])
 
 const invoicesSubItems = ref([
