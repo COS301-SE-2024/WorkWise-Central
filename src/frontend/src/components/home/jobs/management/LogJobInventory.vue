@@ -118,7 +118,8 @@ const props = defineProps<{
 const newInventory = ref<InventoryItem>({
   id: '',
   name: '',
-  quantity: 1
+  quantity: 0,
+  inventoryUsedId: ''
 })
 
 const inventoryList = ref<InventoryItem[]>([])
@@ -236,7 +237,7 @@ function cancelEdit() {
 }
 
 function resetForm() {
-  newInventory.value = { id: '', name: '', quantity: 1 }
+  newInventory.value = { id: '', name: '', quantity: 1, inventoryUsedId: ''}
   isEditing.value = false
   editingIndex.value = -1
   validateForm()
