@@ -83,7 +83,8 @@ export class InventoryUsedService {
   }
 
   async findAllForJob(jobId: Types.ObjectId) {
-    return await this.inventoryUsedRepository.findAllInCompany(jobId);
+    console.log('jobId', jobId);
+    return await this.inventoryUsedRepository.findAllForJob(jobId);
   }
 
   async findById(id: Types.ObjectId) {

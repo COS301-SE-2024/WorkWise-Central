@@ -93,13 +93,13 @@ export class TimeTrackerRepository {
       .find({ $and: [{ employeeId: employeeId }, { jobId: jobId }, { checkOutTime: { $ne: null } }] })
       .lean()
       .exec();
-    console.log(times);
+    // console.log(times);
     return times;
   }
 
   async closeAllTimeTrackersForJob(jobId: Types.ObjectId) {
     const trackers = await this.timeTrackerModel.find({ $and: [{ jobId: jobId }, isNotDeleted] }).exec();
-    console.log(trackers);
+    // console.log(trackers);
     if (!trackers) return true;
     const now = currentDate();
     const updatePromises = trackers.map(async (tracker) => {

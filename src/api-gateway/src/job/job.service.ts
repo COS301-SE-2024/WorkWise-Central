@@ -171,7 +171,7 @@ export class JobService {
   async jobExistsInCompany(id: Types.ObjectId, companyId: Types.ObjectId): Promise<boolean> {
     const result: FlattenMaps<Job> & { _id: Types.ObjectId } = await this.jobRepository.existsInCompany(id, companyId);
 
-    console.log('jobExists -> ', result);
+    // console.log('jobExists -> ', result);
     return result != null;
   }
 
@@ -460,10 +460,10 @@ export class JobService {
     if (!user.joinedCompanies.some((j) => j.companyId.toString() === job.companyId.toString())) {
       throw new UnauthorizedException('User not in company');
     }
-
-    const alreadyAssigned = job.assignedEmployees.teamIds.some((id) => id.toString() === assignDto.teamId.toString());
-    if (alreadyAssigned) throw new ConflictException('Team Already Assigned');
-
+    if (job.assignedEmployees.teamIds != null) {
+      const alreadyAssigned = job.assignedEmployees.teamIds.some((id) => id.toString() === assignDto.teamId.toString());
+      if (alreadyAssigned) throw new ConflictException('Team Already Assigned');
+    }
     // Get team
     const team = await this.teamService.findById(assignDto.teamId);
     if (!team) throw new NotFoundException('Team not found');
@@ -496,10 +496,25 @@ export class JobService {
       throw new UnauthorizedException('User not in company');
     }
 
-    const teamMembers = (await this.teamService.findById(unassignDto.teamId))?.teamMembers;
+    // Get team
+    const team = await this.teamService.findById(unassignDto.teamId);
+    if (!team) throw new NotFoundException('Team not found');
+
+    const result = await this.jobRepository.unassignTeam(unassignDto.teamId, unassignDto.jobId, team.teamMembers);
+    //team.currentJobAssignments.pull(job._id);
+    team.currentJobAssignments = team.currentJobAssignments.filter(
+      (id) => id.toString() !== unassignDto.jobId.toString(),
+    );
+    team.currentJobAssignments = [...new Set(team.currentJobAssignments)];
+    await this.teamService.update(team._id, {
+      currentJobAssignments: team.currentJobAssignments,
+    });
+
+    const teamMembers = team.teamMembers;
     if (!teamMembers) throw new NotFoundException('Team not found');
 
     this.unassignEmployeesInternal(teamMembers, unassignDto.jobId);
+    return result;
   }
 
   async assignEmployee(userId: Types.ObjectId, jobAssignDto: JobAssignDto) {

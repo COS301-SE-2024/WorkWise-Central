@@ -84,28 +84,23 @@ function toggleTheme() {
 
 <style scoped>
 .chat-header {
-  background-color: var(--background); /* Use theme background */
   padding: 10px;
   border-radius: 8px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--highlighter-color); /* Adapted border for theme */
   transition: background-color 0.3s ease;
 }
 
 .chat-header:hover {
-  background-color: var(--primary-color); /* Change background on hover */
   cursor: pointer;
 }
 
 .chat-header h2 {
   margin-left: 1rem;
   font-size: 1.2rem;
-  color: var(--heading-text-color); /* Use theme heading color */
 }
 
 .hover-orange {
-  background-color: orange;
 }
 
 .participant-area {
@@ -124,7 +119,6 @@ function toggleTheme() {
 }
 
 .p-avatar {
-  border: 2px solid var(--element-text-color); /* Border for avatar */
 }
 
 .p-avatar-group .p-avatar {
@@ -136,7 +130,5 @@ function toggleTheme() {
 }
 
 .p-tooltip {
-  background-color: var(--highlighter-color); /* Tooltip background color */
-  color: var(--element-text-color); /* Tooltip text color */
 }
 </style>

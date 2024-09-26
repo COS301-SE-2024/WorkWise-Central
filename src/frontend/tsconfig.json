@@ -21,6 +21,7 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": ["@types/crypto-js", "vuetify"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
       "@/*": ["src/*"]
     },
