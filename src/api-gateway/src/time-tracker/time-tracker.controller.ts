@@ -144,17 +144,6 @@ export class TimeTrackerController {
     }
   }
 
-  /*  @Get('user/check-ins/current')
-  async getAllCurrentUserCheckins(@Headers() headers: any) {
-    try {
-      //validateObjectId(createJobDto.assignedBy, 'assignedBy');
-      const userId = extractUserId(this.jwtService, headers);
-      return { data: await this.timeTrackerService.getAllCurrentUserCheckins(userId) };
-    } catch (Error) {
-      throw new HttpException(Error, HttpStatus.CONFLICT);
-    }
-  }*/
-
   @Get('latest-checkin/')
   @ApiOperation({ summary: 'Get the latest check-in for an employee' })
   @ApiBody({ type: GeneralTimeTrackerDto })
