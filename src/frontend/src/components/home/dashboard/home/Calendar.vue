@@ -1023,21 +1023,22 @@ export default {
 
       try {
         const employee_jobs = await axios(
-          API_URL + `job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+          API_URL + `job/all/employee/${localStorage.getItem('employeeId')}`,
           config
         )
 
         let jobs: Job[] = employee_jobs.data.data
+        console.log(jobs)
         jobs.map((job: Job) => {
-          if (job.status.status === 'Archive') return null
-
+          if (job.status.status === 'Archive' || !job?.details?.endDate) return null
+          console.log(job?.details?.endDate)
           if (job.clientId != null) {
             const evnt: Event = {
               title: job.details.heading,
               with: job.clientId.details.firstName + ' ' + job.clientId.details.lastName,
               time: {
                 start: this.formatDate(job.details.startDate),
-                end: this.formatDate(job.details.endDate)
+                end: this.formatDate(job.details?.endDate)
               },
               color:
                 this.available_event_colors[this.randNum(0, this.available_event_colors.length)],
