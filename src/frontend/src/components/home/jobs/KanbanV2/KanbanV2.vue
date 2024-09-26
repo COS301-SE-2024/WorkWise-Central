@@ -1,21 +1,17 @@
 <template>
   <v-container fluid>
-    <v-row class="align-center">
-      <!-- Empty space to push the heading to the center -->
+    <!-- <v-row class="align-center">
       <v-col cols="auto"></v-col>
 
-      <!-- Heading centered -->
       <v-col class="text-center">
         <h4>Job Board</h4>
       </v-col>
-
-      <!-- Button on the right -->
       <v-col cols="auto">
         <v-btn size="x-large" @click="redirectToArchivePage">
           <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
         </v-btn>
       </v-col>
-    </v-row>
+    </v-row> -->
 
     <v-row>
       <VueDraggable
