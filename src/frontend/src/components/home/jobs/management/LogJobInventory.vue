@@ -151,12 +151,13 @@ async function fetchStockUsed() {
   try {
     const response = await axios.get(`${API_URL}inventory/stockUsed/${props.jobID}`, config)
     console.log('Stock use:', response)
+    console.log(response.data.data)
     if (response.data.data.length > 0) {
       inventoryList.value = response.data.data.map((item: any) => ({
-        id: item._id,
+        id: item.inventoryId._id,
         name: item.inventoryId.name,
         quantity: item.amount,
-        inventoryUsedId: item.inventoryId._id
+        inventoryUsedId: item._id
       }))
     }
     console.log('Inventory list:', inventoryList.value)
@@ -191,7 +192,7 @@ async function saveInventory() {
       const payload = {
         listOfUsedInventory: [{
           changeInAmount: newInventory.value.quantity,
-          inventoryId: itemToEdit.inventoryUsedId,
+          inventoryId: itemToEdit.id,
           inventoryUsedId: itemToEdit.inventoryUsedId
         }],
         currentEmployeeId: localStorage.getItem('employeeId'),

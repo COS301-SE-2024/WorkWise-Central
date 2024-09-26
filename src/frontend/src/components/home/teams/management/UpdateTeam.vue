@@ -152,11 +152,11 @@ export default {
       teamLeaderIdRules: [(v) => !!v || 'Team Leader is required']
     }
   },
-  created() {
+  async created() {
     this.localEditedItem = this.deepCopy(this.editedItem)
-    this.getEmployees()
-    this.getJobInCompany()
-    this.getCurrentJobAssignment()
+    await this.getEmployees()
+    await this.getJobInCompany()
+    await this.getCurrentJobAssignment()
   },
   methods: {
     async updateTeam() {
@@ -194,7 +194,7 @@ export default {
       // Unassign if the job has been removed
 
       for (const job of this.assignedJobs) {
-        if (!this.selectedJobs.find(job._id)) {
+        if (!this.selectedJobs.find(job)) {
           console.log('Removing job... :', job._id)
           await axios.patch(`${API_URL}job/team`, {
               employeeId: localStorage.getItem('employeeId'),
@@ -275,11 +275,11 @@ export default {
             config
         )
         console.log('Selected Jobs:', response.data.data)
-        for (const job in response.data.data.currentJobAssignments) {
+        for (const job of response.data.data.currentJobAssignments) {
           this.assignedJobs.push(job)
         }
         for (const job of this.jobList) {
-          if (this.assignedJobs.includes(job._id)) {
+          if (this.assignedJobs.some(assignedJob => assignedJob === job._id)) {
             this.selectedJobs.push(job._id)
           }
         }
