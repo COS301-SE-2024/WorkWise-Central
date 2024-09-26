@@ -196,6 +196,10 @@ export class JobRepository {
         ],
       })
       .lean()
+      .populate(defaultPopulatedFields)
+      .populate(jobAssignedEmployees)
+      .populate(employeeComments)
+      .populate(jobTaskListItems)
       .exec();
   }
 
