@@ -2,38 +2,38 @@
   <form @submit.prevent="saveInventory" class="p-fluid">
     <div class="p-field">
       <AutoComplete
-          v-model="newInventory.name"
-          :suggestions="filteredInventoryOptions"
-          @complete="filterInventory"
-          field="name"
-          placeholder="Select Inventory Item"
-          class="mb-3 p-inputtext full-width"
-          @change="validateForm"
+        v-model="newInventory.name"
+        :suggestions="filteredInventoryOptions"
+        @complete="filterInventory"
+        field="name"
+        placeholder="Select Inventory Item"
+        class="mb-3 p-inputtext full-width"
+        @change="validateForm"
       />
     </div>
     <div class="p-field">
       <InputNumber
-          v-model="newInventory.quantity"
-          placeholder="Quantity"
-          :min="1"
-          class="mb-3 p-inputnumber full-width"
-          @input="validateForm"
+        v-model="newInventory.quantity"
+        placeholder="Quantity"
+        :min="1"
+        class="mb-3 p-inputnumber full-width"
+        @input="validateForm"
       />
     </div>
     <Button
-        type="submit"
-        :label="isEditing ? 'Update Inventory' : 'Add Inventory'"
-        icon="fa: fa-solid fa-plus"
-        :disabled="!formValid"
-        class="mb-3 p-button p-button-success"
+      type="submit"
+      :label="isEditing ? 'Update Inventory' : 'Add Inventory'"
+      icon="fa: fa-solid fa-plus"
+      :disabled="!formValid"
+      class="mb-3 p-button p-button-success"
     />
     <Button
-        v-if="isEditing"
-        type="button"
-        label="Cancel"
-        icon="fa: fa-solid fa-times"
-        class="p-button p-button-secondary mb-3"
-        @click="cancelEdit"
+      v-if="isEditing"
+      type="button"
+      label="Cancel"
+      icon="fa: fa-solid fa-times"
+      class="p-button p-button-secondary mb-3"
+      @click="cancelEdit"
     />
   </form>
 
@@ -45,33 +45,33 @@
     <Column header="Action" class="p-column">
       <template #body="slotProps">
         <Button
-            icon="fa: fa-solid fa-pencil"
-            class="p-button-rounded p-button-warning mr-2"
-            @click="editInventory(slotProps.index)"
+          icon="fa: fa-solid fa-pencil"
+          class="p-button-rounded p-button-warning mr-2"
+          @click="editInventory(slotProps.index)"
         />
         <Button
-            icon="fa: fa-solid fa-trash"
-            class="p-button-rounded p-button-danger"
-            @click="removeInventory(slotProps.index)"
+          icon="fa: fa-solid fa-trash"
+          class="p-button-rounded p-button-danger"
+          @click="removeInventory(slotProps.index)"
         />
       </template>
     </Column>
   </DataTable>
 
   <Paginator
-      v-model:first="first"
-      :rows="itemsPerPage"
-      :totalRecords="inventoryList.length"
-      @page="onPageChange($event)"
-      class="p-paginator"
+    v-model:first="first"
+    :rows="itemsPerPage"
+    :totalRecords="inventoryList.length"
+    @page="onPageChange($event)"
+    class="p-paginator"
   />
 
   <Button
-      label="Log All Inventory"
-      icon="fa: fa-solid fa-check"
-      class="p-button p-button-success mt-3"
-      :disabled="!inventoryList.length"
-      @click="logInventory"
+    label="Log All Inventory"
+    icon="fa: fa-solid fa-check"
+    class="p-button p-button-success mt-3"
+    :disabled="!inventoryList.length"
+    @click="logInventory"
   />
 </template>
 
@@ -102,10 +102,12 @@ const isLocalAvailable = async (url: string): Promise<boolean> => {
   }
 }
 
-const getInventoryInCompany = async() => {
+const getInventoryInCompany = async () => {
   const baseUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${baseUrl}inventory/all/${localStorage.getItem('employeeId')}`)
+    const response = await axios.get(
+      `${baseUrl}inventory/all/${localStorage.getItem('employeeId')}`
+    )
     inventoryOptions.value = response.data.data.map((item: any) => ({
       id: item.id,
       name: item.name,
@@ -122,9 +124,9 @@ const getRequestUrl = async (): Promise<string> => {
 }
 
 interface InventoryItem {
-  id: string;
-  name: string;
-  quantity: number;
+  id: string
+  name: string
+  quantity: number
 }
 
 const newInventory = ref<InventoryItem>({
@@ -180,12 +182,15 @@ async function saveInventory() {
     const baseUrl = await getRequestUrl()
     if (isEditing.value) {
       // Update existing inventory item
-      const changeInAmount = newInventory.value.quantity - inventoryList.value[editingIndex.value].quantity
+      const changeInAmount =
+        newInventory.value.quantity - inventoryList.value[editingIndex.value].quantity
       await axios.patch(`${baseUrl}inventory/updateStockUse`, {
-        listOfUsedInventory: [{
-          changeInAmount,
-          inventoryId: newInventory.value.id
-        }],
+        listOfUsedInventory: [
+          {
+            changeInAmount,
+            inventoryId: newInventory.value.id
+          }
+        ],
         currentEmployeeId: localStorage.getItem('employeeId'),
         jobId: props.jobID
       })
@@ -194,10 +199,12 @@ async function saveInventory() {
     } else {
       // Add new inventory item
       await axios.patch(`${baseUrl}inventory/recordStockUse`, {
-        listOfUsedInventory: [{
-          amountUsed: newInventory.value.quantity,
-          inventoryId: newInventory.value.id
-        }],
+        listOfUsedInventory: [
+          {
+            amountUsed: newInventory.value.quantity,
+            inventoryId: newInventory.value.id
+          }
+        ],
         currentEmployeeId: localStorage.getItem('employeeId'),
         jobId: props.jobID
       })
@@ -224,10 +231,12 @@ async function removeInventory(index: number) {
     const itemToRemove = inventoryList.value[actualIndex]
     const baseUrl = await getRequestUrl()
     await axios.patch(`${baseUrl}inventory/updateStockUse`, {
-      listOfUsedInventory: [{
-        changeInAmount: -itemToRemove.quantity,
-        inventoryId: itemToRemove.id
-      }],
+      listOfUsedInventory: [
+        {
+          changeInAmount: -itemToRemove.quantity,
+          inventoryId: itemToRemove.id
+        }
+      ],
       currentEmployeeId: localStorage.getItem('employeeId'),
       jobId: props.jobID
     })
@@ -258,15 +267,17 @@ function onPageChange(event: any) {
 async function logInventory() {
   try {
     const baseUrl = await getRequestUrl()
-    const updatePromises = inventoryList.value.map(item =>
-        axios.patch(`${baseUrl}inventory/updateStockUse`, {
-          listOfUsedInventory: [{
+    const updatePromises = inventoryList.value.map((item) =>
+      axios.patch(`${baseUrl}inventory/updateStockUse`, {
+        listOfUsedInventory: [
+          {
             changeInAmount: item.quantity,
             inventoryId: item.id
-          }],
-          currentEmployeeId: localStorage.getItem('employeeId'),
-          jobId: props.jobID
-        })
+          }
+        ],
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        jobId: props.jobID
+      })
     )
     await Promise.all(updatePromises)
     console.log('Inventory Logged:', inventoryList.value)
@@ -279,8 +290,8 @@ async function logInventory() {
 
 function filterInventory(event: any) {
   const query = event.query.toLowerCase()
-  filteredInventoryOptions.value = inventoryOptions.value.filter(option =>
-      option.name.toLowerCase().includes(query)
+  filteredInventoryOptions.value = inventoryOptions.value.filter((option) =>
+    option.name.toLowerCase().includes(query)
   )
 }
 </script>

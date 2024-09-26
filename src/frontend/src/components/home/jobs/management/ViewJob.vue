@@ -1,14 +1,14 @@
 <template>
   <v-card
-      elevation="14"
-      rounded="md"
-      :style="{ backgroundColor: cardBackgroundColor }"
-      :min-height="900"
+    elevation="14"
+    rounded="md"
+    :style="{ backgroundColor: cardBackgroundColor }"
+    :min-height="900"
   >
     <v-img
-        :src="imageSrc"
-        aspect-ratio="5.75"
-        @load="() => setCardBackgroundColor(imageSrc)"
+      :src="imageSrc"
+      aspect-ratio="5.75"
+      @load="() => setCardBackgroundColor(imageSrc)"
     ></v-img>
     <v-row class="position-relative">
       <v-col class="d-flex justify-end">
@@ -16,11 +16,11 @@
           <v-icon left>mdi-image</v-icon>
           <label for="imageInput" class="m-0">Cover</label>
           <input
-              type="file"
-              id="imageInput"
-              @change="changeImage"
-              accept="image/*"
-              style="display: none"
+            type="file"
+            id="imageInput"
+            @change="changeImage"
+            accept="image/*"
+            style="display: none"
           />
         </v-btn>
       </v-col>
@@ -144,8 +144,8 @@
             <v-row>
               <v-col>
                 <AddComment
-                    :jobComments="props.passedInJob?.comments"
-                    :id="props.passedInJob?._id"
+                  :jobComments="props.passedInJob?.comments"
+                  :id="props.passedInJob?._id"
                 />
               </v-col>
             </v-row>
@@ -199,15 +199,15 @@
               <h5 ref="jobTimeTrackerSection">Time tracking</h5>
             </v-divider>
             <v-col>
-              <JobTimeTracker :jobID="props.passedInJob?._id"/>
+              <JobTimeTracker :jobID="props.passedInJob?._id" />
             </v-col>
             <v-divider>
               <h5 ref="historySection">View Job History</h5>
             </v-divider>
             <v-col>
               <JobHistory
-                  :jobHistory="props.passedInJob?.history"
-                  :jobID="props.passedInJob?._id"
+                :jobHistory="props.passedInJob?.history"
+                :jobID="props.passedInJob?._id"
               />
             </v-col>
           </v-col>
@@ -219,11 +219,11 @@
             </v-col>
             <v-col>
               <v-btn
-                  width="100%"
-                  class="d-flex justify-start"
-                  border="md"
-                  elevation="5"
-                  @click="scrollToSection('commentsSection')"
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('commentsSection')"
               >
                 <v-icon left>
                   {{ 'fa: fa-solid fa-comment' }}
@@ -233,11 +233,11 @@
             </v-col>
             <v-col>
               <v-btn
-                  width="100%"
-                  class="d-flex justify-start"
-                  border="md"
-                  elevation="5"
-                  @click="scrollToSection('tasksSection')"
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('tasksSection')"
               >
                 <v-icon left>
                   {{ 'fa: fa-solid fa-tasks' }}
@@ -247,11 +247,11 @@
             </v-col>
             <v-col>
               <v-btn
-                  width="100%"
-                  class="d-flex justify-start"
-                  border="md"
-                  elevation="5"
-                  @click="scrollToSection('imagesSection')"
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('imagesSection')"
               >
                 <v-icon left>
                   {{ 'fa: fa-solid fa-upload' }}
@@ -261,11 +261,11 @@
             </v-col>
             <v-col>
               <v-btn
-                  width="100%"
-                  class="d-flex justify-start"
-                  border="md"
-                  elevation="5"
-                  @click="scrollToSection('jobStatusSection')"
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('jobStatusSection')"
               >
                 <v-icon left>
                   {{ 'fa: fa-solid fa-info-circle' }}
@@ -275,11 +275,11 @@
             </v-col>
             <v-col>
               <v-btn
-                  width="100%"
-                  class="d-flex justify-start"
-                  border="md"
-                  elevation="5"
-                  @click="scrollToSection('jobTagsSection')"
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('jobTagsSection')"
               >
                 <v-icon left>
                   {{ 'fa: fa-solid fa-tags' }}
@@ -289,11 +289,11 @@
             </v-col>
             <v-col>
               <v-btn
-                  width="100%"
-                  class="d-flex justify-start"
-                  border="md"
-                  elevation="5"
-                  @click="scrollToSection('jobInvoiceSection')"
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('jobInvoiceSection')"
               >
                 <v-icon left>
                   {{ 'fa: fa-solid fa-file-invoice' }}
@@ -303,11 +303,11 @@
             </v-col>
             <v-col>
               <v-btn
-                  width="100%"
-                  class="d-flex justify-start"
-                  border="md"
-                  elevation="5"
-                  @click="scrollToSection('jobInventorySection')"
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('jobInventorySection')"
               >
                 <v-icon left>
                   {{ 'fa: fa-solid fa-boxes' }}
@@ -317,11 +317,11 @@
             </v-col>
             <v-col>
               <v-btn
-                  width="100%"
-                  class="d-flex justify-start"
-                  border="md"
-                  elevation="5"
-                  @click="scrollToSection('jobTimeTrackerSection')"
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('jobTimeTrackerSection')"
               >
                 <v-icon left>
                   {{ 'fa: fa-solid fa-clock' }}
@@ -331,11 +331,11 @@
             </v-col>
             <v-col>
               <v-btn
-                  width="100%"
-                  class="d-flex justify-start"
-                  border="md"
-                  elevation="5"
-                  @click="scrollToSection('historySection')"
+                width="100%"
+                class="d-flex justify-start"
+                border="md"
+                elevation="5"
+                @click="scrollToSection('historySection')"
               >
                 <v-icon left>
                   {{ 'fa: fa-solid fa-eye' }}
@@ -349,7 +349,7 @@
     </v-card-text>
     <v-card-actions>
       <v-btn color="error" @click="closeView" block
-      ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
+        ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
       >
     </v-card-actions>
   </v-card>
@@ -413,18 +413,18 @@ const getRequestUrl = async (): Promise<string> => {
 }
 
 function scrollToSection(
-    section:
-        | 'commentsSection'
-        | 'notesSection'
-        | 'tasksSection'
-        | 'imagesSection'
-        | 'tagsSection'
-        | 'historySection'
-        | 'jobStatusSection'
-        | 'jobTagsSection'
-        | 'jobInventorySection'
-        | 'jobInvoiceSection'
-        | 'jobTimeTrackerSection'
+  section:
+    | 'commentsSection'
+    | 'notesSection'
+    | 'tasksSection'
+    | 'imagesSection'
+    | 'tagsSection'
+    | 'historySection'
+    | 'jobStatusSection'
+    | 'jobTagsSection'
+    | 'jobInventorySection'
+    | 'jobInvoiceSection'
+    | 'jobTimeTrackerSection'
 ) {
   let sectionRef = null
 
@@ -477,11 +477,11 @@ const changeImage = async (event: Event) => {
         console.log('Passed in job:', props.passedInJob)
         console.log('Job id:', props.passedInJob._id)
         await axios.patch(
-            `${apiUrl}job/update/${props.passedInJob._id}`,
-            {
-              coverImage: imageSrc.value
-            },
-            config
+          `${apiUrl}job/update/${props.passedInJob._id}`,
+          {
+            coverImage: imageSrc.value
+          },
+          config
         )
         console.log('Image updated successfully')
       } catch (error) {
@@ -506,9 +506,9 @@ const setCardBackgroundColor = (src: string) => {
       const imageData = context.getImageData(0, 0, img.naturalWidth, img.naturalHeight).data
 
       let r = 0,
-          g = 0,
-          b = 0,
-          count = 0
+        g = 0,
+        b = 0,
+        count = 0
       for (let i = 0; i < imageData.length; i += 4) {
         r += imageData[i]
         g += imageData[i + 1]
@@ -529,7 +529,7 @@ onMounted(() => {
   const setImageAndBackground = () => {
     if (props.passedInJob.coverImage === '') {
       imageSrc.value =
-          'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
+        'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
     } else {
       imageSrc.value = props.passedInJob.coverImage
     }
@@ -538,8 +538,8 @@ onMounted(() => {
 
   const img = new Image()
   img.src =
-      props.passedInJob.coverImage ||
-      'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
+    props.passedInJob.coverImage ||
+    'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
   img.onload = setImageAndBackground
 })
 </script>

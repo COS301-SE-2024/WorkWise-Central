@@ -70,14 +70,14 @@ const togglePopover = (event) => {
   childComponentRef.value.toggle(event)
 }
 
-const isDarkMode = ref(false);
+const isDarkMode = ref(false)
 
 function toggleTheme() {
-  const body = document.body;
+  const body = document.body
   if (isDarkMode.value) {
-    body.classList.add('dark-mode');
+    body.classList.add('dark-mode')
   } else {
-    body.classList.remove('dark-mode');
+    body.classList.remove('dark-mode')
   }
 }
 </script>

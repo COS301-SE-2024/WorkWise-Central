@@ -25,13 +25,24 @@
             <v-card-text>
               <v-container>
                 <v-col>
-                  <v-btn variant="elevated" color="primary" block :loading="isGenerating" @click="generatePDF"><v-icon
-                      color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
-                    PDF</v-btn></v-col>
+                  <v-btn
+                    variant="elevated"
+                    color="primary"
+                    block
+                    :loading="isGenerating"
+                    @click="generatePDF"
+                    ><v-icon color="secondary" icon="fa:fa-solid fa-file"></v-icon>Generate
+                    PDF</v-btn
+                  ></v-col
+                >
               </v-container>
             </v-card-text>
-            <v-data-table :headers="stockMovementHeaders" :items="filteredStockMovements"
-              class="elevation-1 bg-cardColor" :header-props="{ class: 'bg-cardColor h6' }">
+            <v-data-table
+              :headers="stockMovementHeaders"
+              :items="filteredStockMovements"
+              class="elevation-1 bg-cardColor"
+              :header-props="{ class: 'bg-cardColor h6' }"
+            >
               <template v-slot:[`item.date`]="{ item }"> {{ formatDate(item.date) }} </template>
             </v-data-table>
           </v-card>
@@ -73,14 +84,14 @@ export default defineComponent({
     filteredStockMovements() {
       // Filter movements based on selected date range
       if (this.startDate && this.endDate) {
-        const start = new Date(this.startDate);
-        const end = new Date(this.endDate);
+        const start = new Date(this.startDate)
+        const end = new Date(this.endDate)
         return this.stockMovements.filter((movement) => {
-          const movementDate = new Date(movement.date);
-          return movementDate >= start && movementDate <= end;
-        });
+          const movementDate = new Date(movement.date)
+          return movementDate >= start && movementDate <= end
+        })
       }
-      return this.stockMovements;
+      return this.stockMovements
     }
   },
   methods: {

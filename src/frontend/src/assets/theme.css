@@ -1,158 +1,173 @@
 :root {
-    /* Light Theme */
-    --background: #F7F8F9;
-    --primary-color: #F0984D;
-    --secondary-color: #227D9B;
-    --accent-color: #82B1FF;
-    --error-color: #E63946;
-    --info-color: #2196F3;
-    --success-color: #1F845A;
-    --warning-color: #E2B203;
-    --card-color: #F1F2F4;
-    --element-text-color: #4C9FC3;
-    --heading-text-color: #091E42;
-    --n-element-text-color: #8C9BAB;
-    --chip-color: #FAF9F6;
-    --highlighter-color: #DEE4EA;
-    --table-row-color: #8C9BAB;
-    --first-place-color: #E2B203;
-    --second-place-color: #626F86;
-    --third-place-color: #533F04;
-    --kanban-icon-color: #161A1D;
-    --second-row-color: #F7F8F9;
-    --button-text-color: #F7F8F9;
-    --faq-question-color: #E8E9EB;
+  /* Light Theme */
+  --background: #f7f8f9;
+  --primary-color: #f0984d;
+  --secondary-color: #227d9b;
+  --accent-color: #82b1ff;
+  --error-color: #e63946;
+  --info-color: #2196f3;
+  --success-color: #1f845a;
+  --warning-color: #e2b203;
+  --card-color: #f1f2f4;
+  --element-text-color: #4c9fc3;
+  --heading-text-color: #091e42;
+  --n-element-text-color: #8c9bab;
+  --chip-color: #faf9f6;
+  --highlighter-color: #dee4ea;
+  --table-row-color: #8c9bab;
+  --first-place-color: #e2b203;
+  --second-place-color: #626f86;
+  --third-place-color: #533f04;
+  --kanban-icon-color: #161a1d;
+  --second-row-color: #f7f8f9;
+  --button-text-color: #f7f8f9;
+  --faq-question-color: #e8e9eb;
 }
 
 body.dark-mode {
-    /* Dark Theme */
-    --background: #161A1D;
-    --primary-color: #F38A3F;
-    --secondary-color: #4C9FC3;
-    --accent-color: #448AFF;
-    --error-color: #E63946;
-    --info-color: #64B5F6;
-    --success-color: #81C784;
-    --warning-color: #FFD54F;
-    --card-color: #22272B;
-    --element-text-color: #B6C2CF;
-    --heading-text-color: #DCDFE4;
-    --n-element-text-color: #8C9BAB;
-    --highlighter-color: #DEE4EA;
-    --table-row-color: #454f55;
-    --first-place-color: #FFD700;
-    --second-place-color: #C0C0C0;
-    --third-place-color: #CD7F32;
-    --kanban-icon-color: #DCDFE4;
-    --second-row-color: #161A1D;
-    --button-text-color: #F7F8F9;
-    --faq-question-color: #2C3135;
+  /* Dark Theme */
+  --background: #161a1d;
+  --primary-color: #f38a3f;
+  --secondary-color: #4c9fc3;
+  --accent-color: #448aff;
+  --error-color: #e63946;
+  --info-color: #64b5f6;
+  --success-color: #81c784;
+  --warning-color: #ffd54f;
+  --card-color: #22272b;
+  --element-text-color: #b6c2cf;
+  --heading-text-color: #dcdfe4;
+  --n-element-text-color: #8c9bab;
+  --highlighter-color: #dee4ea;
+  --table-row-color: #454f55;
+  --first-place-color: #ffd700;
+  --second-place-color: #c0c0c0;
+  --third-place-color: #cd7f32;
+  --kanban-icon-color: #dcdfe4;
+  --second-row-color: #161a1d;
+  --button-text-color: #f7f8f9;
+  --faq-question-color: #2c3135;
 }
 
 /* PrimeVue Component Theming */
 .p-button {
-    background-color: var(--secondary-color);
-    color: var(--button-text-color);
-    border: 1px solid var(--accent-color); /* Outline */
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: background-color 0.3s, border-color 0.3s;
+  background-color: var(--secondary-color);
+  color: var(--button-text-color);
+  border: 1px solid var(--accent-color); /* Outline */
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
 }
 
 .p-button:hover {
-    background-color: #1A6A8D; /* Replace with a manually chosen darker shade */
-    border-color: #1A6A8D;
+  background-color: #1a6a8d; /* Replace with a manually chosen darker shade */
+  border-color: #1a6a8d;
 }
 
 .p-button:active {
-    background-color: #145A6D; /* Even darker shade for active state */
-    border-color: #145A6D;
+  background-color: #145a6d; /* Even darker shade for active state */
+  border-color: #145a6d;
 }
 
 .p-button:disabled {
-    background-color: #B0BEC5; /* Disabled state color */
-    border-color: #B0BEC5;
-    cursor: not-allowed;
-    opacity: 0.6;
+  background-color: #b0bec5; /* Disabled state color */
+  border-color: #b0bec5;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .p-button-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 .p-button-primary:hover {
-    background-color: #D87A3A; /* Darker shade for hover */
-    border-color: #D87A3A;
+  background-color: #d87a3a; /* Darker shade for hover */
+  border-color: #d87a3a;
 }
 
 .p-button-secondary {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
 }
 
 .p-button-secondary:hover {
-    background-color: #1A6A8D; /* Darker shade for hover */
-    border-color: #1A6A8D;
+  background-color: #1a6a8d; /* Darker shade for hover */
+  border-color: #1a6a8d;
 }
 
-.p-card, .p-fileupload-content, .p-listbox, .p-confirm-popup, .p-panel .p-panel-header, .p-contextmenu, .p-dialog .p-dialog-header, .p-dialog .p-dialog-footer {
-    background-color: var(--card-color);
-    color: var(--element-text-color);
+.p-card,
+.p-fileupload-content,
+.p-listbox,
+.p-confirm-popup,
+.p-panel .p-panel-header,
+.p-contextmenu,
+.p-dialog .p-dialog-header,
+.p-dialog .p-dialog-footer {
+  background-color: var(--card-color);
+  color: var(--element-text-color);
 }
 
-.p-dialog .p-dialog-content, .p-carousel, .p-image-preview-container, .p-tabview .p-tabview-nav {
-    background-color: var(--background);
-    color: var(--element-text-color);
+.p-dialog .p-dialog-content,
+.p-carousel,
+.p-image-preview-container,
+.p-tabview .p-tabview-nav {
+  background-color: var(--background);
+  color: var(--element-text-color);
 }
 
-.p-dialog .p-dialog-header-close, .p-tooltip {
-    color: var(--element-text-color);
+.p-dialog .p-dialog-header-close,
+.p-tooltip {
+  color: var(--element-text-color);
 }
 
 .p-datatable .p-datatable-thead > tr > th {
-    background-color: var(--table-row-color);
-    color: var(--element-text-color);
+  background-color: var(--table-row-color);
+  color: var(--element-text-color);
 }
 
-.p-chip, .p-tag {
-    background-color: var(--chip-color);
-    color: var(--n-element-text-color);
+.p-chip,
+.p-tag {
+  background-color: var(--chip-color);
+  color: var(--n-element-text-color);
 }
 
 .p-avatar {
-    background-color: var(--secondary-color);
-    color: var(--button-text-color);
+  background-color: var(--secondary-color);
+  color: var(--button-text-color);
 }
 
 .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
-    background-color: var(--secondary-color);
-    color: var(--button-text-color);
+  background-color: var(--secondary-color);
+  color: var(--button-text-color);
 }
 
 .p-dialog-mask {
-    background-color: rgba(0, 0, 0, 0.8); /* Slightly darker overlay for dark mode */
+  background-color: rgba(0, 0, 0, 0.8); /* Slightly darker overlay for dark mode */
 }
 
-body.dark-mode .p-dialog .p-dialog-header, body.dark-mode .p-dialog .p-dialog-footer {
-    background-color: var(--card-color); /* Dark theme consistency */
+body.dark-mode .p-dialog .p-dialog-header,
+body.dark-mode .p-dialog .p-dialog-footer {
+  background-color: var(--card-color); /* Dark theme consistency */
 }
 
 body.dark-mode .p-dialog .p-dialog-content {
-    background-color: var(--background); /* Dark theme content background */
+  background-color: var(--background); /* Dark theme content background */
 }
 
 .sidebar {
-    background-color: var(--card-color);
-    color: var(--element-text-color);
+  background-color: var(--card-color);
+  color: var(--element-text-color);
 }
 
 .sidebar .item:hover {
-    background-color: rgba(34, 125, 155, 0.1); /* Light hover effect */
+  background-color: rgba(34, 125, 155, 0.1); /* Light hover effect */
 }
 
 /* List Items Hover */
 .p-listbox .item:hover {
-    background-color: grey; /* Change to grey on hover */
+  background-color: grey; /* Change to grey on hover */
 }

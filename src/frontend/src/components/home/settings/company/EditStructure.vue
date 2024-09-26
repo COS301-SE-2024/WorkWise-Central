@@ -12,21 +12,52 @@
             <v-btn @click="updateLayout('LR')" block> Left to Right </v-btn>
           </v-col>
           <v-col cols="12" lg="4">
-            <v-btn color="primary" block @click="getEmployeeDetails" :disabled="!selectedItem" :loading="isLoading">
-              <v-icon icon="fa: fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn>
+            <v-btn
+              color="primary"
+              block
+              @click="getEmployeeDetails"
+              :disabled="!selectedItem"
+              :loading="isLoading"
+            >
+              <v-icon icon="fa: fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
+            >
           </v-col>
         </v-row>
       </v-container>
       <v-card-text>
         <Toast position="top-center" />
-        <v-network-graph v-model="graph" v-model:selected-nodes="selectedNodes" v-model:selected-edges="selectedEdges"
-          class="graph" :nodes="data.nodes" :edges="data.edges" :layouts="data.layouts" :configs="configs"
-          :event-handlers="configs.eventsHandlers">
-          <template #override-node-label="{ scale, text, x, y, config, textAnchor, dominantBaseline }">
-            <text x="0" y="0" :font-size="12 * scale" text-anchor="middle" dominant-baseline="central" fill="#ffffff">{{
-              text }}</text>
-            <text x="0" y="0" :font-size="config.fontSize * scale" :text-anchor="textAnchor"
-              :dominant-baseline="dominantBaseline" :fill="config.color" :transform="`translate(${x} ${y})`"></text>
+        <v-network-graph
+          v-model="graph"
+          v-model:selected-nodes="selectedNodes"
+          v-model:selected-edges="selectedEdges"
+          class="graph"
+          :nodes="data.nodes"
+          :edges="data.edges"
+          :layouts="data.layouts"
+          :configs="configs"
+          :event-handlers="configs.eventsHandlers"
+        >
+          <template
+            #override-node-label="{ scale, text, x, y, config, textAnchor, dominantBaseline }"
+          >
+            <text
+              x="0"
+              y="0"
+              :font-size="12 * scale"
+              text-anchor="middle"
+              dominant-baseline="central"
+              fill="#ffffff"
+              >{{ text }}</text
+            >
+            <text
+              x="0"
+              y="0"
+              :font-size="config.fontSize * scale"
+              :text-anchor="textAnchor"
+              :dominant-baseline="dominantBaseline"
+              :fill="config.color"
+              :transform="`translate(${x} ${y})`"
+            ></text>
           </template>
         </v-network-graph>
       </v-card-text>
@@ -55,49 +86,104 @@
           <v-card-title class="text-center">Edit Employee</v-card-title>
           <v-divider></v-divider>
           <v-card-item>
-            <v-row><v-col>
+            <v-row
+              ><v-col>
                 <h4 class="text-center" style="font-size: 25px; font-weight: lighter">
                   {{ selectedEmployee?.userInfo.firstName }}
                   {{ selectedEmployee?.userInfo.surname }}
                 </h4>
                 <h3 class="text-center">Role: {{ selectedEmployee?.role.roleName }}</h3>
-              </v-col></v-row>
-            <v-row><v-col :cols="12">
-                <v-select clearable label="Company Role" hint="Select the role you'd like to change this employee to"
-                  persistent-hint @update:modelValue="change_roles" :items="roleItems" item-value="roleId"
-                  item-title="roleName" v-model="req_obj.updateEmployeeDto.roleId" bg-color="background" variant="solo"
-                  :loading="loading"></v-select>
+              </v-col></v-row
+            >
+            <v-row
+              ><v-col :cols="12">
+                <v-select
+                  clearable
+                  label="Company Role"
+                  hint="Select the role you'd like to change this employee to"
+                  persistent-hint
+                  @update:modelValue="change_roles"
+                  :items="roleItems"
+                  item-value="roleId"
+                  item-title="roleName"
+                  v-model="req_obj.updateEmployeeDto.roleId"
+                  bg-color="background"
+                  variant="solo"
+                  :loading="loading"
+                ></v-select>
               </v-col>
               <v-col :cols="12">
-                <v-select clearable label="Subordinates"
-                  hint="Select the employees you'd like to be subordinates of this employee" persistent-hint
-                  @update:model-value="selected_subordiates" :items="filteredSubordinateNames"
-                  v-model="req_obj.updateEmployeeDto.subordinates" item-value="employeeId" item-title="name"
-                  bg-color="background" variant="solo" multiple :loading="loading"></v-select> </v-col><v-col
-                :cols="12">
-                <v-select clearable label="Superior"
-                  hint="Select the employee you'd like to be superior of this employee" persistent-hint
-                  @update:modelValue="selected_supirior" :items="filteredSupriorNames"
-                  v-model="req_obj.updateEmployeeDto.superiorId" item-value="employeeId" item-title="name"
-                  bg-color="background" variant="solo"></v-select> </v-col></v-row>
+                <v-select
+                  clearable
+                  label="Subordinates"
+                  hint="Select the employees you'd like to be subordinates of this employee"
+                  persistent-hint
+                  @update:model-value="selected_subordiates"
+                  :items="filteredSubordinateNames"
+                  v-model="req_obj.updateEmployeeDto.subordinates"
+                  item-value="employeeId"
+                  item-title="name"
+                  bg-color="background"
+                  variant="solo"
+                  multiple
+                  :loading="loading"
+                ></v-select> </v-col
+              ><v-col :cols="12">
+                <v-select
+                  clearable
+                  label="Superior"
+                  hint="Select the employee you'd like to be superior of this employee"
+                  persistent-hint
+                  @update:modelValue="selected_supirior"
+                  :items="filteredSupriorNames"
+                  v-model="req_obj.updateEmployeeDto.superiorId"
+                  item-value="employeeId"
+                  item-title="name"
+                  bg-color="background"
+                  variant="solo"
+                ></v-select> </v-col
+            ></v-row>
           </v-card-item>
           <v-card-actions>
             <v-container>
               <v-row>
                 <v-col cols="12" lg="6" order="first" order-lg="last">
-                  <v-btn color="success" rounded="md" width="100%" height="35" variant="text" type="submit" block
-                    :loading="isDeleting">
-                    <v-icon icon="fa:fa-solid fa-floppy-disk" start color="success" size="small"></v-icon>
+                  <v-btn
+                    color="success"
+                    rounded="md"
+                    width="100%"
+                    height="35"
+                    variant="text"
+                    type="submit"
+                    block
+                    :loading="isDeleting"
+                  >
+                    <v-icon
+                      icon="fa:fa-solid fa-floppy-disk"
+                      start
+                      color="success"
+                      size="small"
+                    ></v-icon>
                     Save
                   </v-btn>
                 </v-col>
                 <v-col cols="12" lg="6" order="last" order-lg="first">
-                  <v-btn color="error" rounded="md" width="100%" height="35" variant="text" block @click="close"
-                    :loading="isDeleting">
+                  <v-btn
+                    color="error"
+                    rounded="md"
+                    width="100%"
+                    height="35"
+                    variant="text"
+                    block
+                    @click="close"
+                    :loading="isDeleting"
+                  >
                     <Toast position="top-center" />
-                    <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon>Cancel
+                    <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
+                    >Cancel
                   </v-btn>
-                </v-col></v-row>
+                </v-col></v-row
+              >
             </v-container>
           </v-card-actions>
         </v-form>
@@ -491,87 +577,154 @@ export default defineComponent({
     },
     async savechanges() {
       this.isDeleting = true // Indicate the start of the deletion process
+      let change_occured = false
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       let API_URL = await this.getRequestUrl()
 
-      let add_object = {
-        currentEmployeeId: localStorage['employeeId'],
-        subordinatesToBeAdded: this.req_obj.updateEmployeeDto.subordinates
-      }
-      console.log(add_object)
+      console.log('current subordinates: ' + this.currentSubordinates)
+      console.log('selected subordinates: ' + this.req_obj.updateEmployeeDto.subordinates)
 
-      axios
-        .patch(
-          API_URL + `employee/${this.selectedItem.id}`,
-          {
-            currentEmployeeId: localStorage['employeeId'],
-            superiorId: this.req_obj.updateEmployeeDto.superiorId,
-            roleId: this.req_obj.updateEmployeeDto.roleId
-          },
-          config
-        )
-        .then(() => { })
-        .catch((error) => {
-          console.log(error)
-          this.isDeleting = false
-        })
+      const remove_sub_array = this.currentSubordinates?.filter(
+        (item) => !this.req_obj.updateEmployeeDto.subordinates?.includes(item)
+      )
 
-      axios
-        .patch(
-          API_URL + `employee/addSubordinate/${this.selectedItem.id}`,
-          add_object,
-          config
-        )
-        .then((res) => { })
-        .catch((error) => {
-          console.log(error)
-          this.isDeleting = false
-        })
-
-      const to_be_removed = this.req_obj.updateEmployeeDto.subordinates?.filter(
+      const add_sub_array = this.req_obj.updateEmployeeDto.subordinates?.filter(
         (item) => !this.currentSubordinates.includes(item)
       )
-      axios
-        .patch(
-          API_URL + `employee/removeSubordinate/${this.selectedItem.id}`,
-          {
-            currentEmployeeId: localStorage['employeeId'],
-            subordinatesToBeRemoved: to_be_removed
-          },
-          config
-        )
-        .then((res) => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Employee updated successfully',
-            life: 3000
-          })
-          console.log(res)
-          this.employeeDialog = false
-          setTimeout(() => {
-            this.isDeleting = false
-            this.employeeDialog = false
-          }, 1500)
 
-          console.log(res)
-          this.employeeDialog = false
-          setTimeout(() => {
-            this.isDeleting = false
+      console.log('Remove: ' + remove_sub_array)
+      console.log('Add: ' + add_sub_array)
+
+      let add_object = {
+        currentEmployeeId: localStorage['employeeId'],
+        subordinatesToBeAdded: add_sub_array
+      }
+
+      let remove_object = {
+        currentEmployeeId: localStorage['employeeId'],
+        subordinatesToBeRemoved: remove_sub_array
+      }
+
+      if (remove_sub_array?.length !== 0)
+        axios
+          .patch(
+            API_URL + `employee/removeSubordinate/${this.selectedItem.id}`,
+            remove_object,
+            config
+          )
+          .then((res) => {
+            change_occured = true
+            console.log(res)
             this.employeeDialog = false
-          }, 1500)
-        })
-        .catch((error) => {
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An error occurred while updating the employee',
-            life: 3000
+            setTimeout(() => {
+              this.employeeDialog = false
+            }, 1500)
+
+            console.log(res)
+            this.employeeDialog = false
+            setTimeout(() => {
+              this.employeeDialog = false
+            }, 1500)
           })
-          console.log(error)
-          this.isDeleting = false
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Remove subordinate employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      console.log(add_sub_array)
+
+      if (add_sub_array?.length !== 0)
+        axios
+          .patch(API_URL + `employee/addSubordinate/${this.selectedItem.id}`, add_object, config)
+          .then((res) => {
+            change_occured = true
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Add subordinate employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      if (
+        this.req_obj.updateEmployeeDto.roleId != this.currentRoleId &&
+        this.req_obj.updateEmployeeDto.roleId != '' &&
+        this.req_obj.updateEmployeeDto.roleId != null
+      )
+        axios
+          .patch(
+            API_URL + `employee/${this.selectedItem.id}`,
+            {
+              currentEmployeeId: localStorage['employeeId'],
+              roleId: this.req_obj.updateEmployeeDto.roleId
+            },
+            config
+          )
+          .then(() => {
+            change_occured = true
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Superior employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      if (
+        this.req_obj.updateEmployeeDto.superiorId != this.currentSuperior &&
+        this.req_obj.updateEmployeeDto.superiorId != '' &&
+        this.req_obj.updateEmployeeDto.superiorId != null
+      )
+        axios
+          .patch(
+            API_URL + `employee/${this.selectedItem.id}`,
+            {
+              currentEmployeeId: localStorage['employeeId'],
+              superiorId: this.req_obj.updateEmployeeDto.superiorId
+            },
+            config
+          )
+          .then(() => {
+            change_occured = true
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Superior employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      this.isDeleting = false
+      if (change_occured) {
+        console.log('were in')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Employee Edited Successfully',
+          life: 3000
         })
+        this.employeeDialog = false
+        window.location.reload()
+      }
     },
     async getRequestUrl() {
       console.log(this.localUrl)

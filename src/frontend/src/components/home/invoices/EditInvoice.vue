@@ -124,7 +124,7 @@ export default {
       } as Invoice,
       editDialog: false,
       valid: false,
-      statusOptions: [true,false] as boolean[],
+      statusOptions: [true, false] as boolean[],
       invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
       dateRules: [(v: string) => !!v || 'Date is required'],
       amountRules: [
@@ -187,8 +187,7 @@ export default {
     close() {
       this.editDialog = false
     },
-    change(status:any){
-    },
+    change(status: any) {},
     deepCopy(obj: any) {
       return JSON.parse(JSON.stringify(obj))
     },

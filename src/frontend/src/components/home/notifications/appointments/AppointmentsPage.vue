@@ -338,7 +338,7 @@ export default defineComponent({
       this.selectedRoom = appointment
       console.log(this.selectedRoom)
       localStorage.setItem('RoomId', this.selectedRoom.roomId)
-      localStorage.setItem('RoomName',this.selectedRoom.title)
+      localStorage.setItem('RoomName', this.selectedRoom.title)
       this.$router.push('/video-meetings')
 
       this.joinRoom = false

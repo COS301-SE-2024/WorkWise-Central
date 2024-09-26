@@ -343,11 +343,11 @@ export default defineComponent({
             if (localVideoElement) {
               if (localVideoElement) {
                 if (localVideoElement) {
-                  (localVideoElement as HTMLVideoElement).srcObject = null // Reset the stream first
+                  ;(localVideoElement as HTMLVideoElement).srcObject = null // Reset the stream first
                 }
               }
             }
-            (localVideoElement as HTMLVideoElement).srcObject = localStream // Re-assign the updated stream
+            ;(localVideoElement as HTMLVideoElement).srcObject = localStream // Re-assign the updated stream
           }
 
           updateTrackForAllPeers(cameraTrack) // Notify other peers about the new track
@@ -369,9 +369,9 @@ export default defineComponent({
             // Update the local video element's stream
             if (localVideoElement) {
               if (localVideoElement) {
-                  (localVideoElement as HTMLVideoElement).srcObject = null // Reset the stream first
-                } // Reset the stream first
-              (localVideoElement as HTMLVideoElement).srcObject = localStream // Re-assign the updated stream
+                ;(localVideoElement as HTMLVideoElement).srcObject = null // Reset the stream first
+              } // Reset the stream first
+              ;(localVideoElement as HTMLVideoElement).srcObject = localStream // Re-assign the updated stream
             }
 
             updateTrackForAllPeers(screenTrack) // Notify other peers about the screen track
