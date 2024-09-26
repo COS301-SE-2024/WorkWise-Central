@@ -1,8 +1,13 @@
 <template>
   <div>
     <!-- Vuetify Button to Generate PDF Invoice -->
-<!--    <v-btn @click="generatePdf" color="primary"> Generate PDF Invoice </v-btn>-->
-    <Button @click="generatePdf" label="Generate PDF Invoice" icon="fa: fa-solid fa-file-pdf" class="p-button-success"/>
+    <!--    <v-btn @click="generatePdf" color="primary"> Generate PDF Invoice </v-btn>-->
+    <Button
+      @click="generatePdf"
+      label="Generate PDF Invoice"
+      icon="fa: fa-solid fa-file-pdf"
+      class="p-button-success"
+    />
   </div>
 </template>
 

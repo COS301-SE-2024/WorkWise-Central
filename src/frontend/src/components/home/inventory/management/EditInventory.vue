@@ -79,13 +79,7 @@
           <v-row justify="end">
             <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn @click="close" color="error" block
-                ><v-icon
-                  icon="fa:fa-solid fa-cancel"
-                  color="error"
-                  start
-                  size="small"
-                  :disabled="isDeleting"
-                ></v-icon
+                ><v-icon icon="fa:fa-solid fa-cancel" color="error" start size="small"></v-icon
                 >Cancel</v-btn
               ></v-col
             >
@@ -116,6 +110,7 @@
 <script>
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
   name: 'EditInventory',
@@ -204,7 +199,7 @@ export default {
 
         setTimeout(() => {
           this.addDialog = false
-          this.resetFields()
+
           this.$emit('updateInventory', response.data.data)
         }, 1500)
       } catch (error) {

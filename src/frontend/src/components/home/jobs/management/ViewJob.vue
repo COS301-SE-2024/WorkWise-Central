@@ -571,6 +571,12 @@ onMounted(() => {
     onImageLoad(imageSrc.value);
   }
   setImageAndBackground()
+  //TODO: Ask Kumbi and Thando
+/*  const img = new Image()
+  img.src =
+    props.passedInJob.coverImage ||
+    'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
+  img.onload = setImageAndBackground*/
 })
 </script>
 

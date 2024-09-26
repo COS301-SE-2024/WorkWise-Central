@@ -54,7 +54,7 @@
             <label class="font-weight-light" style="font-size: 20px"> Date Created</label>
             <v-spacer></v-spacer>
             <small class="text-caption" style="font-size: 12px">{{
-              formatDatec(team.createdAt)
+              formatDate(team.createdAt)
             }}</small>
           </v-col>
         </v-row>

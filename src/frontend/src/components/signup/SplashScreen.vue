@@ -925,7 +925,6 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import Tutorial from './Tutorial.vue'
 
-
 export default defineComponent({
   components: {
     RegisterCompanyModal,

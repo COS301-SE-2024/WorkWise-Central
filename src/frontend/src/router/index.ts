@@ -364,7 +364,7 @@ const router = createRouter({
       path: '/client-portal',
       name: 'client-portal',
       component: ClientPortal,
-      props: route => ({ cid: route.query.cid })
+      props: (route) => ({ cid: route.query.cid })
     },
     {
       path: '/invoices',
@@ -409,7 +409,7 @@ const router = createRouter({
     {
       path: '/chatHome',
       name: 'chatHome',
-      component: () => import('@/views/home/chat/ChatHome.vue'),
+      component: () => import('@/views/home/chat/ChatHome.vue')
     }
   ]
 })

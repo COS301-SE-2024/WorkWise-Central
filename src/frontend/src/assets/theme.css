@@ -49,3 +49,110 @@ body.dark-mode {
     --faq-question-color: #2C3135;
 }
 
+/* PrimeVue Component Theming */
+.p-button {
+    background-color: var(--secondary-color);
+    color: var(--button-text-color);
+    border: 1px solid var(--accent-color); /* Outline */
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.p-button:hover {
+    background-color: #1A6A8D; /* Replace with a manually chosen darker shade */
+    border-color: #1A6A8D;
+}
+
+.p-button:active {
+    background-color: #145A6D; /* Even darker shade for active state */
+    border-color: #145A6D;
+}
+
+.p-button:disabled {
+    background-color: #B0BEC5; /* Disabled state color */
+    border-color: #B0BEC5;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.p-button-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.p-button-primary:hover {
+    background-color: #D87A3A; /* Darker shade for hover */
+    border-color: #D87A3A;
+}
+
+.p-button-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.p-button-secondary:hover {
+    background-color: #1A6A8D; /* Darker shade for hover */
+    border-color: #1A6A8D;
+}
+
+.p-card, .p-fileupload-content, .p-listbox, .p-confirm-popup, .p-panel .p-panel-header, .p-contextmenu, .p-dialog .p-dialog-header, .p-dialog .p-dialog-footer {
+    background-color: var(--card-color);
+    color: var(--element-text-color);
+}
+
+.p-dialog .p-dialog-content, .p-carousel, .p-image-preview-container, .p-tabview .p-tabview-nav {
+    background-color: var(--background);
+    color: var(--element-text-color);
+}
+
+.p-dialog .p-dialog-header-close, .p-tooltip {
+    color: var(--element-text-color);
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+    background-color: var(--table-row-color);
+    color: var(--element-text-color);
+}
+
+.p-chip, .p-tag {
+    background-color: var(--chip-color);
+    color: var(--n-element-text-color);
+}
+
+.p-avatar {
+    background-color: var(--secondary-color);
+    color: var(--button-text-color);
+}
+
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    background-color: var(--secondary-color);
+    color: var(--button-text-color);
+}
+
+.p-dialog-mask {
+    background-color: rgba(0, 0, 0, 0.8); /* Slightly darker overlay for dark mode */
+}
+
+body.dark-mode .p-dialog .p-dialog-header, body.dark-mode .p-dialog .p-dialog-footer {
+    background-color: var(--card-color); /* Dark theme consistency */
+}
+
+body.dark-mode .p-dialog .p-dialog-content {
+    background-color: var(--background); /* Dark theme content background */
+}
+
+.sidebar {
+    background-color: var(--card-color);
+    color: var(--element-text-color);
+}
+
+.sidebar .item:hover {
+    background-color: rgba(34, 125, 155, 0.1); /* Light hover effect */
+}
+
+/* List Items Hover */
+.p-listbox .item:hover {
+    background-color: grey; /* Change to grey on hover */
+}
