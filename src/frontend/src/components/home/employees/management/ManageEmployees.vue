@@ -108,12 +108,21 @@ c
                                 :style="'transform: rotate(90deg) dots'"
                                 v-bind="props"
                                 @click="(actionsDialog = true), selectItem(item)"
+                                v-show="
+                                  permissions.includes('view all employees') ||
+                                  permissions.includes('view employees under me') ||
+                                  permissions.includes('edit employees') ||
+                                  permissions.includes('delete employees')
+                                "
                               >
                                 <v-icon color="primary">mdi-dots-horizontal</v-icon>
                               </v-btn></template
                             >
                             <v-list class="bg-background">
                               <v-list-item
+                              v-show="
+                                  permissions.includes('view all employees') ||
+                                  permissions.includes('view employees under me')"
                                 ><EmployeeDetails colors="colors" :EmployeeDetails="selectedItem"
                               /></v-list-item>
 

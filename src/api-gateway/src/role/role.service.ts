@@ -51,6 +51,7 @@ export class RoleService {
     this.permissionsArray.push('company settings');
     this.permissionsArray.push('company requests');
     this.permissionsArray.push('view teams');
+    this.permissionsArray.push('add new teams');
     this.permissionsArray.push('edit teams');
     this.permissionsArray.push('delete teams');
     this.permissionsArray.push('view invoices');

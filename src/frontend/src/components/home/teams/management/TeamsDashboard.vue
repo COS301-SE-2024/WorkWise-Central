@@ -33,7 +33,8 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" lg="4" class="d-flex justify-end">
+            <v-col cols="12" lg="4" class="d-flex justify-end"
+             v-if="checkPermission('add new teams')">
               <CreateTeam @teamCreated="getTeams" />
             </v-col>
           </v-row>
@@ -55,25 +56,36 @@
                 {{ item.currentJobAssignments.length }}
               </v-chip>
             </template>
+
+            <!-- Actions slot -->
             <template v-slot:[`item.actions`]="{ item }">
               <v-menu max-width="500px">
                 <template v-slot:activator="{ props }">
-                  <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
+                  <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)"
+                  v-show="
+                          checkPermission('view teams') ||
+                          checkPermission('edit teams') ||
+                          checkPermission('delete teams') ">
                     <v-icon color="primary">mdi-dots-horizontal</v-icon>
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item>
+                  <v-list-item
+                  v-show="checkPermission('view teams') "
+                  >
                     <ViewTeam :team="selectedItem" />
                   </v-list-item>
-                  <v-list-item>
+                  <v-list-item
+                  v-show="checkPermission('edit teams') ">
                     <UpdateTeam
                       @teamUpdated="getTeams"
                       :teamId="selectedItemID"
                       :editedItem="selectedItem"
                     />
                   </v-list-item>
-                  <v-list-item>
+                  <v-list-item
+                  v-show="checkPermission('delete teams') "
+                  >
                     <DeleteTeam
                       @teamDeleted="getTeams"
                       :team_id="selectedItemID"
@@ -137,6 +149,7 @@ export default defineComponent({
       selectedItemName: '',
       selectedItemID: '',
       actionsMenu: false,
+      employeePermissions: [] as string[]
     }
   },
   methods: {
@@ -145,6 +158,29 @@ export default defineComponent({
       return {
         class: index % 2 ? 'bg-secondRowColor' : ''
       }
+    },
+    async getEmployeePermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      axios
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .then((response) => {
+          console.log(response.data.data.role.permissionSuite)
+          this.employeePermissions = response.data.data.role.permissionSuite
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
+    },
+    checkPermission(permission) {
+      return this.employeePermissions.includes(permission)
     },
     updateTeamInList(updatedTeam: Team) {
       const index = this.teamItems.findIndex((team) => team._id === updatedTeam._id)
@@ -251,6 +287,7 @@ export default defineComponent({
     this.populateTeamTable()
     this.getTeamLeaderName()
     this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
+    this.getEmployeePermissions()
   }
 })
 </script>
