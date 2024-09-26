@@ -1,182 +1,380 @@
 <template>
-  <v-container>
-    <v-row class="justify-center align-center">
-      <v-col cols="12" class="text-center">
-        <h2 class="text-xl font-semibold">Meetings</h2>
-      </v-col>
-      <v-divider></v-divider>
-      <v-col cols="12" class="text-center" v-show="joinRoom">
-        <v-btn color="primary" block @click="openDialog" variant="outlined">
-          Create New Meeting
-        </v-btn>
-      </v-col>
-    </v-row>
-
-    <v-card rounded="md" class="pa-0 ma-3 bg-background" border="md" v-show="joinRoom">
-      <v-row>
-        <!-- Recently Created Appointments Section -->
-        <v-col cols="12" order="last" order-lg="first">
-          <h3 class="pa-0 ma-5">Recently Created Meetings</h3>
-          <v-card
-            v-for="appointment in recentAppointments"
-            :key="appointment._id"
-            class="pa-1 ma-5 bg-background"
-            color="cardColor"
-          >
-            <v-card-title>{{ appointment.title }}</v-card-title>
-            <v-card-subtitle class="bg-cardColor"
-              >Date: {{ formatDate(appointment.date) }}, {{ formatTime(appointment.startTime) }} -
-              {{ formatTime(appointment.endTime) }}</v-card-subtitle
-            >
-            <v-card-text>{{ appointment.details }}</v-card-text>
-            <v-card-actions class="bg-cardColor">
-              <v-container>
-                <v-row>
-                  <!-- Edit Button -->
-                  <v-col cols="12" sm="4">
-                    <v-btn color="primary" @click="editAppointment(appointment)" block>
-                      <v-icon icon="fa:fa-solid fa-pencil" color="primary"></v-icon>
-                      Edit
-                    </v-btn>
-                  </v-col>
-
-                  <!-- Delete Button -->
-                  <v-col cols="12" sm="4">
-                    <v-btn color="error" @click="deleteAppointment(appointment._id)" block>
-                      <v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>
-                      Delete
-                    </v-btn>
-                  </v-col>
-
-                  <!-- Join Room Button -->
-                  <v-col cols="12" sm="4">
-                    <v-btn @click="joiningRoom(appointment)" color="success" block>
-                      <v-icon icon="fa:fa-solid fa-right-to-bracket" color="success"></v-icon>
-                      Join Room
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-
-        <!-- Most Important Appointments Section -->
-      </v-row>
-    </v-card>
-
-    <!-- <VideoConferencing :roomId="selectedRoom.id" v-show="conference" @return="leavingRoom" /> -->
-    <!-- <VideoConferencing :roomId="selectedRoom.id" v-show="conference" @return="leavingRoom" /> -->
-  </v-container>
-
-  <!-- Dialog for Creating/Editing Appointment -->
-  <v-dialog v-model="showDialog" persistent max-width="800px">
-    <v-card class="bg-cardColor">
-      <v-card-title>
-        <span class="headline">{{ isEditing ? 'Edit Appointment' : 'Create a new meeting' }}</span>
-      </v-card-title>
-      <v-card-text>
-        <v-form v-model="valid">
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <h6>Meeting Title</h6>
-                <v-text-field
-                  v-model="newAppointment.title"
-                  label="Title"
-                  :rules="titleRules"
-                  required
-                ></v-text-field
-              ></v-col>
-              <v-col cols="12" align="center"
-                ><h6>Meeting Date</h6>
-
-                <v-date-picker
-                  title="SELECT START DATE"
-                  header="Meeting start date"
-                  border="md"
-                  width="unset"
-                  max-width="350"
-                  v-model="startDate"
-                  elevation="5"
-                  required
-                  :rules="startDateRule"
-                  :min="minDate"
-                  class="mb-4"
-                ></v-date-picker>
-              </v-col>
-              <v-row
-                ><v-col cols="6"
-                  ><h6>Start Time</h6>
-                  <v-time-picker
-                    format="24hr"
-                    :allowed-hours="allowedHours"
-                    :allowed-minutes="allowedMinutes"
-                    v-model="newAppointment.startTime"
-                    class="mb-4"
-                  ></v-time-picker
-                ></v-col>
-                <v-col cols="6"
-                  ><h6>End Time</h6>
-                  <v-time-picker
-                    :allowed-hours="allowedHours2"
-                    :allowed-minutes="allowedMinutes2"
-                    format="24hr"
-                    v-model="newAppointment.endTime"
-                  ></v-time-picker
-                ></v-col>
-              </v-row>
-              <v-col cols="12">
-                <h6>Details</h6>
-                <v-text-field v-model="newAppointment.details" label="Details"></v-text-field
-              ></v-col>
-
-              <v-col cols="12">
-                <h6>Choose Participants</h6>
-                <v-select
-                  clearable
-                  label="Participants"
-                  hint="Select the employee you'd like to join the meeting"
-                  persistent-hint
-                  @update:model-value="selected_participants"
-                  v-model="newAppointment.participants"
-                  item-value="employeeId"
-                  item-title="name"
-                  :items="teamMemberNames"
-                  multiple
-                  chips
-                  bg-color="background"
-                  variant="solo"
-                ></v-select
-              ></v-col>
-            </v-row>
-          </v-container>
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-container>
-          <v-row>
-            <v-col cols="12" lg="6">
-              <v-btn color="error" @click="cancel" block>
-                <v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>Cancel
-              </v-btn>
-            </v-col>
-            <v-col cols="12" lg="6">
-              <v-btn
-                color="success"
-                @click="saveAppointment"
-                block
-                :loading="isGenerating"
-                :disabled="!valid"
+  <v-app :style="isDarkMode === true ? 'dark' : 'light'">
+    <v-container fluid fill-height>
+      <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
+        <v-card-title
+          class="d-flex align-center pe-2 text-h5 font-weight-regular"
+          height="auto"
+          width="100%"
+        >
+          <v-row align="center" justify="space-between">
+            <v-col cols="12" lg="4" class="d-flex align-center">
+              <v-icon icon="fa:fa-solid fa-video"></v-icon>
+              <v-label
+                class="ms-2 h2 font-family-Nunito text-headingTextColor"
+                height="auto"
+                width="auto"
+                >Meetings</v-label
               >
-                <v-icon icon="fa: fa-solid fa-floppy-disk" color="success" start> </v-icon>Save
+            </v-col>
+
+            <v-col cols="12" lg="4" class="d-flex align-center">
+              <v-text-field
+                v-model="search"
+                density="compact"
+                label="Search Meetings"
+                prepend-inner-icon="mdi-magnify"
+                variant="outlined"
+                flat
+                color="primary"
+                width="100%"
+                hide-details="auto"
+                single-line
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" lg="4" class="d-flex align-center">
+              <v-btn
+                color="secondary"
+                block
+                @click="openCreate"
+                variant="solid"
+                style="color: white !important"
+              >
+                <v-icon icon="fa: fa-solid fa-video" color="white"></v-icon>
+                Create New Meeting
               </v-btn>
             </v-col>
           </v-row>
-        </v-container>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-data-table
+            :headers="meetingHeaders"
+            :items="this.appointments"
+            :search="search"
+            height="auto"
+            rounded="xl"
+            class="bg-cardColor"
+            item-key="_id"
+            min-width="100%"
+          >
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-menu max-width="500px">
+                <template v-slot:activator="{ props }">
+                  <v-btn rounded="xl" variant="plain" v-bind="props">
+                    <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list class="bg-background">
+                  <v-list-item>
+                    <v-btn @click.stop="joiningRoom(item)" color="success">
+                      <v-icon
+                        icon="fa:fa-solid fa-right-to-bracket"
+                        color="success"
+                        size="small"
+                      ></v-icon>
+                      Join Room
+                    </v-btn>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-btn color="warning" width="100%" @click.stop="editAppointment(item)">
+                      <v-icon
+                        icon="fa:fa-solid fa-pencil"
+                        start
+                        color="warning"
+                        size="small"
+                      ></v-icon>
+                      Edit
+                    </v-btn>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-btn color="error" width="100%" @click.stop="openDeleteDialog(item._id)">
+                      <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>
+                      Delete
+                    </v-btn>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+
+            <template v-slot:no-data>
+              <v-row>
+                <v-col class="text-center">
+                  <v-icon large color="grey">mdi-alert-outline</v-icon>
+                  <div>No meetings available.</div>
+                </v-col>
+              </v-row>
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>
+    </v-container>
+
+    <!-- Confirmation Dialog -->
+    <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0.1">
+      <v-card class="bg-cardColor">
+        <v-card-title>
+          <v-icon>mdi-delete</v-icon>
+          <span>Delete Appointment</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <p class="font-weight-regular">
+                Are you sure you want to delete this appointment? This action cannot be reversed.
+              </p>
+            </v-row>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-container>
+            <v-row justify="end">
+              <v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn label="Cancel" color="secondary" @click="closeDeleteDialog" block>
+                  <v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon
+                  >Cancel
+                </v-btn>
+              </v-col>
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                <v-btn
+                  label="Delete"
+                  color="error"
+                  :loading="isDeleting"
+                  block
+                  @click="confirmDelete"
+                >
+                  <v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon
+                  >Delete
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Creating the appointment  -->
+    <v-dialog v-model="showCreate" persistent max-width="800px">
+      <v-card class="bg-cardColor">
+        <v-card-title>
+          <span class="headline">{{ 'Create a new meeting' }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form v-model="valid">
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <h6>Meeting Title</h6>
+                  <v-text-field
+                    v-model="newAppointment.title"
+                    label="Title"
+                    :rules="titleRules"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" align="center">
+                  <h6>Meeting Date</h6>
+                  <v-date-picker
+                    title="SELECT START DATE"
+                    header="Meeting start date"
+                    border="md"
+                    width="unset"
+                    max-width="350"
+                    v-model="newAppointment.date"
+                    elevation="5"
+                    required
+                    :rules="startDateRule"
+                    :min="minDate"
+                    class="mb-4"
+                  ></v-date-picker>
+                </v-col>
+                <v-row>
+                  <v-col cols="6">
+                    <h6>Start Time</h6>
+                    <v-time-picker
+                      format="24hr"
+                      :allowed-hours="allowedHours"
+                      :allowed-minutes="allowedMinutes"
+                      v-model="newAppointment.startTime"
+                      class="mb-4"
+                    ></v-time-picker>
+                  </v-col>
+                  <v-col cols="6">
+                    <h6>End Time</h6>
+                    <v-time-picker
+                      :allowed-hours="allowedHours2"
+                      :allowed-minutes="allowedMinutes2"
+                      format="24hr"
+                      v-model="newAppointment.endTime"
+                    ></v-time-picker>
+                  </v-col>
+                </v-row>
+                <v-col cols="12">
+                  <h6>Details</h6>
+                  <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <h6>Choose Participants</h6>
+                  <v-select
+                    clearable
+                    label="Participants"
+                    hint="Select the employee you'd like to join the meeting"
+                    persistent-hint
+                    @update:model-value="selected_participants"
+                    v-model="newAppointment.participants"
+                    item-value="employeeId"
+                    item-title="name"
+                    :items="teamMemberNames"
+                    multiple
+                    chips
+                    bg-color="background"
+                    variant="solo"
+                  ></v-select>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6">
+                <v-btn color="error" @click="cancel" block>
+                  <v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>
+                  Cancel
+                </v-btn>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-btn
+                  color="success"
+                  @click="createAppointment"
+                  block
+                  :loading="isGenerating"
+                  :disabled="!valid"
+                >
+                  <v-icon icon="fa: fa-solid fa-floppy-disk" color="success" start></v-icon>
+                  Save
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Editing the appointment -->
+    <v-dialog v-model="showEdit" persistent max-width="800px">
+      <v-card class="bg-cardColor">
+        <v-card-title>
+          <span class="headline">{{ 'Edit Appointment' }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form v-model="valid">
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <h6>Meeting Title</h6>
+                  <v-text-field
+                    v-model="newAppointment.title"
+                    label="Title"
+                    :rules="titleRules"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" align="center">
+                  <h6>Meeting Date</h6>
+                  <v-date-picker
+                    title="START DATE"
+                    header="Meeting start date"
+                    border="md"
+                    width="unset"
+                    max-width="350"
+                    v-model="newAppointment.date"
+                    elevation="5"
+                    required
+                    :rules="startDateRule"
+                    :min="minDate"
+                    class="mb-4"
+                  ></v-date-picker>
+                </v-col>
+                <v-row>
+                  <v-col cols="6">
+                    <h6>Start Time</h6>
+                    <v-time-picker
+                      format="24hr"
+                      :allowed-hours="allowedHours"
+                      :allowed-minutes="allowedMinutes"
+                      v-model="newAppointment.startTime"
+                      class="mb-4"
+                    ></v-time-picker>
+                  </v-col>
+                  <v-col cols="6">
+                    <h6>End Time</h6>
+                    <v-time-picker
+                      :allowed-hours="allowedHours2"
+                      :allowed-minutes="allowedMinutes2"
+                      format="24hr"
+                      v-model="newAppointment.endTime"
+                    ></v-time-picker>
+                  </v-col>
+                </v-row>
+                <v-col cols="12">
+                  <h6>Details</h6>
+                  <v-text-field v-model="newAppointment.details" label="Details"></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <h6>Choose Participants</h6>
+                  <v-select
+                    clearable
+                    label="Participants"
+                    hint="Select the employee you'd like to join the meeting"
+                    persistent-hint
+                    @update:model-value="selected_participants"
+                    v-model="newAppointment.participants"
+                    item-value="employeeId"
+                    item-title="name"
+                    :items="teamMemberNames"
+                    multiple
+                    chips
+                    bg-color="background"
+                    variant="solo"
+                  ></v-select>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6">
+                <v-btn color="error" @click="cancel" block>
+                  <v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>
+                  Cancel
+                </v-btn>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-btn
+                  color="success"
+                  @click="editAppointment"
+                  block
+                  :loading="isGenerating"
+                  :disabled="!valid"
+                >
+                  <v-icon icon="fa: fa-solid fa-floppy-disk" color="success" start></v-icon>
+                  Save
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -203,7 +401,18 @@ export default defineComponent({
   components: {},
   data() {
     return {
-      showDialog: false,
+      meetingHeaders: [
+        { title: 'Title', value: 'title' },
+        { title: 'Date', value: 'date' },
+        { title: 'Start Time', value: 'startTime' },
+        { title: 'End Time', value: 'endTime' },
+        { title: 'Actions', value: 'actions', sortable: false }
+      ],
+      deleteDialog: false,
+      isDeleting: false,
+      appointmentId: null,
+      showEdit: false,
+      showCreate: false,
       selectedRoom: {} as any,
       isEditing: false,
       joinRoom: true,
@@ -218,19 +427,9 @@ export default defineComponent({
       req_obj: {
         participants: [] as string[]
       },
-      newAppointment: {
-        _id: '',
-        title: '',
-        date: '',
-        startTime: '',
-        endTime: '',
-        details: '',
-        important: false,
-        participants: []
-      } as Appointment,
-      recentAppointments: [] as Appointment[],
+      newAppointment: {} as Appointment,
+      appointments: [] as Appointment[],
       companyId: '',
-      startDate: null as string | null,
       minDate: new Date().toISOString().substr(0, 10),
       selectedDate: '',
       selectedTime: '',
@@ -246,8 +445,31 @@ export default defineComponent({
     }
   },
   methods: {
+    openDeleteDialog(appointmentId) {
+      this.appointmentId = appointmentId // Store the appointment ID
+      this.deleteDialog = true // Open the confirmation dialog
+    },
+    closeDeleteDialog() {
+      this.deleteDialog = false // Close the confirmation dialog
+      this.appointmentId = null // Clear the appointment ID
+    },
+    async confirmDelete() {
+      this.isDeleting = true
+      await this.deleteAppointment(this.appointmentId)
+        .then(() => {
+          // Close the dialog on success
+          this.closeDeleteDialog()
+          this.isDeleting = false
+          // Optionally, add any success notification or refresh logic here
+        })
+        .catch((error) => {
+          this.isDeleting = false
+          // Optionally, handle the error (e.g., show an error notification)
+          console.error('Error deleting appointment:', error)
+        })
+    },
     selected_participants(a: any) {
-      console.log(a)
+      //console.log(a)
     },
 
     async getRequests() {
@@ -265,7 +487,7 @@ export default defineComponent({
           `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
           config
         )
-        console.log(response.data.data)
+        //console.log(response.data.data)
         for (const employee of response.data.data) {
           this.teamMemberNames.push(employee.userInfo.displayName)
           this.teamLeaderIds.push(employee._id)
@@ -281,15 +503,17 @@ export default defineComponent({
           `${API_URL}videoCalls/forEmployee/${localStorage.getItem('employeeId')}`,
           config
         )
-        console.log(response.data.data)
+        //console.log(response.data.data)
         for (const appointment of response.data.data) {
           const participants = appointment.participants.map((participant: any) => participant.name)
-          this.recentAppointments.push({
+          this.appointments.push({
             _id: appointment._id,
             title: appointment.title,
-            date: appointment.scheduledStartTime,
-            startTime: appointment.scheduledStartTime,
-            endTime: appointment.scheduledEndTime,
+            date: this.formatDate(appointment.scheduledStartTime),
+            startTime: this.formatTime(appointment.scheduledStartTime),
+            endTime: appointment.scheduledEndTime
+              ? this.formatTime(appointment.scheduledEndTime)
+              : '',
             details: appointment.details,
             participants: participants,
             roomId: appointment.roomId
@@ -305,9 +529,8 @@ export default defineComponent({
     formatTime(time: string) {
       return new Date(time).toLocaleTimeString()
     },
-    openDialog() {
-      this.isEditing = false
-      this.showDialog = true
+    openCreate() {
+      this.showCreate = true
       this.newAppointment = {
         _id: '',
         title: '',
@@ -319,9 +542,9 @@ export default defineComponent({
       }
     },
     joiningRoom(appointment: any) {
-      console.log(appointment._id)
+      //console.log(appointment._id)
       this.selectedRoom = appointment
-      console.log(this.selectedRoom)
+      //console.log(this.selectedRoom)
       localStorage.setItem('RoomId', this.selectedRoom.roomId)
       this.$router.push('/video-meetings')
 
@@ -348,108 +571,132 @@ export default defineComponent({
       const [hrs, min] = time.split(':').map(Number)
       date.setHours(hrs)
       date.setMinutes(min)
-      console.log(date.toISOString())
+      //console.log(date.toISOString())
       return date.toISOString()
     },
     formatEndDateAndTime(date: Date, time: string) {
       const [hrs, min] = time.split(':').map(Number)
       date.setHours(hrs)
       date.setMinutes(min)
-      console.log(date.toISOString())
+      //console.log(date.toISOString())
       return date.toISOString()
     },
-    async saveAppointment() {
-      this.newAppointment.date = this.startDate as string
+    async editAppointment() {
+      this.newAppointment.date = this.newAppointment.date as string
       this.isGenerating = true
-      if (this.isEditing && this.editIndex !== null) {
-        // Update existing appointment
-        this.recentAppointments.splice(this.editIndex, 1, { ...this.newAppointment })
-        //Integrate with backend
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
-          }
+      // Update existing appointment
+      this.appointments.splice(this.editIndex, 1, { ...this.newAppointment })
+      //Integrate with backend
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
-        if (localStorage.getItem('currentCompany') !== null) {
-          this.companyId = localStorage.getItem('currentCompany') as string
-        }
-
-        const data = {
-          title: this.newAppointment.title,
-          scheduledTime: new Date(this.newAppointment.date).toISOString(),
-          details: this.newAppointment.details,
-          participants: await this.selectTeamMembers(),
-          companyId: this.companyId
-        }
-        const id = this.newAppointment._id
-        console.log(data)
-        await axios
-          .patch(`${API_URL}videoCalls/${id}`, data, config)
-          .then((response) => {
-            console.log('response: ', response)
-          })
-          .catch((error) => {
-            console.error(error)
-          })
-      } else {
-        // Add new appointment
-        const appointment = { ...this.newAppointment }
-        this.recentAppointments.push(appointment)
-        //Integrate with backend
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
-          }
-        }
-        
-
-        console.log('this.newAppointment: ', this.newAppointment)
-        const data = {
-          title: this.newAppointment.title,
-          scheduledStartTime: this.formatStartDateAndTime(
-            new Date(this.newAppointment.date),
-            this.newAppointment.startTime
-          ),
-          scheduledEndTime: this.formatEndDateAndTime(
-            new Date(this.newAppointment.date),
-            this.newAppointment.endTime
-          ),
-          details: this.newAppointment.details,
-          participants: await this.selectTeamMembers(),
-          companyId: this.companyId
-        }
-        console.log(data)
-        await axios
-          .post(`${API_URL}videoCalls/create`, data, config)
-          .then((response) => {
-            console.log(response)
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Review Submitted'
-            })
-          })
-          .catch((error) => {
-            console.error(error)
-          })
       }
-      this.showDialog = false
+      if (localStorage.getItem('currentCompany') !== null) {
+        this.companyId = localStorage.getItem('currentCompany') as string
+      }
+
+      const data = {
+        title: this.newAppointment.title,
+        scheduledTime: new Date(this.newAppointment.date).toISOString(),
+        details: this.newAppointment.details,
+        participants: await this.selectTeamMembers(),
+        companyId: this.companyId
+      }
+      const id = this.newAppointment._id
+      //console.log(data)
+      await axios
+        .patch(`${API_URL}videoCalls/${id}`, data, config)
+        .then((response) => {
+          //console.log('response: ', response)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+
+      this.showEdit = false
       this.isGenerating = false
       this.clearFields()
     },
-    editAppointment(appointment: Appointment) {
-      this.newAppointment = appointment
-      this.isEditing = true
-      this.showDialog = true
-      //populating the form with the selected appointment
+    async createAppointment() {
+      this.newAppointment.date = this.newAppointment.date as string
+      this.isGenerating = true
+
+      const appointment = { ...this.newAppointment }
+      this.appointments.push(appointment)
+      //Integrate with backend
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+
+      //console.log('this.newAppointment: ', this.newAppointment)
+      const data = {
+        title: this.newAppointment.title,
+        scheduledStartTime: this.formatStartDateAndTime(
+          new Date(this.newAppointment.date),
+          this.newAppointment.startTime
+        ),
+        scheduledEndTime: this.formatEndDateAndTime(
+          new Date(this.newAppointment.date),
+          this.newAppointment.endTime
+        ),
+        details: this.newAppointment.details,
+        participants: await this.selectTeamMembers(),
+        companyId: this.companyId
+      }
+      //console.log(data)
+      await axios
+        .post(`${API_URL}videoCalls/create`, data, config)
+        .then((response) => {
+          //console.log(response)
+          //clearing the data in the table
+          this.appointments = []
+          this.getRequests()
+
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Review Submitted'
+          })
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+
+      this.showCreate = false
+      this.isGenerating = false
+      this.clearFields()
+    },
+    convertToISOString(dateString) {
+      const date = new Date(dateString)
+
+      if (isNaN(date.getTime())) {
+        throw new Error('Invalid date string')
+      }
+      const isoString = date.toISOString()
+
+      return isoString
+    },
+    convertTo24HourFormat(timeString) {
+      const [time, modifier] = timeString.split(' ')
+      let [hours, minutes] = time.split(':')
+
+      if (modifier === 'PM' && hours !== '12') {
+        hours = (parseInt(hours, 10) + 12).toString()
+      } else if (modifier === 'AM' && hours === '12') {
+        hours = '00'
+      }
+      return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`
     },
     cancel() {
       this.showDialog = false
       this.clearFields()
     },
-    deleteAppointment(id: string) {
+    async deleteAppointment(id: string) {
       //Integrate with backend
       const config = {
         headers: {
@@ -460,22 +707,22 @@ export default defineComponent({
       axios
         .delete(`${API_URL}videoCalls/${id}`, config)
         .then((response) => {
-          console.log(response)
+          //console.log(response)
         })
         .catch((error) => {
           console.error(error)
         })
 
-      this.recentAppointments = this.recentAppointments.filter(
+      this.appointments = this.appointments.filter(
         (appointment) => appointment._id !== id
       )
     },
     async selectTeamMembers() {
       for (const member of this.newAppointment.participants) {
-        console.log(member)
+        //console.log(member)
         this.participants.push(this.teamLeaderIds[this.newAppointment.participants.indexOf(member)])
       }
-      console.log(this.participants)
+      //console.log(this.participants)
       return this.participants
     }
   },

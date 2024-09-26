@@ -10,7 +10,7 @@
         User's Companies
       </h2>
       <v-card-text class="bg-background">
-        <v-container>
+        <v-container fluid fill-height>
           <v-row>
             <v-col cols="2"
               ><v-menu v-model="modalMenu" activator="parent">
@@ -43,7 +43,7 @@
         </v-container>
       </v-card-text>
       <v-actions @click="closeCompanyDialog" class="bg-background">
-        <v-container>
+        <v-container fluid fill-height>
           <v-row>
             <v-col cols="12" lg="6" align-self="center" order="last" order-lg="first">
               <v-btn

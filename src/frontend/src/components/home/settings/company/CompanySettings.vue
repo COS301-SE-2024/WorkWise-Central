@@ -1,6 +1,6 @@
 <template>
   <v-app :style="isDarkMode === true ? 'dark' : 'light'">
-    <v-container>
+    <v-container fluid fill-height>
       <v-row class="justify-center align-center">
         <v-col cols="12" class="text-center">
           <h1 class="text-xl font-semibold">Company Settings</h1>
