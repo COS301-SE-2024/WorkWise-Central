@@ -20,6 +20,7 @@ export class ClientRepository {
   }
 
   async findAllInCompany(companyId: Types.ObjectId) {
+    console.log('companyId', companyId);
     return this.clientModel
       .find({
         $and: [{ 'details.companyId': companyId }, isNotDeleted],

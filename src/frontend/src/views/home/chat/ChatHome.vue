@@ -4,9 +4,7 @@ import ChatUI from '@/components/home/chat/ChatUI.vue'
 </script>
 
 <template>
-  <NavigationBar :component="ChatUI"/>
+  <NavigationBar :component="ChatUI" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

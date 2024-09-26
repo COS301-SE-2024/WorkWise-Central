@@ -249,7 +249,6 @@ const downloadAttachment = (url) => {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  background-color: #b6afa9;
   object-fit: cover;
   /* Full height */
   height: 100%;
@@ -275,11 +274,10 @@ const downloadAttachment = (url) => {
 }
 
 .message-content {
-  background-color: #ffffff;
+  background-color: lightskyblue;
   border-radius: 12px;
   padding: 0.5rem 1rem;
   position: relative;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   margin-left: 0.5rem;
   flex-grow: 1;
   display: flex;
@@ -321,12 +319,10 @@ const downloadAttachment = (url) => {
 
 .timestamp {
   font-size: 0.8em;
-  color: #888;
   align-self: flex-end;
 }
 
 .attachments {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding-top: 5px;
   margin-top: 5px;
 }
@@ -340,7 +336,6 @@ const downloadAttachment = (url) => {
 .attachment a {
   margin-left: 5px;
   text-decoration: none;
-  color: #007bff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

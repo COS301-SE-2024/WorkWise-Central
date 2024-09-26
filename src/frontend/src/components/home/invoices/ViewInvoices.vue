@@ -59,22 +59,19 @@
       <v-card-actions>
         <v-container
           ><v-row
-            ><v-col cols="12" lg="6">
+            ><v-col cols="12">
               <v-btn color="error" block @click="dialog = false"
                 ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
               ></v-col
-            ><v-col cols="12" lg="6"
-              ><v-btn color="success" block @click="downloadPdf"
-                ><v-icon icon="fa: fa-solid fa-file" color="success"></v-icon>Download PDF</v-btn
-              ></v-col
             ></v-row
-          ></v-container>
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
-<script >
+<script>
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 
 export default {

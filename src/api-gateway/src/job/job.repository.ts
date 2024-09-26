@@ -47,6 +47,14 @@ export class JobRepository {
     return this.jobModel.find(isNotDeleted).lean();
   }
 
+  async findAllForClient(clientId: Types.ObjectId) {
+    const filter = {
+      $and: [{ clientId: clientId }, isNotDeleted],
+    };
+
+    return this.jobModel.find(filter).lean().exec();
+  }
+
   async findAllInCompany(companyId: Types.ObjectId) {
     const filter = {
       $and: [{ companyId: companyId }, isNotDeleted],

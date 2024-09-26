@@ -54,7 +54,7 @@
             <label class="font-weight-light" style="font-size: 20px"> Date Created</label>
             <v-spacer></v-spacer>
             <small class="text-caption" style="font-size: 12px">{{
-              formatDatec(team.createdAt)
+              formatDate(team.createdAt)
             }}</small>
           </v-col>
         </v-row>
@@ -103,37 +103,6 @@ export default defineComponent({
     close() {
       this.dialog = false
     },
-    async fetchTeamLeaderAndMembers() {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      const apiURL = await this.getRequestUrl()
-
-      try {
-        const leaderResponse = await axios.get(
-          `${apiURL}employee/${this.team.teamLeaderId}`,
-          config
-        )
-        this.teamLeaderName = leaderResponse.data.userInfo.displayName
-
-        const memberResponses = await Promise.all(
-          this.team.teamMembers.map((memberId) =>
-            axios.get(`${apiURL}employee/${memberId}`, config)
-          )
-        )
-        this.teamMemberNames = memberResponses.map((res) => res.data.userInfo.displayName)
-      } catch (error) {
-        console.error('Failed to fetch team leader or members:', error)
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to fetch team leader or members',
-          life: 3000
-        })
-      }
-    },
     async getRequestUrl() {
       const localUrl = 'http://localhost:3000/'
       const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
@@ -149,7 +118,6 @@ export default defineComponent({
   },
   mounted() {
     console.log(this.team)
-    this.fetchTeamLeaderAndMembers()
   }
 })
 </script>

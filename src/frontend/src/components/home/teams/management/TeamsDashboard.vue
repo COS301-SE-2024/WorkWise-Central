@@ -56,7 +56,7 @@
               </v-chip>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-              <v-menu max-width="500px">
+              <v-menu max-width="500px" v-bind="menuProps">
                 <template v-slot:activator="{ props }">
                   <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)">
                     <v-icon color="primary">mdi-dots-horizontal</v-icon>
@@ -112,7 +112,7 @@ export default defineComponent({
   data() {
     return {
       search: '',
-
+      menuVisible: false,
       teamHeaders: [
         { title: 'Team Name', value: 'teamName' },
         { title: 'Team Leader', value: 'teamLeaderId.userInfo.displayName' },
@@ -137,6 +137,13 @@ export default defineComponent({
       actionsMenu: false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+    }
+  },
+  computed: {
+    menuProps() {
+      return {
+        'v-model': this.menuVisible // Bind the visibility state using v-bind
+      }
     }
   },
   methods: {
@@ -172,6 +179,7 @@ export default defineComponent({
       this.selectedItem = item
       this.selectedItemName = item.teamName
       this.selectedItemID = item._id
+      this.menuVisible = true // Open the menu
     },
     chipColor(numAssignments: number) {
       if (numAssignments > 0) {
@@ -199,6 +207,7 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
+      this.menuVisible = false
     },
     addTeam(newTeam: Team) {
       this.teamItems.push(newTeam)
@@ -259,7 +268,8 @@ export default defineComponent({
     async getRequestUrl() {
       const localAvailable = await this.isLocalAvailable(this.localUrl)
       return localAvailable ? this.localUrl : this.remoteUrl
-    }
+    },
+    
   },
   mounted() {
     this.getTeams()

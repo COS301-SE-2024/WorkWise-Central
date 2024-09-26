@@ -2,15 +2,10 @@
   <v-container>
     <!-- Button to create a new task -->
     <v-row class="justify-center mb-4">
-      <!--      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"-->
-      <!--        >Create New Task List</v-btn-->
-      <!--      >-->
-      <Button
-        label="Create New Task List"
-        icon="fa: fa-solid fa-plus"
-        @click="createNewTask"
-        class="p-button-success"
-      />
+<!--      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"-->
+<!--        >Create New Task List</v-btn-->
+<!--      >-->
+      <Button label="Create New Task List" icon="fa: fa-solid fa-plus" @click="createNewTask" class="p-button-success" />
     </v-row>
 
     <!-- Loop through tasks with pagination -->
@@ -29,26 +24,23 @@
             prepend-icon="fa: fa-solid fa-tasks"
             rows="1"
             class="mb-4"
-            :disabled="taskDeleteLoading"
           ></v-textarea>
           <template v-if="task.title.trim() !== ''">
-            <!--            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">-->
-            <!--              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>-->
-            <!--            </v-btn>-->
-            <v-col cols="1">
-              <Button
-                icon="fa: fa-solid fa-trash"
-                @click="deleteTask(taskIndex)"
-                class="p-button-danger"
-              />
-            </v-col>
+<!--            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">-->
+<!--              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>-->
+<!--            </v-btn>-->
+              <v-col cols="1">
+                <Button icon="fa: fa-solid fa-trash" @click="deleteTask(taskIndex)" class="p-button-danger" />
+              </v-col>
           </template>
         </v-row>
 
         <!-- Only show the rest of the components if the title is set -->
         <template v-if="task.title.trim() !== ''">
           <v-row>
-            <v-col>
+            <v-col
+                v-if="!isSaveButtonVisible"
+            >
               <div class="mb-3">{{ getTaskProgress(task).toFixed(0) }}%</div>
               <v-progress-linear
                 :model-value="getTaskProgress(task)"
@@ -73,7 +65,9 @@
                 class="pt-0 pb-0"
                 dense
                 hide-details
-              ></v-checkbox>
+                @change="handleCheckboxChange(taskIndex, itemIndex)"
+              >
+              </v-checkbox>
             </v-col>
             <v-col md="2" cols="2">
               <v-row>
@@ -101,7 +95,7 @@
                       </v-card-title>
                       <v-card-actions class="d-flex flex-column">
                         <v-defaults-provider :defaults="{ VIcon: { color: 'info' } }">
-                          <v-btn color="info" @click="assignDialog = true">
+                          <v-btn color="info" @click="openAssignDialog(taskIndex, itemIndex)">
                             <v-icon>{{ 'fa: fa-solid fa-user-plus' }}</v-icon>
                             Assign
                           </v-btn>
@@ -113,17 +107,17 @@
                               <v-label>Assigned Employees</v-label>
                               <v-select
                                 label="Select"
-                                :items="assignableEmployees"
-                                item-title="text"
-                                item-value="value"
+                                :items="members"
+                                :item-title="member => getMemberFullName(member)"
+                                item-value="_id"
                                 item-class="custom-item-class"
                                 multiple
                                 variant="solo"
                                 hide-details
-                                v-model="selectedEmployees"
-                                :disabled="
-                                  isDeleting || isSaving || isSavingMembers || isDeletingItem
-                                "
+                                v-model="selectedMembers"
+                                return-object
+                                color="primary"
+                                background-color="#f5f5f5"
                               ></v-select>
                             </v-card-text>
                             <v-card-actions class="d-flex flex-column">
@@ -132,8 +126,6 @@
                                   color="success"
                                   prepend-icon="fa: fa-solid fa-save"
                                   @click="saveMembers(taskIndex, itemIndex)"
-                                  :loading="isSavingMembers"
-                                  :disabled="isDeleting || isSaving || isDeletingItem"
                                 >
                                   Save
                                 </v-btn>
@@ -143,9 +135,6 @@
                                   color="error"
                                   @click="assignDialog = false"
                                   prepend-icon="fa: fa-solid fa-times"
-                                  :disabled="
-                                    isDeleting || isSaving || isSavingMembers || isDeletingItem
-                                  "
                                 >
                                   Cancel
                                 </v-btn>
@@ -154,9 +143,9 @@
                           </v-card>
                         </v-dialog>
                         <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
-                          <v-btn color="success" class="mb-2">
-                            <v-icon>{{ 'fa: fa-solid fa-save' }}</v-icon>
-                            Save
+                          <v-btn color="success" class="mb-2" @click="convertCard(taskIndex, itemIndex)">
+                            <v-icon>{{ 'fa: fa-solid fa-exchange-alt' }}</v-icon>
+                            Convert Card
                           </v-btn>
                         </v-defaults-provider>
                         <v-defaults-provider :defaults="{ VIcon: { color: 'error' } }">
@@ -164,21 +153,15 @@
                             color="error"
                             @click="deleteItem(taskIndex, itemIndex)"
                             class="mb-2"
-                            :loading="isDeletingItem"
-                            :disabled="isDeleting || isSaving || isSavingMembers"
                           >
                             <v-icon>{{ 'fa: fa-solid fa-trash' }}</v-icon>
                             Delete
                           </v-btn>
                         </v-defaults-provider>
                         <v-defaults-provider :defaults="{ VIcon: { color: 'warning' } }">
-                          <v-btn
-                            color="warning"
-                            @click="isActive.value = false"
-                            :disabled="isDeleting || isSaving || isSavingMembers || isDeletingItem"
-                          >
-                            <v-icon>{{ 'fa: fa-solid fa-times' }}</v-icon>
-                            Cancel
+                          <v-btn color="warning" @click="isActive.value = false">
+                            <v-icon>{{ 'fa: fa-solid fa-cancel' }}</v-icon>
+                            Close
                           </v-btn>
                         </v-defaults-provider>
                       </v-card-actions>
@@ -191,7 +174,10 @@
 
           <!-- Add Item to Task -->
           <v-row>
-            <v-col color="success">
+            <v-col
+                color="success"
+                v-if="!isSaveButtonVisible"
+            >
               <v-textarea
                 v-model="task.newItemText"
                 label="Add an item"
@@ -203,37 +189,30 @@
                 prepend-icon="fa: fa-solid fa-check"
                 rows="3"
                 class="mb-4"
-                :disabled="isDeleting || isSaving || isSavingMembers || isDeletingItem"
               ></v-textarea>
-              <!--              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"-->
-              <!--                >Add Item</v-btn-->
-              <!--              >-->
-              <Button
-                label="Add Item"
-                icon="fa: fa-solid fa-plus"
-                @click="addItem(taskIndex)"
-                class="p-button-success"
-                :loading="isDeleting"
-              />
+<!--              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"-->
+<!--                >Add Item</v-btn-->
+<!--              >-->
+              <Button label="Add Item" icon="fa: fa-solid fa-plus" @click="addItem(taskIndex)" class="p-button-success" />
             </v-col>
           </v-row>
 
           <!-- Save Task Button -->
           <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
             <v-row class="justify-center">
-              <!--              <v-btn-->
-              <!--                color="success"-->
-              <!--                @click="saveTask(taskIndex)"-->
-              <!--                prepend-icon="fa: fa-solid fa-save"-->
-              <!--              >-->
-              <!--                Save Task-->
-              <!--              </v-btn>-->
+<!--              <v-btn-->
+<!--                color="success"-->
+<!--                @click="saveTask(taskIndex)"-->
+<!--                prepend-icon="fa: fa-solid fa-save"-->
+<!--              >-->
+<!--                Save Task-->
+<!--              </v-btn>-->
               <Button
-                label="Save Task"
-                icon="fa: fa-solid fa-save"
-                @click="saveTask(taskIndex)"
-                :loading="isSaving"
-                class="p-button-success"
+                  v-if="isSaveButtonVisible"
+                  label="Save Task"
+                  icon="fa: fa-solid fa-save"
+                  @click="handleSaveTask(taskIndex)"
+                  class="p-button-success"
               />
             </v-row>
           </v-defaults-provider>
@@ -259,12 +238,6 @@ import Button from 'primevue/button'
 import axios from 'axios'
 import { API_URL } from '@/main'
 
-let isDeleting = ref<boolean>(false)
-let isSaving = ref<boolean>(false)
-let isDeletingItem = ref<boolean>(false)
-let isSavingMembers = ref<boolean>(false)
-let taskDeleteLoading = ref<boolean>(false)
-
 interface Task {
   title: string
   items: { description: string; done: boolean; _id: string }[]
@@ -287,10 +260,15 @@ const itemsPerPage = ref(1)
 const currentPage = ref(1)
 const assignDialog = ref(false)
 const selectedEmployees = ref<string[]>([])
-const assignableEmployees = ref<string[]>([])
 const selectedMembers = ref<Member[]>([])
 const members = ref<Member[]>([]) // Populate with your states data
 const originalSelectedMembers = ref<Member[]>([])
+const isSaveButtonVisible = ref(true)
+
+function handleSaveTask(taskIndex: number) {
+  saveTask(taskIndex);
+  isSaveButtonVisible.value = taskList.value.length === 0;
+}
 
 //API URLS
 const localUrl: string = 'http://localhost:3000/'
@@ -339,6 +317,16 @@ function getTaskProgress(task: Task) {
   return (completedItems / task.items.length) * 100 || 0
 }
 
+function getMemberFullName(member: Member): string {
+  return `${member.userInfo.firstName} ${member.userInfo.surname}`
+}
+
+const openAssignDialog = async (taskIndex: number, itemIndex: number) => {
+  assignDialog.value = true
+  await getAssignedEmployees(taskIndex, itemIndex)
+  originalSelectedMembers.value = [...selectedMembers.value]
+}
+
 const addItem = async (taskIndex: number) => {
   const task = taskList.value[taskIndex]
   if (task.newItemText.trim() !== '') {
@@ -348,7 +336,6 @@ const addItem = async (taskIndex: number) => {
   }
 
   try {
-    isDeleting.value = true
     const body = {
       employeeId: localStorage.getItem('employeeId') || '',
       jobId: props.jobID,
@@ -382,8 +369,6 @@ const addItem = async (taskIndex: number) => {
     }
   } catch (error) {
     console.log(error)
-  } finally {
-    isDeleting.value = false
   }
 }
 
@@ -430,7 +415,6 @@ const updateTaskIntegration = async (taskIndex: number) => {
 
 const saveTask = async (taskIndex: number) => {
   try {
-    isSaving.value = true
     if (taskList.value[taskIndex]._id === '') {
       await createTaskIntegration(taskIndex)
     } else {
@@ -438,10 +422,52 @@ const saveTask = async (taskIndex: number) => {
     }
   } catch (error) {
     console.log(error)
-  } finally {
-    isSaving.value = false
   }
 }
+
+const convertCard = async (taskIndex: number, itemIndex: number) => {
+  try {
+    const body = {
+      currentEmployeeId: localStorage.getItem('employeeId') || '',
+      jobId: props.jobID,
+      taskId: taskList.value[taskIndex]._id,
+      taskItemId: taskList.value[taskIndex].items[itemIndex]._id
+    }
+    const response = await axios.patch(`${API_URL}job/convert`, body, config)
+    if (response.status > 199 && response.status < 300) {
+      console.log('Card converted successfully', response.data)
+    } else {
+      console.log('Failed to convert card', response)
+    }
+  } catch (error) {
+    console.log('Error converting card', error)
+  }
+  assignDialog.value = false
+}
+
+const handleCheckboxChange = async (taskIndex: number, itemIndex: number) => {
+  const task = taskList.value[taskIndex];
+  const item = task.items[itemIndex];
+  const body = {
+    employeeId: localStorage.getItem('employeeId') || '',
+    jobId: props.jobID,
+    taskId: task._id,
+    itemId: item._id,
+    description: item.description,
+    dueDate: new Date().toISOString(),
+    done: item.done
+  };
+  try {
+    const response = await axios.patch(`${API_URL}job/taskItem`, body, config);
+    if (response.status > 199 && response.status < 300) {
+      console.log('Item updated successfully', response.data);
+    } else {
+      console.log('Failed to update item', response);
+    }
+  } catch (error) {
+    console.log('Error updating item', error);
+  }
+};
 
 const getTeamMembers = async () => {
   try {
@@ -471,93 +497,96 @@ const getTeamMembers = async () => {
 const saveMembers = async (taskIndex: number, itemIndex: number) => {
   try {
     // Find members to remove
-    isSavingMembers.value = true
     const membersToRemove = originalSelectedMembers.value.filter(
-      (originalMember) =>
-        !selectedMembers.value.some((selectedMember) => selectedMember._id === originalMember._id)
-    )
+        (originalMember) =>
+            !selectedMembers.value.some((selectedMember) => selectedMember._id === originalMember._id)
+    );
 
     // Remove unselected members
     for (const member of membersToRemove) {
-      const response = await axios.patch(
-        `${API_URL}job/employee/taskItem`,
-        {
-          employeeId: localStorage.getItem('employeeId'),
-          employeeToAssignId: member._id,
-          jobId: props.jobID,
-          taskId: taskList.value[taskIndex]._id,
-          itemId: taskList.value[taskIndex].items[itemIndex]._id
-        },
-        config
-      )
-      if (response.status > 199 && response.status < 300) {
-        console.log(`Removed member: ${member._id}`)
-      } else {
-        console.log('Failed to remove member', response)
+      try {
+        const response = await axios.patch(
+            `${API_URL}job/employee/taskItem`,
+            {
+              employeeId: localStorage.getItem('employeeId'),
+              employeeToAssignId: member._id,
+              jobId: props.jobID,
+              taskId: taskList.value[taskIndex]._id,
+              itemId: taskList.value[taskIndex].items[itemIndex]._id
+            },
+            config
+        );
+        if (response.status >= 200 && response.status < 300) {
+          console.log(`Removed member: ${member._id}`);
+        } else {
+          console.log('Failed to remove member', response);
+        }
+      } catch (error) {
+        console.error(`Error removing member ${member._id}:`, error);
       }
     }
 
     // Add new selected members
     for (const member of selectedMembers.value) {
       if (
-        !originalSelectedMembers.value.some((originalMember) => originalMember._id === member._id)
+          !originalSelectedMembers.value.some((originalMember) => originalMember._id === member._id)
       ) {
-        console.log('Add new member option')
-        console.log('Now in selected members', selectedMembers.value)
-        console.log('member', member)
-        const membervia = {
-          employeeId: localStorage.getItem('employeeId'),
-          employeeToAssignId: member._id,
-          jobId: props.jobID
-        }
-        console.log('Member view', membervia)
-        const response = await axios.put(
-          `${API_URL}job/employee`,
-          {
-            employeeId: localStorage.getItem('employeeId'),
-            employeeToAssignId: member,
-            jobId: props.jobID
-          },
-          config
-        )
-        if (response.status > 199 && response.status < 300) {
-          console.log('Member change', response)
-          console.log(`Added member: ${member._id}`)
-        } else {
-          console.log('Failed to add member', response)
+        try {
+          const response = await axios.put(
+              `${API_URL}job/employee/taskItem`,
+              {
+                employeeId: localStorage.getItem('employeeId'),
+                employeeToAssignId: member._id,
+                jobId: props.jobID,
+                taskId: taskList.value[taskIndex]._id,
+                itemId: taskList.value[taskIndex].items[itemIndex]._id
+              },
+              config
+          );
+          if (response.status >= 200 && response.status < 300) {
+            console.log(`Added member: ${member._id}`);
+          } else {
+            console.log('Failed to add member', response);
+          }
+        } catch (error) {
+          console.error(`Error adding member ${member._id}:`, error);
         }
       }
     }
 
     // Update the original selected members
-    originalSelectedMembers.value = [...selectedMembers.value]
+    originalSelectedMembers.value = [...selectedMembers.value];
   } catch (error) {
-    console.log(error)
-  } finally {
-    isSavingMembers.value = false
+    console.error('Error in saveMembers function:', error);
   }
-}
+  assignDialog.value = false;
+};
 
-const getAssignedEmployees = async () => {
+const getAssignedEmployees = async (taskIndex: number, itemIndex: number) => {
   try {
-    const response = await axios.get(`${API_URL}job/id/${props.jobID}`, config)
-    if (response.status > 199 && response.status < 300) {
-      console.log(response)
-      const employees = response.data.data.assignedEmployees.employeeIds
+    const response = await axios.get(`${API_URL}job/id/${props.jobID}`, config);
+    if (response.status >= 200 && response.status < 300) {
+      console.log(response);
+      const task = response.data.data.taskList[taskIndex];
+      console.log('Task', task)
+      const item = task.items[itemIndex];
+      console.log('Item', item)
+      const employees = item.assignedEmployees || [];
+      console.log('Employees', employees)
       selectedMembers.value = employees.map((employee: any) => ({
         _id: employee._id,
         userInfo: {
           firstName: employee.userInfo.firstName,
           surname: employee.userInfo.surname
         }
-      }))
-      console.log('Assigned Employees', selectedMembers.value)
+      }));
+      console.log('Assigned Employees', selectedMembers.value);
     } else {
-      console.log('failed')
+      console.log('Failed to retrieve assigned employees', response);
     }
   } catch (error) {
-    console.log(error)
-    console.error('Error updating job:', error)
+    console.log(error);
+    console.error('Error retrieving assigned employees:', error);
   }
 }
 
@@ -577,7 +606,6 @@ function openCheckActionsDialog(itemIndex: number) {
 }
 
 const deleteTask = async (taskIndex: number) => {
-  const API_URL = getRequestUrl()
   try {
     const body = {
       employeeId: localStorage.getItem('employeeId') || '',
@@ -585,8 +613,8 @@ const deleteTask = async (taskIndex: number) => {
       taskId: taskList.value[taskIndex]._id
     }
     const response = await axios.delete(`${API_URL}job/task`, {
-      data: body,
-      headers: config.headers
+      headers: config.headers,
+      data: body
     })
     console.log('Delete successful', response)
     if (response.status > 199 && response.status < 300) {
@@ -598,12 +626,15 @@ const deleteTask = async (taskIndex: number) => {
 }
 
 onMounted(() => {
-  getJobTasks()
+  getJobTasks().then(() => {
+    taskList.value.forEach(task => {
+      if (task.items.length > 0) {
+        isSaveButtonVisible.value = false;
+      }
+    });
+  });
   getTeamMembers()
-  getAssignedEmployees().then(() => {
-    originalSelectedMembers.value = [...selectedMembers.value]
-  })
-})
+});
 </script>
 
 <style scoped>

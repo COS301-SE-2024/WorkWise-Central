@@ -75,7 +75,7 @@
                     <EditInventory
                       :inventory_id="selectedItemID"
                       :editedItem="selectedItem"
-                      @inventoryUpdated="getInventoryItems"
+                      @updateInventory="getInventoryItems"
                     />
                   </v-list-item>
 

@@ -88,7 +88,7 @@ export default defineComponent({
       cancel_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal',
       notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
       testingMode: true,
-      pfHost: 'https://sandbox.payfast.co.za/eng/process',
+      pfHost:'sandbox.payfast.co.za',
       forms: {} as { [key: string]: any }
     }
   },
@@ -156,10 +156,18 @@ export default defineComponent({
 
       this.companyId = this.client.details.companyId
 
-      if (this.companyId !== '66cdad718554b49834a56eed') {
-        this.testingMode = false
-        this.pfHost = 'www.payfast.co.za'
-      }
+      // Getting the company info
+      await axios
+        .get(`${API_URL}company/id/${this.companyId}`, config)
+        .then((response) => {
+          if(response.data.data.name.includes('DemoAccount')) {
+            this.testingMode = true
+            this.pfHost = 'https://sandbox.payfast.co.za/eng/process'
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
 
       // Getting the company info
       await axios
@@ -179,9 +187,9 @@ export default defineComponent({
         .then((response) => {
           // console.log('Invoices:', response)
           this.invoices = response.data.data
-          // for (const invoice of this.invoices) {
-          //   this.forms[invoice._id] = this.generateHtmlForm(invoice._id)
-          // }
+          for(const invoice of this.invoices) {
+            invoice.paymentDate = this.formatDate(invoice.paymentDate)
+          }
         })
         .catch((error) => {
           console.error(error)
@@ -194,6 +202,17 @@ export default defineComponent({
       } catch (error) {
         return false
       }
+    },
+    formatDate(date: string) {
+      const date_passed_in = new Date(date)
+      const y = date_passed_in.getFullYear()
+      const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
+      const d = String(date_passed_in.getDate()).padStart(2, '0')
+      const h = String(date_passed_in.getHours()).padStart(2, '0')
+      const mn = String(date_passed_in.getMinutes()).padStart(2, '0')
+      const f_date = `${y}-${m}-${d} ${h}:${mn}`
+      console.log('f_date: ', f_date)
+      return f_date
     }
   },
   mounted() {

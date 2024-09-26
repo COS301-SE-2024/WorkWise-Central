@@ -52,7 +52,7 @@ const items = ref([
         label: 'Personal Information',
         icon: 'fa: fa-solid fa-user',
         route: '/userSettings'
-      },
+      }
       // {
       //   label: 'Notifications',
       //   icon: 'fa: fa-solid fa-bell',
