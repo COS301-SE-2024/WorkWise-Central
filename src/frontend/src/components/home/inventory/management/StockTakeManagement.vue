@@ -204,9 +204,20 @@
               <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="400px"></iframe>
             </v-card-text>
             <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="green darken-1" text @click="confirmUpdate(true)">Yes</v-btn>
-              <v-btn color="red darken-1" text @click="confirmUpdate(false)">No</v-btn>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" lg="6" order="last" order-lg="first">
+                    <v-btn @click="confirmUpdate(false)" block color="red darken-1" text
+                    ><v-icon icon="fa: fa-solid fa-cancel" color="red darken-1"></v-icon>No</v-btn
+                    >
+                  </v-col>
+                  <v-col cols="12" lg="6" order="first" order-lg="last">
+                    <v-btn @click="confirmUpdate(true)" block color="green darken-1" text
+                    ><v-icon icon="fa: fa-solid fa-check" color="green darken-1"></v-icon>Yes</v-btn
+                    >
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-actions>
           </v-card>
         </v-dialog>
