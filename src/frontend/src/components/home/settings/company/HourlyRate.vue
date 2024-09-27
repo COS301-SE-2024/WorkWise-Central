@@ -165,8 +165,6 @@ export default {
       currentRole: {} as any,
       roleUpdates: [] as any,
       roleIds: [] as any,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       selectedItem: {} as any
     }
   },
@@ -204,7 +202,7 @@ export default {
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}role/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response.data.data.length)
 
@@ -268,22 +266,10 @@ export default {
         console.error(error)
       }
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
     selectItem(item: any) {
       console.log(item)
       this.selectedItem = item
     },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.getEmployees()

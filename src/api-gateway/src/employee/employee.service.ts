@@ -536,6 +536,11 @@ export class EmployeeService {
     return result;
   }
 
+  async findByIdsInternalForJobs(ids: Types.ObjectId[]) {
+    // It is being used for jobs, due to type errors
+    return await this.employeeRepository.findByIds(ids);
+  }
+
   async getSuperior(id: Types.ObjectId) {
     //checking the employee exists
     if (!(await this.employeeExists(id))) {

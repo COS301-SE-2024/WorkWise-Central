@@ -551,8 +551,6 @@ export default {
 .chat-header {
   display: flex;
   align-items: center;
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .chat-header h2 {
@@ -566,7 +564,6 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100%;
-  background-color: #f9f9f9;
 }
 
 .chat-icon {
@@ -578,11 +575,9 @@ export default {
 .no-chat-selected h1 {
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #333;
 }
 
 .no-chat-selected p {
   font-size: 1rem;
-  color: #666;
 }
 </style>

@@ -93,29 +93,11 @@ const selectedMembers = ref<Member[]>([])
 const members = ref<Member[]>([]) // Populate with your states data
 const originalSelectedMembers = ref<Member[]>([])
 
-// API URLs and config
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 const config = {
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
-}
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
 }
 
 const showAssignEmployeesSuccess = () => {
@@ -225,6 +207,7 @@ const saveMembers = async () => {
 
     // Update the original selected members
     originalSelectedMembers.value = [...selectedMembers.value]
+    membersDialog.value = false
   } catch (error) {
     console.log(error)
     showAssignEmployeesError()

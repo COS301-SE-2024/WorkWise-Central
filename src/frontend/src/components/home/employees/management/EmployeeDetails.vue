@@ -117,8 +117,6 @@ export default defineComponent({
       isDeleting: false,
       subnames: [],
       supname: '',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
@@ -167,18 +165,6 @@ export default defineComponent({
       console.log('closing dialog:' + this.clientDialog)
       this.clientDialog = false
     },
-    async isLocalAvailable(string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.loadEmployeeData()

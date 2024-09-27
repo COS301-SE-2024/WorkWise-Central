@@ -147,8 +147,6 @@ export default defineComponent({
     CreateRoles
   },
   data: () => ({
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dialog: false,
     items: [],
     isDeleting: false,
@@ -186,11 +184,11 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}role/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response.data.data.length)
 
-          for(const data of response.data.data) {
+          for (const data of response.data.data) {
             if (data.roleName) {
               this.roleUpdates.push({
                 _id: data._id,
@@ -224,10 +222,10 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/allPermissions`, config)
+        .get(`${API_URL}role/allPermissions`, config)
         .then((response) => {
           console.log(response.data.data)
-          for(const data of response.data.data) {
+          for (const data of response.data.data) {
             this.permissions.push(data)
           }
         })
@@ -250,7 +248,7 @@ export default defineComponent({
       }
       console.log(JSON.stringify(data))
       await axios
-        .patch(`http://localhost:3000/role/${this.selectedItem._id}`, config, data)
+        .patch(`${API_URL}role/${this.selectedItem._id}`, config, data)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -347,18 +345,6 @@ export default defineComponent({
         detail: 'Company updated',
         life: 3000
       })
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
     },
     selectItem(item) {
       console.log(item)

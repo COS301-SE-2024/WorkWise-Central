@@ -117,7 +117,7 @@ const router = createRouter({
       component: () => import('../views/TestView.vue')
     },
     {
-      path: '/manager-employees-t',
+      path: '/manageremployees',
       name: 'manageremployees',
       component: () => import('@/views/home/employees/ManageEmployees.vue')
     },
@@ -364,7 +364,7 @@ const router = createRouter({
       path: '/client-portal',
       name: 'client-portal',
       component: ClientPortal,
-      props: route => ({ cid: route.query.cid })
+      props: (route) => ({ cid: route.query.cid })
     },
     {
       path: '/invoices',
@@ -409,7 +409,7 @@ const router = createRouter({
     {
       path: '/chatHome',
       name: 'chatHome',
-      component: () => import('@/views/home/chat/ChatHome.vue'),
+      component: () => import('@/views/home/chat/ChatHome.vue')
     }
   ]
 })

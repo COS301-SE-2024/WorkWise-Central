@@ -26,7 +26,7 @@
 import ClientJobs from './ViewJobs.vue'
 import ReviewJobs from './ReviewJob.vue'
 import Invoices from './PaymentPortal.vue'
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   props: {
@@ -53,7 +53,7 @@ export default defineComponent({
     },
     getCidValue() {
       const url = this.$route.fullPath
-      const match = url.match(/cid=([a-zA-Z0-9]+)/);
+      const match = url.match(/cid=([a-zA-Z0-9]+)/)
       if (match[1]) {
         sessionStorage.setItem('clientId', match[1])
         this.clientID = sessionStorage.getItem('clientId').toString()
@@ -61,7 +61,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.getCidValue();
+    this.getCidValue()
   }
-});
+})
 </script>

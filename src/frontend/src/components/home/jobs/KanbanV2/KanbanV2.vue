@@ -1,13 +1,19 @@
 <template>
   <v-container fluid>
-    <!--    <v-row justify="end"-->
-    <!--      ><v-col cols="auto">-->
-    <!--        <v-btn size="x-large" align="right" @click="redirectToArchivePage">-->
-    <!--          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>-->
-    <!--        </v-btn>-->
-    <!--      </v-col></v-row-->
-    <!--    >-->
-    <v-row class="flex">
+    <!-- <v-row class="align-center">
+      <v-col cols="auto"></v-col>
+
+      <v-col class="text-center">
+        <h4>Job Board</h4>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn size="x-large" @click="redirectToArchivePage">
+          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row> -->
+
+    <v-row>
       <VueDraggable
         ref="el"
         v-model="columns"
@@ -433,8 +439,6 @@ export default {
   data() {
     return {
       nostatusID: '',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       delete_all_jobs_dialog: false,
       add_column_dialog: false,
       delete_column_dialog: false,
@@ -720,12 +724,7 @@ export default {
         this.error_message = 'A color should be selected'
         return
       }
-      // const column: Column = {
-      //   id: this.columns.length + 1,
-      //   status: this.new_column_name,
-      //   color: this.column_color,
-      //   cards: []
-      // }
+
       try {
         const config = {
           headers: {
@@ -807,7 +806,6 @@ export default {
         hit = false
       }
       this.columns.forEach((col: Column) => {
-        // this.N_M_Sort(col.cards, this.order_of_sorting_in_columns)
         col.cards.sort(
           (a: JobCardDataFormat, b: JobCardDataFormat) =>
             a.priorityTag.priorityLevel - b.priorityTag.priorityLevel
@@ -817,37 +815,6 @@ export default {
     },
     async loadColumns() {
       console.log('load Column request')
-      // const config = {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Authorization: `Bearer ${localStorage.getItem('access_token')}`
-      //   }
-      // }
-      //
-      // try {
-      //   const loaded_tags_response = await axios.get(
-      //     API_URL + `job/status/all/${localStorage['currentCompany']}`,
-      //     config
-      //   )
-      //   console.log(loaded_tags_response)
-      //   loaded_tags_response.data.data.map((status: any) => {
-      //     console.log(status)
-      //     if (status.status === 'Archive') {
-      //       this.archive_status_id = status._id
-      //       return null
-      //     }
-      //     this.columns.push({
-      //       _id: status._id,
-      //       __v: status.__v,
-      //       status: status.status,
-      //       colour: status.colour,
-      //       companyId: status.companyId,
-      //       cards: [] as JobCardDataFormat[]
-      //     })
-      //   })
-      // } catch (error) {
-      //   console.log('Error fetching data:', error)
-      // }
 
       const config = {
         headers: {
@@ -862,9 +829,6 @@ export default {
           config
         )
         console.log(loaded_tags_response.data.data)
-        // loaded_tags_response.data.data.jobStatuses.forEach((col: any) => {
-        //   col['cards'] = [] as JobCardDataFormat[]
-        // })
 
         let archive_index = -1
         for (let i = 0; i < loaded_tags_response.data.data.jobStatuses.length; i++) {
@@ -918,36 +882,13 @@ export default {
 
       try {
         const loaded_tags_response = await axios.get(
-          API_URL + `job/all/employee/${localStorage['employeeId']}`,
+          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(loaded_tags_response)
         let loaded_tags_res = loaded_tags_response.data.data
         for (let i = 0; i < loaded_tags_res.length; i++) {
           if (loaded_tags_res[i].status.status === 'Archive') continue
-          // if (
-          //   loaded_tags_res[i]._id === undefined ||
-          //   loaded_tags_res[i].details.heading === undefined ||
-          //   loaded_tags_res[i].details.description === undefined ||
-          //   loaded_tags_res[i].details.startDate === undefined ||
-          //   loaded_tags_res[i].details.endDate === undefined ||
-          //   loaded_tags_res[i].status === undefined ||
-          //   loaded_tags_res[i].clientId === undefined ||
-          //   loaded_tags_res[i].clientId.details === undefined ||
-          //   loaded_tags_res[i].details.address === undefined ||
-          //   loaded_tags_res[i].details.address.street === undefined ||
-          //   loaded_tags_res[i].details.address.suburb === undefined ||
-          //   loaded_tags_res[i].details.address.city === undefined ||
-          //   loaded_tags_res[i].details.address.street.postalCode === undefined ||
-          //   loaded_tags_res[i].recordedDetails.imagesTaken === undefined ||
-          //   loaded_tags_res[i].recordedDetails.inventoryUsed === undefined ||
-          //   loaded_tags_res[i].taskList === undefined ||
-          //   loaded_tags_res[i].comments === undefined ||
-          //   loaded_tags_res[i].priorityTag === undefined ||
-          //   loaded_tags_res[i].tags === undefined ||
-          //   loaded_tags_res[i].coverImage === undefined
-          // )
-          //   continue
 
           this.starting_cards.push({
             jobId: loaded_tags_res[i]._id,
@@ -1063,18 +1004,6 @@ export default {
         return tracker1 - tracker2
       })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))

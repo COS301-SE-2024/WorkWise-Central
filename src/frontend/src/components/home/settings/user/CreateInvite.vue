@@ -59,13 +59,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 export default defineComponent({
   data() {
     return {
       dialog: false,
       valid: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       buttonColor: 'secondary',
       req_obj: {
         emailToInvite: '',
@@ -84,7 +83,7 @@ export default defineComponent({
       this.dialog = false
     },
     async inviteUser() {
-      const url = await this.getRequestUrl()
+      
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -92,24 +91,12 @@ export default defineComponent({
         }
       }
       try {
-        const response = await axios.post(`${url}admin/invite/create`, this.req_obj, config)
+        const response = await axios.post(`${API_URL}admin/invite/create`, this.req_obj, config)
         console.log(response)
       } catch (error) {
         console.error(error)
       }
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   }
 })
 </script>

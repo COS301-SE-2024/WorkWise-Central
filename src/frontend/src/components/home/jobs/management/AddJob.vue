@@ -508,8 +508,6 @@ export default defineComponent({
     const currentHour = now.getHours()
     const currentMinute = now.getMinutes()
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       click_create_employee: false,
       valid: false,
       selectedDate: '',
@@ -693,7 +691,6 @@ export default defineComponent({
         console.log(update)
         this.date_validation_error_alert = !update
         if (update) {
-          this.request_load = true
           await this.handleSubmission()
         }
       }
@@ -719,6 +716,8 @@ export default defineComponent({
       return `${year}-${month}-${day}`
     },
     async handleSubmission() {
+      this.request_load = true
+
       console.log(this.req_obj)
 
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -733,8 +732,6 @@ export default defineComponent({
               summary: 'Success',
               detail: 'Job Added Successfully'
             })
-            this.createClientLoadClicked = false
-            window.location.reload()
           }
           axios
             .put(
@@ -923,18 +920,6 @@ export default defineComponent({
       } catch (error) {
         console.log('Error fetching data:', error)
       }
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     updateClient() {
       console.log(this.req_obj.clientId)

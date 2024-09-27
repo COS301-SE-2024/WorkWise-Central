@@ -74,7 +74,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-
 import Toast from 'primevue/toast'
 import { API_URL } from '@/main'
 
@@ -94,8 +93,6 @@ export default defineComponent({
         companyId: localStorage.getItem('currentCompany'),
         employeeId: localStorage.getItem('employeeId')
       } as Status,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
       labelRules: [(v: string) => !!v || 'Label is required'],
       colorRules: [
@@ -184,18 +181,6 @@ export default defineComponent({
         })
       this.isDeleting = false
       console.log('Creating Status')
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     close() {
       this.dialog = false

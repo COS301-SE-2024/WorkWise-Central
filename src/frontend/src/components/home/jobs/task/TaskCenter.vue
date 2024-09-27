@@ -61,8 +61,6 @@ interface Job {
 export default defineComponent({
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       automatedAssignment: false,
       activeTab: 0,
       jobs: [] as Job[],
@@ -87,7 +85,7 @@ export default defineComponent({
       }
       try {
         const response = await axios.get(
-          `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -101,18 +99,6 @@ export default defineComponent({
         })
       }
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.getJobs()

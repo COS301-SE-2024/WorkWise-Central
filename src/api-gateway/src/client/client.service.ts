@@ -73,6 +73,10 @@ export class ClientService {
     return this.clientRepository.findAllInCompany(companyId);
   }
 
+  async getAllClientsInCompanyInternal(companyId: Types.ObjectId) {
+    return this.clientRepository.findAllInCompany(companyId);
+  }
+
   async getClientById(
     //TODO:Add role enforcement later
     userId: Types.ObjectId,
@@ -308,6 +312,7 @@ export class ClientService {
         comments: feedbackDto.comments,
         jobRating: feedbackDto.jobRating,
         customerServiceRating: feedbackDto.customerServiceRating,
+        date: new Date(),
       },
     });
   }

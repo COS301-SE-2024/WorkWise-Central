@@ -28,7 +28,7 @@
           :customUpload="true"
           :showCancelButton="false"
           :showUploadButton="false"
-          :class="{ 'p-button-rounded p-button-outlined': true }"
+          :class="{ 'p-button p-button-rounded p-button-outlined': true }"
       >
         <template #chooseicon>
           <i class="fas fa-file"></i>
@@ -40,7 +40,7 @@
         icon="fa: fa-solid fa-paper-plane"
         @click="sendMessage"
         :disabled="disabled || (!message.trim() && attachments.length === 0)"
-        class="p-button-rounded"
+        class="p-button-rounded p-button"
       />
     </v-col>
   </div>
@@ -160,8 +160,6 @@ const clearFiles = () => {
   display: flex;
   align-items: center;
   padding: 1rem;
-  background-color: var(--background); /* Use theme background */
-  border-top: 1px solid var(--highlighter-color); /* Theme border */
   position: sticky;
   bottom: 0;
 }
@@ -171,23 +169,18 @@ const clearFiles = () => {
   margin-right: 0.5rem;
 }
 
-:deep(.p-inputtext) {
-  background-color: var(--card-color); /* Theme card color */
-  color: var(--element-text-color); /* Theme element text color */
-}
-
 .p-button {
-  background-color: var(--primary-color); /* Theme primary color */
-  color: var(--button-text-color); /* Theme button text color */
 }
 
 .p-button:enabled:hover {
-  background-color: var(--secondary-color); /* Theme secondary color on hover */
+  opacity: 0.8; /* Subtle hover effect */
 }
 
 .p-button:disabled {
-  background-color: var(--n-element-text-color); /* Theme disabled background color */
-  color: var(--button-text-color); /* Maintain button text color */
+}
+
+/* Deep selectors for third-party components */
+:deep(.p-inputtext) {
 }
 
 :deep(.p-fileupload-choose) {

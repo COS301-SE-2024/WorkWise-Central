@@ -27,11 +27,11 @@
               ></v-text-field>
             </v-col>
             <v-col>
-              <small class="text-caption">Date</small>
+              <small class="text-caption">Date of Payment</small>
               <v-text-field
-                :disabled="isDeleting"
-                v-model="localEditedInvoice.creationDate"
+                v-model="localEditedInvoice.paymentDate"
                 color="secondary"
+                type="date"
                 required
               ></v-text-field>
             </v-col>
@@ -42,11 +42,12 @@
                   :disabled="isDeleting"
                   v-model="localEditedInvoice.total"
                   color="secondary"
+                  type="number"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" lg="6">
-                <small class="text-caption">Status</small>
+                <small class="text-caption">Status of Payment</small>
                 <v-select
                   :disabled="isDeleting"
                   v-model="localEditedInvoice.paid"
@@ -95,8 +96,8 @@ import { API_URL } from '@/main'
 interface Invoice {
   _id: string
   invoiceNumber: string
-  creationDate: string
-  paymentDate: string
+  creationDate: Date
+  paymentDate: Date
   total: number
   paid: boolean
   clientName: string
@@ -123,7 +124,7 @@ export default {
       } as Invoice,
       editDialog: false,
       valid: false,
-      statusOptions: ['Paid', 'Unpaid', 'Pending'] as any[],
+      statusOptions: [true, false] as boolean[],
       invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
       dateRules: [(v: string) => !!v || 'Date is required'],
       amountRules: [
@@ -152,9 +153,9 @@ export default {
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` }
       }
-
+      console.log(this.localEditedInvoice)
       axios
-        .patch(`${API_URL}/invoices/${this.invoice_id}`, this.localEditedInvoice, config)
+        .patch(`${API_URL}invoice/${this.invoice_id}`, this.localEditedInvoice, config)
         .then((response) => {
           this.$toast.add({
             severity: 'success',
@@ -186,12 +187,10 @@ export default {
     close() {
       this.editDialog = false
     },
+    change(status: any) {},
     deepCopy(obj: any) {
       return JSON.parse(JSON.stringify(obj))
     },
-    getRequestUrl() {
-      return 'https://your-api-url.com'
-    }
   }
 }
 </script>
