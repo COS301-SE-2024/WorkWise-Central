@@ -7,13 +7,20 @@ import { v4 as uuidv4 } from 'uuid';
 import * as mime from 'mime-types';
 import { join } from 'path';
 import { SaveBase64Response } from './dto/SaveBase64Response.dto';
+import { ConfigService } from '@nestjs/config';
 
-const uploadPath = join(__dirname, '..', '../../../uploads');
+//const uploadPath = join(__dirname, '..', '../../../uploads');
 
 @Global()
 @Injectable()
 export class FileService {
-  constructor(@Inject('GLOBAL_CONFIG') private readonly globalConfig: { serverUrl: string; frontendUrl: string }) {}
+  private readonly uploadPath: string;
+  constructor(
+    private configService: ConfigService,
+    @Inject('GLOBAL_CONFIG') private readonly globalConfig: { serverUrl: string; frontendUrl: string },
+  ) {
+    this.uploadPath = this.configService.get<string>('UPLOAD_PATH') || join(__dirname, '..', '../../../uploads');
+  }
 
   async uploadBase64Image(base64Image: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
@@ -54,9 +61,9 @@ export class FileService {
   }
 
   async saveAttachments(files: Express.Multer.File[]): Promise<string[]> {
-    if (!fs.existsSync(uploadPath)) {
+    if (!fs.existsSync(this.uploadPath)) {
       //console.log('FAILED TO FIND FILE');
-      fs.mkdirSync(uploadPath, { recursive: true });
+      fs.mkdirSync(this.uploadPath, { recursive: true });
     }
 
     const fileLinks: string[] = [];
@@ -66,7 +73,7 @@ export class FileService {
       const extension = this.keepAfterLastDot(file.originalname);
 
       const fileName = `${uuidv4()}-${name}${extension}`;
-      const filePath = path.join(uploadPath, fileName);
+      const filePath = path.join(this.uploadPath, fileName);
       fs.writeFileSync(filePath, file.buffer);
       fileLinks.push(this.globalConfig.serverUrl + `uploads/${fileName}`);
       console.log('SAVING:', `/uploads/${fileName}`);
@@ -90,8 +97,8 @@ export class FileService {
   }
 
   async saveBase64File(base64Image: string): Promise<SaveBase64Response> {
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
+    if (!fs.existsSync(this.uploadPath)) {
+      fs.mkdirSync(this.uploadPath, { recursive: true });
     }
 
     let fileLink: string = '';
@@ -102,7 +109,7 @@ export class FileService {
     }
 
     const fileName = `File-${uuidv4()}.${extension}`;
-    const filePath = path.join(uploadPath, fileName);
+    const filePath = path.join(this.uploadPath, fileName);
 
     // Decode the Base64 string
     const base64Data = base64Image.replace(/^data:([A-Za-z-+/]+);base64,/, '');
@@ -116,8 +123,8 @@ export class FileService {
 
   /*
   async saveBase64Files(base64Files: { base64: string; originalname: string }[]): Promise<string[]> {
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
+    if (!fs.existsSync(this.uploadPath)) {
+      fs.mkdirSync(this.uploadPath, { recursive: true });
     }
 
     const fileLinks: string[] = [];
@@ -127,7 +134,7 @@ export class FileService {
       const extension = this.keepAfterLastDot(file.originalname);
 
       const fileName = `${uuidv4()}-${name}-${uuidv4()}${extension}`;
-      const filePath = path.join(uploadPath, fileName);
+      const filePath = path.join(this.uploadPath, fileName);
 
       // Decode the Base64 string
       const base64Data = file.base64.replace(/^data:([A-Za-z-+/]+);base64,/, '');

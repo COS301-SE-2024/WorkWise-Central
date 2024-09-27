@@ -33,8 +33,12 @@ services:
     depends_on:
       - mongo_db
     environment:
-      SERVER_LOGIN:
-        mongodb://mongo_db:27017/${MONGO_INIT_ROOT_DATABASE}?retryWrites=true&w=majority
+#      SERVER_LOGIN:
+#        mongodb://mongo_db:27017/${MONGO_INIT_ROOT_DATABASE}?retryWrites=true&w=majority
+      UPLOAD_PATH:
+        /app/uploads
+      volumes:
+        ./uploads:/app/uploads
       ENVIRONMENT:
         prod
 #    volumes:
@@ -64,7 +68,7 @@ services:
 volumes:
   workwise_prod_volume:
   mongo_db_config:
-# workwise_file_volume:
+  uploads:
 
 networks:
   webnet:
