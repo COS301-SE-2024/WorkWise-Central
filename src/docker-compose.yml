@@ -7,6 +7,9 @@ services:
     container_name: vue-app
     ports:
       - '8080:80'
+    environment:
+      ENVIRONMENT:
+        prod
 
   nginx:
     image: nginx:alpine
@@ -32,6 +35,8 @@ services:
     environment:
       SERVER_LOGIN:
         mongodb://mongo_db:27017/${MONGO_INIT_ROOT_DATABASE}?retryWrites=true&w=majority
+      ENVIRONMENT:
+        prod
 #    volumes:
 #      - workwise_file_volume:/api-gateway/uploads/
 

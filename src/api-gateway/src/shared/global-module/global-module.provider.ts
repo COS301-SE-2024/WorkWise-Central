@@ -1,6 +1,12 @@
 export const GlobalModuleProvider = {
-  provide: 'GLOBAL_SERVER_URL',
+  provide: 'GLOBAL_CONFIG',
   useFactory: () => {
-    return process.env.ENVIRONMENT ? process.env.DEV_URL : process.env.PROD_URL;
+    return {
+      serverUrl: process.env.ENVIRONMENT == 'dev' ? process.env.DEV_URL : process.env.PROD_URL,
+      frontendUrl:
+        process.env.ENVIRONMENT == 'dev'
+          ? process.env.VITE_ROOT_APPLICATION_DEV
+          : process.env.VITE_ROOT_APPLICATION_PROD,
+    };
   },
 };
