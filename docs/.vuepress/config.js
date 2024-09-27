@@ -1,6 +1,6 @@
-import { viteBundler } from '@vuepress/bundler-vite'
-import { defaultTheme } from '@vuepress/theme-default'
-import { defineUserConfig } from 'vuepress'
+import { viteBundler } from "@vuepress/bundler-vite";
+import { defaultTheme } from "@vuepress/theme-default";
+import { defineUserConfig } from "vuepress";
 
 export default defineUserConfig({
   bundler: viteBundler(),
@@ -509,6 +509,10 @@ export default defineUserConfig({
             { text: "CI/CD", link: "/demo4/devOps/cicd.md" },
             { text: "Testing Policy", link: "/demo4/devOps/testing.md" },
           ],
+        },
+        {
+          text: "Project management Documentation",
+          link: "/demo4/projectManagementDocs/",
         },
       ],
     },

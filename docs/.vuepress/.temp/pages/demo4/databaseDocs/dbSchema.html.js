@@ -1,5 +1,5 @@
 import comp from "/home/jessica/University/WorkWise-Central/docs/.vuepress/.temp/pages/demo4/databaseDocs/dbSchema.html.vue"
-const data = JSON.parse("{\"path\":\"/demo4/databaseDocs/dbSchema.html\",\"title\":\"Database Schema\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1727356228000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"demo4/databaseDocs/dbSchema.md\"}")
+const data = JSON.parse("{\"path\":\"/demo4/databaseDocs/dbSchema.html\",\"title\":\"Database Schema\",\"lang\":\"en-US\",\"frontmatter\":{},\"headers\":[],\"git\":{\"updatedTime\":1727457956000,\"contributors\":[{\"name\":\"JessicaBloem\",\"email\":\"jessicabloem8@gmail.com\",\"commits\":2}]},\"filePathRelative\":\"demo4/databaseDocs/dbSchema.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {
