@@ -112,7 +112,7 @@ To run the project you need to add .env files in the appropriate places. Make su
 ### .env files
 You will need to add .env files in the following places in the project.
 #### In the "src" folder
-```
+```bash
 ANON_KEY=
 SUPER_KEY=
 SERVER_LOGIN=
@@ -132,8 +132,8 @@ MAIL_TRANSPORT=
 
 FB_PRIVATE_KEY=
 ```
-#### In the "api-gateway" folder
-```
+#### In the "src/api-gateway" folder
+```bash
 ANON_KEY=
 SUPER_KEY=
 SERVER_LOGIN=
@@ -154,6 +154,25 @@ MAIL_TRANSPORT=
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
+
+# For dynamic link
+SERVER_URL=
+FRONTEND_URL=
+
+# For payment gateway encryption
+PAY_KEY=
+```
+
+#### In the "src/frontend" folder
+```bash
+ENVIRONMENT=
+VITE_ROOT_API_DEV=
+VITE_ROOT_API_PROD=
+VITE_SERVER_API_DEV=
+VITE_SERVER_API_PROD=
+
+#GOOGLE MAPS API
+VITE_GOOGLE_MAPS_API_KEY=
 ```
 
 [//]: # (#### In the "frontend" folder)
@@ -173,4 +192,4 @@ CLOUDINARY_API_SECRET=
     ```bash
         cd npm run start:dev
    ```
-4. Open the website by going to [http://localhost:5173/](http://localhost:5173/)
+3. Open the website by going to [http://localhost:5173/](http://localhost:5173/)

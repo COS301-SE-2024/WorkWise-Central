@@ -148,48 +148,65 @@
 <h3 id="env-files" tabindex="-1"><a class="header-anchor" href="#env-files"><span>.env files</span></a></h3>
 <p>You will need to add .env files in the following places in the project.</p>
 <h4 id="in-the-src-folder" tabindex="-1"><a class="header-anchor" href="#in-the-src-folder"><span>In the &quot;src&quot; folder</span></a></h4>
-<div class="language-text line-numbers-mode" data-highlighter="prismjs" data-ext="text" data-title="text"><pre v-pre><code><span class="line">ANON_KEY=</span>
-<span class="line">SUPER_KEY=</span>
-<span class="line">SERVER_LOGIN=</span>
+<div class="language-bash line-numbers-mode" data-highlighter="prismjs" data-ext="sh" data-title="sh"><pre v-pre><code><span class="line"><span class="token assign-left variable">ANON_KEY</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">SUPER_KEY</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">SERVER_LOGIN</span><span class="token operator">=</span></span>
 <span class="line"></span>
-<span class="line">#Basic mail</span>
-<span class="line">EMAIL_HOST=</span>
-<span class="line">EMAIL_USERNAME=</span>
-<span class="line">EMAIL_PASSWORD=</span>
-<span class="line">EMAIL_PORT=</span>
+<span class="line"><span class="token comment">#Basic mail</span></span>
+<span class="line"><span class="token assign-left variable">EMAIL_HOST</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">EMAIL_USERNAME</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">EMAIL_PASSWORD</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">EMAIL_PORT</span><span class="token operator">=</span></span>
 <span class="line"></span>
-<span class="line">#Final mail</span>
-<span class="line">MAIL_HOST=</span>
-<span class="line">MAIL_USER=</span>
-<span class="line">MAIL_PASSWORD=</span>
-<span class="line">MAIL_FROM=</span>
-<span class="line">MAIL_TRANSPORT=</span>
+<span class="line"><span class="token comment">#Final mail</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_HOST</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_USER</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_PASSWORD</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_FROM</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_TRANSPORT</span><span class="token operator">=</span></span>
 <span class="line"></span>
-<span class="line">FB_PRIVATE_KEY=</span>
+<span class="line"><span class="token assign-left variable">FB_PRIVATE_KEY</span><span class="token operator">=</span></span>
 <span class="line"></span></code></pre>
-<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h4 id="in-the-api-gateway-folder" tabindex="-1"><a class="header-anchor" href="#in-the-api-gateway-folder"><span>In the &quot;api-gateway&quot; folder</span></a></h4>
-<div class="language-text line-numbers-mode" data-highlighter="prismjs" data-ext="text" data-title="text"><pre v-pre><code><span class="line">ANON_KEY=</span>
-<span class="line">SUPER_KEY=</span>
-<span class="line">SERVER_LOGIN=</span>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h4 id="in-the-src-api-gateway-folder" tabindex="-1"><a class="header-anchor" href="#in-the-src-api-gateway-folder"><span>In the &quot;src/api-gateway&quot; folder</span></a></h4>
+<div class="language-bash line-numbers-mode" data-highlighter="prismjs" data-ext="sh" data-title="sh"><pre v-pre><code><span class="line"><span class="token assign-left variable">ANON_KEY</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">SUPER_KEY</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">SERVER_LOGIN</span><span class="token operator">=</span></span>
 <span class="line"></span>
-<span class="line">#Basic mail</span>
-<span class="line">EMAIL_HOST=</span>
-<span class="line">EMAIL_USERNAME=</span>
-<span class="line">EMAIL_PASSWORD=</span>
-<span class="line">EMAIL_PORT=</span>
+<span class="line"><span class="token comment">#Basic mail</span></span>
+<span class="line"><span class="token assign-left variable">EMAIL_HOST</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">EMAIL_USERNAME</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">EMAIL_PASSWORD</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">EMAIL_PORT</span><span class="token operator">=</span></span>
 <span class="line"></span>
-<span class="line">#Final mail</span>
-<span class="line">MAIL_HOST=</span>
-<span class="line">MAIL_USER=</span>
-<span class="line">MAIL_PASSWORD=</span>
-<span class="line">MAIL_FROM=</span>
-<span class="line">MAIL_TRANSPORT=</span>
+<span class="line"><span class="token comment">#Final mail</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_HOST</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_USER</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_PASSWORD</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_FROM</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">MAIL_TRANSPORT</span><span class="token operator">=</span></span>
 <span class="line"></span>
-<span class="line">CLOUDINARY_CLOUD_NAME=</span>
-<span class="line">CLOUDINARY_API_KEY=</span>
-<span class="line">CLOUDINARY_API_SECRET=</span>
+<span class="line"><span class="token assign-left variable">CLOUDINARY_CLOUD_NAME</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">CLOUDINARY_API_KEY</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">CLOUDINARY_API_SECRET</span><span class="token operator">=</span></span>
+<span class="line"></span>
+<span class="line"><span class="token comment"># For dynamic link</span></span>
+<span class="line"><span class="token assign-left variable">SERVER_URL</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">FRONTEND_URL</span><span class="token operator">=</span></span>
+<span class="line"></span>
+<span class="line"><span class="token comment"># For payment gateway encryption</span></span>
+<span class="line"><span class="token assign-left variable">PAY_KEY</span><span class="token operator">=</span></span>
 <span class="line"></span></code></pre>
-<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h3 id="running-1" tabindex="-1"><a class="header-anchor" href="#running-1"><span>Running</span></a></h3>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h4 id="in-the-src-frontend-folder" tabindex="-1"><a class="header-anchor" href="#in-the-src-frontend-folder"><span>In the &quot;src/frontend&quot; folder</span></a></h4>
+<div class="language-bash line-numbers-mode" data-highlighter="prismjs" data-ext="sh" data-title="sh"><pre v-pre><code><span class="line"><span class="token assign-left variable">ENVIRONMENT</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">VITE_ROOT_API_DEV</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">VITE_ROOT_API_PROD</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">VITE_SERVER_API_DEV</span><span class="token operator">=</span></span>
+<span class="line"><span class="token assign-left variable">VITE_SERVER_API_PROD</span><span class="token operator">=</span></span>
+<span class="line"></span>
+<span class="line"><span class="token comment">#GOOGLE MAPS API</span></span>
+<span class="line"><span class="token assign-left variable">VITE_GOOGLE_MAPS_API_KEY</span><span class="token operator">=</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h3 id="running-1" tabindex="-1"><a class="header-anchor" href="#running-1"><span>Running</span></a></h3>
 <ol>
 <li>Move to the root directory of the project<div class="language-bash line-numbers-mode" data-highlighter="prismjs" data-ext="sh" data-title="sh"><pre v-pre><code><span class="line">    <span class="token builtin class-name">cd</span> <span class="token punctuation">..</span>/<span class="token punctuation">..</span>/</span>
 <span class="line"></span></code></pre>
