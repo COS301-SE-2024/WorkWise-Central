@@ -26,19 +26,33 @@ By following this strategy, we aim to maintain a stable codebase, manage feature
 <li>Creation: Branch off from <code v-pre>develop</code>.</li>
 <li>Merge: Merged back into <code v-pre>develop</code> after completion and testing.</li>
 </ul>
-<h3 id="release-branch" tabindex="-1"><a class="header-anchor" href="#release-branch"><span>Release branch</span></a></h3>
-<ul>
-<li>Purpose: Used to prepare for a new production release, allowing for minor bug fixes and final tweaks.</li>
-<li>Naming Convention: <code v-pre>release/release-version</code> (e.g., release/1.0.0).</li>
-<li>Creation: Branch off from <code v-pre>develop</code> when the codebase is ready for a new release.
-Merge: Merged into <code v-pre>main</code> and <code v-pre>develop</code> after finalization.</li>
-</ul>
 <h3 id="hotfix-branch" tabindex="-1"><a class="header-anchor" href="#hotfix-branch"><span>Hotfix branch</span></a></h3>
 <ul>
 <li>Purpose: Used to quickly address critical issues found in the production environment.</li>
 <li>Naming Convention: <code v-pre>hotfix/hotfix-name</code> (e.g., hotfix/security-patch).</li>
 <li>Creation: Branch off from <code v-pre>main</code>.</li>
 <li>Merge: Merged into <code v-pre>main</code> and <code v-pre>develop</code> after the fix is applied.</li>
+</ul>
+<h3 id="bugfix" tabindex="-1"><a class="header-anchor" href="#bugfix"><span>Bugfix</span></a></h3>
+<ul>
+<li>Purpose: Used to address small bugs found during development.</li>
+<li>Naming Convention: <code v-pre>bugfix/bugfix-name</code> (e.g., bugfix/date-format).</li>
+<li>Creation: Branch off from <code v-pre>develop</code>.</li>
+<li>Merge: Merged into <code v-pre>develop</code> after the fix is applied.</li>
+</ul>
+<h3 id="refactor" tabindex="-1"><a class="header-anchor" href="#refactor"><span>Refactor</span></a></h3>
+<ul>
+<li>Purpose: Used for general code improvements.</li>
+<li>Naming Convention: <code v-pre>refactor/refactor-name</code> (e.g., refactor/job-speed-improvement).</li>
+<li>Creation: Branch off from <code v-pre>develop</code>.</li>
+<li>Merge: Merged into <code v-pre>develop</code> after the fix is applied.</li>
+</ul>
+<h3 id="chore" tabindex="-1"><a class="header-anchor" href="#chore"><span>Chore</span></a></h3>
+<ul>
+<li>Purpose: Used to do maintenance on the system and perform CI/CD updates.</li>
+<li>Naming Convention: <code v-pre>chore/chore-name</code> (e.g., chore/reconfiguring-docker).</li>
+<li>Creation: Branch off from <code v-pre>develop</code>.</li>
+<li>Merge: Merged into <code v-pre>develop</code> after the fix is applied.</li>
 </ul>
 <h2 id="workflow" tabindex="-1"><a class="header-anchor" href="#workflow"><span>Workflow</span></a></h2>
 <h3 id="feature-development" tabindex="-1"><a class="header-anchor" href="#feature-development"><span>Feature Development</span></a></h3>
@@ -58,29 +72,8 @@ Merge: Merged into <code v-pre>main</code> and <code v-pre>develop</code> after 
 <li>Conduct a code review and resolve any feedback.</li>
 <li>Merge the feature branch into develop and delete the feature branch.</li>
 </ul>
-<h3 id="release-preparation" tabindex="-1"><a class="header-anchor" href="#release-preparation"><span>Release Preparation</span></a></h3>
-<ol>
-<li>Creating a Release Branch:</li>
-</ol>
-<ul>
-<li>When develop has accumulated enough changes, create a release branch from <code v-pre>develop</code>.</li>
-<li>Name the branch <code v-pre>release/release-version</code>.</li>
-</ul>
-<ol start="2">
-<li>Finalizing the Release:</li>
-</ol>
-<ul>
-<li>Perform any final testing and bug fixing on the release branch.</li>
-<li>Update version numbers and documentation as needed.</li>
-</ul>
-<ol start="3">
-<li>Completing the Release:</li>
-</ol>
-<ul>
-<li>Merge the release branch into main and tag the release.</li>
-<li>Merge the release branch back into develop to incorporate any changes made during the release preparation.</li>
-<li>Delete the release branch.</li>
-</ul>
+<!-- ### Release Preparation
+1. Everyone freak out bcs demo approaching and test non existent!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <h3 id="hotfix-management" tabindex="-1"><a class="header-anchor" href="#hotfix-management"><span>Hotfix Management</span></a></h3>
 <ol>
 <li>Creating a Hotfix Branch:</li>

@@ -7,7 +7,8 @@
 - **Line Length**: Limit lines to 120 characters.
 - **File Naming**: Use kebab-case for file names (e.g., `service-delivery.component.ts`).
 - **Comments**: Use `//` for single-line comments and `/* ... */` for multi-line comments. Ensure comments are meaningful and provide value.
-- **Version Control**: Follow the Git Flow branching model. Use `feature` branches for new features, `fix` branches for fixes, and `develop` and `main` branches for integration.
+- **Version Control**: Follow the Git Flow branching model. 
+  
 
 ### TypeScript Conventions
 - **Types**: Always explicitly define types.
@@ -17,13 +18,15 @@
 - **Variables and Functions**: Use camelCase for variable and function names.
 - **Constants**: Use UPPER_CASE for constants.
 
-### Vue Conventions
+### Frontend Conventions
+#### Vue
 - **Component Structure**: Use the `<template>`, `<script>`, and `<style>` sections in single-file components.
 - **Props**: Define prop types and default values.
 - **Events**: Use `$emit` to trigger events and define event names in kebab-case.
 - **Lifecycle Hooks**: Order lifecycle hooks as they are called (`created`, `mounted`, `updated`, `destroyed`).
 
-### NestJS Conventions
+### Backend Conventions
+#### NestJs 
 **Modules**:
 Use modules to organize your application logically. Only use Global modules when it is justified. Ensure that modules export all services required by importing modules (To prevent circular dependencies)
 
@@ -34,6 +37,11 @@ Use modules to organize your application logically. Only use Global modules when
 **Repositories**: These classes must only contain queries to relevant Mongoose models related to a Service. No validation should be performed in these classes.
 
 **Providers**: Use providers for dependency injection. Only add providers that are required by the Service.
+
+#### MongoDB
+**Entities**: They represent documents in our schema, they also specify indexes and middleware to be used with Mongoose based on specific operations. 
+
+**Dtos**: These specify request/response body structure, including the data sanitation and transformation before reaching the controllers. 
 
 ## File Structure
 .github/
@@ -84,7 +92,13 @@ src/
 
 │ ├── cypress/
 
+│ ├── dev-dist/
+
+│ ├── dist/
+
 │ ├── img/
+
+│ ├── nginx/
 
 │ ├── node_modules/
 
@@ -92,9 +106,23 @@ src/
 
 │ ├── src/
 
+│ │ ├── assets
+
+│ │ ├── components
+
 │ │ ├── ...
 
+│ ├── .env
+
 │ ├── ...
+
+├──docker-compose.yml
+
+├──.env
+
+uploads
+
+├── ...
 
 ...
 

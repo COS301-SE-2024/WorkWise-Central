@@ -411,10 +411,6 @@ export default defineUserConfig({
         {
           text: "Design Documentation",
           link: "/demo4/designDocs/",
-          // children: [
-          //   { text: 'Wireframes', link: '/demo4/designDocs/wireframes.md' },
-          //   { text: 'Style document', link: '/demo4/designDocs/styles.md' },
-          // ],
         },
         {
           text: "Business Documentation",
@@ -511,6 +507,7 @@ export default defineUserConfig({
             },
             { text: "Branching Strategy", link: "/demo4/devOps/branching.md" },
             { text: "CI/CD", link: "/demo4/devOps/cicd.md" },
+            { text: "Testing Policy", link: "/demo4/devOps/testing.md" },
           ],
         },
       ],

@@ -26,18 +26,29 @@ By following this strategy, we aim to maintain a stable codebase, manage feature
 - Creation: Branch off from `develop`.
 - Merge: Merged back into `develop` after completion and testing.
 
-### Release branch 
-- Purpose: Used to prepare for a new production release, allowing for minor bug fixes and final tweaks.
-- Naming Convention: `release/release-version` (e.g., release/1.0.0).
-- Creation: Branch off from `develop` when the codebase is ready for a new release.
-Merge: Merged into `main` and `develop` after finalization.
-
 ### Hotfix branch
 - Purpose: Used to quickly address critical issues found in the production environment.
 - Naming Convention: `hotfix/hotfix-name` (e.g., hotfix/security-patch).
 - Creation: Branch off from `main`.
 - Merge: Merged into `main` and `develop` after the fix is applied.
 
+### Bugfix
+- Purpose: Used to address small bugs found during development.
+- Naming Convention: `bugfix/bugfix-name` (e.g., bugfix/date-format).
+- Creation: Branch off from `develop`.
+- Merge: Merged into `develop` after the fix is applied.
+
+### Refactor 
+- Purpose: Used for general code improvements.
+- Naming Convention: `refactor/refactor-name` (e.g., refactor/job-speed-improvement).
+- Creation: Branch off from `develop`.
+- Merge: Merged into `develop` after the fix is applied.
+
+### Chore
+- Purpose: Used to do maintenance on the system and perform CI/CD updates.
+- Naming Convention: `chore/chore-name` (e.g., chore/reconfiguring-docker).
+- Creation: Branch off from `develop`.
+- Merge: Merged into `develop` after the fix is applied.
 
 ## Workflow 
 ### Feature Development
@@ -53,22 +64,8 @@ Merge: Merged into `main` and `develop` after finalization.
 - Conduct a code review and resolve any feedback.
 - Merge the feature branch into develop and delete the feature branch.
 
-### Release Preparation
-1. Creating a Release Branch:
-
-- When develop has accumulated enough changes, create a release branch from `develop`.
-- Name the branch `release/release-version`.
-
-2. Finalizing the Release:
-
-- Perform any final testing and bug fixing on the release branch.
-- Update version numbers and documentation as needed.
-
-3. Completing the Release:
-
-- Merge the release branch into main and tag the release.
-- Merge the release branch back into develop to incorporate any changes made during the release preparation.
-- Delete the release branch.
+<!-- ### Release Preparation
+1. Everyone freak out bcs demo approaching and test non existent!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 
 ### Hotfix Management
 1. Creating a Hotfix Branch:
