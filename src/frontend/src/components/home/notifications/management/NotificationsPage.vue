@@ -63,13 +63,13 @@
                 <v-card-text class="bg-background">
                   <v-list class="bg-background" rounded="md">
                     <v-list-item
+                      class="bg-background"
                       v-for="(notification, i) in notifications"
                       :key="i"
-                      @click="handleNotificationClick(notification._id)"
                     >
                       <Panel :class="'bg-background'">
                         <template #header>
-                          <div class="flex items-center gap-2">
+                          <div class="flex items-center gap-2 bg-background">
                             <!--                            <v-icon-->
                             <!--                              :icon="-->
                             <!--                                !notification.isRead-->
@@ -83,7 +83,7 @@
                             </v-badge>
                             <v-icon icon="fa: fa-regular fa-bell" v-else></v-icon>
 
-                            <span class="font-bold h6 notification-title" style="color: #f0984d">{{
+                            <span class="font-bold h6" style="color: #f0984d">{{
                               notification.message.title
                             }}</span>
                           </div>

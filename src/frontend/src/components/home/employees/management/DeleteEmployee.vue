@@ -87,7 +87,7 @@ export default {
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
-      modal_light_theme_color: '#FFFFFF',
+      modal_light_theme_color: '#FFFFFF'
     }
   },
   methods: {
@@ -95,14 +95,10 @@ export default {
       this.clientDialog = false
     },
     async deleteEmployee() {
-      const employee_to_be_deleted = {
-        currentEmployeeId: localStorage['employeeId']
-      }
       console.log(employee_to_be_deleted)
       this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        data: employee_to_be_deleted,
         params: {
           currentEmployeeId: localStorage['employeeId']
         }
@@ -117,7 +113,7 @@ export default {
             detail: 'Employee deleted successfully',
             life: 3000
           })
-          this.clientDialog = false
+
           this.clientDialog = false
           window.location.reload()
         })
@@ -132,7 +128,7 @@ export default {
           })
         })
       this.isDeleting = false
-    },
+    }
   }
 }
 </script>
