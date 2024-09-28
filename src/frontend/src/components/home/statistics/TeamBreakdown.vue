@@ -19,15 +19,25 @@
           <v-row>
             <v-col cols="12" lg="6">
               <p><strong>Average Number of Team Members per Team:</strong></p>
-              <Chart v-if="teamStats.averageNumMembers > 0" type="bar" :data="averageTeamMembersChartData"
-                :options="chartOptions" height="300px" />
+              <Chart
+                v-if="teamStats.averageNumMembers > 0"
+                type="bar"
+                :data="averageTeamMembersChartData"
+                :options="chartOptions"
+                height="300px"
+              />
             </v-col>
 
             <!-- Conditionally render Line Chart for Average Number of Jobs per Team -->
             <v-col cols="12" lg="6">
               <p><strong>Average Number of Jobs per Team:</strong></p>
-              <Chart v-if="teamStats.averageNumJobsForTeam > 0" type="line" :data="averageJobsPerTeamChartData"
-                :options="chartOptions" height="300px" />
+              <Chart
+                v-if="teamStats.averageNumJobsForTeam > 0"
+                type="line"
+                :data="averageJobsPerTeamChartData"
+                :options="chartOptions"
+                height="300px"
+              />
             </v-col>
           </v-row>
         </v-container>
@@ -36,11 +46,15 @@
         <p v-if="teamStats.ratingPerTeam.length"><strong>Average Rating per Team:</strong></p>
         <v-container v-if="teamStats.ratingPerTeam.length">
           <v-row>
-            <v-col cols="12" md="6" lg="3" v-for="(team, index) in teamStats.ratingPerTeam" :key="team.teamId">
+            <v-col
+              cols="12"
+              md="6"
+              lg="3"
+              v-for="(team, index) in teamStats.ratingPerTeam"
+              :key="team.teamId"
+            >
               <v-card class="d-flex flex-column mx-auto py-4" elevation="10">
-                <div class="d-flex justify-center text-h5 mb-2">
-                  Team {{ index + 1 }} Ratings
-                </div>
+                <div class="d-flex justify-center text-h5 mb-2">Team {{ index + 1 }} Ratings</div>
 
                 <div class="d-flex align-center flex-column my-auto">
                   <!-- Work Performance Rating -->
@@ -49,8 +63,11 @@
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
 
-                  <v-rating :model-value="team.workPerformanceRatingAverage ?? 0" color="yellow-darken-3"
-                    half-increments></v-rating>
+                  <v-rating
+                    :model-value="team.workPerformanceRatingAverage ?? 0"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
 
                   <div class="px-3 mb-4">
                     {{ team.workPerformanceRating.length }} work performance ratings
@@ -62,8 +79,11 @@
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
 
-                  <v-rating :model-value="team.customerServiceRatingAverage ?? 0" color="yellow-darken-3"
-                    half-increments></v-rating>
+                  <v-rating
+                    :model-value="team.customerServiceRatingAverage ?? 0"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
 
                   <div class="px-3 mb-4">
                     {{ team.customerServiceRating.length }} customer service ratings
@@ -73,8 +93,13 @@
                 <!-- Progress Linear for Ratings -->
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i" class="mb-2">
-                    <v-progress-linear :model-value="calculateProgress(team.workPerformanceRating, i + 1)" class="mx-n5"
-                      color="yellow-darken-3" height="20" rounded></v-progress-linear>
+                    <v-progress-linear
+                      :model-value="calculateProgress(team.workPerformanceRating, i + 1)"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
 
                     <template v-slot:prepend>
                       <span>{{ i + 1 }}</span>
@@ -83,8 +108,9 @@
 
                     <template v-slot:append>
                       <div class="rating-values">
-                        <span class="d-flex justify-end">{{ calculateRatingCount(team.workPerformanceRating, i + 1)
-                          }}</span>
+                        <span class="d-flex justify-end">{{
+                          calculateRatingCount(team.workPerformanceRating, i + 1)
+                        }}</span>
                       </div>
                     </template>
                   </v-list-item>
@@ -100,13 +126,12 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
   components: { Chart },
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       currentTab: 'Team Breakdown',
       teamStats: {
         totalNumTeams: 0,
@@ -154,16 +179,15 @@ export default {
       }
     },
     calculateProgress(ratings, starValue) {
-      const totalRatings = ratings.length;
-      const starCount = ratings.filter((r) => r === starValue).length;
-      return totalRatings ? (starCount / totalRatings) * 100 : 0;
+      const totalRatings = ratings.length
+      const starCount = ratings.filter((r) => r === starValue).length
+      return totalRatings ? (starCount / totalRatings) * 100 : 0
     },
     calculateRatingCount(ratings, starValue) {
-      return ratings.filter((r) => r === starValue).length;
+      return ratings.filter((r) => r === starValue).length
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      return API_URL
     },
     async getTeamStats() {
       const config = {
@@ -178,7 +202,10 @@ export default {
       const apiURL = await this.getRequestUrl()
 
       try {
-        const response = await axios.get(`${apiURL}stats/teamStats/${localStorage.getItem('currentCompany')}`, config)
+        const response = await axios.get(
+          `${apiURL}stats/teamStats/${localStorage.getItem('currentCompany')}`,
+          config
+        )
         this.teamStats = response.data.data
 
         // Update chart data if values are present
