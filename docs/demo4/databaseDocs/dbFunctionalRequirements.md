@@ -1,64 +1,104 @@
 # Functional Requirements of the Database
 
-
-### Authentication and Authorisation
+### Authentication and Authorization
 
 - **User login and logout**: Secure login and logout functionality for users.
 - **Password management**: Ability for users to change passwords, recover forgotten passwords, and ensure password security.
 - **Role-based access control**: Implementing different access levels based on user roles (e.g., admin, employee, client).
 
-### User Document
+### User Management
 
-- **User management**: Creat, update, delete and read user entities.
-- **Joined companies management**: Allow users to join or leave companies
+- **User profile management**: Create, read, update, and delete user entities, including personal information, contact details, and system details.
+- **Company association**: Allow users to join or leave companies, managing their `joinedCompanies` list.
+- **Skills management**: Add, remove, or update user skills.
+- **Device management**: Associate and manage multiple device IDs for each user.
+- **Account validation**: Implement a process to validate user accounts.
 
-### Employee Document
+### Employee Management
 
-- **Employee management**: Creat, update, delete and read employee entities.
-- **Company association**: Associate the employee with the company.
+- **Employee profile management**: Create, read, update, and delete employee entities.
+- **Company association**: Associate employees with companies.
 - **Role and permission management**: Assign roles and manage permissions for different employees.
-- **Model company structure**: Assign or remove superiorID and subordinateIds to model the structure company.
-- **Job assignment management**: Assign or remove jobs from an employee.
+- **Organizational structure**: Model company structure by assigning or removing superiorId and managing subordinates.
+- **Job and task assignment**: Manage current job and task assignments for employees.
+- **Team membership**: Associate employees with teams.
 
-### Company Document
+### Company Management
 
-- **Company registration and profile management**: Allow companies to register, and manage their profiles.
-- **Employee association**: Associate employees with companies and manage their roles within the company.
-- **Status list**: Add, edit and remove statuses
-- **Tag list**: Add, edit and remove tag
+- **Company profile management**: Allow companies to register and manage their profiles, including contact details and address information.
+- **Employee association**: Manage employee associations with the company.
+- **Job status management**: Add, edit, and remove job statuses.
+- **Job tag management**: Add, edit, and remove job tags.
+- **Inventory management**: Associate and manage inventory items for the company.
 
-### Inventory Document
+### Inventory Management
 
-- **Inventory item management**: Create, update, delete and read inventory items.
-- **Stock level management**: Track stock levels and reorder levels of inventory items 
+- **Inventory item management**: Create, read, update, and delete inventory items.
+- **Stock level tracking**: Monitor current stock levels of inventory items.
+- **Reorder level management**: Set and manage reorder levels for inventory items.
+- **Cost and pricing**: Manage cost prices and sale prices for inventory items.
+- **Stock movement tracking**: Record and manage stock movements, including reasons and employee associations.
+- **Stock take management**: Conduct and record stock takes, comparing current and recorded stock levels.
 
+### Client Management
 
-### Client Document
-
-- **Client profile management**: Create, update, delete and read client profiles.
+- **Client profile management**: Create, read, update, and delete client profiles.
 - **Contact information management**: Store and manage client contact details and addresses.
+- **Company association**: Associate clients with specific companies.
 
-### Job Document
+### Job Management
 
-- **Job management**: Create, update, delete and read jobs.
-- **Job assignment**: Assign jobs to employees and manage job details.
-- **Job scheduling**: Schedule jobs and manage job timelines.
-- **Job status tracking**: Update and track the status of jobs (e.g., pending, in progress, completed).
-- **Client feedback collection**: Collect and store client feedback for completed jobs.
-- **Upload files**: Add and remove files to the job. 
-- **Comments**: Add, remove and edit comments on a job. 
-- **Employee and team assignment**: Assign or remove employees or teams from a job. 
-- **Task management**: Add, remove, edit and track tasks.
-- **Activity History**: Keep track of all activity on a job.
-- **Company association**: Associate the job with the company.
-- **Client feedback**: Add feedback from client to job
+- **Job creation and management**: Create, read, update, and delete jobs.
+- **Job assignment**: Assign jobs to employees and teams.
+- **Job scheduling**: Manage job timelines, including start and end dates.
+- **Status tracking**: Update and track the status of jobs using predefined status options.
+- **Priority management**: Assign and manage priority tags for jobs.
+- **File management**: Add and remove attachments and cover images for jobs.
+- **Comment system**: Add, remove, and edit comments on jobs.
+- **Task management**: Create, update, delete, and track tasks within jobs.
+- **Activity history**: Maintain a log of all activities related to a job.
+- **Client feedback**: Collect and store client feedback for completed jobs.
 
-### Role Document
-- **Role management**: Create, update, delete and read roles.
-- **Permission suite**: Add or remove a permission to a role.
-- **Company association**: Associate the role with the company.
+### Role Management
 
-### Team Document
-- **Team management**: Create, update, delete and read teams.
-- **Company association**: Associate the team with the company.
-- **Job assignment management**: Assign or remove jobs from a team.
+- **Role creation and management**: Create, read, update, and delete roles.
+- **Permission suite management**: Add or remove permissions for each role.
+- **Company association**: Associate roles with specific companies.
+
+### Team Management
+
+- **Team creation and management**: Create, read, update, and delete teams.
+- **Team composition**: Manage team members and team leaders.
+- **Company association**: Associate teams with specific companies.
+- **Job assignment**: Manage current job assignments for teams.
+
+### Chat and Communication
+
+- **Chat message management**: Create, read, and manage chat messages between users.
+- **Chat creation**: Allow users to create new chats and manage participants.
+
+### Notification System
+
+- **Notification management**: Create, read, and manage notifications for users.
+- **Notification status**: Track whether notifications have been read by recipients.
+- **Job-related notifications**: Distinguish between job-related and other types of notifications.
+
+### Time Tracking
+
+- **Time interval management**: Record start and end times for work periods.
+- **Employee time tracking**: Associate time tracking entries with specific employees and jobs.
+- **Break management**: Record and manage break times during work periods.
+
+### Invoice Management
+
+- **Invoice creation and management**: Create, read, update, and delete invoices.
+- **Item management**: Add and manage both inventory and labor items on invoices.
+- **Payment tracking**: Record payment status and dates for invoices.
+- **Tax calculation**: Manage tax amounts and percentages for invoices.
+- **Association with jobs and clients**: Link invoices to specific jobs and clients.
+
+### Video Call Management
+
+- **Video call scheduling**: Create and manage video call schedules.
+- **Participant management**: Add and remove participants for video calls.
+- **Company association**: Associate video calls with specific companies.
