@@ -14,7 +14,9 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "lhci:mobile": "lhci autorun",
+    "lhci:desktop": "lhci autorun --collect.settings.preset=desktop"
   },
   "dependencies": {
     "@cypress/vue": "^6.0.1",
@@ -68,6 +70,7 @@
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^6.0.2",
     "@fortawesome/fontawesome-free": "^6.6.0",
+    "@lhci/cli": "^0.14.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/crypto-js": "^4.2.2",

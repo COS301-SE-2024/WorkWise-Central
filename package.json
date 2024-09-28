@@ -6,6 +6,7 @@
   "description": "WorkWise Central is a service-management tool designed for service-based industries. It is engineered to streamline operations, maximize resource efficiency, and elevate customer experiences.",
   "homepage": "https://tuksui.sharpsoftwaresolutions.net/",
   "devDependencies": {
+    "@lhci/cli": "^0.14.0",
     "@vuepress/bundler-vite": "^2.0.0-rc.13",
     "@vuepress/theme-default": "^2.0.0-rc.33",
     "concurrently": "^8.2.2",
@@ -18,7 +19,9 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "start:dev": "concurrently \"cd src/frontend && npm run dev\" \"cd src/api-gateway && npm run start:dev\"",
-    "installAll": "npm install && cd src/api-gateway && npm install && cd ../frontend && npm install && cd ../../"
+    "installAll": "npm install && cd src/api-gateway && npm install && cd ../frontend && npm install && cd ../../",
+    "lhci:mobile": "lhci autorun",
+    "lhci:desktop": "lhci autorun --collect.settings.preset=desktop"
   },
   "dependencies": {
     "https-localhost": "^4.7.1",
