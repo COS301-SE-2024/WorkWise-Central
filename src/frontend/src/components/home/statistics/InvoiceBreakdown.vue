@@ -34,18 +34,16 @@
   </v-card>
 </template>
 
-
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
   components: { Chart },
   data() {
     return {
       currentTab: 'Invoice Breakdown',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       invoiceStats: {
         totalNumInvoices: 0,
         numPaid: 0,
@@ -65,31 +63,30 @@ export default {
   computed: {
     // Computed property to check if revenue chart data has meaningful values
     revenueChartHasData() {
-      return this.revenueChartData.datasets?.[0]?.data?.some((value) => value > 0);
+      return this.revenueChartData.datasets?.[0]?.data?.some((value) => value > 0)
     }
   },
   mounted() {
-    this.getInvoiceStats();
+    this.getInvoiceStats()
   },
   methods: {
     async isLocalAvailable(localUrl) {
       try {
-        const res = await axios.get(localUrl);
-        return res.status < 300 && res.status > 199;
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
       } catch (error) {
-        return false;
+        return false
       }
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl);
-      return localAvailable ? this.localUrl : this.remoteUrl;
+      return API_URL
     },
     fetchRevenueForMonth(month) {
-      const monthlyRevenue = this.invoiceStats.revenue;
+      const monthlyRevenue = this.invoiceStats.revenue
 
       // Extract the data for the chart
-      const months = monthlyRevenue.map((entry) => entry.month);
-      const numUnpaid = monthlyRevenue.map((entry) => entry.numUnpaid);
+      const months = monthlyRevenue.map((entry) => entry.month)
+      const numUnpaid = monthlyRevenue.map((entry) => entry.numUnpaid)
 
       // Update the chart with the data
       this.revenueChartData = {
@@ -103,7 +100,7 @@ export default {
             borderWidth: 1
           }
         ]
-      };
+      }
     },
     async getInvoiceStats() {
       const config = {
@@ -114,12 +111,12 @@ export default {
         params: {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
-      };
-      const apiURL = await this.getRequestUrl();
+      }
+      const apiURL = await this.getRequestUrl()
       axios
         .get(`${apiURL}stats/invoiceStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          this.invoiceStats = response.data.data;
+          this.invoiceStats = response.data.data
 
           // Update the pie chart data with API response
           this.paidVsUnpaidChartData = {
@@ -130,18 +127,17 @@ export default {
                 backgroundColor: ['#42A5F5', '#FF6384']
               }
             ]
-          };
+          }
 
           // Fetch revenue data for all months (replace with actual logic if needed)
-          this.fetchRevenueForMonth('January');
+          this.fetchRevenueForMonth('January')
         })
         .catch((error) => {
-          console.error('Failed to fetch invoice stats:', error);
-        });
+          console.error('Failed to fetch invoice stats:', error)
+        })
     }
   }
-};
-
+}
 </script>
 
 <style scoped>
