@@ -9,16 +9,12 @@
     "build": "run-p type-check \"build-only {@}\" --",
     "serve": "PORT=4433 serve dist",
     "preview": "vite preview",
-    "test:e2e": "start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
-    "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@cypress/vue": "^6.0.1",
-    "@cypress/webpack-dev-server": "^3.10.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@googlemaps/js-api-loader": "^1.16.8",
     "@mdi/font": "^7.4.47",
@@ -66,7 +62,6 @@
     "webpack-plugin-vuetify": "^3.0.3"
   },
   "devDependencies": {
-    "@cypress/webpack-preprocessor": "^6.0.2",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
@@ -84,9 +79,7 @@
     "@vue/tsconfig": "^0.5.1",
     "autoprefixer": "^10.4.20",
     "css-loader": "^7.1.2",
-    "cypress": "^13.12.0",
     "eslint": "^8.57.0",
-    "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-vue": "^9.23.0",
     "https-localhost": "^4.7.1",
     "jsdom": "^24.0.0",
