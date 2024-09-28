@@ -16,23 +16,12 @@ import {
   UseInterceptors,
   //UploadedFile,
   UploadedFiles,
+  Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto, CreateJobResponseDto } from './dto/create-job.dto';
-import {
-  AddAttachmentDto,
-  AddCommentDto,
-  AddTaskDto,
-  RemoveCommentDto,
-  RemoveTaskDto,
-  UpdateAttachmentDto,
-  UpdateCommentDto,
-  UpdateDtoResponse,
-  UpdateJobDto,
-  UpdateStatus,
-  UpdateStatusDto,
-  UpdateTaskDto,
-} from './dto/update-job.dto';
+import { UpdateJobDto } from './dto/update-job.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -49,8 +38,8 @@ import mongoose, { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto } from './dto/create-tag.dto';
-import { extractUserId, validateObjectId } from '../utils/Utils';
+import { CreatePriorityTagDto, CreateStatusDto, CreateTagDto, PriorityTagDto } from './dto/create-tag.dto';
+import { extractUserId, isBase64Uri, validateObjectId, validateObjectIds } from '../utils/Utils';
 import { DeleteStatusDto, DeleteTagDto, UpdatePriorityTagDto, UpdateTagDto } from './dto/edit-tag.dto';
 import {
   JobAllResponseDetailedDto,
@@ -63,9 +52,16 @@ import {
   TagResponseDto,
   TagsAllResponseDto,
 } from './dto/job-responses.dto';
-import { JobAssignDto, JobAssignGroupDto, TaskAssignDto } from './dto/assign-job.dto';
+import { JobAssignDto, JobAssignGroupDto, JobAssignTeamDto, TaskAssignDto } from './dto/assign-job.dto';
 //import { UpdateProfilePicDto } from '../users/dto/update-user.dto';
 import { FileFieldsInterceptor /*, FileInterceptor*/ } from '@nestjs/platform-express';
+import { AddCommentDto, RemoveCommentDto, UpdateCommentDto } from './dto/job-comments.dto';
+import { AddAttachmentDto, UpdateAttachmentDto } from './dto/job-attachment.dto';
+import { UpdateStatus, UpdateStatusDto } from './dto/job-status.dto';
+import { AddTaskDto, RemoveTaskDto, UpdateTaskDto } from './dto/job-tasks.dto';
+import { AddTaskItemDto, RemoveTaskItemDto, UpdateTaskItemDto } from './dto/job-task-item.dto';
+import { ConvertItemToJobDto } from './dto/convert-item-to-job.dto';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Job';
 
@@ -75,6 +71,7 @@ export class JobController {
   constructor(
     private readonly jobService: JobService,
     private jwtService: JwtService,
+    private readonly employeeService: EmployeeService,
   ) {}
   validateObjectId(id: string | Types.ObjectId, entity: string = ''): boolean {
     let data: string;
@@ -113,11 +110,18 @@ export class JobController {
   })
   @Post('/create')
   async create(@Headers() headers: any, @Body() createJobDto: CreateJobDto) {
-    validateObjectId(createJobDto.assignedBy, 'assignedBy');
-    if (createJobDto.companyId) validateObjectId(createJobDto.companyId, 'Company');
-
+    if (createJobDto.coverImage) {
+      console.log('Cover image present');
+      const isValidUrl = isBase64Uri(createJobDto.coverImage);
+      if (!isValidUrl) {
+        throw new BadRequestException('coverImage must be Base64 URI');
+      }
+    }
     try {
+      validateObjectId(createJobDto.assignedBy, 'assignedBy');
+      if (createJobDto.companyId) validateObjectId(createJobDto.companyId, 'Company');
       const userId = extractUserId(this.jwtService, headers);
+      console.log(userId);
       return { data: await this.jobService.create(userId, createJobDto) };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
@@ -152,15 +156,48 @@ export class JobController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all/company/:cid')
-  async findAllInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
-    try {
-      validateObjectId(companyId);
-      const userId = extractUserId(this.jwtService, headers);
-      return {
-        data: await this.jobService.getAllJobsInCompany(userId, new Types.ObjectId(companyId)),
-      };
-    } catch (Error) {
-      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+  async findAllInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('view all jobs')) {
+      try {
+        validateObjectId(companyId);
+        const userId = extractUserId(this.jwtService, headers);
+        return {
+          data: await this.jobService.getAllJobsInCompany(userId, new Types.ObjectId(companyId)),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view jobs under me')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(userId);
+
+        const employeeId = new Types.ObjectId(currentEmployeeId);
+        return {
+          data: await this.jobService.getAllJobBelowMe(employeeId),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view jobs assigned to me')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(userId);
+
+        const employeeId = new Types.ObjectId(currentEmployeeId);
+        return {
+          data: await this.jobService.getAllJobsForEmployee(userId, employeeId),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      return {};
     }
   }
 
@@ -174,15 +211,48 @@ export class JobController {
     description: `An array of mongodb objects of the ${className} class`,
   })
   @Get('all/company/detailed/:cid')
-  async findDetailedAllInCompany(@Headers() headers: any, @Param('cid') companyId: string) {
-    try {
-      const userId = extractUserId(this.jwtService, headers);
-      validateObjectId(companyId);
-      return {
-        data: await this.jobService.getAllDetailedJobsInCompany(userId, new Types.ObjectId(companyId)),
-      };
-    } catch (Error) {
-      throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+  async findDetailedAllInCompany(
+    @Headers() headers: any,
+    @Param('cid') companyId: string,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('view all jobs')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(companyId);
+        return {
+          data: await this.jobService.getAllDetailedJobsInCompany(userId, new Types.ObjectId(companyId)),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view jobs under me')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(userId);
+
+        const employeeId = new Types.ObjectId(currentEmployeeId);
+        return {
+          data: await this.jobService.getAllJobBelowMeDetailed(employeeId),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else if (currentEmployee.role.permissionSuite.includes('view jobs assigned to me')) {
+      try {
+        const userId = extractUserId(this.jwtService, headers);
+        validateObjectId(userId);
+
+        const employeeId = new Types.ObjectId(currentEmployeeId);
+        return {
+          data: await this.jobService.getAllDetailedJobsForEmployee(userId, employeeId),
+        };
+      } catch (Error) {
+        throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      return {};
     }
   }
 
@@ -224,8 +294,9 @@ export class JobController {
       validateObjectId(userId);
       validateObjectId(empId);
 
+      const employeeId = new Types.ObjectId(empId);
       return {
-        data: await this.jobService.getAllJobsForEmployee(userId, new Types.ObjectId(empId)),
+        data: await this.jobService.getAllJobsForEmployee(userId, employeeId),
       };
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -301,13 +372,20 @@ export class JobController {
   @ApiBody({ type: UpdateJobDto })
   @Patch('update/:id')
   async update(@Headers() headers: any, @Param('id') jobId: string, @Body() updateJobDto: UpdateJobDto) {
+    if (updateJobDto.coverImage) {
+      console.log('Cover image present');
+      const isValidUrl = isBase64Uri(updateJobDto.coverImage);
+      if (!isValidUrl) {
+        throw new BadRequestException('coverImage must be Base64 URI');
+      }
+    }
     try {
       validateObjectId(jobId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       // console.log(userId);
       // console.log(new Types.ObjectId(jobId));
-      const success = await this.jobService.update(userId, new Types.ObjectId(jobId), updateJobDto);
-      return new UpdateDtoResponse(success);
+      const job = await this.jobService.update(userId, new Types.ObjectId(jobId), updateJobDto);
+      return { data: job };
     } catch (e) {
       console.log(e);
       throw new InternalServerErrorException(`Job could not be updated`);
@@ -483,7 +561,7 @@ export class JobController {
     summary: 'Add a job Priority Tag to a company',
   })
   @ApiCreatedResponse({
-    type: BooleanResponseDto,
+    type: PriorityTagDto,
     description: 'Confirmation of success of request',
   })
   @UseGuards(AuthGuard)
@@ -573,7 +651,7 @@ export class JobController {
     summary: 'Update the name, colour, or PriorityLevel of a PriorityTag, within a company',
   })
   @ApiResponse({
-    type: TagResponseDto,
+    type: PriorityTagDto,
     description: 'PriorityTag successfully updated',
   })
   @UseGuards(AuthGuard)
@@ -631,7 +709,7 @@ export class JobController {
   @ApiResponse({ type: JobResponseDto })
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @Put('/employee/task')
+  @Put('/employee/taskItem')
   async assignEmployeeToTaskItem(@Headers() headers: any, @Body() taskAssignDto: TaskAssignDto) {
     try {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
@@ -648,7 +726,7 @@ export class JobController {
   @ApiResponse({ type: JobResponseDto })
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @Patch('employee/task/item')
+  @Patch('employee/taskItem')
   async unassignEmployeeFromTaskItem(@Headers() headers: any, @Body() taskAssignDto: TaskAssignDto) {
     try {
       const userId = extractUserId(this.jwtService, headers);
@@ -695,24 +773,47 @@ export class JobController {
     }
   }
 
-  ///Employees
-
-  /*  addAttachmentToJob(@Headers() headers: any, @Param('cid') companyId: string) {
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'Assign a team to a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @Put('/team')
+  async assignTeam(@Headers() headers: any, @Body() assignTeamDto: JobAssignTeamDto) {
     try {
-      validateObjectId(companyId);
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
-      const compId = new Types.ObjectId(companyId);
-      return this.jobService.addAttachmentToJob(userId, compId);
+      return {
+        data: await this.jobService.assignTeam(userId, assignTeamDto),
+      };
     } catch (e) {
       console.log(e);
-      throw new InternalServerErrorException(`Job could not be updated`);
+      throw e;
     }
-  }*/
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'Unassign a team from a job' })
+  @ApiResponse({ type: JobResponseDto })
+  @Patch('/team')
+  async unassignTeam(@Headers() headers: any, @Body() assignTeamDto: JobAssignTeamDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.unassignTeam(userId, assignTeamDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  ///Employees
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiOperation({
-    summary: `Add an attachment to a ${className}`,
+    summary: `Add an attachment to a ${className}, (the key needed in in your form-data is "files")`,
+    description: 'Max of 20 files at a time',
   })
   @ApiOkResponse({
     type: JobResponseDto,
@@ -720,15 +821,20 @@ export class JobController {
   })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 20 }]))
-  @Patch('/add/attachments')
+  @Patch('/add/attachments/')
   async addAttachments(
     @Headers() headers: any,
-    @Body() attachmentDto: AddAttachmentDto,
+    @Query('jId') jId: string,
+    @Query('eId') empId: string,
     @UploadedFiles() files: { files?: Express.Multer.File[] },
   ) {
     console.log(files);
     try {
       const userId = extractUserId(this.jwtService, headers);
+      validateObjectIds([empId, jId]);
+      const employeeId = new Types.ObjectId(empId);
+      const jobId = new Types.ObjectId(jId);
+      const attachmentDto = new AddAttachmentDto(employeeId, jobId);
       return {
         data: await this.jobService.addAttachments(userId, attachmentDto, files.files),
       };
@@ -741,12 +847,13 @@ export class JobController {
   @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Update the attachment array in a ${className}`,
+    description: 'All you need to do is pass me the updated array of strings',
   })
   @ApiOkResponse({
     type: JobResponseDto,
     description: `The updated ${className} instance`,
   })
-  @Patch('/update/attachments')
+  @Patch('/updateAttachments')
   async updateAttachments(@Headers() headers: any, @Body() updateAttachmentDto: UpdateAttachmentDto) {
     try {
       const userId = extractUserId(this.jwtService, headers);
@@ -893,6 +1000,27 @@ export class JobController {
     }
   }
 
+  @ApiOperation({ summary: 'Add an item to a Job Task' })
+  @ApiResponse({
+    type: JobResponseDto,
+    description: 'The updated Job',
+  })
+  @ApiBody({ type: AddTaskItemDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Put('/taskItem')
+  async addTaskItem(@Headers() headers: any, @Body() itemDto: AddTaskItemDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.addJobTaskItem(userId, itemDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
   @ApiOperation({ summary: 'Remove a task within a Job, including all its Items' })
   @ApiResponse({
     type: JobResponseDto,
@@ -907,6 +1035,39 @@ export class JobController {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.removeTaskFromJob(userId, removeTaskDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @ApiOperation({ summary: 'Remove an Item within a Task' })
+  @ApiResponse({
+    type: JobResponseDto,
+    description: 'The updated Job',
+  })
+  //@ApiBody({ type: RemoveTaskItemDto })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Delete('/taskItem')
+  async removeTaskItem(
+    @Headers() headers: any,
+    @Query('empId') eId: string,
+    @Query('jobId') jId: string,
+    @Query('taskId') tId: string,
+    @Query('itemId') iId: string,
+  ) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      validateObjectIds([eId, jId, tId, iId]);
+      const employeeId = new Types.ObjectId(eId);
+      const jobId = new Types.ObjectId(jId);
+      const taskId = new Types.ObjectId(tId);
+      const itemId = new Types.ObjectId(iId);
+      const removeTaskItemDto = new RemoveTaskItemDto(employeeId, jobId, taskId, itemId);
+      return {
+        data: await this.jobService.removeJobTaskItem(userId, removeTaskItemDto),
       };
     } catch (e) {
       console.log(e);
@@ -930,6 +1091,51 @@ export class JobController {
       const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
       return {
         data: await this.jobService.editTaskInJob(userId, updateTaskDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Change an item a Task`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The updated Job object`,
+  })
+  @Patch('/taskItem')
+  async editTaskItem(@Headers() headers: any, @Body() updateTaskItemDto: UpdateTaskItemDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.editJobTaskItem(userId, updateTaskItemDto),
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: `Convert a Job TaskList Item into a new Job`,
+    description: `It also removes the task from the current Job and updated the History to reflect the conversion`,
+  })
+  @ApiOkResponse({
+    type: JobResponseDto,
+    description: `The new Job that was created from the TaskList Item`,
+  })
+  @Patch('/convert')
+  async convertItemToJob(@Headers() headers: any, @Body() convertItemToJobDto: ConvertItemToJobDto) {
+    try {
+      const userId: Types.ObjectId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.jobService.convertTaskListItemToJob(userId, convertItemToJobDto),
       };
     } catch (e) {
       console.log(e);

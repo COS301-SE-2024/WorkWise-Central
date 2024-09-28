@@ -38,7 +38,7 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'JobDetailsModal',
-  props: ['isdarkmode'],
+  props: ['isDarkMode'],
   data() {
     return {
       job: {

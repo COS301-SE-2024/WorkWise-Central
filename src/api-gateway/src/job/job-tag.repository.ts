@@ -3,8 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JobPriorityTag, JobTag } from './entities/job-tag.entity';
 import { Model, Types } from 'mongoose';
 import { JobStatus } from './entities/job-status.entity';
-import { UpdatePriorityTag, UpdateStatus, UpdateTag } from './dto/update-job.dto';
 import { isNotDeleted } from '../shared/soft-delete';
+import { UpdatePriorityTag, UpdateTag } from './dto/job-tag.dto';
+import { UpdateStatus } from './dto/job-status.dto';
 
 @Injectable()
 export class JobTagRepository {
@@ -29,12 +30,12 @@ export class JobTagRepository {
 
   async addJobTagToCompany(jobTag: JobTag) {
     const jobTagModel = new this.jobTagModel(jobTag);
-    return await jobTagModel.save();
+    return (await jobTagModel.save()).toObject();
   }
 
   async addJobPriorityTagToCompany(jobPriorityTag: JobPriorityTag) {
     const priorityTagModel = new this.jobPriorityTagModel(jobPriorityTag);
-    return await priorityTagModel.save();
+    return (await priorityTagModel.save()).toObject();
   }
 
   async deleteJobTag(tagId: Types.ObjectId) {
@@ -64,10 +65,10 @@ export class JobTagRepository {
       .exec();
   }
 
-  async findStatusByLabel(label: string) {
+  async findStatusByLabel(companyId: Types.ObjectId, label: string) {
     return this.jobStatusModel
       .findOne({
-        $and: [{ status: label }, isNotDeleted],
+        $and: [{ companyId: companyId }, { status: label }, isNotDeleted],
       })
       .lean()
       .exec();
@@ -96,10 +97,21 @@ export class JobTagRepository {
 
   async createDefaultStatusesInCompany(statusArr: JobStatus[]) {
     //'No status' and 'Archive'
+    const result: any[] = [];
     for (const jobStatus of statusArr) {
       const newStatus = await this.jobStatusModel.create(jobStatus);
-      await newStatus.save();
+      result.push(await newStatus.save());
     }
+    return result;
+  }
+
+  async createDefaultPriorityTagsInCompany(priorityTags: JobPriorityTag[]) {
+    const result: any[] = [];
+    for (const jobPriorityTag of priorityTags) {
+      const newStatus = await this.jobPriorityTagModel.create(jobPriorityTag);
+      result.push(await newStatus.save());
+    }
+    return result;
   }
 
   async updateTag(tagId: Types.ObjectId, updates: UpdateTag) {
@@ -107,7 +119,7 @@ export class JobTagRepository {
       .findOneAndUpdate(
         { _id: tagId },
         {
-          ...updates,
+          $set: { ...updates },
         },
         { new: true },
       )
@@ -120,7 +132,7 @@ export class JobTagRepository {
       .findOneAndUpdate(
         { _id: tagId },
         {
-          ...updates,
+          $set: { ...updates },
         },
         { new: true },
       )
@@ -133,7 +145,7 @@ export class JobTagRepository {
       .findOneAndUpdate(
         { _id: statusId },
         {
-          ...updateStatus,
+          $set: { ...updateStatus },
         },
         { new: true },
       )
@@ -146,5 +158,11 @@ export class JobTagRepository {
       $and: [{ _id: statusId }, { companyId: companyId }],
     });
     return deleteResult.acknowledged;
+  }
+
+  deleteAllTagsAndStatusesInCompany(companyId: Types.ObjectId) {
+    this.jobTagModel.deleteMany({ companyId: companyId });
+    this.jobPriorityTagModel.deleteMany({ companyId: companyId });
+    this.jobStatusModel.deleteMany({ companyId: companyId });
   }
 }

@@ -16,16 +16,18 @@ import { Types } from 'mongoose';
 
 export class ContactInfo {
   @ApiProperty()
+  @IsOptional()
   @IsString()
-  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
+  //@Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
-  phoneNumber: string;
+  phoneNumber?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   @IsEmail()
   @Transform(({ value }) => value.toLowerCase())
-  email: string;
+  email?: string;
 }
 
 export class Address {
@@ -119,6 +121,11 @@ export class CreateClientDto {
   @IsNotEmpty()
   @IsMongoId()
   employeeId: Types.ObjectId;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsMongoId()
+  companyId?: Types.ObjectId;
 
   @ApiProperty()
   @IsOptional()

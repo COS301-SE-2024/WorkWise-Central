@@ -1,6 +1,21 @@
 import { Types } from 'mongoose';
 import { IsMongoId, IsNotEmpty } from 'class-validator';
 
+export class CreateTaskItemDto {
+  //TODO: DO something with this
+  @IsNotEmpty()
+  @IsMongoId()
+  employeeId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  jobId: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  taskId: Types.ObjectId;
+}
+
 export class TaskAssignDto {
   @IsNotEmpty()
   @IsMongoId()
@@ -58,7 +73,7 @@ export class JobAssignTeamDto {
 
   @IsNotEmpty()
   @IsMongoId({ each: true })
-  teamIds: Types.ObjectId[];
+  teamId: Types.ObjectId;
 
   @IsNotEmpty()
   @IsMongoId()

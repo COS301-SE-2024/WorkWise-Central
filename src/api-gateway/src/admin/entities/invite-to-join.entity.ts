@@ -4,6 +4,7 @@ import { Role } from '../../role/entity/role.entity';
 import { currentDate } from '../../utils/Utils';
 import { Transform } from 'class-transformer';
 import { Employee } from '../../employee/entities/employee.entity';
+import { Company } from '../../company/entities/company.entity';
 
 const ONEWEEK = 604800;
 
@@ -15,16 +16,18 @@ export class InviteToJoin {
     roleIdForInvite: Types.ObjectId,
     roleName: string,
     emailBeingInvited: string,
+    superiorId: Types.ObjectId,
   ) {
     this.companyId = companyId;
     this.companyName = companyName;
     this.roleIdForInvite = roleIdForInvite;
     this.roleName = roleName;
     this.emailBeingInvited = emailBeingInvited;
+    this.superiorId = superiorId;
     this.createdAt = currentDate();
   }
 
-  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Company' })
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Company.name })
   companyId: Types.ObjectId;
 
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name })

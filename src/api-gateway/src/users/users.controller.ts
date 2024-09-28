@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -33,11 +34,13 @@ import mongoose, { Types } from 'mongoose';
 import { UserAllResponseDto, UserResponseDto } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { UserEmailVerificationDTO } from './dto/user-validation.dto';
-import { BooleanResponseDto, FileResponseDto } from '../shared/dtos/api-response.dto';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserAllResponseDetailedDto } from './dto/user-response.dto';
 //import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
-import { BodyInterceptor } from '../utils/Custom Interceptors/body.interceptor';
+import { isBase64Uri, extractUserId } from '../utils/Utils';
+import { RequestResetDto, UserResetPasswordDto } from './dto/user-reset-password.dto';
+
 // import { diskStorage } from 'multer';
 // import e from 'express';
 // import firebase from 'firebase/compat';
@@ -98,20 +101,27 @@ export class UsersController {
     description: `The access token and ${className}'s Id used for querying. 
     currentCompany Will also be added soon*`,
   })
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('profilePicture'), BodyInterceptor)
+  @ApiConsumes('application/json')
   @Post('/create')
   async create(@Body() createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
     console.log('createUserController', createUserDto);
     try {
-      return await this.usersService.create(createUserDto, createUserDto.profilePicture);
+      const profilePicture = createUserDto.profilePicture;
+      console.log(profilePicture);
+      if (profilePicture) {
+        if (!isBase64Uri(profilePicture)) {
+          throw new BadRequestException('Profile picture is invalid, it must be base64 encoded');
+        }
+      }
+      return await this.usersService.create(createUserDto);
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
     }
   }
 
-  @ApiOperation({
+  /*  @ApiOperation({
     summary: `Upload a new User's Profile Picture, and receive the image url`,
+    description: `This is a form-data request, with the key called 'file'`,
   })
   @ApiOkResponse({
     type: FileResponseDto,
@@ -121,13 +131,13 @@ export class UsersController {
   @ApiBody({ type: UpdateProfilePicDto })
   @UseInterceptors(FileInterceptor('profilePicture'))
   @Post('/newUser/profilePic')
-  async uploadProfilePic(@UploadedFile(/*GetImageValidator()*/) file: Express.Multer.File): Promise<FileResponseDto> {
+  async uploadProfilePic(@UploadedFile(/!*GetImageValidator()*!/) file: Express.Multer.File): Promise<FileResponseDto> {
     try {
       return this.usersService.uploadProfilePic(file);
     } catch (e) {
       throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+  }*/
 
   //@UseGuards(AuthGuard)
   //@ApiBearerAuth('JWT')
@@ -143,6 +153,28 @@ export class UsersController {
     try {
       console.log(headers);
       return { data: await this.usersService.getAllUsers() };
+    } catch (Error) {
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @ApiOperation({
+    summary: `Get all ${className}s in a company`,
+  })
+  @ApiOkResponse({
+    type: UserAllResponseDto,
+    description: `An array of mongodb objects of the ${className} class in the specified company`,
+  })
+  @ApiBearerAuth('JWT')
+  @UseGuards(AuthGuard)
+  @Get('all/company/:companyId')
+  async findAllUsersInCompany(@Headers() headers: any, @Param('companyId') companyId: string) {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(companyId)) {
+        throw new HttpException('Invalid Company ID', HttpStatus.BAD_REQUEST);
+      }
+      const userId = extractUserId(this.jwtService, headers);
+      return { data: await this.usersService.getAllUsersInCompany(userId, new Types.ObjectId(companyId)) };
     } catch (Error) {
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -289,9 +321,7 @@ export class UsersController {
   @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: `Change the Profile Picture of a ${className}`,
-    /*    description: `
-    You may send the entire ${className} object that was sent to you, in your request body.\r\n
-    You may also send a singular attribute `,*/
+    description: `MIME TYPE is a multipart/form-data.\n The file's key is "profilePicture"`,
   })
   @ApiOkResponse({
     type: UserResponseDto,
@@ -372,6 +402,38 @@ export class UsersController {
       return this.usersService.changeCurrentEmployee(userId, new Types.ObjectId(companyId));
     } catch (e) {
       throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Make a request to get an email to reset your password',
+  })
+  @ApiResponse({ type: BooleanResponseDto })
+  @Post('request/reset-pass')
+  async requestPasswordReset(@Body() requestResetDto: RequestResetDto) {
+    try {
+      return {
+        data: await this.usersService.createUserPasswordResetRequest(requestResetDto.email),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @ApiOperation({
+    summary:
+      'Once you have received the email, Reset your password and pass the token to prove it was from the recipient of said email',
+    description: 'token is from the email',
+  })
+  @ApiResponse({ type: BooleanResponseDto })
+  @Post('reset-pass')
+  async resetPassword(@Headers() headers: any, @Body() userResetPasswordDto: UserResetPasswordDto) {
+    try {
+      return {
+        data: await this.usersService.resetPassword(userResetPasswordDto.userId, userResetPasswordDto),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

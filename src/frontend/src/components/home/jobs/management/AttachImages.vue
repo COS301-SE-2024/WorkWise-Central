@@ -24,7 +24,7 @@
     </template>
 
     <template v-slot:default="{ isActive }">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
           Upload a file
         </v-card-title>
@@ -32,6 +32,7 @@
         <v-card-text class="text-center">
           <div>
             <v-file-input
+              :disabled="isDeleting"
               class="pt-4"
               label="File input"
               prepend-icon="mdi-camera"
@@ -47,13 +48,28 @@
         </v-card-text>
 
         <v-card-actions class="d-flex flex-column">
-          <v-btn @click="upload, (isActive.value = false)" color="success">Upload</v-btn>
-          <v-btn @click="closeDialog" color="error">Cancel</v-btn>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6">
+                <v-btn
+                  @click="upload, (isActive.value = false)"
+                  color="success"
+                  block
+                  :loading="isDeleting"
+                  ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Upload</v-btn
+                ></v-col
+              ><v-col cols="12" lg="6">
+                <v-btn @click="closeDialog" color="error" block :disabled="isDeleting"
+                  ><v-icon icon="fa:fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
+                ></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </template>
   </v-dialog>
-  <Toast />
+  <Toast position="top-center" />
 </template>
 
 <script setup lang="ts">
@@ -61,6 +77,7 @@ import { ref, defineProps } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 const fileDialog = ref<boolean>(false)
 const selectedFiles = ref<File[]>([])
@@ -77,32 +94,13 @@ interface UpdateRecordedDetails {
   imagesTaken: string[]
   inventoryUsed: InventoryUsed[]
 }
-
+let isDeleting = ref<boolean>(false)
 const props = defineProps<{
   recordedDetails: UpdateRecordedDetails
   jobID: string
 }>()
 
 const recordedDetails = ref<UpdateRecordedDetails>(props.recordedDetails)
-
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
 
 const showImageUploadSuccess = () => {
   toast.add({
@@ -129,11 +127,10 @@ const uploadFileInput = async (): Promise<string> => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   await processSelectedFiles()
 
   try {
-    const response = await axios.patch(`${apiUrl}job/${props.jobID}`, recordedDetails, config)
+    const response = await axios.patch(`${API_URL}job/${props.jobID}`, recordedDetails, config)
     if (response.status < 300 && response.status > 199) {
       showImageUploadSuccess()
     } else {
@@ -143,6 +140,8 @@ const uploadFileInput = async (): Promise<string> => {
   } catch (error) {
     console.error('Error updating job:', error)
     return 'fail'
+  } finally {
+    isDeleting.value = false
   }
 }
 
@@ -205,6 +204,7 @@ const processSelectedFiles = async () => {
 }
 
 const upload = (): void => {
+  isDeleting.value = true
   if (selectedFiles.value.length > 0) {
     uploadFileInput()
   }

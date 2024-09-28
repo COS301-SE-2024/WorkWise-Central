@@ -1,96 +1,14 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12" md="4">
-        <v-card class="mb-5">
-          <v-card-title>
-            Recently Added Jobs
-            <!-- <v-switch
-              class="ml-auto"
-              v-model="automatedAssignment"
-              label="Automated Job Assignment"
-            ></v-switch> -->
-          </v-card-title>
-          <v-list>
-            <v-list-item v-for="job in recentJobs" :key="job.details.heading">
-              <v-list-item-content>
-                <v-list-item-title>{{ job.details.heading }}</v-list-item-title>
-                <v-list-item-subtitle>{{
-                  job.taskList.map((task) => task.name).join(', ')
-                }}</v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-action>
-                <ReportForm />
-              </v-list-item-action>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="8">
-        <v-tabs v-model="activeTab" bg-color="secondary">
-          <v-tab>All Jobs</v-tab>
-          <v-tab>Completed Jobs</v-tab>
-          <v-tab>Ongoing Jobs</v-tab>
-        </v-tabs>
-
-        <v-tabs-items v-model="activeTab">
-          <v-tab-item>
-            <v-list>
-              <v-list-item v-for="job in jobs" :key="job.details.heading">
-                <v-list-item-content>
-                  <v-list-item-title>{{ job.details.heading }}</v-list-item-title>
-                  <v-list-item-subtitle>{{
-                    job.taskList.map((task) => task.name).join(', ')
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <ReportForm />
-                </v-list-item-action>
-              </v-list-item>
-            </v-list>
-          </v-tab-item>
-          <v-tab-item>
-            <v-list>
-              <v-list-item v-for="job in completedJobs" :key="job.details.heading">
-                <v-list-item-content>
-                  <v-list-item-title>{{ job.details.heading }}</v-list-item-title>
-                  <v-list-item-subtitle>{{
-                    job.taskList.map((task) => task.name).join(', ')
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <ReportForm />
-                </v-list-item-action>
-              </v-list-item>
-            </v-list>
-          </v-tab-item>
-
-          <v-tab-item>
-            <v-list>
-              <v-list-item v-for="job in ongoingJobs" :key="job.details.heading">
-                <v-list-item-content>
-                  <v-list-item-title>{{ job.details.heading }}</v-list-item-title>
-                  <v-list-item-subtitle>{{
-                    job.taskList.map((task) => task.name).join(', ')
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <ReportForm />
-                </v-list-item-action>
-              </v-list-item>
-            </v-list>
-          </v-tab-item>
-        </v-tabs-items>
-      </v-col>
-    </v-row>
-  </v-container>
+  <main>
+    <ReportForm />
+  </main>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import ReportForm from './ReportForm.vue'
+import { API_URL } from '@/main'
 
 interface Job {
   companyId: {}
@@ -143,8 +61,6 @@ interface Job {
 export default defineComponent({
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       automatedAssignment: false,
       activeTab: 0,
       jobs: [] as Job[],
@@ -167,10 +83,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiUrl = await this.getRequestUrl()
       try {
         const response = await axios.get(
-          `${apiUrl}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -184,18 +99,6 @@ export default defineComponent({
         })
       }
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.getJobs()

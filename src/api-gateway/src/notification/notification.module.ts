@@ -22,11 +22,18 @@ import { ClientModule } from '../client/client.module';
 import { InventoryService } from '../inventory/inventory.service';
 import { InventoryModule } from '../inventory/inventory.module';
 import { ClientRepository } from '../client/client.repository';
+import { StockTakeModule } from '../stocktake/stocktake.module';
+import { NotificationToken, NotificationTokenSchema } from './entities/notificationToken.entity';
+import { StockMovementsModule } from '../stockmovements/stockmovements.module';
+import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
 
 @Global()
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Notification.name, schema: NotificationSchema }]),
+    MongooseModule.forFeature([
+      { name: Notification.name, schema: NotificationSchema },
+      { name: NotificationToken.name, schema: NotificationTokenSchema },
+    ]),
     EmailModule,
     forwardRef(() => UsersModule),
     forwardRef(() => CompanyModule),
@@ -37,6 +44,9 @@ import { ClientRepository } from '../client/client.repository';
     forwardRef(() => TeamModule),
     forwardRef(() => ClientModule),
     forwardRef(() => InventoryModule),
+    forwardRef(() => StockTakeModule),
+    forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryUsedModule),
   ],
   providers: [
     NotificationGateway,
@@ -51,6 +61,6 @@ import { ClientRepository } from '../client/client.repository';
     ClientRepository,
   ],
   controllers: [NotificationController],
-  exports: [NotificationService],
+  exports: [NotificationService, NotificationRepository, FcmNotificationService, MongooseModule],
 })
 export class NotificationModule {}

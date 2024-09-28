@@ -21,11 +21,11 @@ export class Address {
 }
 
 export class ContactInfo {
-  @Prop({ type: String, required: true })
-  phoneNumber: string;
+  @Prop({ type: String, required: false })
+  phoneNumber?: string;
 
-  @Prop({ type: String, unique: true, lowercase: true, trim: true })
-  email: string; //TODO: Make unique within company, instead of within DB
+  @Prop({ type: String, unique: false, lowercase: true, trim: true, required: false })
+  email?: string; //TODO: Make unique within company, instead of within DB
 }
 
 export class ClientDetails {
@@ -80,7 +80,7 @@ export class Client {
 
   @ApiProperty()
   @Prop({ required: true })
-  details: ClientDetails;
+  details: ClientDetails = new ClientDetails();
 
   @ApiProperty()
   @Prop({ required: false, default: currentDate() })

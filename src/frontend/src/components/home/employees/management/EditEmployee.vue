@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="employeeDialog"
-    max-width="500"
-    height="500"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-  >
+  <v-dialog v-model="employeeDialog" max-width="500" height="500">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -12,12 +7,13 @@
         color="warning"
         variant="text"
         v-bind="activatorProps"
+        :disabled="Disabled"
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon
         >Edit</v-btn
       >
     </template>
-    <v-card>
-      <v-form @submit.prevent="validateEdits">
+    <v-card class="bg-cardColor">
+      <v-form ref="form" @submit.prevent="validateEdits">
         <v-card-title class="text-center">Edit Employee</v-card-title>
         <v-divider></v-divider>
         <v-card-item>
@@ -49,22 +45,25 @@
                 v-model="req_obj.updateEmployeeDto.roleId"
                 bg-color="background"
                 variant="solo"
+                :loading="loading"
+                :disabled="isDeleting"
               ></v-select>
             </v-col>
             <v-col :cols="12">
               <v-select
-                clearable
                 label="Subordinates"
                 hint="Select the employees you'd like to be subordinates of this employee"
                 persistent-hint
-                @update:modelValue="selected_subordiates"
-                :items="subordinateItemNames"
+                @update:model-value="selected_subordiates"
+                :items="filteredSubordinateNames"
                 v-model="req_obj.updateEmployeeDto.subordinates"
                 item-value="employeeId"
                 item-title="name"
                 bg-color="background"
                 variant="solo"
                 multiple
+                :loading="loading"
+                :disabled="isDeleting"
               ></v-select> </v-col
             ><v-col :cols="12">
               <v-select
@@ -73,44 +72,58 @@
                 hint="Select the employee you'd like to be superior of this employee"
                 persistent-hint
                 @update:modelValue="selected_supirior"
-                :items="subordinateItemNames"
+                :items="filteredSupriorNames"
                 v-model="req_obj.updateEmployeeDto.superiorId"
                 item-value="employeeId"
                 item-title="name"
                 bg-color="background"
                 variant="solo"
+                :disabled="isDeleting"
               ></v-select> </v-col
           ></v-row>
         </v-card-item>
         <v-card-actions>
-          <v-row>
-            <v-col>
-              <Toast />
-              <v-btn
-                color="success"
-                rounded="md"
-                width="100%"
-                height="35"
-                variant="text"
-                type="submit"
-              >
-                Save
-                <v-icon icon="fa:fa-solid fa-floppy-disk" end color="success" size="small"></v-icon>
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                color="error"
-                rounded="md"
-                width="100%"
-                height="35"
-                variant="text"
-                @click="close"
-              >
-                <Toast />
-                Cancel <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon>
-              </v-btn> </v-col
-          ></v-row>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                <v-btn
+                  color="success"
+                  rounded="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  type="submit"
+                  block
+                  :loading="isDeleting"
+                >
+                  <v-icon
+                    icon="fa:fa-solid fa-floppy-disk"
+                    start
+                    color="success"
+                    size="small"
+                    :disabled="isDeleting"
+                  ></v-icon>
+                  Save
+                </v-btn>
+              </v-col>
+              <v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn
+                  color="error"
+                  rounded="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  block
+                  @click="close"
+                  :loading="isDeleting"
+                >
+                  <Toast position="top-center" />
+                  <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
+                  >Cancel
+                </v-btn>
+              </v-col></v-row
+            >
+          </v-container>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -121,6 +134,16 @@
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import type { EmployeeInformation2, RoleItem, Role } from '@/components/home/employees/types'
+import { API_URL } from '@/main'
+
+type EmployeeUpdate = {
+  currentEmployeeId: string
+  updateEmployeeDto: {
+    roleId?: string
+    subordinates?: string[]
+    superiorId?: null
+  }
+}
 
 export default {
   name: 'EditClient',
@@ -131,33 +154,44 @@ export default {
     editedItem: {
       type: Object,
       required: true
+    },
+    Disabled: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
     return {
+      currentRoleId: null,
+      currentSuperior: null,
       selectedRole: '',
       localEditedItem: this.editedItem,
-      isdarkmode: localStorage['theme'] !== 'false',
+      isDarkMode: localStorage['theme'] !== 'false',
       role_change: false,
       employeeDialog: false,
+      currentSubordinates: [] as string[],
       roleItems: [] as RoleItem[],
       subordinateItemNames: [] as EmployeeInformation2[],
+      superiorItemNames: [] as EmployeeInformation2[],
+      selected_subordinate_names: [] as EmployeeInformation2[],
+      selected_supiror_names: [] as EmployeeInformation2[],
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
+      employeesCurrentlySubordinates: [] as string[],
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
       modal_light_theme_color: '#FFFFFF',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      backendselectedSubs: [] as string[],
+      loading: true,
       req_obj: {
         currentEmployeeId: localStorage['employeeId'],
         updateEmployeeDto: {
           roleId: '',
           subordinates: [] as string[],
-          superiorId: ''
+          superiorId: null
         }
-      },
+      } as EmployeeUpdate,
       nameRules: [
         (v: string) => !!v || 'Name is required',
         (v: string) => (v && v.length >= 2) || 'Name must be at least 2 characters'
@@ -177,10 +211,28 @@ export default {
       ]
     }
   },
+  computed: {
+    filteredSubordinateNames() {
+      return this.subordinateItemNames.filter(
+        (sub: EmployeeInformation2) =>
+          !(
+            this.req_obj.updateEmployeeDto.superiorId &&
+            this.req_obj.updateEmployeeDto.superiorId === sub.employeeId
+          )
+      )
+    },
+    filteredSupriorNames() {
+      return this.subordinateItemNames.filter(
+        (sub: EmployeeInformation2) =>
+          !this.req_obj.updateEmployeeDto.subordinates?.some(
+            (selected: string) => selected === sub.employeeId
+          )
+      )
+    }
+  },
   methods: {
-    selected_subordiates() {
-      console.log(this.req_obj.updateEmployeeDto.subordinates)
-      // console.log(this.editedItem)
+    selected_subordiates(a: any) {
+      console.log(a)
     },
     selected_supirior() {
       console.log(this.req_obj.updateEmployeeDto.superiorId)
@@ -193,58 +245,133 @@ export default {
       console.log(this.localEditedItem)
     },
     async validateEdits() {
-      console.log('Validate called')
-      await this.savechanges()
+      if (
+        this.req_obj.updateEmployeeDto.roleId === '' &&
+        this.req_obj.updateEmployeeDto.subordinates?.length === 0 &&
+        this.req_obj.updateEmployeeDto.superiorId === null
+      ) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Please select at least one field to update',
+          life: 3000
+        })
+        return
+      }
+
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+      this.req_obj.updateEmployeeDto.subordinates ||
+        delete this.req_obj.updateEmployeeDto.subordinates
+      this.req_obj.updateEmployeeDto.superiorId || delete this.req_obj.updateEmployeeDto.superiorId
+      this.req_obj.updateEmployeeDto.roleId || delete this.req_obj.updateEmployeeDto.roleId
+
+      if (validate || this.currentSubordinates.length != 0) await this.savechanges()
     },
     async loadSubordinates() {
       const config = {
-        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        params: { currentEmployeeId: localStorage['employeeId'] }
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         const sub_res = await axios.get(
-          apiURL + `employee/listOther/${localStorage.getItem('employeeId')}`,
+          API_URL + `employee/listPotentialSubordinates/${this.editedItem.employeeId}`,
           config
         )
         console.log(sub_res)
         for (let i = 0; i < sub_res.data.data.length; i++) {
-          const employee_details = await axios.get(
-            apiURL + `employee/detailed/id/${sub_res.data.data[i]._id}`,
-            config
-          )
-
-          console.log(employee_details.data)
-
+          console.log(sub_res.data)
           let company_employee: EmployeeInformation2 = {
             name:
-              employee_details.data.data.userId.personalInfo.firstName +
+              sub_res.data.data[i].userInfo.firstName +
               ' ' +
-              employee_details.data.data.userId.personalInfo.surname +
+              sub_res.data.data[i].userInfo.surname +
               ' (' +
-              employee_details.data.data.role.roleName +
+              sub_res.data.data[i].role.roleName +
               ')',
-            employeeId: employee_details.data.data._id
+            employeeId: sub_res.data.data[i]._id
           }
-
           this.subordinateItemNames.push(company_employee)
         }
+        console.log('Hello man')
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
+    async setCurrentSubsAndSuperiors() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: { currentEmployeeId: localStorage['employeeId'] }
+      }
+
+      try {
+        let current_subs = await axios.get(
+          API_URL + `employee/detailed/id/${this.editedItem.employeeId}`,
+          config
+        )
+        this.req_obj.updateEmployeeDto.roleId = current_subs.data.data.role.roleId
+        this.currentRoleId = current_subs.data.data.role.roleId
+        this.req_obj.updateEmployeeDto.superiorId = current_subs.data.data.superiorId
+        this.currentSuperior = current_subs.data.data.superiorId
+        this.req_obj.updateEmployeeDto.subordinates = current_subs.data.data.subordinates
+        this.currentSubordinates = current_subs.data.data.subordinates
+        this.loading = false
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async loadSuperiors() {
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: { currentEmployeeId: localStorage['employeeId'] }
+      }
+      try {
+        const sup_res = await axios.get(
+          API_URL + `employee/listPotentialSuperiors/${this.editedItem.employeeId}`,
+          config
+        )
+        for (let i = 0; i < sup_res.data.data.length; i++) {
+          let company_employee: EmployeeInformation2 = {
+            name:
+              sup_res.data.data[i].userInfo.firstName +
+              ' ' +
+              sup_res.data.data[i].userInfo.surname +
+              ' (' +
+              sup_res.data.data[i].role.roleName +
+              ')',
+            employeeId: sup_res.data.data[i]._id
+          }
+
+          this.superiorItemNames.push(company_employee)
+        }
+        this.loading = false
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     },
     async loadRoles() {
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+      console.log(API_URL)
       try {
         let roles_response = await axios.get(
-          apiURL + `role/all/${localStorage['currentCompany']}`,
+          API_URL + `role/all/${localStorage['currentCompany']}`,
           config
         )
         let roles_data: Role[] = roles_response.data.data
         for (let i = 0; i < roles_data.length; i++) {
-          if (roles_data[i].roleName === this.localEditedItem.roleName) continue
+          if (
+            roles_data[i].roleName === this.localEditedItem.roleName ||
+            roles_data[i].roleName === 'Owner'
+          )
+            continue
           this.roleItems.push({
             roleName: roles_data[i].roleName,
             roleId: roles_data[i]._id
@@ -258,67 +385,167 @@ export default {
       this.employeeDialog = false
     },
     async savechanges() {
+      this.isDeleting = true // Indicate the start of the deletion process
+      let change_occured = false
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      let apiURL = await this.getRequestUrl()
       console.log(this.localEditedItem.employeeId)
-      axios
-        .patch(apiURL + `employee/${this.localEditedItem.employeeId}`, this.req_obj, config)
-        .then((res) => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Employee updated successfully',
-            life: 3000
+
+      console.log('current subordinates: ' + this.currentSubordinates)
+      console.log('selected subordinates: ' + this.req_obj.updateEmployeeDto.subordinates)
+
+      const remove_sub_array = this.currentSubordinates?.filter(
+        (item: string) => !this.req_obj.updateEmployeeDto.subordinates?.includes(item)
+      )
+
+      const add_sub_array = this.req_obj.updateEmployeeDto.subordinates?.filter(
+        (item: string) => !this.currentSubordinates.includes(item)
+      )
+
+      console.log('Remove: ' + remove_sub_array)
+      console.log('Add: ' + add_sub_array)
+
+      let add_object = {
+        currentEmployeeId: localStorage['employeeId'],
+        subordinatesToBeAdded: add_sub_array
+      }
+
+      let remove_object = {
+        currentEmployeeId: localStorage['employeeId'],
+        subordinatesToBeRemoved: remove_sub_array
+      }
+
+      if (remove_sub_array?.length !== 0)
+        axios
+          .patch(
+            API_URL + `employee/removeSubordinate/${this.localEditedItem.employeeId}`,
+            remove_object,
+            config
+          )
+          .then((res) => {
+            change_occured = true
+            console.log(res)
+            this.employeeDialog = false
+            setTimeout(() => {
+              this.employeeDialog = false
+            }, 1500)
+
+            console.log(res)
+            this.employeeDialog = false
+            setTimeout(() => {
+              this.employeeDialog = false
+            }, 1500)
           })
-          console.log(res)
-          this.employeeDialog = false
-          window.location.reload()
-        })
-        .catch((error) => {
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An error occurred while updating the employee',
-            life: 3000
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Remove subordinate employee',
+              life: 3000
+            })
+            console.log(error)
+            return
           })
-          console.log(error)
+
+      console.log(add_sub_array)
+
+      if (add_sub_array?.length !== 0)
+        axios
+          .patch(
+            API_URL + `employee/addSubordinate/${this.localEditedItem.employeeId}`,
+            add_object,
+            config
+          )
+          .then((res) => {
+            change_occured = true
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Add subordinate employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      if (
+        this.req_obj.updateEmployeeDto.roleId != this.currentRoleId &&
+        this.req_obj.updateEmployeeDto.roleId != '' &&
+        this.req_obj.updateEmployeeDto.roleId != null
+      )
+        axios
+          .patch(
+            API_URL + `employee/${this.localEditedItem.employeeId}`,
+            {
+              currentEmployeeId: localStorage['employeeId'],
+              roleId: this.req_obj.updateEmployeeDto.roleId
+            },
+            config
+          )
+          .then(() => {
+            change_occured = true
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Superior employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      if (
+        this.req_obj.updateEmployeeDto.superiorId != this.currentSuperior &&
+        this.req_obj.updateEmployeeDto.superiorId != '' &&
+        this.req_obj.updateEmployeeDto.superiorId != null
+      )
+        axios
+          .patch(
+            API_URL + `employee/${this.localEditedItem.employeeId}`,
+            {
+              currentEmployeeId: localStorage['employeeId'],
+              superiorId: this.req_obj.updateEmployeeDto.superiorId
+            },
+            config
+          )
+          .then(() => {
+            change_occured = true
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while updating Superior employee',
+              life: 3000
+            })
+            console.log(error)
+            return
+          })
+
+      this.isDeleting = false
+      if (change_occured) {
+        console.log('were in')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Employee Edited Successfully',
+          life: 3000
         })
-    },
-    // async update() {
-    //   await axios
-    //     .patch(`http://localhost:3000/employee/${this.id}`)
-    //     .then((response) => {
-    //       console.log(response)
-    //       alert('Client updated')
-    //       return true
-    //     })
-    //     .catch((error) => {
-    //       console.log(error)
-    //       alert('Error updating client')
-    //       return false
-    //     })
-    //     .finally(() => {
-    //       this.employeeDialog = false
-    //     })
-    // },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
+        this.employeeDialog = false
+        window.location.reload()
       }
     },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
-  mounted() {
+  created() {
     this.showlocalvalues()
     this.loadRoles()
-    this.loadSubordinates()
+    this.loadSubordinates().then(() =>
+      this.loadSuperiors().then(() => this.setCurrentSubsAndSuperiors())
+    )
   }
 }
 </script>

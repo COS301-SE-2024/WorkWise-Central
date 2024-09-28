@@ -1,4 +1,11 @@
-import { forwardRef, Inject, Injectable, InternalServerErrorException, OnModuleInit } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -8,6 +15,8 @@ import { EmployeeService } from '../employee/employee.service';
 import { CompanyService } from '../company/company.service';
 import { UsersService } from '../users/users.service';
 import { FcmNotificationService } from './fcm-notification.service';
+import { NotificationToken } from './entities/notificationToken.entity';
+import { StopPushDto } from './dto/receiveFCMTokenDto';
 
 @Injectable()
 export class NotificationService implements OnModuleInit {
@@ -36,7 +45,13 @@ export class NotificationService implements OnModuleInit {
     const senderId = newNotification.senderId;
     const message = newNotification.message;
     for (const recipient of newNotification.recipientIds) {
-      const singularNotification = new Notification(senderId, recipient, message);
+      const singularNotification = new Notification(
+        senderId,
+        recipient,
+        message,
+        newNotification.companyName,
+        newNotification.isJobRelated,
+      );
       // listOfNotifications.push(singularNotification);
       const result = new this.notificationModel(singularNotification);
       await result.save();
@@ -48,10 +63,25 @@ export class NotificationService implements OnModuleInit {
   }
 
   watchDatabase() {
-    this.notificationModel.watch().on('change', (change) => {
-      console.log(change);
+    this.notificationModel.watch().on('change', async (change) => {
+      //console.log(change);
       const document: Notification = change.fullDocument;
       console.log(document);
+      try {
+        const tokens = await this.notificationRepository.findAllTokensForUser(document.recipientId);
+        if (tokens.length == 0) {
+          return;
+        }
+        for (const token of tokens) {
+          await this.fcmNotificationService.sendNotificationToUser({
+            title: document.message.title,
+            body: document.message.body,
+            token: token.tokenString,
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
       this.fcmNotificationService.sendingNotificationOneUser('rand').then((r) => {
         console.log('message sent', r);
       });
@@ -103,5 +133,36 @@ export class NotificationService implements OnModuleInit {
       const notification = new Notification(new Types.ObjectId(), user, message);
       this.notificationRepository.save(notification);
     }
+  }
+
+  async saveNewFCMToken(userId: Types.ObjectId, newToken: string) {
+    const token = new NotificationToken(userId, newToken);
+    return this.notificationRepository.saveToken(token);
+  }
+
+  async getAllTokensForUser(userId: Types.ObjectId) {
+    return this.notificationRepository.findAllTokensForUser(userId);
+  }
+
+  //async removeToken(userId: Types.ObjectId, newToken: string) {}
+
+  async stopPushNotifications(userId: Types.ObjectId, body: StopPushDto) {
+    return this.notificationRepository.stopPushNotificationsOnDevice(userId, body.deviceType);
+  }
+
+  async markAsRead(userId: Types.ObjectId, notificationId: Types.ObjectId) {
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('Invalid UserId');
+    return this.notificationRepository.markAsRead(notificationId);
+  }
+
+  async markAsUnread(userId: Types.ObjectId, notificationId: Types.ObjectId) {
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new NotFoundException('Invalid UserId');
+    return this.notificationRepository.markAsUnread(notificationId);
+  }
+
+  async haveNewNotifications(userId: Types.ObjectId) {
+    return this.notificationRepository.haveNewNotifications(userId);
   }
 }

@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Company } from '../../company/entities/company.entity';
 import { SchemaTypes, Types } from 'mongoose';
 
-export const defaultTagColour: string = '#FAF9F6';
-export const defaultPriorityColour: string = '#fbfffc';
+export const defaultTagColour: string = '#1a89c4';
+export const defaultPriorityColour: string = '#f83150';
 
 @Schema()
 export class JobTag {
@@ -34,7 +34,7 @@ export class JobPriorityTag {
   label: string;
   @Prop({ type: Number, required: true, default: 0 })
   priorityLevel: number;
-  @Prop({ type: String, required: false, default: '#fbfffc' })
+  @Prop({ type: String, required: false, default: defaultPriorityColour })
   colour: string; //Will be hex value
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Company.name })
   companyId: Types.ObjectId;

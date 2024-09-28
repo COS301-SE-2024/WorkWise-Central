@@ -1,4 +1,5 @@
 <template>
+  <Toast position="top-center" />
   <v-dialog
     v-model="addDialog"
     max-height="800"
@@ -6,7 +7,6 @@
     scrollable
     color="warning"
     :opacity="0.1"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
@@ -14,7 +14,7 @@
         >Edit</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Edit Inventory
@@ -31,6 +31,7 @@
                 color="secondary"
                 :rules="nameRules"
                 required
+                :disabled="isDeleting"
               ></v-text-field
             ></v-col>
             <v-col>
@@ -38,36 +39,36 @@
               ><v-text-field
                 v-model="localEditedItem.description"
                 color="secondary"
-                :rules="descriptionRules"
                 required
+                :disabled="isDeleting"
               ></v-text-field
             ></v-col>
             <v-row
-              ><v-col col="4">
+              ><v-col cols="12" lg="4">
                 <small class="text-caption white--text">Cost Price</small
                 ><v-text-field
                   v-model="localEditedItem.costPrice"
                   color="secondary"
-                  :rules="costPriceRules"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <small class="text-caption white--text">Current Stock Level</small
                 ><v-text-field
                   v-model="localEditedItem.currentStockLevel"
                   color="secondary"
-                  :rules="currentStockLevelRules"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <small class="text-caption white--text">Reorder Level</small
                 ><v-text-field
                   v-model="localEditedItem.reorderLevel"
                   color="secondary"
-                  :rules="reorderLevelRules"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field></v-col
             ></v-row>
           </v-col>
@@ -76,15 +77,20 @@
       <v-card-actions>
         <v-container>
           <v-row justify="end">
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn @click="close" color="error" block
-                ><v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon
+                ><v-icon icon="fa:fa-solid fa-cancel" color="error" start size="small"></v-icon
                 >Cancel</v-btn
               ></v-col
             >
-            <Toast position="top-center" />
-            <v-col cols="12" lg="6">
-              <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
+
+            <v-col cols="12" lg="6" order="first" order-lg="last">
+              <v-btn
+                @click="updateItem"
+                color="success"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
                 ><v-icon
                   icon="fa:fa-solid fa-floppy-disk"
                   start
@@ -104,9 +110,10 @@
 <script>
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
-  name: 'AddInventory',
+  name: 'EditInventory',
   props: {
     editedItem: Object,
     item: Object,
@@ -119,16 +126,14 @@ export default {
     return {
       localEditedItem: this.editedItem,
       addDialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true',
-
+      isDarkMode: localStorage.getItem('theme') === 'true',
+      isDeleting: false,
       valid: false,
       name: '',
       description: '',
       costPrice: '',
       currentStockLevel: '',
       reorderLevel: '',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       nameRules: [(v) => !!v || 'Name is required'],
       descriptionRules: [(v) => !!v || 'Description is required'],
       costPriceRules: [
@@ -162,59 +167,49 @@ export default {
         life: 3000
       })
     },
-    updateItem() {
-      this.$emit('update:item', this.localEditedItem)
-      alert('Item updated')
-    },
-    async createInventoryItem() {
-      if (!this.localEditedItem) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Invalid item data',
-          life: 3000
-        })
-        return
-      }
-      console.log(this.inventory_id)
+    async updateItem() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
-        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
-      const apiURL = await this.getRequestUrl()
 
       const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
         updateInventoryDto: {
           name: this.localEditedItem.name,
           description: this.localEditedItem.description,
-          costPrice: this.convertToNumber(this.localEditedItem.costPrice),
-          currentStockLevel: this.convertToNumber(this.localEditedItem.currentStockLevel),
-          reorderLevel: this.convertToNumber(this.localEditedItem.reorderLevel),
-          companyId: localStorage.getItem('currentCompany')
-        },
-        currentEmployeeId: localStorage.getItem('employeeId')
+          costPrice: this.localEditedItem.costPrice,
+          salePrice: this.localEditedItem.salePrice,
+          currentStockLevel: this.localEditedItem.currentStockLevel,
+          reorderLevel: this.localEditedItem.reorderLevel
+        }
       }
-      console.log(data)
       try {
-        const response = await axios.patch(`${apiURL}inventory/${this.inventory_id}`, data, config)
+        console.log(data)
+        const response = await axios.patch(`${API_URL}inventory/${this.inventory_id}`, data, config)
         console.log(response)
         this.$toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Inventory updated successfully',
+          detail: 'Inventory Updated',
           life: 3000
         })
-        this.addDialog = false
+
+        setTimeout(() => {
+          this.addDialog = false
+
+          this.$emit('updateInventory', response.data.data)
+        }, 1500)
       } catch (error) {
         console.error(error)
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'An error occurred while updating the inventory',
+          detail: 'Failed to add inventory',
           life: 3000
         })
+      } finally {
+        this.isDeleting = false
       }
     },
     allRulesPass() {
@@ -240,18 +235,6 @@ export default {
     },
     close() {
       this.addDialog = false
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     deepCopy(obj) {
       return JSON.parse(JSON.stringify(obj))

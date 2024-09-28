@@ -4,6 +4,7 @@ import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Inventory } from './entities/inventory.entity';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import { User } from '../users/entities/user.entity';
+import { isNotDeleted } from '../shared/soft-delete';
 
 @Injectable()
 export class InventoryRepository {
@@ -134,5 +135,33 @@ export class InventoryRepository {
       return false;
     }
     return true;
+  }
+
+  async addAttachments(id: Types.ObjectId, newUrls: string[]) {
+    return await this.InventoryModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: id },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+      { $push: { images: { $each: newUrls } }, updatedAt: Date.now() },
+      { new: true },
+    )
+      .lean()
+      .exec();
+  }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    this.InventoryModel.updateMany(
+      {
+        $and: [{ companyId: companyId }, isNotDeleted],
+      },
+      {
+        $set: { deletedAt: new Date() },
+      },
+    );
   }
 }

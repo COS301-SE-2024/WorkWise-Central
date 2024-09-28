@@ -2,11 +2,19 @@
   <div>
     <v-container>
       <!-- Display comments -->
-      <v-row v-for="(comment, index) in comments" :key="index" class="d-flex align-center mb-3">
+      <v-row
+        v-for="(comment, index) in paginatedComments"
+        :key="index"
+        class="d-flex align-center mb-3"
+      >
         <v-col cols="2" class="pt-2">
           <v-avatar color="secondary" style="width: 38px; height: 36px">
-            <!-- Display initials of the comment's employee -->
-            <span class="text-h6">{{ getInitials(comment.employeeId) }}</span>
+            <!-- Display image of the comment's employee -->
+            <img
+              :src="comment.displayImage"
+              alt="Employee Image"
+              style="width: 100%; height: 100%; object-fit: cover"
+            />
           </v-avatar>
         </v-col>
         <v-col md="9">
@@ -19,15 +27,33 @@
             class="pt-4"
             :hint="new Date(comment.date).toLocaleDateString()"
             persistent-hint
+            :disabled="isAdding || isDeleting"
+            auto-grow
+            multi-line
           ></v-text-field>
         </v-col>
         <v-col cols="1">
           <!-- Delete comment button -->
-          <v-btn @click="deleteComment(index)">
-            <v-icon color="red" class="fa fa-trash pt-1"></v-icon>
-          </v-btn>
+          <!--          <v-btn @click="deleteComment(index)">-->
+          <!--            <v-icon color="red" class="fa fa-trash pt-1"></v-icon>-->
+          <!--          </v-btn>-->
+          <Button
+            icon="fa: fa-solid fa-trash"
+            class="p-button-danger"
+            :disabled="isAdding"
+            :loading="isDeleting"
+            @click="deleteComment(index)"
+          />
         </v-col>
       </v-row>
+
+      <!-- Pagination -->
+      <v-row>
+        <v-col offset="1">
+          <v-pagination v-model="currentPage" :length="totalPages" color="primary"></v-pagination>
+        </v-col>
+      </v-row>
+
       <!-- Add new comment textarea -->
       <v-textarea
         v-model="newComment"
@@ -39,25 +65,35 @@
         hide-details
         prepend-icon="fa: fa-solid fa-comment"
         rows="3"
+        :disabled="isAdding || isDeleting"
       ></v-textarea>
+
       <!-- Submit button -->
-      <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>
+      <!--      <v-btn color="success" @click="addComment" prepend-icon="mdi-comment-plus">Comment</v-btn>-->
+      <div class="pt-2">
+        <Button
+          label="Comment"
+          icon="mdi mdi-comment-plus"
+          class="p-button-success"
+          @click="addComment"
+          :disabled="isDeleting"
+          :loading="isAdding"
+        />
+      </div>
     </v-container>
-    <Toast />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, onMounted } from 'vue'
+import { defineProps, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
-import { v4 as uuidv4 } from 'uuid'
+import Button from 'primevue/button'
+import { API_URL } from '@/main'
 
+let isAdding = ref<boolean>(false)
+let isDeleting = ref<boolean>(false)
 const toast = useToast()
-
-// API URLs
-const localUrl = 'http://localhost:3000/'
-const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
 // Request Config
 const config = {
@@ -93,99 +129,66 @@ interface EmployeeId {
   updatedAt: string
   userId: string
   userInfo: {
+    displayImage: string
     displayName: string
     firstName: string
     surname: string
+    username: string
   }
   _id: string
 }
+const firstName = ref('')
+const surname = ref('')
+const profilePicture = ref('')
 
 // Data
 const newComment = ref('')
-const userInitials = ref<{ employeeId: string; initials: string }[]>([])
-const comments = ref<
-  { text: string; employeeId: string; date: string; initials?: string; _id: string }[]
->(
+const comments = ref(
   props.jobComments.map((comment) => ({
     text: comment.comment,
     employeeId: comment.employeeId._id,
     date: comment.date,
-    _id: comment._id
+    _id: comment._id,
+    firstName: comment.employeeId.userInfo.firstName,
+    surname: comment.employeeId.userInfo.surname,
+    displayImage: comment.employeeId.userInfo.displayImage
   }))
 )
 
-// Utility Functions
-const getInitials = (employeeId: string): string => {
-  const user = userInitials.value.find((user) => user.employeeId === employeeId)
-  return user ? user.initials : ''
-}
+const currentPage = ref(1) // Tracks the current page number
+const commentsPerPage = 3 // Number of comments to show per page
 
-const getInitialsS = (firstName: string, surname: string): string => {
-  return `${firstName.charAt(0)}${surname.charAt(0)}`.toUpperCase()
-}
+// Computed property to slice the comments based on current page
+const paginatedComments = computed(() => {
+  const startIndex = (currentPage.value - 1) * commentsPerPage
+  const endIndex = startIndex + commentsPerPage
+  return comments.value.slice(startIndex, endIndex)
+})
 
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status >= 200 && res.status < 300
-  } catch {
-    return false
-  }
-}
+// Calculate the total number of pages
+const totalPages = computed(() => {
+  return Math.ceil(comments.value.length / commentsPerPage)
+})
 
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
+const getInitials = (firstName: string, surname: string): string => {
+  const firstInitial = firstName.charAt(0).toUpperCase()
+  const lastInitial = surname.charAt(0).toUpperCase()
+  return `${firstInitial}${lastInitial}`
 }
 
 const getUserData = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const response = await axios.get(`${apiUrl}users/id/${localStorage.getItem('id')}`, config)
-    const userData = response.data.data
-
-    userInitials.value.push({
-      employeeId: localStorage.getItem('id') || '',
-      initials: getInitialsS(userData.personalInfo.firstName, userData.personalInfo.surname)
-    })
+    const response = await axios.get(`${API_URL}users/id/${localStorage.getItem('id')}`, config)
+    if (response.status > 199 && response.status < 300) {
+      const userData = response.data.data
+      console.log('User data', userData)
+      firstName.value = userData.personalInfo.firstName
+      surname.value = userData.personalInfo.surname
+      profilePicture.value = userData.profile.displayImage
+    }
   } catch (error) {
     console.error('Error getting user data', error)
   }
-}
-
-const getAllEmployeeData = async () => {
-  const apiUrl = await getRequestUrl()
-  try {
-    const employeeResponse = await axios.get(
-      `${apiUrl}employee/all/${localStorage.getItem('currentCompany')}`,
-      config
-    )
-    console.log(employeeResponse)
-    const employeeIds = employeeResponse.data.map((employee: { _id: string }) => employee._id)
-
-    for (const id of employeeIds) {
-      const response = await axios.get(`${apiUrl}users/id/${id}`, config)
-      const userData = response.data.data
-
-      userInitials.value.push({
-        employeeId: id,
-        initials: getInitialsS(userData.personalInfo.firstName, userData.personalInfo.surname)
-      })
-    }
-
-    populateCommentsWithInitials()
-  } catch (error) {
-    console.error('Failed to get employee data', error)
-  }
-}
-
-const populateCommentsWithInitials = () => {
-  comments.value.forEach((comment) => {
-    const user = userInitials.value.find((user) => user.employeeId === comment.employeeId)
-    if (user) {
-      comment.initials = user.initials
-    }
-  })
 }
 
 const addComment = async () => {
@@ -198,35 +201,27 @@ const addComment = async () => {
     })
     return
   }
-
-  const apiUrl = await getRequestUrl()
-  const newId = uuidv4() // Generate a unique ID
-  const updatedComments = [
-    ...comments.value,
-    {
-      text: newComment.value,
-      employeeId: localStorage.getItem('employeeId') || '',
-      date: new Date().toISOString(),
-      _id: newId // Assign the generated ID
-    }
-  ]
+  isAdding.value = true
   const addedComment = ref<{ employeeId: string; jobId: string; newComment: string }>({
     employeeId: localStorage.getItem('employeeId') || '',
     jobId: props.id,
     newComment: newComment.value
   })
-
   try {
-    const response = await axios.put(`${apiUrl}job/comment`, addedComment.value, config)
-    // You can update the _id here if the server returns it
-    comments.value = updatedComments
-    newComment.value = ''
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Successfully commented on job',
-      life: 3000
+    const response = await axios.put(`${API_URL}job/comment`, addedComment.value, config)
+    const commentId: string =
+      response.data.data.comments[response.data.data.comments.length - 1]._id
+    comments.value.push({
+      text: newComment.value,
+      date: new Date().toISOString(),
+      firstName: firstName.value,
+      surname: surname.value,
+      _id: commentId,
+      employeeId: localStorage.getItem('employeeId') || '',
+      displayImage: profilePicture.value
     })
+    newComment.value = ''
+    currentPage.value = totalPages.value // Go to the last page
   } catch (error) {
     console.error('Error adding comment', error)
     toast.add({
@@ -235,39 +230,40 @@ const addComment = async () => {
       detail: 'An error occurred while commenting on this job',
       life: 3000
     })
+  } finally {
+    isAdding.value = false
   }
 }
 
 const deleteComment = async (index: number) => {
-  const apiUrl = await getRequestUrl()
-  const commentToBeRemoved = comments.value[index]
+  const commentToBeRemoved = paginatedComments.value[index]
   const commentBody = ref<{ employeeId: string; jobId: string; commentId: string }>({
     employeeId: commentToBeRemoved.employeeId,
     jobId: props.id,
     commentId: commentToBeRemoved._id
   })
-  const updatedComments = comments.value.filter((_, i) => i !== index)
-
+  const updatedComments = comments.value.filter(
+    (_, i) => i !== index + (currentPage.value - 1) * commentsPerPage
+  )
   try {
-    const response = await axios.delete(`${apiUrl}job/comment`, {
+    isDeleting.value = true
+    await axios.delete(`${API_URL}job/comment`, {
       data: commentBody.value,
       headers: config.headers
     })
     comments.value = updatedComments
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Comment deleted successfully',
-      life: 3000
-    })
+    // If deleting the last comment on a page, move to the previous page
+    if (paginatedComments.value.length === 0 && currentPage.value > 1) {
+      currentPage.value--
+    }
   } catch (error) {
     console.error('Error deleting comment', error)
+  } finally {
+    isDeleting.value = false
   }
 }
 
-// On Mounted
 onMounted(async () => {
   await getUserData()
-  await getAllEmployeeData()
 })
 </script>

@@ -1,88 +1,56 @@
 <template>
-  <v-dialog
-    v-model="inventoryDialog"
-    max-width="600px"
-    location="bottom"
-    location-strategy="connected"
-    opacity="0"
-    origin="top center"
+  <Dialog
+    v-model:visible="inventoryDialog"
+    modal
+    header="Log Inventory"
+    :style="{ width: '50vw' }"
+    :breakpoints="{ '960px': '75vw', '641px': '100vw' }"
   >
-    <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        width="100%"
-        class="d-flex justify-start"
-        border="md"
-        elevation="5"
-        outlined
-        @click="openInventoryDialog"
-        v-bind="activatorProps"
-      >
-        <v-icon left>
-          {{ 'fa: fa-solid fa-box' }}
-        </v-icon>
-        Log Inventory
-      </v-btn>
+    <div class="p-fluid">
+      <div v-for="(item, index) in inventory" :key="index" class="p-field p-grid p-mb-2">
+        <div class="p-col-12 p-md-5">
+          <InputText v-model="item.name" placeholder="Item Name" />
+        </div>
+        <div class="p-col-12 p-md-3">
+          <InputNumber v-model="item.quantity" placeholder="Quantity" :min="0" />
+        </div>
+        <div class="p-col-12 p-md-4">
+          <Button icon="pi pi-trash" class="p-button-danger p-mr-2" @click="deleteItem(index)" />
+          <Button icon="pi pi-save" class="p-button-success" @click="saveItem(index)" />
+        </div>
+      </div>
+    </div>
+    <Button label="Add Item" icon="pi pi-plus" @click="addItem" class="p-mt-3" />
+
+    <template #footer>
+      <Button
+        label="Save All"
+        icon="pi pi-check"
+        @click="saveAllItems"
+        autofocus
+        :loading="req_loading"
+      />
+      <Button label="Cancel" icon="pi pi-times" @click="closeDialog" class="p-button-text" />
     </template>
+  </Dialog>
 
-    <template v-slot:default="{ isActive }">
-      <v-card>
-        <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
-          Log Inventory
-        </v-card-title>
-
-        <v-card-text class="text-center">
-          <div>
-            <h5 class="pt-4">Log Inventory</h5>
-            <v-container>
-              <v-row
-                v-for="(item, index) in inventory"
-                :key="index"
-                class="d-flex align-center mb-3"
-              >
-                <v-text-field
-                  v-model="item.name"
-                  label="Item Name"
-                  dense
-                  class="pt-4 pr-2"
-                  hide-details
-                  prepend-icon="fa: fa-solid fa-box"
-                ></v-text-field>
-                <v-text-field
-                  v-model="item.quantity"
-                  label="Quantity"
-                  dense
-                  class="pt-4"
-                  hide-details
-                  :width="30"
-                ></v-text-field>
-
-                <v-btn @click="deleteItem(index)">
-                  <v-icon color="red" class="pt-4 pr-0 mr-0">{{ 'fa: fa-solid fa-trash' }}</v-icon>
-                </v-btn>
-                <v-btn @click="saveItem(index)">
-                  <v-icon color="success" class="pt-4 pl-0 ml-0">{{
-                    'fa: fa-solid fa-save'
-                  }}</v-icon>
-                </v-btn>
-              </v-row>
-              <v-btn color="success" @click="addItem">Add Item</v-btn>
-            </v-container>
-          </div>
-        </v-card-text>
-
-        <v-card-actions class="d-flex flex-column">
-          <v-btn @click="saveAllItems" color="success">Save All</v-btn>
-          <v-btn @click="isActive.value = false" color="error">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-dialog>
+  <Button
+    label="Log Inventory"
+    icon="pi pi-box"
+    @click="openInventoryDialog"
+    class="p-button-outlined"
+  />
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { ref, defineProps } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import axios from 'axios'
+import Dialog from 'primevue/dialog'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import Button from 'primevue/button'
+import { API_URL } from '@/main'
 
 const toast = useToast()
 const inventoryDialog = ref(false)
@@ -101,27 +69,12 @@ interface UpdateRecordedDetails {
 
 const props = defineProps<{ recordedDetails: UpdateRecordedDetails; jobID: string }>()
 
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
-
 const openInventoryDialog = () => {
   inventoryDialog.value = true
+}
+
+const closeDialog = () => {
+  inventoryDialog.value = false
 }
 
 const addItem = () => {
@@ -129,35 +82,31 @@ const addItem = () => {
 }
 
 const deleteItem = (index: number) => {
-  if (inventory.value[index].name.trim() !== '' && inventory.value[index].quantity > 0) {
-    console.log('non empty block statement')
-  } else {
-    inventory.value.splice(index, 1)
-  }
+  inventory.value.splice(index, 1)
 }
 
 const saveItem = (index: number) => {
-  if (inventory.value.length > 0) {
-    if (inventory.value[index].name.trim() !== '' && inventory.value[index].quantity > 0) {
-      inventory.value[index].name = inventory.value[index].name.trim()
-      // Post the list of inventory items to the backend
-    } else {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Please provide valid item details',
-        life: 3000
-      })
-    }
+  if (inventory.value[index].name.trim() !== '' && inventory.value[index].quantity > 0) {
+    inventory.value[index].name = inventory.value[index].name.trim()
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Item saved successfully',
+      life: 3000
+    })
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please provide valid item details',
+      life: 3000
+    })
   }
 }
 
-const saveAllItems = () => {
-  logInventoryItems()
-  inventoryDialog.value = false
-}
+let req_loading = ref<boolean>(false)
 
-const logInventoryItems = async () => {
+const saveAllItems = async () => {
   if (inventory.value.length === 0) {
     toast.add({
       severity: 'warn',
@@ -175,8 +124,6 @@ const logInventoryItems = async () => {
     }
   }
 
-  const apiUrl = await getRequestUrl()
-
   const updatedInventory = inventory.value.map((item) => ({
     inventoryItemId: '', // Provide or retrieve this from somewhere
     inventoryItemName: item.name,
@@ -184,30 +131,32 @@ const logInventoryItems = async () => {
   }))
 
   try {
-    const response = await axios.patch(`${apiUrl}job/${props.jobID}`, updatedInventory, config)
+    req_loading.value = true
+    const response = await axios.patch(`${API_URL}job/${props.jobID}`, updatedInventory, config)
     console.log(response)
-    showInventoryLogSuccess()
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Successfully logged inventory',
+      life: 3000
+    })
+    closeDialog()
   } catch (error) {
-    console.log('Error while logging inventory', error)
-    showInventoryLogError()
+    console.error('Error while logging inventory', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'An error occurred while logging the inventory item',
+      life: 3000
+    })
+  } finally {
+    req_loading.value = false
   }
 }
-
-const showInventoryLogSuccess = () => {
-  toast.add({
-    severity: 'success',
-    summary: 'Success Message',
-    detail: 'Successfully logged inventory',
-    life: 3000
-  })
-}
-
-const showInventoryLogError = () => {
-  toast.add({
-    severity: 'error',
-    summary: 'Error Message',
-    detail: 'An error occurred while logging the inventory item',
-    life: 3000
-  })
-}
 </script>
+
+<style scoped>
+.p-dialog-content {
+  padding-bottom: 0;
+}
+</style>

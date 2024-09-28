@@ -1,25 +1,19 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-height="800"
-    max-width="600"
-    :theme="isdarkmode ? 'dark' : 'light'"
-    :opacity="0.1"
-    persistent
-  >
+  <v-dialog v-model="dialog" max-height="800" max-width="600" :opacity="0.1" persistent>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
-        variant="outlined"
-        color="primary"
+        variant="elevated"
+        color="secondary"
         v-bind="activatorProps"
+        block
       >
         <v-icon icon="fa: fa-solid fa-person" color="primary"></v-icon>
         Create Role
       </v-btn>
     </template>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title> Create new Role</v-card-title>
       <v-card-text>
         <v-form v-model="formIsValid" ref="form">
@@ -36,15 +30,27 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn
-          @click="createRole"
-          :disabled="!formIsValid"
-          color="success"
-          variant="text"
-          rounded="md"
-          >Create Role</v-btn
-        >
-        <v-btn color="error" rounded="md" variant="text" @click="close"> Cancel </v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6" order="last" order-lg="first">
+              <v-btn color="error" rounded="md" variant="text" @click="close" block
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon> Cancel
+              </v-btn>
+            </v-col>
+            <v-col cols="12" lg="6" order="first" order-lg="last">
+              <v-btn
+                @click="createRole"
+                :disabled="!formIsValid"
+                color="success"
+                rounded="md"
+                variant="text"
+                :loading="isDeleting"
+                block
+                ><v-icon icon="fa: fa-solid fa-plus" color="success"></v-icon>Create Role</v-btn
+              >
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -52,6 +58,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 interface Role {
   roleName: string
@@ -62,9 +69,8 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      isDeleting: false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       formIsValid: false,
       Role: {
         roleName: '',
@@ -79,11 +85,19 @@ export default defineComponent({
 
   methods: {
     async createRole() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
+      const data = {
+        createRoleDto: {
+          roleName: this.Role.roleName,
+          permissionSuite: this.Role.permissionSuite,
+          companyId: this.Role.companyId
+        },
+        currentEmployeeId: localStorage.getItem('employeeId')
+      }
       console.log(this.Role)
       await axios
-        .post(`${apiURL}role/create`, this.Role, config)
+        .post(`${API_URL}role/create`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -92,8 +106,10 @@ export default defineComponent({
             detail: 'Role Created',
             life: 3000
           })
-          this.dialog = false
-          window.location.reload()
+          this.isDeleting = this.dialog = false
+          setTimeout(() => {
+            this.$emit('CreatedRoles', response.data.data)
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)
@@ -103,19 +119,8 @@ export default defineComponent({
             detail: 'Role not created',
             life: 3000
           })
+          this.isDeleting = false
         })
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     async getPermissions() {
       const config = {
@@ -125,7 +130,7 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}role/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response)
           for (let i = 0; i < response.data.data.length; i++) {

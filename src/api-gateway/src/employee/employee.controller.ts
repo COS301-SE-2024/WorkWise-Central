@@ -10,30 +10,38 @@ import {
   Headers,
   Post,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import {
   EmployeeListResponseDto,
   EmployeeResponseDto,
+  GraphResponseDto,
   joinedEmployeeListResponseDto,
   joinedEmployeeResponseDto,
 } from './entities/employee.entity';
 import { Types } from 'mongoose';
 import { AuthGuard } from '../auth/auth.guard';
-import { extractUserId, validateObjectId } from '../utils/Utils';
+import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
-// import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
+import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
+import { AddSubordinatesDto, RemoveSubordinatesDto, UpdateEmployeeDto } from './dto/update-employee.dto';
+import { ExternalCreateEmployeeDto } from './dto/create-employee.dto';
+import { UsersService } from '../users/users.service';
 
 const className = 'Employee';
 
@@ -43,62 +51,88 @@ export class EmployeeController {
   constructor(
     private readonly employeeService: EmployeeService,
     private readonly jwtService: JwtService,
+    private readonly userService: UsersService,
   ) {}
 
+  async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+    console.log('userId:', userId);
+    const user = await this.userService.getUserById(userId);
+    console.log('user:', user);
+    console.log('currentEmployeeId:', currentEmployeeId);
+    if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  async validateRequestWithCompanyId(userId: Types.ObjectId, companyId: Types.ObjectId) {
+    const user = await this.userService.getUserById(userId);
+    if (!user.joinedCompanies.find((joined) => joined.companyId.toString() === companyId.toString())) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
   @ApiOperation({
-    summary: `Refer to Documentation`,
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
   })
   @Get()
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
   }
   //********Endpoints for test purposes - Start**********/
+  @ApiOperation({
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
+  })
   @Get('/all')
   async findAll() {
-    console.log('hi');
+    // console.log('hi');
     const data = await this.employeeService.findAll();
     return { data: data };
   }
 
+  @ApiOperation({
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
+  })
   @Post('/create')
   async create(
     @Headers() headers: any,
     @Body()
     body: {
       currentEmployeeId: Types.ObjectId;
-      createEmployeeDto: CreateEmployeeDto;
+      createEmployeeDto: ExternalCreateEmployeeDto;
     },
   ) {
     const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    console.log('current employee: ', currentEmployee);
+    // console.log('current employee: ', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('add new employees')) {
       let data;
       try {
         data = await this.employeeService.create(body.createEmployeeDto);
       } catch (e) {
-        console.log('error:', e);
+        // console.log('error:', e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
     } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }
-  @Get('/test')
-  async test() {
-    console.log('In allEmployeesInCompanyWithRole');
-  }
 
+  @ApiOperation({
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
+  })
   @Get('/employeeWithRole/:roleId')
   async allEmployeesInCompanyWithRole(@Param('roleId') roleId: Types.ObjectId) {
-    console.log('In allEmployeesInCompanyWithRole');
+    // console.log('In allEmployeesInCompanyWithRole');
     const data = await this.employeeService.allEmployeesInCompanyWithRole(roleId);
     return { data: data };
   }
 
+  @ApiOperation({
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
+  })
   @Get('/depthFirst/:employeeId')
   async depthFirst(@Param('employeeId') employeeId: Types.ObjectId) {
-    console.log('In depthFirst');
+    // console.log('In depthFirst');
     const data = await this.employeeService.deptFirstTraversalId(employeeId);
     return { data: data };
   }
@@ -107,40 +141,54 @@ export class EmployeeController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
+  @ApiNoContentResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
   })
-  @ApiInternalServerErrorResponse({
+  @ApiBadRequestResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
-    summary: `Get all ${className} instances for a given company, joined with the User and Role tables`,
-    description: `Returns all ${className} instances in the database for a given Company, joined with the User and Role tables.`,
+    summary: `Get a detailed list of all ${className}s in a given company.`,
+    description: `Returns all ${className}s in for a given Company. The user information is also added to the response. userId returns an object with the user information.`,
   })
   @ApiOkResponse({
     type: joinedEmployeeListResponseDto,
     description: `An array of mongodb objects of the ${className} class for a given Company, joined with the User and Role tables.`,
   })
   @ApiParam({
-    name: 'companyId',
-    description: `The _id attribute of the Company for which to get all ${className} instances.`,
+    name: 'currentEmployeeId',
+    description: `This is the _id of the ${className} making the request.`,
+    type: String,
   })
   @Get('/detailed/all/:currentEmployeeId')
   async findAllInCompanyDetailed(
     @Headers() headers: any,
     @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
-    console.log('In findAllInCompanyDetailed');
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    console.log('currentEmployee', currentEmployee);
+    // console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
       let data;
       try {
-        console.log('In try block');
+        // console.log('In try block');
         data = await this.employeeService.detailedFindAllInCompany(currentEmployee.companyId);
-        console.log('data', data);
+        // console.log('data', data);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -154,36 +202,51 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
-  @ApiInternalServerErrorResponse({
+  @ApiNoContentResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
   })
-  @ApiInternalServerErrorResponse({
+  @ApiBadRequestResponse({
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
-    summary: `Get all ${className} instances for a given company`,
-    description: `Returns all ${className} instances in the database for a given Company.`,
+    summary: `Get all ${className}s for a given company`,
+    description: `Returns all ${className} instances for a given Company.`,
   })
   @ApiOkResponse({
     type: EmployeeListResponseDto,
     description: `An array of mongodb objects of the ${className} class for a given Company.`,
   })
   @ApiParam({
-    name: 'companyId',
-    description: `The _id attribute of the Company for which to get all ${className} instances.`,
+    name: 'currentEmployeeId',
+    description: `This is the _id of the ${className} making the request.`,
+    type: String,
   })
   @Get('/all/:currentEmployeeId')
   async findAllInCompany(@Headers() headers: any, @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
+
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
       let data;
       try {
@@ -201,15 +264,33 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }
+
+  //Check
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Find an ${className}`,
@@ -220,35 +301,41 @@ export class EmployeeController {
     description: `The mongodb object of the ${className}, with an _id attribute, joined with the User and Role tables.`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'employeeId',
     description: `The _id attribute of the ${className} to be retrieved.`,
+    type: String,
   })
-  @Get('/detailed/id/:id/')
+  @ApiQuery({
+    name: 'currentEmployeeId',
+    description: '_id of the employee making the request',
+    type: String,
+  })
+  @Get('/detailed/id/:employeeId')
   async findByIdDetailed(
     @Headers() headers: any,
-    @Param('id') id: Types.ObjectId,
+    @Param('employeeId') employeeId: Types.ObjectId,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
-    if (!currentEmployeeId) {
-      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
-    }
-    validateObjectId(currentEmployeeId, 'currentEmployee');
+    console.log('employeeId: ', employeeId);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
-    const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      const data = await this.employeeService.detailedFindById(id);
+      console.log('In if');
+      const data = await this.employeeService.detailedFindById(employeeId);
       return { data: data };
     } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
       let data;
       try {
-        data = await this.employeeService.detailedFindByIdUnderMe(userId, id, currentEmployeeId);
+        data = await this.employeeService.detailedFindByIdUnderMe(employeeId, currentEmployeeId);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
     } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }
 
@@ -257,6 +344,22 @@ export class EmployeeController {
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Find an ${className}`,
@@ -267,36 +370,39 @@ export class EmployeeController {
     description: `The mongodb object of the ${className}, with an _id attribute`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'employeeId',
     description: `The _id attribute of the ${className} to be retrieved.`,
+    type: String,
   })
-  @Get('id/:id')
+  @ApiQuery({
+    name: 'currentEmployeeId',
+    description: '_id of the employee making the request',
+    type: String,
+  })
+  @Get('id/:employeeId')
   async findById(
     @Headers() headers: any,
-    @Param('id') id: Types.ObjectId,
+    @Param('employeeId') employeeId: Types.ObjectId,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
-    if (!currentEmployeeId) {
-      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
-    }
-    validateObjectId(currentEmployeeId, 'currentEmployee');
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
-    const userId = extractUserId(this.jwtService, headers);
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    console.log('currentEmployee', currentEmployee);
+    // console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      const data = await this.employeeService.findById(id);
+      const data = await this.employeeService.findById(employeeId);
       return { data: data };
     } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
       let data;
       try {
-        data = await this.employeeService.findByIdUnderMe(userId, id, currentEmployeeId);
+        data = await this.employeeService.findByIdUnderMe(employeeId, currentEmployeeId);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
     } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }
 
@@ -305,27 +411,44 @@ export class EmployeeController {
   @ApiInternalServerErrorResponse({
     type: HttpException,
     status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
-    summary: `Find the list of all the employees in the company except the given employee and their subordinates and superiors.`,
-    description: `Returns the ${className} instance with the given id.`,
+    summary: `Gets a list of employees that are allowed to be made subordinates of the current employee`,
+    description: `Returns a list of ${className}`,
   })
   @ApiOkResponse({
     type: EmployeeListResponseDto,
   })
   @ApiParam({
-    name: 'id',
-    description: `The _id attribute of the ${className}.`,
+    name: 'employeeId',
+    description: `The _id attribute of the ${className}, for which a list of potential subordinates needs to be returned.`,
+    type: String,
   })
-  @ApiParam({
-    name: 'companyId',
-    description: `The _id attribute of the Company.`,
-  })
-  @Get('/listOther/:id')
-  async getOtherEmployees(@Headers() headers: any, @Param('id') id: Types.ObjectId) {
+  @Get('/listPotentialSubordinates/:employeeId')
+  async listPotentialSubordinates(@Headers() headers: any, @Param('employeeId') employeeId: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    const employee = await this.employeeService.findById(employeeId);
+    await this.validateRequestWithCompanyId(userId, employee.companyId);
+
     let data;
     try {
-      data = await this.employeeService.getListOfOtherEmployees(id);
+      data = await this.employeeService.listPotentialSubordinates(employeeId);
     } catch (e) {
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
@@ -338,7 +461,119 @@ export class EmployeeController {
   @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
     status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Gets a list of all the employees in the company that are allowed to be made the superior of the current employee`,
+    description: `Returns a list of ${className}`,
+  })
+  @ApiOkResponse({
+    type: EmployeeListResponseDto,
+  })
+  @ApiParam({
+    name: 'employeeId',
+    description: `The _id attribute of the ${className}, for which a list of potential superiors needs to be returned.`,
+    type: String,
+  })
+  @Get('/listPotentialSuperiors/:employeeId')
+  async listSuperiors(@Headers() headers: any, @Param('employeeId') employeeId: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    const employee = await this.employeeService.findById(employeeId);
+    await this.validateRequestWithCompanyId(userId, employee.companyId);
+
+    let data;
+    try {
+      data = await this.employeeService.listPotentialSuperiors(employeeId);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return {
+      data: data,
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Get data for the graph view of the company`,
+    description: `Return the nodes and edged for the graph view of the company. Also returns the nodes mapped to the ids of the employees.`,
+  })
+  @ApiOkResponse({
+    type: GraphResponseDto,
+    description: `This returns the data needed to render the graph view of the company`,
+  })
+  @ApiParam({
+    name: 'currentEmployeeId',
+    description: `The _id attribute of the employee that is making the request.`,
+    type: String,
+  })
+  @Get('/graphViewData/:currentEmployeeId')
+  async graphData(@Headers() headers: any, @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    const data = await this.employeeService.graphData(currentEmployee.companyId);
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Update an ${className} instances`,
@@ -349,64 +584,175 @@ export class EmployeeController {
     description: `The updated ${className} object`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'employeeId',
     description: `The _id attribute of the ${className} to be updated.`,
+    type: String,
   })
   @ApiBody({ type: UpdateEmployeeDto })
   @Patch(':employeeId')
   async update(
     @Headers() headers: any,
+    @Body() updateEmployeeDto: UpdateEmployeeDto,
     @Param('employeeId') employeeId: Types.ObjectId,
-    @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      updateEmployeeDto: UpdateEmployeeDto;
-    },
   ) {
-    console.log('In update');
-    const userId = extractUserId(this.jwtService, headers);
-    console.log('userId', userId);
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    console.log('currentEmployee', currentEmployee);
-    if (currentEmployee.role.permissionSuite.includes('edit all employees')) {
-      console.log('In edit all employees');
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, updateEmployeeDto.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(updateEmployeeDto.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('edit employees')) {
+      //TODO: change edit permission
       let data;
       try {
-        console.log('In try block');
-        data = await this.employeeService.update(employeeId, body.currentEmployeeId, body.updateEmployeeDto);
-        console.log('data', data);
+        data = await this.employeeService.update(employeeId, updateEmployeeDto);
       } catch (e) {
         console.log('error:', e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
-    } else if (currentEmployee.role.permissionSuite.includes('edit employees under me')) {
+    } else {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Update an ${className} instances`,
+    description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
+  })
+  @ApiOkResponse({
+    type: EmployeeResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiParam({
+    name: 'employeeId',
+    description: `The _id attribute of the ${className} to be updated.`,
+    type: String,
+  })
+  @ApiBody({ type: AddSubordinatesDto })
+  @Patch('addSubordinate/:employeeId')
+  async addSubordinates(
+    @Headers() headers: any,
+    @Param('employeeId') employeeId: Types.ObjectId,
+    @Body() addSubordinatesDto: AddSubordinatesDto,
+  ) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, addSubordinatesDto.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(addSubordinatesDto.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('edit employees')) {
       let data;
       try {
-        data = await this.employeeService.updateUnderMe(
-          userId,
-          employeeId,
-          body.updateEmployeeDto,
-          body.currentEmployeeId,
-        );
+        data = await this.employeeService.addSubordinates(employeeId, addSubordinatesDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };
     } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }
 
-  /*  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
-    status: HttpStatus.BAD_REQUEST,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
   })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Update an ${className} instances`,
+    description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
+  })
+  @ApiOkResponse({
+    type: EmployeeResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiParam({
+    name: 'employeeId',
+    description: `The _id attribute of the ${className} to be updated.`,
+    type: String,
+  })
+  @ApiBody({ type: RemoveSubordinatesDto })
+  @Patch('removeSubordinate/:employeeId')
+  async removeSubordinate(
+    @Headers() headers: any,
+    @Param('employeeId') employeeId: Types.ObjectId,
+    @Body() removeSubordinatesDto: RemoveSubordinatesDto,
+  ) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, removeSubordinatesDto.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(removeSubordinatesDto.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('edit employees')) {
+      let data;
+      try {
+        data = await this.employeeService.removeSubordinates(employeeId, removeSubordinatesDto);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Delete an ${className}`,
@@ -418,30 +764,31 @@ export class EmployeeController {
     description: `A boolean value indicating whether or not the deletion was a success`,
   })
   @ApiParam({
-    name: 'id',
+    name: 'employeeId',
     description: `The _id attribute of the ${className}`,
+    type: String,
   })
-  @Delete(':id')
-  async remove(@Headers() headers: any, @Param('id') id: Types.ObjectId, @Body() body: CurrentEmployeeDto) {
-    const userId = extractUserId(this.jwtService, headers);
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('remove any employees')) {
-      let data;
-      try {
-        data = await this.employeeService.remove(id);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
+  @Delete(':employeeId')
+  async remove(
+    @Headers() headers: any,
+    @Param('employeeId') employeeId: Types.ObjectId,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    console.log('employeeId:', employeeId);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
-      if (data === false) {
-        throw new HttpException('update unsuccessful', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-      return { data: data };
-    } else if (currentEmployee.role.permissionSuite.includes('remove employees under me')) {
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    console.log('currentEmployee:', currentEmployee);
+
+    if (currentEmployee.role.permissionSuite.includes('delete employees')) {
+      console.log('In if');
       let data;
       try {
-        data = await this.employeeService.removeUnderMe(userId, id, body.currentEmployeeId);
+        console.log('In try block');
+        data = await this.employeeService.remove(employeeId);
       } catch (e) {
+        console.log('error:', e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
 
@@ -450,7 +797,8 @@ export class EmployeeController {
       }
       return { data: data };
     } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      console.log('In else');
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
-  }*/
+  }
 }

@@ -17,7 +17,7 @@
       rounded="xl"
       width="500"
       height="auto"
-      :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+      :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
     >
       <v-col>
         <v-col>
@@ -31,21 +31,21 @@
             ><v-chip color="green"
               ><small
                 class="text-caption"
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
                 >Plumbing</small
               ></v-chip
             >
             <v-chip color="green"
               ><small
                 class="text-caption"
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
                 >Water Storage Installation
               </small></v-chip
             >
             <v-chip color="green"
               ><small
                 class="text-caption"
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
                 >Drainage Repairs
               </small></v-chip
             >
@@ -57,7 +57,7 @@
             <v-chip color="red"
               ><small
                 class="text-caption"
-                :style="isdarkmode === true ? dark_theme_text_color : light_theme_text_color"
+                :style="isDarkMode === true ? dark_theme_text_color : light_theme_text_color"
                 >None</small
               ></v-chip
             ></v-col
@@ -73,7 +73,7 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   props: {
-    isdarkmode: Boolean,
+    isDarkMode: Boolean,
     colors: Array
   },
   data() {
