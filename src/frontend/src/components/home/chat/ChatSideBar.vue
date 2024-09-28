@@ -9,7 +9,7 @@
       label="New Chat"
       icon="fa: fa-solid fa-plus"
       @click="showNewChatDialog"
-      class="p-button-outlined mb-3 w-full"
+      class="custom-button"
     />
 
     <ul class="chat-list">
@@ -51,7 +51,7 @@
     <Dialog
       v-model:visible="newChatDialogVisible"
       header="Create New Chat"
-      :style="{ width: '50vw' }"
+      :style="{ width: '40vw' }"
       class="new-chat-dialog"
     >
       <div class="p-fluid pt-5 pb-5">
@@ -97,8 +97,9 @@
               icon="fa: fa-solid fa-times"
               @click="closeNewChatDialog"
               class="p-button-text"
+              style="background-color: red; outline-color: red; color: white; margin-right: 5px"
           />
-          <Button label="Create" icon="fa: fa-solid fa-check" @click="createNewChat" autofocus />
+          <Button label="Create" icon="fa: fa-solid fa-check" class="custom-button"/>
         </div>
       </template>
     </Dialog>
@@ -219,6 +220,18 @@ const theKidIsNotMySon = (userId) => {
 </script>
 
 <style scoped>
+
+.custom-button {
+  background-color: #4C9FC3;
+  outline-color: #4C9FC3;
+  border: none; /* Add this line to remove the green outline */
+}
+
+.custom-button:hover {
+  background-color: #4C9FC3 !important; /* Ensure hover color matches */
+  border: none !important; /* Add this line to remove the green outline */
+}
+
 .chat-sidebar {
   width: 300px;
   padding: 1rem;
