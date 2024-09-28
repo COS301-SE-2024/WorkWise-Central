@@ -12,9 +12,6 @@ on:
       - develop
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-
   k6:
     runs-on: ubuntu-latest
     steps:
