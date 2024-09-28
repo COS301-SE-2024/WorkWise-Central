@@ -114,8 +114,10 @@ export default {
             life: 3000
           })
 
-          this.clientDialog = false
-          window.location.reload()
+          setTimeout(() => {
+           this.$emit('employeeDeleted')
+           this.clientDialog = false
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)
