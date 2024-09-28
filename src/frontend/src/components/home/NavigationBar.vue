@@ -371,7 +371,7 @@ export default defineComponent({
             value="Movements"
             title="Movements"
             prepend-icon="fa: fa-solid fa-people-carry-box"
-            v-show="checkPermission('view movements')"
+            v-show="checkPermission('view all stock movements')"
           ></v-list-item>
         </v-list-group>
       </v-list>
