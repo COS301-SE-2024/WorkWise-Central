@@ -21,7 +21,7 @@
             </Card>
           </div>
 
-          <Panel header="Current Drivers" class="text-center">
+          <Panel header="Current Drivers">
             <DataView :value="currentDrivers">
               <template #list="slotProps">
                 <div class="driver-item">
@@ -62,7 +62,7 @@
               label="Show All Vehicle Data"
               icon="fa: fa-solid fa-external-link"
               @click="dialogVisible = true"
-              class="p-button-success"
+              style="background-color: #4C9FC3; outline-color: #4C9FC3;"
           />
         </div>
         <Dialog

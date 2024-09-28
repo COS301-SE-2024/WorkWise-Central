@@ -10,6 +10,7 @@
       icon="fa: fa-solid fa-plus"
       @click="showNewChatDialog"
       class="p-button-outlined mb-3 w-full"
+      style="background-color: #4C9FC3; outline-color: #4C9FC3; color: white;"
     />
 
     <ul class="chat-list">
@@ -51,7 +52,7 @@
     <Dialog
       v-model:visible="newChatDialogVisible"
       header="Create New Chat"
-      :style="{ width: '50vw' }"
+      :style="{ width: '40vw' }"
       class="new-chat-dialog"
     >
       <div class="p-fluid pt-5 pb-5">
@@ -97,8 +98,9 @@
               icon="fa: fa-solid fa-times"
               @click="closeNewChatDialog"
               class="p-button-text"
+              style="background-color: red; outline-color: red; color: white; margin-right: 5px"
           />
-          <Button label="Create" icon="fa: fa-solid fa-check" @click="createNewChat" autofocus />
+          <Button label="Create" icon="fa: fa-solid fa-check" @click="createNewChat" autofocus  style="background-color: #4C9FC3; outline-color: #4C9FC3; color: white;"/>
         </div>
       </template>
     </Dialog>
