@@ -34,7 +34,7 @@
               :disabled="invoice.paid === 'Paid'"
             >
               Pay Now </v-btn
-            ><v-btn color="primary" @click="formatPdfData(invoice)"> Generate PDF </v-btn>
+            ><v-btn color="primary" @click="formatPdfData(invoice)"> View Invoice </v-btn>
           </v-list-item-action>
           <v-dialog v-model="dialog" max-width="600">
             <v-card class="bg-cardColor">
@@ -101,44 +101,19 @@
   </v-container>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import axios from 'axios'
 import { defineComponent } from 'vue'
 import CryptoJS from 'crypto-js'
 import { API_URL } from '@/main'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template/index'
 
-export type InvoiceCardDataFormat = {
-  id: string // For ObjectId type in the API class
-  invoiceNumber: number
-  invoiceDate: string // Using ISO string format for Date
-  paymentDate: string // ISO string format
-  subTotal: number
-  total: number
-  paid: boolean
-  clientId: string // For ObjectId type
-  clientName: string
-  taxAmount: number
-  taxPercentage: number
-  jobName: string
-  clientAddress: string
-  clientPhoneNumber: string
-  clientEmail: string
-  companyName: string
-  companyAddress: string
-  companyEmail: string
-  companyPhoneNumber: string
-  companyLogo: string
-  inventoryItems: []
-  laborItems: []
-}
-
 export default defineComponent({
   data() {
     return {
       dialog: false,
-      invoices: [] as Array<any>, // Update with your invoice model
-      clientId: '66cf13c3a76252f35d46c8fb' as any, // This is for testing purposes
+      invoices: [], // Update with your invoice model
+      clientId: '66cf13c3a76252f35d46c8fb', // This is for testing purposes
       client: {
         registrationNumber: '',
         details: {
@@ -163,7 +138,7 @@ export default defineComponent({
           type: ''
         }
       },
-      testRoute: '' as any,
+      testRoute: '',
       companyId: '',
       merchant_id: '',
       merchant_key: '',
@@ -173,11 +148,11 @@ export default defineComponent({
       notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
       testingMode: true,
       pfHost: 'sandbox.payfast.co.za',
-      forms: {} as { [key: string]: any }
+      forms: {}
     }
   },
   methods: {
-    formatPdfData(payload: any) {
+    formatPdfData(payload) {
       console.log(payload)
       this.invoiceGeneration({
         id: payload._id,
@@ -234,7 +209,7 @@ export default defineComponent({
         ])
       })
     },
-    invoiceGeneration(payload: any) {
+    invoiceGeneration(payload) {
       try {
         if (payload.laborItems.length != 0) {
           payload.inventoryItems.push(['', '', '', '', ''])
@@ -345,9 +320,9 @@ export default defineComponent({
         console.log('Error fetching data: ' + error)
       }
     },
-    generateSignature(invoice: any): string {
+    generateSignature(invoice) {
       // Create parameter string
-      const data: { [key: string]: string | number | any } = {
+      const data = {
         merchant_id: this.merchant_id,
         merchant_key: this.merchant_key,
         return_url: this.return_url,
@@ -362,7 +337,7 @@ export default defineComponent({
       }
       let pfOutput = ''
       for (const key in data) {
-        let value = data[key as keyof typeof data]
+        let value = data[key]
         value = value.toString().trim()
         pfOutput += `${key}=${encodeURIComponent(value).replace(/%20/g, '+')}&`
       }
@@ -375,8 +350,8 @@ export default defineComponent({
       console.log('getString:', getString)
       return CryptoJS.MD5(getString).toString()
     },
-    submitPaymentForm(invoiceId: number) {
-      const form = document.getElementById('paymentForm' + invoiceId) as HTMLFormElement
+    submitPaymentForm(invoiceId) {
+      const form = document.getElementById('paymentForm' + invoiceId)
       // console.log('Form:', form)
       if (form) {
         form.submit()
@@ -386,7 +361,7 @@ export default defineComponent({
     },
     async getRequests() {
       if (localStorage.getItem('clientId') !== null) {
-        this.clientId = localStorage.getItem('clientId') as string
+        this.clientId = localStorage.getItem('clientId')
       }
 
       // Getting the client info
@@ -447,7 +422,7 @@ export default defineComponent({
           console.error(error)
         })
     },
-    formatDate(date: string) {
+    formatDate(date) {
       const date_passed_in = new Date(date)
       const y = date_passed_in.getFullYear()
       const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
