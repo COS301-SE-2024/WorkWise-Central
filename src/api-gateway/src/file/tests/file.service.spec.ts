@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FileService } from '../file.service';
+import { ConfigService } from '@nestjs/config';
 
 describe('FileService', () => {
   let service: FileService;
@@ -12,6 +13,7 @@ describe('FileService', () => {
           provide: 'GLOBAL_CONFIG',
           useValue: 'http://mocked-server-url.com', // Mocked URL
         },
+        ConfigService,
       ],
     }).compile();
 
