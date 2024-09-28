@@ -30,15 +30,17 @@ services:
       - webnet
     ports:
       - '3000:3000'
-    depends_on:
-      - mongo_db
+#    depends_on:
+#      - mongo_db
     environment:
       SERVER_LOGIN:
-        mongodb://mongo_db:27017/${MONGO_INIT_ROOT_DATABASE}?retryWrites=true&w=majority
+        mongodb+srv://${APP_USER}:${APP_PASS}@cluster1ww.wzjkgf8.mongodb.net/WorkwiseCentral?retryWrites=true&w=majority&appName=Cluster1ww
+      UPLOAD_PATH:
+        /app/uploads
       ENVIRONMENT:
         prod
-#    volumes:
-#      - workwise_file_volume:/api-gateway/uploads/
+    volumes:
+      - ./uploads:/app/uploads
 
   mongo_db:
     restart: unless-stopped
@@ -64,7 +66,7 @@ services:
 volumes:
   workwise_prod_volume:
   mongo_db_config:
-# workwise_file_volume:
+  uploads:
 
 networks:
   webnet:
