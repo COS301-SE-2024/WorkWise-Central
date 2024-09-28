@@ -55,7 +55,7 @@
                     <label class="font-weight-light" style="font-size: 20px">Date</label>
                     <v-spacer></v-spacer>
                     <small class="text-caption" style="font-size: 12px">{{
-                      invoice?.creationDate
+                      invoice?.paymentDate
                     }}</small>
                   </v-col>
                 </v-row>
