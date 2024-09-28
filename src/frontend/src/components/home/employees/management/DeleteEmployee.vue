@@ -95,7 +95,6 @@ export default {
       this.clientDialog = false
     },
     async deleteEmployee() {
-      console.log(employee_to_be_deleted)
       this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
