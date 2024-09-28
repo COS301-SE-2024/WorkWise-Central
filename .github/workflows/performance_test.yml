@@ -44,7 +44,7 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_TEST_URI }}
 
       - name: Install k6
-        run: sudo apt-get install -y k6
+        run: sudo apt-get install k6
 
       - name: Run k6 tests
         run: ls && k6 run tests/test.js
