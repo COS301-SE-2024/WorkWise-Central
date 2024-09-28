@@ -18,29 +18,29 @@ jobs:
   k6:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start NestJS server
+        run: npm run start:dev &
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_TEST_URI }}
+
+
+      - name: Install k6
         uses: actions/checkout@v2
       - name: Run k6 test
         uses: k6io/action@v0.1
         with:
-          filename: tests.js
-
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Set up Node.js
-#        uses: actions/setup-node@v2
-#        with:
-#          node-version: '16'
-#
-#      - name: Install dependencies
-#        run: npm install
-#
-#      - name: Start NestJS server
-#        run: npm run start:dev &
-#        env:
-#          MONGODB_URI: ${{ secrets.MONGODB_TEST_URI }}
+          filename: test/tests.js
 #
 #      - name: Install k6
 #        run: sudo apt-get install k6
