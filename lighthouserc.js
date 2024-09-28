@@ -1,7 +1,8 @@
 module.exports = {
   ci: {
     collect: {
-      staticDistDir: "./src/frontend/dist",
+      //staticDistDir: "./src/frontend/dist",
+      startServerCommand: "cd src/frontend && npm run start:prod",
       url: [
         "http://localhost/",
         "http://localhost/dashboard",
