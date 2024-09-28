@@ -62,7 +62,7 @@
               label="Show All Vehicle Data"
               icon="fa: fa-solid fa-external-link"
               @click="dialogVisible = true"
-              style="background-color: #4C9FC3; outline-color: #4C9FC3;"
+              class="custom-button"
           />
         </div>
         <Dialog
@@ -431,6 +431,18 @@ export default {
 </script>
 
 <style scoped>
+
+.custom-button {
+  background-color: #4C9FC3;
+  outline-color: #4C9FC3;
+  border: none; /* Add this line to remove the green outline */
+}
+
+.custom-button:hover {
+  background-color: #4C9FC3 !important; /* Ensure hover color matches */
+  border: none !important; /* Add this line to remove the green outline */
+}
+
 .centered {
   display: block;
   margin: 8px auto;

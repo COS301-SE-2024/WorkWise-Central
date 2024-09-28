@@ -9,8 +9,7 @@
       label="New Chat"
       icon="fa: fa-solid fa-plus"
       @click="showNewChatDialog"
-      class="p-button-outlined mb-3 w-full"
-      style="background-color: #4C9FC3; outline-color: #4C9FC3; color: white;"
+      class="custom-button"
     />
 
     <ul class="chat-list">
@@ -100,7 +99,7 @@
               class="p-button-text"
               style="background-color: red; outline-color: red; color: white; margin-right: 5px"
           />
-          <Button label="Create" icon="fa: fa-solid fa-check" @click="createNewChat" autofocus  style="background-color: #4C9FC3; outline-color: #4C9FC3; color: white;"/>
+          <Button label="Create" icon="fa: fa-solid fa-check" class="custom-button"/>
         </div>
       </template>
     </Dialog>
@@ -221,6 +220,18 @@ const theKidIsNotMySon = (userId) => {
 </script>
 
 <style scoped>
+
+.custom-button {
+  background-color: #4C9FC3;
+  outline-color: #4C9FC3;
+  border: none; /* Add this line to remove the green outline */
+}
+
+.custom-button:hover {
+  background-color: #4C9FC3 !important; /* Ensure hover color matches */
+  border: none !important; /* Add this line to remove the green outline */
+}
+
 .chat-sidebar {
   width: 300px;
   padding: 1rem;
