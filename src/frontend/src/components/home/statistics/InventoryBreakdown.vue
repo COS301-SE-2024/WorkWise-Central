@@ -10,8 +10,20 @@
       <v-container>
         <v-row>
           <!-- Each item in a small red card -->
-          <v-col cols="12" sm="6" md="4" v-for="item in itemsToReorder" :key="item.inventoryItem.inventoryId">
-            <v-card class="colourCard1" elevation="2" rounded="md" height="auto" color="red important">
+          <v-col
+            cols="12"
+            sm="6"
+            md="4"
+            v-for="item in itemsToReorder"
+            :key="item.inventoryItem.inventoryId"
+          >
+            <v-card
+              class="colourCard1"
+              elevation="2"
+              rounded="md"
+              height="auto"
+              color="red important"
+            >
               <v-card-title class="colourCard2" colour="black">
                 {{ item.inventoryItem.nameOfItem }}
               </v-card-title>
@@ -43,7 +55,12 @@
           <!-- Doughnut Chart for Highest Usage Items -->
           <v-col v-if="hasHighestUsageData" cols="12" lg="6">
             <p><strong>Highest Usage Items:</strong></p>
-            <Chart type="doughnut" :data="highestUsageItemsChartData" :options="chartOptions" height="600px" />
+            <Chart
+              type="doughnut"
+              :data="highestUsageItemsChartData"
+              :options="chartOptions"
+              height="600px"
+            />
           </v-col>
 
           <!-- Bar Chart for Loss of Stock -->
@@ -60,14 +77,13 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
+import { API_URL } from '@/main.js'
 
 export default {
   components: { Chart },
   data() {
     return {
       currentTab: 'Inventory Breakdown',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       totalItems: 0,
 
       itemsToReorder: [],
@@ -108,10 +124,12 @@ export default {
   },
   computed: {
     hasHighestUsageData() {
-      return this.itemUsage.length > 0 && this.itemUsage.some(item => item.quantity > 0);
+      return this.itemUsage.length > 0 && this.itemUsage.some((item) => item.quantity > 0)
     },
     hasLossOfStockData() {
-      return this.stockLost.length > 0 && this.stockLost.some(item => item.inventoryItem.quantity > 0);
+      return (
+        this.stockLost.length > 0 && this.stockLost.some((item) => item.inventoryItem.quantity > 0)
+      )
     }
   },
   methods: {
@@ -124,8 +142,7 @@ export default {
       }
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      return API_URL
     },
     async getInventoryStats() {
       const config = {
@@ -163,15 +180,23 @@ export default {
 
       // Ensure there are enough background colors for the highest usage items
       const itemCount = this.itemUsage.length
-      this.highestUsageItemsChartData.datasets[0].backgroundColor = this.generateColors(itemCount, this.highestUsageItemsChartData.datasets[0].backgroundColor)
+      this.highestUsageItemsChartData.datasets[0].backgroundColor = this.generateColors(
+        itemCount,
+        this.highestUsageItemsChartData.datasets[0].backgroundColor
+      )
 
       // Update Loss of Stock Chart
       this.lossOfStockChartData.labels = this.stockLost.map((item) => item.inventoryItem.itemName)
-      this.lossOfStockChartData.datasets[0].data = this.stockLost.map((item) => item.inventoryItem.quantity)
+      this.lossOfStockChartData.datasets[0].data = this.stockLost.map(
+        (item) => item.inventoryItem.quantity
+      )
 
       // Ensure there are enough background colors for the lost stock items
       const stockLostCount = this.stockLost.length
-      this.lossOfStockChartData.datasets[0].backgroundColor = this.generateColors(stockLostCount, this.lossOfStockChartData.datasets[0].backgroundColor)
+      this.lossOfStockChartData.datasets[0].backgroundColor = this.generateColors(
+        stockLostCount,
+        this.lossOfStockChartData.datasets[0].backgroundColor
+      )
     },
 
     // Helper function to generate or add colors
@@ -203,8 +228,6 @@ export default {
   }
 }
 </script>
-
-
 
 <style scoped>
 .colourCard1 {
