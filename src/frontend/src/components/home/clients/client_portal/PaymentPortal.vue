@@ -33,9 +33,68 @@
               @click="submitPaymentForm(invoice._id)"
               :disabled="invoice.paid === 'Paid'"
             >
-              Pay Now
-            </v-btn>
+              Pay Now </v-btn
+            ><v-btn color="primary" @click="formatPdfData(invoice)"> Generate PDF </v-btn>
           </v-list-item-action>
+          <v-dialog v-model="dialog" max-width="600">
+            <v-card class="bg-cardColor">
+              <v-card-title>
+                <v-icon>mdi-file-document-outline</v-icon>
+                <span>Invoice Details</span>
+              </v-card-title>
+              <v-card-text>
+                <v-row>
+                  <v-col cols="6">
+                    <label class="font-weight-light" style="font-size: 20px">Invoice Number</label>
+                    <v-spacer></v-spacer>
+                    <small class="text-caption" style="font-size: 12px">{{
+                      invoice?.invoiceNumber
+                    }}</small>
+                  </v-col>
+                  <v-col cols="6">
+                    <label class="font-weight-light" style="font-size: 20px">Date</label>
+                    <v-spacer></v-spacer>
+                    <small class="text-caption" style="font-size: 12px">{{
+                      invoice?.creationDate
+                    }}</small>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
+                <v-row>
+                  <v-col cols="6">
+                    <label class="font-weight-light" style="font-size: 20px">Amount</label>
+                    <v-spacer></v-spacer>
+                    <small class="text-caption" style="font-size: 12px">{{ invoice?.total }}</small>
+                  </v-col>
+                  <v-col cols="6">
+                    <label class="font-weight-light" style="font-size: 20px">Status</label>
+                    <v-spacer></v-spacer>
+                    <small class="text-caption" style="font-size: 12px">{{
+                      invoice?.paid ? 'Paid' : 'Unpaid'
+                    }}</small>
+                  </v-col>
+                </v-row>
+
+                <!-- Embed the PDF inside an iframe -->
+                <v-row>
+                  <v-col cols="12">
+                    <iframe v-if="pdfSrc" :src="pdfSrc" style="width: 100%; height: 500px"></iframe>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+              <v-card-actions>
+                <v-container
+                  ><v-row
+                    ><v-col cols="12">
+                      <v-btn color="error" block @click="dialog = false"
+                        ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
+                      ></v-col
+                    ></v-row
+                  ></v-container
+                >
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-list-item>
       </v-list>
     </v-card>
@@ -47,10 +106,37 @@ import axios from 'axios'
 import { defineComponent } from 'vue'
 import CryptoJS from 'crypto-js'
 import { API_URL } from '@/main'
+import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template/index'
+
+export type InvoiceCardDataFormat = {
+  id: string // For ObjectId type in the API class
+  invoiceNumber: number
+  invoiceDate: string // Using ISO string format for Date
+  paymentDate: string // ISO string format
+  subTotal: number
+  total: number
+  paid: boolean
+  clientId: string // For ObjectId type
+  clientName: string
+  taxAmount: number
+  taxPercentage: number
+  jobName: string
+  clientAddress: string
+  clientPhoneNumber: string
+  clientEmail: string
+  companyName: string
+  companyAddress: string
+  companyEmail: string
+  companyPhoneNumber: string
+  companyLogo: string
+  inventoryItems: []
+  laborItems: []
+}
 
 export default defineComponent({
   data() {
     return {
+      dialog: false,
       invoices: [] as Array<any>, // Update with your invoice model
       clientId: '66cf13c3a76252f35d46c8fb' as any, // This is for testing purposes
       client: {
@@ -86,11 +172,179 @@ export default defineComponent({
       cancel_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal',
       notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
       testingMode: true,
-      pfHost:'sandbox.payfast.co.za',
+      pfHost: 'sandbox.payfast.co.za',
       forms: {} as { [key: string]: any }
     }
   },
   methods: {
+    formatPdfData(payload: any) {
+      console.log(payload)
+      this.invoiceGeneration({
+        id: payload._id,
+        invoiceNumber: payload.invoiceNumber,
+        invoiceDate: this.formatDate(payload.invoiceDate),
+        paymentDate: this.formatDate(payload.paymentDate),
+        subTotal: payload.subTotal,
+        total: payload.total,
+        taxAmount: payload.taxAmount,
+        taxPercentage: payload.taxPercentage,
+        paid: payload.paid,
+        clientId: payload.clientId._id,
+        clientName: payload.clientId.details.firstName + ' ' + payload.clientId.details.lastName,
+        jobName: payload.jobId.details.heading,
+        clientAddress:
+          payload.clientId.details.address.province +
+          ', ' +
+          payload.clientId.details.address.city +
+          ', ' +
+          payload.clientId.details.address.suburb +
+          ', ' +
+          payload.clientId.details.address.street +
+          ', ' +
+          payload.clientId.details.address.postalCode,
+        clientEmail: payload.clientId.details.contactInfo.email,
+        clientPhoneNumber: payload.clientId.details.contactInfo.phoneNumber,
+        companyName: payload.companyId.name,
+        companyAddress:
+          payload.clientId.details.address.province +
+          ', ' +
+          payload.companyId.address.city +
+          ', ' +
+          payload.companyId.address.suburb +
+          ', ' +
+          payload.companyId.address.street +
+          ', ' +
+          payload.companyId.address.postalCode,
+        companyEmail: payload.companyId.contactDetails.email,
+        companyPhoneNumber: payload.companyId.contactDetails.phoneNumber,
+        companyLogo: payload.companyId.logo,
+        inventoryItems: payload.inventoryItems.map((obj) => [
+          obj.description,
+          obj.quantity,
+          obj.unitPrice,
+          obj.discount,
+          obj.total
+        ]),
+        laborItems: payload.laborItems.map((obj) => [
+          obj.description,
+          obj.quantity,
+          obj.unitPrice,
+          obj.discount,
+          obj.total
+        ])
+      })
+    },
+    invoiceGeneration(payload: any) {
+      try {
+        if (payload.laborItems.length != 0) {
+          payload.inventoryItems.push(['', '', '', '', ''])
+          payload.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount', 'Total'])
+          payload.inventoryItems.unshift([
+            'Description',
+            'Quantity',
+            'Unit Price',
+            'Discount',
+            'Total'
+          ])
+          payload.inventoryItems = payload.inventoryItems.concat(payload.laborItems)
+          payload.inventoryItems.push(['', '', '', '', ''])
+        }
+        const data = {
+          outputType: OutputType.Blob, // Generate the PDF as a Blob to embed it
+          fileName: `Invoice ${payload.companyName}`,
+          orientationLandscape: false,
+          compress: true,
+          logo: {
+            src: payload.companyLogo,
+            type: 'PNG',
+            width: 53.33,
+            height: 26.66,
+            margin: {
+              top: 0,
+              left: 0
+            }
+          },
+          stamp: {
+            inAllPages: true,
+            src: payload.companyLogo,
+            type: 'JPG',
+            width: 20,
+            height: 20,
+            margin: {
+              top: 0,
+              left: 0
+            }
+          },
+          business: {
+            name: payload.companyName,
+            address: payload.companyAddress,
+            phone: payload.companyPhoneNumber,
+            email: payload.companyEmail
+          },
+          contact: {
+            label: 'Invoice issued for:',
+            name: payload.clientName,
+            address: payload.clientAddress,
+            phone: payload.clientPhoneNumber,
+            email: payload.clientEmail,
+            otherInfo: 'www.website.al'
+          },
+          invoice: {
+            label: `Invoice #:`,
+            num: payload.invoiceNumber,
+            invDate: `Payment Date: ${this.formatDate(payload.paymentDate)}`,
+            invGenDate: `Invoice Date:  ${this.formatDate(payload.invoiceDate)}`,
+            headerBorder: false,
+            tableBodyBorder: false,
+            header: [{ title: '' }, { title: '' }, { title: '' }, { title: '' }, { title: '' }],
+            table: payload.inventoryItems,
+            additionalRows: [
+              {
+                col1: 'Total:',
+                col2: `${payload.total}`,
+                col3: 'R',
+                style: {
+                  fontSize: 14
+                }
+              },
+              {
+                col1: 'VAT:',
+                col2: `${payload.taxPercentage}`,
+                col3: '%',
+                style: {
+                  fontSize: 10
+                }
+              },
+              {
+                col1: 'SubTotal:',
+                col2: `${payload.subTotal}`,
+                col3: 'R',
+                style: {
+                  fontSize: 10
+                }
+              }
+            ],
+            invDescLabel: 'Invoice Note',
+            invDesc: 'Thank you for your business. Please make the payment by the due date.'
+          },
+          footer: {
+            text: 'The invoice is created on a computer and is valid without the signature and stamp.'
+          },
+          pageEnable: true,
+          pageLabel: 'Page '
+        }
+        console.log(data)
+        const pdf = jsPDFInvoiceTemplate(data)
+        console.log(pdf)
+        const blb = pdf.blob
+        console.log(blb)
+        this.pdfSrc = URL.createObjectURL(blb)
+        this.dialog = true
+        console.log(this.pdfSrc)
+      } catch (error) {
+        console.log('Error fetching data: ' + error)
+      }
+    },
     generateSignature(invoice: any): string {
       // Create parameter string
       const data: { [key: string]: string | number | any } = {
@@ -158,7 +412,7 @@ export default defineComponent({
       await axios
         .get(`${API_URL}company/id/${this.companyId}`, config)
         .then((response) => {
-          if(response.data.data.name.includes('DemoAccount')) {
+          if (response.data.data.name.includes('DemoAccount')) {
             this.testingMode = true
             this.pfHost = 'https://sandbox.payfast.co.za/eng/process'
           }
@@ -185,7 +439,7 @@ export default defineComponent({
         .then((response) => {
           // console.log('Invoices:', response)
           this.invoices = response.data.data
-          for(const invoice of this.invoices) {
+          for (const invoice of this.invoices) {
             invoice.paymentDate = this.formatDate(invoice.paymentDate)
           }
         })
