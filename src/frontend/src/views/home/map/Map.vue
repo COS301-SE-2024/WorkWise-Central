@@ -18,7 +18,7 @@
           <h3>Current Drivers</h3>
           <ul>
             <li v-for="driver in currentDrivers" :key="driver.id">
-              {{ driver.profile.displayName }}
+              {{ driver?.profile?.displayName }}
             </li>
           </ul>
         </div>
@@ -43,6 +43,7 @@
           icon="pi pi-external-link"
           @click="dialogVisible = true"
         />
+        <Button label="Redirect Map To Find Vehicle" @click="redirectMap(40.7128, -74.0060)"/>
         <Dialog
           v-model:visible="dialogVisible"
           header="Flex Scroll"
@@ -84,10 +85,11 @@
             <Column header="Image">
               <!--TODO: Add Image Column Properly-->
               <template #body="slotProps">
-                <img
-                  :src="`https://primefaces.org/cdn/primevue/images/product/${slotProps.data.image}`"
-                  :alt="slotProps.data.image"
-                  class="w-24 rounded"
+                <Image
+                  :src="slotProps.data.images[0]"
+                  :alt="slotProps.data.images[0]"
+                  width="96"
+                  preview
                 />
               </template>
             </Column>
@@ -153,7 +155,7 @@
     <SplitterPanel class="flex items-center justify-center" :size="75">
       <GoogleMap :api-key="apiKey" style="width: 100%; height: 100%" :center="mapCenter" :zoom="12">
         <!-- Company Marker -->
-        <Marker v-if="company" :options="{ position: companyLocation }">
+        <Marker v-if="company" :options="{ position: companyLocation, icon: 'fa: fa-solid fa-building' }">
           <InfoWindow>
             <div id="companyContent">
               <img class="centered" v-if="company.logo" :src="company.logo" alt="Company Logo" />
@@ -166,7 +168,7 @@
         </Marker>
 
         <!-- Current Location Marker -->
-        <Marker :options="{ position: currentLocation }">
+        <Marker :options="{ position: currentLocation, icons: 'fa: fa-solid fa-user' }">
           <InfoWindow>
             <div id="content">
               <h1 id="firstHeading" style="color: black">You Are Here</h1>
@@ -178,7 +180,7 @@
         <Marker
           v-for="vehicle in vehicles"
           :key="vehicle.id"
-          :options="{ position: vehicle.location, label: vehicle.driver }"
+          :options="{ position: vehicle.location, label: vehicle.driver, icon: 'fa: fa-solid fa-car' }"
         >
           <InfoWindow>
             <div style="color: black">
@@ -206,7 +208,11 @@ import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-// import Image from 'primevue/image'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import Select from 'primevue/select'
+import Tag from 'primevue/tag'
+import Image from 'primevue/image'
 import { VehicleAvailabilityEnum, FuelType } from './models/vehicles'
 
 export default {
@@ -225,11 +231,41 @@ export default {
     DataTable,
     Column,
     // eslint-disable-next-line vue/no-reserved-component-names
-    Button
-    //Image
+    Button,
+    Image,
+    InputNumber,
+    InputText,
+    Select,
+    Tag
   },
   data() {
     return {
+      markerIcons: {
+        vehicle: {
+          path: '@public/CarMarker.png',
+          fillColor: '#4CAF50',
+          fillOpacity: 1,
+          strokeWeight: 1,
+          strokeColor: '#ffffff',
+          scale: 0.06,
+        },
+        person: {
+          path: '@public/PersonMarker.png',
+          fillColor: '#2196F3',
+          fillOpacity: 1,
+          strokeWeight: 1,
+          strokeColor: '#ffffff',
+          scale: 0.06,
+        },
+        building: {
+          path: '@public/BuildingMarker.png',
+          fillColor: '#FFC107',
+          fillOpacity: 1,
+          strokeWeight: 1,
+          strokeColor: '#ffffff',
+          scale: 0.06,
+        },
+      },
       apiKey: GOOGLE_MAPS_API_KEY,
       apiUrl: API_URL,
       company: null,
@@ -252,13 +288,11 @@ export default {
       vehiclesDueForService: 0
     }
   },
-  created() {
+  mounted() {
     this.getCurrentLocation()
     this.getCompanyData()
     this.getVehiclesData().then(() => this.loadFleetData())
     //this.loadFleetData()
-  },
-  mounted() {
     //VehicleService.getVehicles().then((data) => (this.vehicles = data))
   },
   computed: {
@@ -271,6 +305,15 @@ export default {
     }
   },
   methods: {
+    redirectMap(latitude, longitude) {
+      const newCenter = { lat: latitude, lng: longitude };
+      this.mapCenter = newCenter;
+
+      // If you want to smoothly pan to the new location:
+      if (this.$refs.mapRef) {
+        this.$refs.mapRef.panTo(newCenter);
+      }
+    },
     async getCurrentLocation() {
       try {
         const coordinates = await this.$getLocation()
@@ -296,7 +339,7 @@ export default {
     async getVehiclesData() {
       try {
         const response = await axios.get(
-          `${this.apiUrl}fleet/all/${localStorage['currentCompany']}`,
+          `${this.apiUrl}fleet/all?companyId=${localStorage.getItem('currentCompany')}&employeeId=${localStorage.getItem('employeeId')}`,
           this.getAuthConfig()
         )
         this.vehicles = await Promise.all(
@@ -360,7 +403,9 @@ export default {
         // const data = await VehicleService.getFleetData()
         // this.vehicles = data.vehicles
         for (const v of this.vehicles) {
-          this.currentDrivers.push(v.availability.assignedTo)
+          if (v.availability.assignedTo != null) {
+            this.currentDrivers.push(v.availability.assignedTo)
+          }
         }
         //this.currentDrivers = data.currentDrivers
         //this.recentAlerts = data.recentAlerts //TODO: remove
@@ -385,10 +430,14 @@ export default {
       }
     },
     async updateVehicle(vehicle) {
-      vehicle['currentEmployeeId'] = localStorage['currentCompany']
+      vehicle['currentEmployeeId'] = localStorage['employeeId']
       vehicle['vehicleId'] = vehicle._id
       axios
-        .post(`${this.apiUrl}fleet/update`, vehicle, this.getAuthConfig())
+        .patch(
+          `${this.apiUrl}fleet/update?companyId=${localStorage.getItem('currentCompany')}&employeeId=${localStorage.getItem('employeeId')}`,
+          vehicle,
+          this.getAuthConfig()
+        )
         .then((res) => {
           console.log(res.data.data)
         })

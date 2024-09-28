@@ -1,6 +1,6 @@
 <template>
   <v-container fluid fill-height>
-     <v-row class="justify-center align-center">
+    <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">Statistics Dashboard</h2>
       </v-col>

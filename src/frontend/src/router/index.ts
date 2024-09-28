@@ -364,7 +364,7 @@ const router = createRouter({
       path: '/client-portal',
       name: 'client-portal',
       component: ClientPortal,
-      props: route => ({ cid: route.query.cid })
+      props: (route) => ({ cid: route.query.cid })
     },
     {
       path: '/invoices',

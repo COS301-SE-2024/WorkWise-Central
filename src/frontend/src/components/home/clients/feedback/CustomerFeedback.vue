@@ -136,7 +136,6 @@ export default defineComponent({
     }
   },
   methods: {
-   
     getFeedbackDetails(feedback: Feedback) {
       console.log(feedback)
     },

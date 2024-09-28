@@ -199,7 +199,7 @@ export default {
       headers: [
         { title: 'Name', value: 'name' },
 
-        { title: 'Current Stock Level', value:  'reorderLevel'},
+        { title: 'Current Stock Level', value: 'reorderLevel' },
         { title: 'Recorded Stock Level', value: 'currentStockLevel' },
         { title: '', value: 'actions', sortable: false }
       ],
@@ -227,7 +227,8 @@ export default {
       ],
       currentStockLevelRules: [
         (v) => !!v || 'Recorded Stock Level is required',
-        (v) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Recorded Stock Level must be a valid number',
+        (v) =>
+          /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Recorded Stock Level must be a valid number',
         (v) => !/^0\d/.test(v) || 'Recorded Stock Level cannot have leading zeros'
       ],
       reorderLevelRules: [
@@ -377,35 +378,35 @@ export default {
       this.pdfUrl = URL.createObjectURL(pdfBlob)
     },
     async confirmUpdate(update) {
-      this.updateInventory = update;
-      this.confirmDialog = false;
+      this.updateInventory = update
+      this.confirmDialog = false
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
-      };
-      const apiURL = await this.getRequestUrl();
+      }
+      const apiURL = await this.getRequestUrl()
       const data = {
-        "currentEmployeeId": localStorage.getItem('employeeId'),
-        "companyId": localStorage.getItem('currentCompany'),
-        "date": new Date(this.currentDate).toISOString(),
-        "items": [],
-        "updateInventory": this.updateInventory
-      };
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        companyId: localStorage.getItem('currentCompany'),
+        date: new Date(this.currentDate).toISOString(),
+        items: [],
+        updateInventory: this.updateInventory
+      }
       this.filteredInventoryItems.forEach((item) => {
         data.items.push({
-          "inventoryId": item._id,
-          "recordedStockLevel": item.currentStockLevel
-        });
+          inventoryId: item._id,
+          recordedStockLevel: item.currentStockLevel
+        })
       })
       console.log('Data', data)
       try {
         const response = await axios.post(`${apiURL}stocktake/create`, data, config)
         console.log('Response:', response)
-        console.log("Hello world!");
+        console.log('Hello world!')
       } catch (error) {
-        console.log('Failure to update stock take', error);
+        console.log('Failure to update stock take', error)
       }
     },
 
@@ -530,7 +531,9 @@ export default {
       })
 
       autoTable(doc, {
-        head: [['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level', 'Difference']],
+        head: [
+          ['Item Name', 'Cost Price', 'Recorded Stock Level', 'Current Stock Level', 'Difference']
+        ],
         body: tableBody,
         startY: 40,
         theme: 'grid'

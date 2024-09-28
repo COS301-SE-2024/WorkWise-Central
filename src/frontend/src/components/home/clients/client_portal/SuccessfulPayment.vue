@@ -24,17 +24,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'PaymentSuccess',
   methods: {
     continueProcess() {
       // Redirect the user to the client portal home page
-      window.location.href = 'http://localhost:5173/client-portal';
+      window.location.href = 'http://localhost:5173/client-portal'
     }
   }
-});
+})
 </script>
 
 <style scoped>

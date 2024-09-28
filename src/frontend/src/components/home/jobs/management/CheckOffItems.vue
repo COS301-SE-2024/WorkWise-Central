@@ -2,10 +2,15 @@
   <v-container>
     <!-- Button to create a new task -->
     <v-row class="justify-center mb-4">
-<!--      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"-->
-<!--        >Create New Task List</v-btn-->
-<!--      >-->
-      <Button label="Create New Task List" icon="fa: fa-solid fa-plus" @click="createNewTask" class="p-button-success" />
+      <!--      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"-->
+      <!--        >Create New Task List</v-btn-->
+      <!--      >-->
+      <Button
+        label="Create New Task List"
+        icon="fa: fa-solid fa-plus"
+        @click="createNewTask"
+        class="p-button-success"
+      />
     </v-row>
 
     <!-- Loop through tasks with pagination -->
@@ -26,12 +31,16 @@
             class="mb-4"
           ></v-textarea>
           <template v-if="task.title.trim() !== ''">
-<!--            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">-->
-<!--              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>-->
-<!--            </v-btn>-->
-              <v-col cols="1">
-                <Button icon="fa: fa-solid fa-trash" @click="deleteTask(taskIndex)" class="p-button-danger" />
-              </v-col>
+            <!--            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">-->
+            <!--              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>-->
+            <!--            </v-btn>-->
+            <v-col cols="1">
+              <Button
+                icon="fa: fa-solid fa-trash"
+                @click="deleteTask(taskIndex)"
+                class="p-button-danger"
+              />
+            </v-col>
           </template>
         </v-row>
 
@@ -180,28 +189,33 @@
                 rows="3"
                 class="mb-4"
               ></v-textarea>
-<!--              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"-->
-<!--                >Add Item</v-btn-->
-<!--              >-->
-              <Button label="Add Item" icon="fa: fa-solid fa-plus" @click="addItem(taskIndex)" class="p-button-success" />
+              <!--              <v-btn color="success" @click="addItem(taskIndex)" prepend-icon="mdi-plus"-->
+              <!--                >Add Item</v-btn-->
+              <!--              >-->
+              <Button
+                label="Add Item"
+                icon="fa: fa-solid fa-plus"
+                @click="addItem(taskIndex)"
+                class="p-button-success"
+              />
             </v-col>
           </v-row>
 
           <!-- Save Task Button -->
           <v-defaults-provider :defaults="{ VIcon: { color: 'success' } }">
             <v-row class="justify-center">
-<!--              <v-btn-->
-<!--                color="success"-->
-<!--                @click="saveTask(taskIndex)"-->
-<!--                prepend-icon="fa: fa-solid fa-save"-->
-<!--              >-->
-<!--                Save Task-->
-<!--              </v-btn>-->
+              <!--              <v-btn-->
+              <!--                color="success"-->
+              <!--                @click="saveTask(taskIndex)"-->
+              <!--                prepend-icon="fa: fa-solid fa-save"-->
+              <!--              >-->
+              <!--                Save Task-->
+              <!--              </v-btn>-->
               <Button
-                  label="Save Task"
-                  icon="fa: fa-solid fa-save"
-                  @click="saveTask(taskIndex)"
-                  class="p-button-success"
+                label="Save Task"
+                icon="fa: fa-solid fa-save"
+                @click="saveTask(taskIndex)"
+                class="p-button-success"
               />
             </v-row>
           </v-defaults-provider>

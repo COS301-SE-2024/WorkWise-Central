@@ -116,7 +116,7 @@ export default {
         }
       ],
       reviewDialog: false,
-      currentJobId:'',
+      currentJobId: '',
       jobRating: 0,
       feedback: '',
       customerServiceRating: 0,

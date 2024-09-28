@@ -1,10 +1,10 @@
 <template>
   <Dialog
-      v-model:visible="inventoryDialog"
-      modal
-      header="Log Inventory"
-      :style="{ width: '50vw' }"
-      :breakpoints="{ '960px': '75vw', '641px': '100vw' }"
+    v-model:visible="inventoryDialog"
+    modal
+    header="Log Inventory"
+    :style="{ width: '50vw' }"
+    :breakpoints="{ '960px': '75vw', '641px': '100vw' }"
   >
     <div class="p-fluid">
       <div v-for="(item, index) in inventory" :key="index" class="p-field p-grid p-mb-2">
@@ -28,7 +28,12 @@
     </template>
   </Dialog>
 
-  <Button label="Log Inventory" icon="pi pi-box" @click="openInventoryDialog" class="p-button-outlined" />
+  <Button
+    label="Log Inventory"
+    icon="pi pi-box"
+    @click="openInventoryDialog"
+    class="p-button-outlined"
+  />
 </template>
 
 <script setup lang="ts">

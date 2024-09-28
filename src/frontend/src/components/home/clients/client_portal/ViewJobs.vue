@@ -156,7 +156,7 @@ export default {
         .catch((error) => {
           console.error(error)
         })
-    },
+    }
   },
   mounted() {
     if (sessionStorage.getItem('clientId') !== null) {
