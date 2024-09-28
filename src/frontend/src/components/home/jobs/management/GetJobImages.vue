@@ -1,25 +1,37 @@
 <template>
   <v-container>
-    <v-carousel v-if="hasImages" hide-delimiters>
+    <v-carousel height="400">
       <v-carousel-item v-for="(image, index) in images" :key="index">
         <v-img
-          :src="image.src"
-          min-height="auto"
-          min-width="auto"
-          @click="openImageOverlay(index)"
-        ></v-img>
-        <v-btn @click="openImageActionsDialog(index)" class="image-actions-btn">
-          <v-icon>
-            {{ 'fa: fa-solid fa-ellipsis-h' }}
-          </v-icon>
+            :src="image.src"
+            height="100%"
+            width="100%"
+            cover
+            @click="openImageOverlay(index)"
+        >
+          <template v-slot:placeholder>
+            <v-row class="fill-height ma-0" align="center" justify="center">
+              <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+            </v-row>
+          </template>
+        </v-img>
+        <v-btn
+            @click="openImageActionsDialog(index)"
+            class="image-actions-btn"
+            icon
+            elevation="2"
+            color="secondary"
+            style="position: absolute; bottom: 16px; right: 16px;"
+        >
+          <v-icon class="pl-3" color="primary">{{ 'fa: fa-solid fa-ellipsis-h' }}</v-icon>
         </v-btn>
         <v-dialog
-          v-model="image.dialog"
-          max-width="300px"
-          location="bottom"
-          location-strategy="connected"
-          opacity="0"
-          origin="top center"
+            v-model="image.dialog"
+            max-width="300px"
+            location="bottom"
+            location-strategy="connected"
+            opacity="0"
+            origin="top center"
         >
           <template v-slot:default="{ isActive }">
             <v-card class="bg-cardColor">
@@ -28,27 +40,19 @@
               </v-card-title>
               <v-card-actions class="d-flex flex-column">
                 <v-btn color="info" @click="changeImage(index)" :loading="isDownloading">
-                  <v-icon>
-                    {{ 'fa: fa-solid fa-sync' }}
-                  </v-icon>
+                  <v-icon left>{{ 'fa: fa-solid fa-sync' }}</v-icon>
                   Change Image
                 </v-btn>
                 <v-btn color="success" @click="downloadImage(index)">
-                  <v-icon>
-                    {{ 'fa: fa-solid fa-download' }}
-                  </v-icon>
+                  <v-icon left>{{ 'fa: fa-solid fa-download' }}</v-icon>
                   Download
                 </v-btn>
                 <v-btn color="error" @click="deleteImage(index)" :loading="isDeleting">
-                  <v-icon>
-                    {{ 'fa: fa-solid fa-trash' }}
-                  </v-icon>
+                  <v-icon left>{{ 'fa: fa-solid fa-trash' }}</v-icon>
                   Delete
                 </v-btn>
                 <v-btn color="error" @click="isActive.value = false">
-                  <v-icon>
-                    {{ 'fa: fa-solid fa-times' }}
-                  </v-icon>
+                  <v-icon left>{{ 'fa: fa-solid fa-times' }}</v-icon>
                   Cancel
                 </v-btn>
               </v-card-actions>
@@ -315,5 +319,9 @@ onMounted(() => {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+.v-carousel {
+  overflow: hidden;
 }
 </style>

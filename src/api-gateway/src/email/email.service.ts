@@ -14,12 +14,13 @@ export class EmailService {
     private readonly mailerService: MailerService,
     @Inject(forwardRef(() => NotificationService))
     private readonly notificationService: NotificationService,
+
+    @Inject('GLOBAL_CONFIG') private readonly globalConfig: { serverUrl: string; frontendUrl: string },
   ) {}
 
   async sendUserConfirmation(userConfirmation: UserConfirmation) {
     console.log('sendUserConfirmation', userConfirmation);
-    const tempUrl = 'http://localhost:3000'; //TODO: Change to deployed url later
-    const url = `${tempUrl}/auth/verify?email=${encodeURIComponent(userConfirmation.email)}&token=${userConfirmation.key}`;
+    const url = `${this.globalConfig.serverUrl}auth/verify?email=${encodeURIComponent(userConfirmation.email)}&token=${userConfirmation.key}`;
 
     await this.mailerService.sendMail({
       to: userConfirmation.email,
@@ -36,29 +37,8 @@ export class EmailService {
     // console.log(result);
   }
 
-  /*  async sendRequestEmail(userRequestToJoin: UserJoinRequest) {  //TODO: Fix
-    console.log('userRequestToJoin', userRequestToJoin);
-    const tempUrl = 'http://localhost:3000'; //TODO: Change to deployed url later
-    const url = `${tempUrl}/auth/verify?email=${encodeURIComponent(userRequestToJoin.companyName)}`;
-
-    await this.mailerService.sendMail({
-      //TODO: Add required fields to parameter
-      to: userRequestToJoin.companyName, //Change to email
-      from: '"Support Team" <support@workwise.com>',
-      subject: 'Welcome to WorkWise Central! Confirm your Email',
-      template: './confirmation',
-      context: {
-        name: userRequestToJoin.companyName,
-        surname: userRequestToJoin.companyName,
-        url: url,
-      },
-    });
-    // console.log('sendUserConfirmation');
-    // console.log(result);
-  }*/
-
   async sendEmailConfirmation(details: { name: string; surname: string; email: string }, token: string) {
-    const url = `example.com/auth/confirm?token=${encodeURIComponent(token)}`; //TODO:confirm
+    const url = `${this.globalConfig.serverUrl}auth/confirm?token=${encodeURIComponent(token)}`;
 
     /*    const user = await this.userService.getUserByEmail(details.email);
     if (user) {
@@ -104,8 +84,8 @@ export class EmailService {
   }
 
   async sendResetPasswordRequest(resetDto: PasswordResetDto, token: string) {
-    const serverUrl = `http://localhost:5173`; //TODO:Point to Deployment
-    const url = `${serverUrl}/new-password?uId=${encodeURIComponent(resetDto.userId.toString())}&tok=${encodeURIComponent(token)}`;
+    //const serverUrl = `http://localhost:5173`;
+    const url = `${this.globalConfig.frontendUrl}/new-password?uId=${encodeURIComponent(resetDto.userId.toString())}&tok=${encodeURIComponent(token)}`;
     console.log(token);
     const ourEmail = '<support@workwise.com>';
     const result = await this.mailerService.sendMail({
@@ -127,9 +107,9 @@ export class EmailService {
     // const newUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;//TODO:Point to Deployment
     // const existingUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
 
-    const tempUrl = `http://localhost:5173`;
-    const newUserLink = `${tempUrl}/?inviteId=${encodeURIComponent(inviteId.toString())}`;
-    const existingUserLink = `${tempUrl}/company-invites?inviteId=${encodeURIComponent(inviteId.toString())}`;
+    const url = this.globalConfig.frontendUrl;
+    const newUserLink = `${url}/?inviteId=${encodeURIComponent(inviteId.toString())}`;
+    const existingUserLink = `${url}/company-invites?inviteId=${encodeURIComponent(inviteId.toString())}`;
 
     if (hasAccount) {
       if (userId) {
@@ -181,8 +161,7 @@ export class EmailService {
     companyName: string,
     jobTitle: string,
   ) {
-    const serverUrl = `http://localhost:5173`; //TODO: Point to Deployment <!-- https://tuksui.sharpsoftwaresolutions.net?clientid=clientid-->
-    const url = `${serverUrl}/client-portal?cId=${encodeURIComponent(clientId.toString())}`;
+    const url = `${this.globalConfig.frontendUrl}/client-portal?cId=${encodeURIComponent(clientId.toString())}`;
     const ourEmail = '<support@workwise.com>';
 
     const result = await this.mailerService.sendMail({

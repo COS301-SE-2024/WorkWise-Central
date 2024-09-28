@@ -28,6 +28,8 @@
             :hint="new Date(comment.date).toLocaleDateString()"
             persistent-hint
             :disabled="isAdding || isDeleting"
+            auto-grow
+            multi-line
           ></v-text-field>
         </v-col>
         <v-col cols="1">

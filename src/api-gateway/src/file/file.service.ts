@@ -13,7 +13,7 @@ const uploadPath = join(__dirname, '..', '../../../uploads');
 @Global()
 @Injectable()
 export class FileService {
-  constructor(@Inject('GLOBAL_SERVER_URL') private serverUrl: string) {}
+  constructor(@Inject('GLOBAL_CONFIG') private readonly globalConfig: { serverUrl: string; frontendUrl: string }) {}
 
   async uploadBase64Image(base64Image: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
@@ -68,7 +68,7 @@ export class FileService {
       const fileName = `${uuidv4()}-${name}${extension}`;
       const filePath = path.join(uploadPath, fileName);
       fs.writeFileSync(filePath, file.buffer);
-      fileLinks.push(this.serverUrl + `uploads/${fileName}`);
+      fileLinks.push(this.globalConfig.serverUrl + `uploads/${fileName}`);
       console.log('SAVING:', `/uploads/${fileName}`);
     }
 
@@ -108,7 +108,7 @@ export class FileService {
     const base64Data = base64Image.replace(/^data:([A-Za-z-+/]+);base64,/, '');
     fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
 
-    fileLink = this.serverUrl + `uploads/${fileName}`;
+    fileLink = this.globalConfig.serverUrl + `uploads/${fileName}`;
     console.log('SAVING:', fileLink);
 
     return new SaveBase64Response(true, fileLink);
