@@ -9,7 +9,7 @@ describe('FileService', () => {
       providers: [
         FileService,
         {
-          provide: 'GLOBAL_SERVER_URL',
+          provide: 'GLOBAL_CONFIG',
           useValue: 'http://mocked-server-url.com', // Mocked URL
         },
       ],
