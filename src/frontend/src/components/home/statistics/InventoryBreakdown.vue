@@ -10,13 +10,13 @@
       <v-container>
         <v-row>
           <!-- Each item in a small red card -->
-          <v-col cols="12" sm="6" md="4" v-for="item in itemsToReorder" :key="item.inventoryItem.inventoryId">
+          <v-col cols="12" sm="6" md="4" v-for="item in itemsToReorder" :key="item.inventoryId">
             <v-card class="colourCard1" elevation="2" rounded="md" height="auto" color="red important">
               <v-card-title class="colourCard2" colour="black">
-                {{ item.inventoryItem.nameOfItem }}
+                {{ item.itemName }}
               </v-card-title>
               <v-card-subtitle>
-                <strong>Stock Level: {{ item.inventoryItem.quantity }}</strong>
+                <strong>Stock Level: {{ item.quantity }}</strong>
               </v-card-subtitle>
             </v-card>
           </v-col>
