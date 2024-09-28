@@ -1,12 +1,103 @@
 <template>
+  <v-dialog v-model="dialog" max-width="600">
+    <v-card>
+      <v-card-title> Detailed Breakdown</v-card-title>
+      <v-card-text>
+        <v-list class="bg-cardColor">
+          <v-col cols="12">
+            <v-row>
+              <!-- Active Jobs -->
+              <v-col v-if="jobStats.activeJobs.length > 0" cols="12" lg="6">
+                <v-list-item-group>
+                  <v-subheader>Active Jobs</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in jobStats.activeJobs"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="primary">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- All Jobs -->
+              <v-col v-if="jobStats.archivedJobs.length > 0" cols="12" lg="6">
+                <v-list-item-group>
+                  <v-subheader>All Jobs</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in jobStats.archivedJobs"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="secondary">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- Completed Jobs -->
+              
+            </v-row>
+
+            <v-row><v-col v-if="jobStats.completedJobs.length > 0" cols="12" lg="6">
+                <v-list-item-group>
+                  <v-subheader>Completed Jobs</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in jobStats.completedJobs"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="success">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+              <!-- Invoices Unpaid -->
+              <v-col v-if="jobStats.jobsUnpaidInvoice.length > 0" cols="12" lg="6">
+                <v-list-item-group>
+                  <v-subheader>Invoices Unpaid</v-subheader>
+                  <v-list-item
+                    v-for="(invoice, index) in jobStats.jobsUnpaidInvoice"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-chip color="error">
+                      <v-list-item-content>{{ invoice.invoiceNumber }}.</v-list-item-content>
+                      <br />
+                      <v-list-item-content>{{ invoice.job.jobTitle }}</v-list-item-content>
+                      <br />
+                      <v-list-item-content>R{{ invoice.total }}</v-list-item-content>
+                    </v-chip>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-list>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn color="error" @click="dialog = false" block>
+          <v-icon color="error">fa-solid fa-cancel</v-icon>Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-card border="md" rounded="md" height="auto">
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-clock mr-2"></v-icon>
       {{ currentTab }}
     </v-card-title>
+  
 
     <!-- Total Jobs Information -->
     <v-card-subtitle>
+      <v-btn @click="dialog = true">View Details</v-btn>
+      <br/>
       <v-chip color="primary">
         <h5>Total Jobs: {{ jobStats.totalNumJobs }}</h5>
       </v-chip>
@@ -19,30 +110,47 @@
 
         <!-- Pie Chart for Active Jobs Breakdown -->
 
-
         <!-- Overall Rating Cards -->
         <v-container>
-          <v-row> <v-col cols="12" lg="4">
-              <Chart type="pie" :data="activeJobsChartData" :options="chartOptions" height="300px" />
+          <v-row>
+            <v-col cols="12" lg="6">
+              <Chart
+                type="pie"
+                :data="activeJobsChartData"
+                :options="chartOptions"
+                height="300px"
+              />
             </v-col>
 
-            <v-col cols="12" lg="4">
-
-              <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+            <v-col cols="12" lg="6">
+              <v-card
+                class="d-flex flex-column mx-auto py-4"
+                elevation="10"
+                height="auto"
+                width="360"
+              >
                 <div class="d-flex justify-center mt-auto text-h5">Work Performance Rating</div>
                 <div class="d-flex align-center flex-column my-auto">
                   <div class="text-h2 mt-5">
                     {{ jobStats.workPerformanceRatingAverage }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
-                  <v-rating :model-value="jobStats.workPerformanceRatingAverage" color="yellow-darken-3"
-                    half-increments></v-rating>
+                  <v-rating
+                    :model-value="jobStats.workPerformanceRatingAverage"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
                   <div class="px-3">{{ totalWorkPerformanceRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
-                    <v-progress-linear :model-value="workRatingCounts[i] * ratingValueFactor" class="mx-n5"
-                      color="yellow-darken-3" height="20" rounded></v-progress-linear>
+                    <v-progress-linear
+                      :model-value="workRatingCounts[i] * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
                     <template v-slot:prepend>
                       <span>{{ rating }}</span>
                       <v-icon class="mx-3" icon="mdi-star"></v-icon>
@@ -57,23 +165,35 @@
               </v-card>
             </v-col>
 
-            <v-col cols="12" lg="4">
-
-              <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+            <v-col cols="12" lg="6">
+              <v-card
+                class="d-flex flex-column mx-auto py-4"
+                elevation="10"
+                height="auto"
+                width="360"
+              >
                 <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
                 <div class="d-flex align-center flex-column my-auto">
                   <div class="text-h2 mt-5">
                     {{ jobStats.customerServiceRatingAverage }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
-                  <v-rating :model-value="jobStats.customerServiceRatingAverage" color="yellow-darken-3"
-                    half-increments></v-rating>
+                  <v-rating
+                    :model-value="jobStats.customerServiceRatingAverage"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
                   <div class="px-3">{{ totalCustomerServiceRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
-                    <v-progress-linear :model-value="customerServiceRatingCounts[i] * ratingValueFactor" class="mx-n5"
-                      color="yellow-darken-3" height="20" rounded></v-progress-linear>
+                    <v-progress-linear
+                      :model-value="customerServiceRatingCounts[i] * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
                     <template v-slot:prepend>
                       <span>{{ rating }}</span>
                       <v-icon class="mx-3" icon="mdi-star"></v-icon>
@@ -138,7 +258,7 @@ export default {
           }
         ]
       },
-
+      dialog: false,
       // Rating-related data
       totalWorkPerformanceRatings: 0,
       workRatingCounts: [0, 0, 0, 0, 0],
@@ -185,7 +305,9 @@ export default {
 
           // Update customer service rating data
           this.totalCustomerServiceRatings = this.jobStats.customerServiceRating.length
-          this.customerServiceRatingCounts = this.calculateRatingCounts(this.jobStats.customerServiceRating)
+          this.customerServiceRatingCounts = this.calculateRatingCounts(
+            this.jobStats.customerServiceRating
+          )
         })
         .catch((error) => {
           console.error('Failed to fetch job stats:', error)
@@ -193,15 +315,14 @@ export default {
       this.statsShown = true
     },
     calculateRatingCounts(ratings) {
-      const counts = [0, 0, 0, 0, 0]; // Array to hold counts for ratings 1 to 5
+      const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
       ratings?.forEach((rating) => {
         if (rating.rating >= 1 && rating.rating <= 5) {
-          counts[Math.floor(rating.rating) - 1]++; // Adjust index for 0-based array
+          counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
         }
-      });
-      return counts;
+      })
+      return counts
     }
-
   },
   mounted() {
     this.getJobStats()

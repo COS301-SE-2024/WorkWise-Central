@@ -1,4 +1,112 @@
 <template>
+  <v-dialog v-model="dialog" max-width="600">
+    <v-card>
+      <v-card-title>{{ selectedClient.firstName }}'s Detailed Breakdown</v-card-title>
+      <v-card-text>
+        <v-list class="bg-cardColor">
+          <v-col cols="12">
+            <v-row>
+              <!-- Active Jobs -->
+              <v-col v-if="clientStats.activeJobs.length > 0" cols="12" lg="4">
+                <v-list-item-group>
+                  <v-subheader>Active Jobs</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in clientStats.activeJobs"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="primary">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- All Jobs -->
+              <v-col v-if="clientStats.allJobs.length > 0" cols="12" lg="4">
+                <v-list-item-group>
+                  <v-subheader>All Jobs</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in clientStats.allJobs"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="secondary">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- Completed Jobs -->
+              <v-col v-if="clientStats.completedJobs.length > 0" cols="12" lg="4">
+                <v-list-item-group>
+                  <v-subheader>Completed Jobs</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in clientStats.completedJobs"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="success">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <!-- Invoices Paid -->
+              <v-col v-if="clientStats.invoicesPaid.length > 0" cols="12" lg="6">
+                <v-list-item-group>
+                  <v-subheader>Invoices Paid</v-subheader>
+                  <v-list-item
+                    v-for="(invoice, index) in clientStats.invoicesPaid"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-chip color="success">
+                      <v-list-item-content>{{ invoice.invoiceNumber }}.</v-list-item-content>
+                      <br/>
+                      <v-list-item-content>{{ invoice.job.jobTitle }}</v-list-item-content>
+                      <br/>
+                      <v-list-item-content>R{{ invoice.total }}</v-list-item-content>
+                    </v-chip>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- Invoices Unpaid -->
+              <v-col v-if="clientStats.invoicesUnpaid.length > 0" cols="12" lg="6">
+                <v-list-item-group>
+                  <v-subheader>Invoices Unpaid</v-subheader>
+                  <v-list-item
+                    v-for="(invoice, index) in clientStats.invoicesUnpaid"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-chip color="error">
+                      <v-list-item-content>{{ invoice.invoiceNumber }}.</v-list-item-content>
+                      <br/>
+                      <v-list-item-content>{{ invoice.job.jobTitle }}</v-list-item-content>
+                      <br/>
+                      <v-list-item-content>R{{ invoice.total }}</v-list-item-content>
+                    </v-chip>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-list>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn color="error" @click="dialog = false" block>
+          <v-icon color="error">fa-solid fa-cancel</v-icon>Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-card border="md" rounded="md" height="auto">
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-users mr-2"></v-icon>

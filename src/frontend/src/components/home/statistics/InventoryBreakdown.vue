@@ -1,4 +1,70 @@
 <template>
+  <v-dialog v-model="dialog" max-width="600">
+    <v-card>
+      <v-card-title>Detailed Breakdown</v-card-title>
+      <v-card-text>
+        <v-list class="bg-cardColor">
+          <v-col cols="12">
+            <v-row>
+              <!-- Active Jobs -->
+              <v-col v-if="inventoryStats.itemsToReorder.length > 0" cols="12" lg="4">
+                <v-list-item-group>
+                  <v-subheader>Items To Reorder</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in inventoryStats.itemsToReorder"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="warning">{{ job.itemName }}, {{ job.quantity }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- All Jobs -->
+              <v-col v-if="inventoryStats.itemUsage.length > 0" cols="12" lg="4">
+                <v-list-item-group>
+                  <v-subheader>Item Usage</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in inventoryStats.itemsToReorder"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="success">{{ job.itemName }}, {{ job.quantity }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- Completed Jobs -->
+              <v-col v-if="inventoryStats.stockLost.length > 0" cols="12" lg="4">
+                <v-list-item-group>
+                  <v-subheader>Stock Lost</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in inventoryStats.itemsToReorder"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="error">{{ job.itemName }}, {{ job.quantity }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-list>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn color="error" @click="dialog = false" block>
+          <v-icon color="error">fa-solid fa-cancel</v-icon>Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-card border="md" rounded="md" height="auto">
     <!-- Items to Reorder Section -->
     <v-card-title>
@@ -11,7 +77,13 @@
         <v-row>
           <!-- Each item in a small red card -->
           <v-col cols="12" sm="6" md="4" v-for="item in itemsToReorder" :key="item.inventoryId">
-            <v-card class="colourCard1" elevation="2" rounded="md" height="auto" color="red important">
+            <v-card
+              class="colourCard1"
+              elevation="2"
+              rounded="md"
+              height="auto"
+              color="red important"
+            >
               <v-card-title class="colourCard2" colour="black">
                 {{ item.itemName }}
               </v-card-title>
@@ -29,7 +101,7 @@
       <v-icon icon="fa: fa-solid fa-calendar-alt mr-2"></v-icon>
       {{ currentTab }}
     </v-card-title>
-
+    <v-btn @click="dialog = true">View Details</v-btn>
     <!-- Total Number of Items Display -->
     <v-card-subtitle>
       <v-chip color="primary">
@@ -43,7 +115,12 @@
           <!-- Doughnut Chart for Highest Usage Items -->
           <v-col v-if="hasHighestUsageData" cols="12" lg="6">
             <p><strong>Highest Usage Items:</strong></p>
-            <Chart type="doughnut" :data="highestUsageItemsChartData" :options="chartOptions" height="600px" />
+            <Chart
+              type="doughnut"
+              :data="highestUsageItemsChartData"
+              :options="chartOptions"
+              height="600px"
+            />
           </v-col>
 
           <!-- Bar Chart for Loss of Stock -->
@@ -74,6 +151,7 @@ export default {
       itemUsage: [],
       stockLost: [],
       costDueToStockLoss: 0,
+      dialog: false,
 
       // Doughnut chart data for highest usage items
       highestUsageItemsChartData: {
@@ -108,10 +186,12 @@ export default {
   },
   computed: {
     hasHighestUsageData() {
-      return this.itemUsage.length > 0 && this.itemUsage.some(item => item.quantity > 0);
+      return this.itemUsage.length > 0 && this.itemUsage.some((item) => item.quantity > 0)
     },
     hasLossOfStockData() {
-      return this.stockLost.length > 0 && this.stockLost.some(item => item.inventoryItem.quantity > 0);
+      return (
+        this.stockLost.length > 0 && this.stockLost.some((item) => item.inventoryItem.quantity > 0)
+      )
     }
   },
   methods: {
@@ -163,15 +243,23 @@ export default {
 
       // Ensure there are enough background colors for the highest usage items
       const itemCount = this.itemUsage.length
-      this.highestUsageItemsChartData.datasets[0].backgroundColor = this.generateColors(itemCount, this.highestUsageItemsChartData.datasets[0].backgroundColor)
+      this.highestUsageItemsChartData.datasets[0].backgroundColor = this.generateColors(
+        itemCount,
+        this.highestUsageItemsChartData.datasets[0].backgroundColor
+      )
 
       // Update Loss of Stock Chart
       this.lossOfStockChartData.labels = this.stockLost.map((item) => item.inventoryItem.itemName)
-      this.lossOfStockChartData.datasets[0].data = this.stockLost.map((item) => item.inventoryItem.quantity)
+      this.lossOfStockChartData.datasets[0].data = this.stockLost.map(
+        (item) => item.inventoryItem.quantity
+      )
 
       // Ensure there are enough background colors for the lost stock items
       const stockLostCount = this.stockLost.length
-      this.lossOfStockChartData.datasets[0].backgroundColor = this.generateColors(stockLostCount, this.lossOfStockChartData.datasets[0].backgroundColor)
+      this.lossOfStockChartData.datasets[0].backgroundColor = this.generateColors(
+        stockLostCount,
+        this.lossOfStockChartData.datasets[0].backgroundColor
+      )
     },
 
     // Helper function to generate or add colors
@@ -203,8 +291,6 @@ export default {
   }
 }
 </script>
-
-
 
 <style scoped>
 .colourCard1 {

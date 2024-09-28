@@ -1,4 +1,104 @@
 <template>
+  <v-dialog v-model="dialog" max-width="600">
+    <v-card>
+      <v-card-title>{{ selectedEmployee.userInfo.firstName }}'s Detailed Breakdown</v-card-title>
+      <v-card-text>
+        <v-list class="bg-cardColor">
+          <v-col cols="12">
+            <v-row>
+              <!-- Active Jobs -->
+              <v-col v-if="employeeStats.activeJobs.length > 0" cols="12" lg="4">
+                <v-list-item-group>
+                  <v-subheader>Active Jobs</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in employeeStats.activeJobs"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="primary">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- Total Jobs -->
+              <v-col v-if="employeeStats.totalJobs.length > 0" cols="12" lg="4">
+                <v-list-item-group>
+                  <v-subheader>Total Jobs</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in employeeStats.totalJobs"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="secondary">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- Completed Jobs -->
+              <v-col v-if="employeeStats.completedJobs.length > 0" cols="12" lg="4">
+                <v-list-item-group>
+                  <v-subheader>Completed Jobs</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in employeeStats.completedJobs"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="success">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <!-- Jobs Completed on Time -->
+              <v-col v-if="employeeStats.jobsCompletedOnTime.length > 0" cols="12" lg="6">
+                <v-list-item-group>
+                  <v-subheader>Jobs Completed on Time</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in employeeStats.jobsCompletedOnTime"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="success">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+
+              <!-- Jobs Completed Late -->
+              <v-col v-if="employeeStats.jobsCompletedLate.length > 0" cols="12" lg="6">
+                <v-list-item-group>
+                  <v-subheader>Jobs Completed Late</v-subheader>
+                  <v-list-item
+                    v-for="(job, index) in employeeStats.jobsCompletedLate"
+                    :key="index"
+                    class="bg-cardColor"
+                  >
+                    <v-list-item-content>
+                      <v-chip color="error">{{ job.jobTitle }}</v-chip>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-list>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn color="error" @click="dialog = false" block>
+          <v-icon color="error">fa-solid fa-cancel</v-icon>Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-card border="md" rounded="md" height="auto">
     <!-- Card Title -->
     <v-card-title>
@@ -14,8 +114,14 @@
     </v-card-subtitle>
 
     <v-card-text>
-      <v-text-field v-model="search" append-icon="mdi-magnify" variant="outlined" color="primary"
-        label="Search Employees" class="mb-4" />
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        variant="outlined"
+        color="primary"
+        label="Search Employees"
+        class="mb-4"
+      />
 
       <!-- Employee Stats Table -->
       <v-data-table :items="employees" :headers="employeeHeaders" class="bg-background">
@@ -39,23 +145,36 @@
           </v-menu>
         </template>
         <template v-slot:[`item.userInfo.firstName`]="{ item }">
-          <v-chip :color="selectedEmployee === item ? 'success' : 'secondary'">{{ item.userInfo.firstName }}</v-chip>
+          <v-chip :color="selectedEmployee === item ? 'success' : 'secondary'">{{
+            item.userInfo.firstName
+          }}</v-chip>
         </template>
       </v-data-table>
 
-
       <!-- Employee Breakdown Charts -->
       <div v-if="showStats">
-        <v-card-title>Employee Breakdown for {{ selectedEmployee.userInfo.firstName }}</v-card-title>
+        <v-card-title
+          >Employee Breakdown for {{ selectedEmployee.userInfo.firstName }}
+        </v-card-title>
+        <v-btn @click="dialog = true">View Details</v-btn>
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6" v-if="!combinedChartData.datasets[0].data.every(d => d !== 0)">
+            <v-col
+              cols="12"
+              lg="6"
+              v-if="!combinedChartData.datasets[0].data.every((d) => d !== 0)"
+            >
               <h5>Jobs for {{ selectedEmployee.userInfo.firstName }}</h5>
               <Chart type="pie" :data="combinedChartData" height="300px" />
             </v-col>
-            <v-col cols="12" lg="6" v-if="!onTimeJobsChartData.datasets[0].data.every(d => d !== 0)">
+            <v-col
+              cols="12"
+              lg="6"
+              v-if="!onTimeJobsChartData.datasets[0].data.every((d) => d !== 0)"
+            >
               <h5>
-                Jobs completed on time vs jobs completed late for {{ selectedEmployee.userInfo.firstName }}
+                Jobs completed on time vs jobs completed late for
+                {{ selectedEmployee.userInfo.firstName }}
               </h5>
               <Chart type="pie" :data="onTimeJobsChartData" height="300px" />
             </v-col>
@@ -66,21 +185,34 @@
           <v-row>
             <v-col cols="12" lg="6" v-if="totalCustomerRatings !== 0">
               <h5>Average Customer Service ratings given by</h5>
-              <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+              <v-card
+                class="d-flex flex-column mx-auto py-4"
+                elevation="10"
+                height="auto"
+                width="360"
+              >
                 <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
                 <div class="d-flex align-center flex-column my-auto">
                   <div class="text-h2 mt-5">
                     {{ customerServiceRatingAverage }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
-                  <v-rating :model-value="customerServiceRatingAverage" color="yellow-darken-3"
-                    half-increments></v-rating>
+                  <v-rating
+                    :model-value="customerServiceRatingAverage"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
                   <div class="px-3">{{ totalCustomerRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
-                    <v-progress-linear :model-value="ratingCounts[i] * ratingValueFactor" class="mx-n5"
-                      color="yellow-darken-3" height="20" rounded></v-progress-linear>
+                    <v-progress-linear
+                      :model-value="ratingCounts[i] * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
                     <template v-slot:prepend>
                       <span>{{ rating }}</span>
                       <v-icon class="mx-3" icon="mdi-star"></v-icon>
@@ -96,21 +228,34 @@
             </v-col>
             <v-col cols="12" lg="6" v-if="totalJobRatings !== 0">
               <h5>Average Job Performance ratings given by</h5>
-              <v-card class="d-flex flex-column mx-auto py-4" elevation="10" height="auto" width="360">
+              <v-card
+                class="d-flex flex-column mx-auto py-4"
+                elevation="10"
+                height="auto"
+                width="360"
+              >
                 <div class="d-flex justify-center mt-auto text-h5">Job Performance Rating</div>
                 <div class="d-flex align-center flex-column my-auto">
                   <div class="text-h2 mt-5">
                     {{ jobPerformanceRatingAverage }}
                     <span class="text-h6 ml-n3">/5</span>
                   </div>
-                  <v-rating :model-value="jobPerformanceRatingAverage" color="yellow-darken-3"
-                    half-increments></v-rating>
+                  <v-rating
+                    :model-value="jobPerformanceRatingAverage"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
                   <div class="px-3">{{ totalJobRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
-                    <v-progress-linear :model-value="jobRatingCounts[i] * ratingValueFactor" class="mx-n5"
-                      color="yellow-darken-3" height="20" rounded></v-progress-linear>
+                    <v-progress-linear
+                      :model-value="jobRatingCounts[i] * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
                     <template v-slot:prepend>
                       <span>{{ rating }}</span>
                       <v-icon class="mx-3" icon="mdi-star"></v-icon>
@@ -127,7 +272,6 @@
           </v-row>
         </v-container>
       </div>
-
     </v-card-text>
   </v-card>
 </template>
@@ -148,6 +292,7 @@ export default {
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       employees: [],
       employeeStats: '',
+      dialog: false,
       employeeHeaders: [
         { title: 'First Name', value: 'userInfo.firstName' },
         { title: 'Last Name', value: 'userInfo.surname' },
@@ -231,6 +376,7 @@ export default {
       try {
         const response = await axios.get(`${apiURL}stats/employeeStats/${employee._id}`, config)
         const data = response.data.data
+        this.employeeStats = data
 
         // Update stats with response data
         this.combinedChartData.datasets[0].data = [data.numActiveJobs, data.numCompletedJobs]
@@ -251,15 +397,14 @@ export default {
       }
     },
     calculateRatingCounts(ratings) {
-      const counts = [0, 0, 0, 0, 0]; // Array to hold counts for ratings 1 to 5
+      const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
       ratings?.forEach((rating) => {
         if (rating.rating >= 1 && rating.rating <= 5) {
-          counts[Math.floor(rating.rating) - 1]++; // Adjust index for 0-based array
+          counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
         }
-      });
-      return counts;
-    }
-    ,
+      })
+      return counts
+    },
     async getNumEmployees() {
       const config = {
         headers: {
