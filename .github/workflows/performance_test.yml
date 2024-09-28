@@ -1,0 +1,50 @@
+name: 🚀Run performance tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - chore/deployment-updates
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start NestJS server
+        run: npm run start:dev &
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_TEST_URI }}
+
+      - name: Install k6
+        run: sudo apt-get install -y k6
+
+      - name: Run k6 tests
+        run: ls && k6 run tests/test.js
