@@ -539,7 +539,6 @@ export default {
 
       this.isDeleting = false
       if (change_occured) {
-        window.location.reload()
         console.log('were in')
         this.$toast.add({
           severity: 'success',
@@ -547,7 +546,10 @@ export default {
           detail: 'Employee Edited Successfully',
           life: 3000
         })
-        this.employeeDialog = false
+        setTimeout(() => {
+          this.employeeDialog = false
+          this.$emit('update')
+        }, 1500)
       }
     }
   },
