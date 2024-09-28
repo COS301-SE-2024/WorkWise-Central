@@ -32,24 +32,6 @@
 <li><strong>MTTR:</strong> Less than 2 hours.</li>
 <li><strong>Critical Failures per Month:</strong> 0.</li>
 </ul>
-<h2 id="security" tabindex="-1"><a class="header-anchor" href="#security"><span>Security</span></a></h2>
-<p>Security is crucial in our system, due to the application's access to sensitive data related to clients, employees and businesses. The system must prevent and be capable of easily recovering from a data breach. The system must enforce authorisation through a role-based management system to ensure confidentiality of user data.</p>
-<p>Security will be quantified through measuring the confidentiality and integrity of the system.</p>
-<!-- As such, we plan to implement a Gatekeeper that will serve as a broker between the client requests and the services, to sanitize and validate the requests. -->
-<p>Confidentiality will be provided through the use of Authentication and Authorisation in the API Gateway, as well as a role-based system. Each role is associated with a set of permissions, which ensures that crucial endpoints are well-secured. It will be measured by the amount of security measures that are established, and the number of policy violations that occur.</p>
-<p>Lastly, the system will provide full transparency on policies regarding user rights and data protection.</p>
-<h3 id="quantification-2" tabindex="-1"><a class="header-anchor" href="#quantification-2"><span>Quantification</span></a></h3>
-<ul>
-<li><strong>Number of Security Breaches:</strong> Incidents of unauthorized access.</li>
-<li><strong>Policy Violations:</strong> Number of breaches of security policies.</li>
-<li><strong>Security Measures Implemented:</strong> Number of implemented security protocols (e.g., encryption, authentication).</li>
-</ul>
-<h3 id="target-2" tabindex="-1"><a class="header-anchor" href="#target-2"><span>Target</span></a></h3>
-<ul>
-<li><strong>Number of Security Breaches:</strong> Zero breaches per year.</li>
-<li><strong>Policy Violations:</strong> No more than 1 per year.</li>
-<li><strong>Security Measures Implemented:</strong> At least 5 security protocols in place.</li>
-</ul>
 <h2 id="performance-and-scalability" tabindex="-1"><a class="header-anchor" href="#performance-and-scalability"><span>Performance and Scalability</span></a></h2>
 <p>Given that the system will facilitate live communication, system performance is crucial. The system must be responsive and maintain a high throughput with multiple, concurrent requests. The application must have low resource utilisation, to cater for  mobile users on mobile devices.</p>
 <!-- The performance of the app will be measured using the following criteria:
@@ -57,13 +39,13 @@
   2. **Resource Utilization**: Monitoring CPU, memory, and network usage to ensure efficient resource allocation. Mobile devices have limited resources, so optimizing utilization is critical. -->
 <p>In the frontend, we may use server-side rendering (SSR) if performance is found to be suboptimal. Although it would increase the load on the server, the improvement to the user experience may warrant this change.</p>
 <p>In the backend, the seamless integration with WebSockets and microservices provided by Nest.js allow a high throughput. The use of asynchronous responses allows the services to run concurrently, and prevents delayed responses.</p>
-<h3 id="quantification-3" tabindex="-1"><a class="header-anchor" href="#quantification-3"><span>Quantification</span></a></h3>
+<h3 id="quantification-2" tabindex="-1"><a class="header-anchor" href="#quantification-2"><span>Quantification</span></a></h3>
 <ul>
 <li><strong>Latency:</strong> Time taken for a request to be processed and a response delivered.</li>
 <li><strong>Throughput:</strong> Number of requests the system can handle per unit of time.</li>
 <li><strong>Resource Utilization:</strong> CPU, memory, and network usage.</li>
 </ul>
-<h3 id="target-3" tabindex="-1"><a class="header-anchor" href="#target-3"><span>Target</span></a></h3>
+<h3 id="target-2" tabindex="-1"><a class="header-anchor" href="#target-2"><span>Target</span></a></h3>
 <ul>
 <li><strong>Latency:</strong> Less than 100 milliseconds per request.</li>
 <li><strong>Throughput:</strong> At least 1000 requests per second.
@@ -72,17 +54,35 @@ Resource Utilization: CPU usage below 75%, memory usage below 70%.</li>
 <h2 id="maintainability" tabindex="-1"><a class="header-anchor" href="#maintainability"><span>Maintainability</span></a></h2>
 <p>The client also identified maintainability as a core requirement. The modular architecture that is present in the API-Gateway allows us to break down the application into smaller, reusable modules. Additionally, the use of services provides a good separation of concerns.</p>
 <p>Our coding standards ensure that all code is uniform and readable. The use of the Model-View-Controller (MVC) pattern decouples the business logic from the view, which further makes it more maintainable.</p>
-<h3 id="quantification-4" tabindex="-1"><a class="header-anchor" href="#quantification-4"><span>Quantification</span></a></h3>
+<h3 id="quantification-3" tabindex="-1"><a class="header-anchor" href="#quantification-3"><span>Quantification</span></a></h3>
 <ul>
 <li><strong>Mean Time to Repair (MTTR):</strong> Average time to fix defects; lower MTTR indicates better maintainability.</li>
 <li><strong>Code Coverage:</strong> Percentage of code executed by tests; higher coverage usually leads to fewer undetected bugs.</li>
 <li><strong>Code Duplication:</strong> Measures duplicated code; lower duplication indicates better maintainability.</li>
 </ul>
-<h3 id="target-4" tabindex="-1"><a class="header-anchor" href="#target-4"><span>Target</span></a></h3>
+<h3 id="target-3" tabindex="-1"><a class="header-anchor" href="#target-3"><span>Target</span></a></h3>
 <ul>
 <li><strong>Mean Time to Repair (MTTR):</strong> Aim for an MTTR of less than 2 hours, ensuring quick resolution of defects.</li>
 <li><strong>Code Coverage:</strong> Achieve at least 80% code coverage through automated tests, ensuring thorough testing and reducing undetected bugs.</li>
 <li><strong>Code Duplication:</strong> Maintain code duplication below 5%, promoting code reuse and reducing maintenance overhead.</li>
+</ul>
+<h2 id="security" tabindex="-1"><a class="header-anchor" href="#security"><span>Security</span></a></h2>
+<p>Security is crucial in our system, due to the application's access to sensitive data related to clients, employees and businesses. The system must prevent and be capable of easily recovering from a data breach. The system must enforce authorisation through a role-based management system to ensure confidentiality of user data.</p>
+<p>Security will be quantified through measuring the confidentiality and integrity of the system.</p>
+<!-- As such, we plan to implement a Gatekeeper that will serve as a broker between the client requests and the services, to sanitize and validate the requests. -->
+<p>Confidentiality will be provided through the use of Authentication and Authorisation in the API Gateway, as well as a role-based system. Each role is associated with a set of permissions, which ensures that crucial endpoints are well-secured. It will be measured by the amount of security measures that are established, and the number of policy violations that occur.</p>
+<p>Lastly, the system will provide full transparency on policies regarding user rights and data protection.</p>
+<h3 id="quantification-4" tabindex="-1"><a class="header-anchor" href="#quantification-4"><span>Quantification</span></a></h3>
+<ul>
+<li><strong>Number of Security Breaches:</strong> Incidents of unauthorized access.</li>
+<li><strong>Policy Violations:</strong> Number of breaches of security policies.</li>
+<li><strong>Security Measures Implemented:</strong> Number of implemented security protocols (e.g., encryption, authentication).</li>
+</ul>
+<h3 id="target-4" tabindex="-1"><a class="header-anchor" href="#target-4"><span>Target</span></a></h3>
+<ul>
+<li><strong>Number of Security Breaches:</strong> Zero breaches per year.</li>
+<li><strong>Policy Violations:</strong> No more than 1 per year.</li>
+<li><strong>Security Measures Implemented:</strong> At least 5 security protocols in place.</li>
 </ul>
 </div></template>
 

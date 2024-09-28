@@ -4,6 +4,79 @@ pageClass: functionalDocDemo2
 <div class="functional-doc">
 
 # Functional Requirements
+## Wow factors
+Given the use case for this system, our team decided that it does not make sense to add one particularly large "wow factor" feature. Since useability is our most important non-functional requirement, we decided that it would be most beneficial to add a group of smaller features that enhances our system 
+### Invoice and client portal subsystem 
+#### Invoice subsystem 
+- The system must be able to generate invoices for a particular job
+- The system must allow that invoice be to edit if the user has the correct permissions
+- The system must provide a view of the invoice
+- The system must allow the user to send the invoice to the client
+- The system must allow the client to view their invoice 
+- The system must allow the client to pay their invoice through a payment gateway
+
+#### Client portal subsystem 
+- The system must provide an interface that clients of the businesses can access
+- The system must allow the business to send an email to the client containing a dynamic link that allows the client to access the client portal
+- The system must display the jobs the client currently has with the company, as well as a page to review previous jobs and current invoices
+- The system must allow the client to pay their invoice through a payment gateway. 
+- The system must ensure that the invoice gets updated when the user pays their invoice
+
+#### Feedback Subsystem
+This system is intended to gather feedback from clients. It is linked to the client portal subsystem 
+- The system must allow the clients to provide a rating on the work done in a job
+- The system must allow the client to provide a rating for customer service for the job
+- The system must allow the client to submit any feedback they have on the job 
+- The system must allow the user to access the feedback on jobs if they have the appropriate permissions
+
+### Company structure and role modeling subsystem
+#### Company structure modeling subsystem
+- The system must provide the ability to specify the superior of employees in the company  
+- The system must provide the ability to specify the subordinates of an employee in the company 
+- The system must provide a representation of the structure of the employees of the company 
+- The system must allow the user to edit that structure if they have the reliant permissions 
+
+#### Role and system permissions subsystem
+Roles are commonly used groupings of permissions that can be assigned to a employee.
+- The system must provide permissions for all the operations on the system
+- The system must restrict access to the actions based on the permissions 
+- The system must provide default roles when a company is created. 
+- The system must provide 2 immutable roles  
+  - "Owner" which represents the owner of the company. This user must have full permissions.
+  - "Worker" which represents the worker of the company. This is also the default role in any company. This role must give the most basic access required.
+- The system must assign the user who registered the company as the owner.
+- The system must allow the permissions associated with a role to be edited if they are not immutable
+- The viewing of subsystems such as employee, job and client must be based on the structure of the company (described in the subsystem)
+
+### Communication and Notification Subsystem
+#### In App Notifications
+- All users of the system should receive push notifications regarding any important changes in the system that involve them.
+- The system should allow the user to view their notifications. 
+- The system should allow the user to mark their notification as read or unread
+
+#### Emails
+- The system should email a user when they joined a company
+- The system should email a user when they left or was removed from a company 
+- The system should email a user when there are any important changes to a job they are assigned to.
+- The system should email a user when they have been invited to join a company
+- The system should send a email when a user requests to join a company
+- The system should email a client with their invoices 
+- The system should send an email to users to reset their password if they forgot their password.
+
+### Video conferencing
+- The system must provide video conferencing capabilities. 
+- THe system must allow the user to schedule a video conference in which they invite certain users to the meeting
+- The user must be able to view all the meeting they have scheduled 
+- The scheduled meeting's must be editable
+
+## Analytics Subsystem
+- The system should be able to generate analytics:
+   - The system must generate analytics about the inventory system.
+   - The system must generate analytics about the clients of the business. The system should include any client feedback.
+   - The system must generate analytics about the employees of the business.
+     - The system should provide these reports to the users based on their role in the company.
+     - If there is no one under a particular employee, the system should only show a report of the user's own performance.
+     - If there is someone working under the user, then the system should show analytics for everyone and everything under that user.
 
 ## Job Subsystem
 
@@ -137,56 +210,6 @@ pageClass: functionalDocDemo2
 - Users must be able to leave a company
   - The system must allow the user to revert the leave action within a month of leaving a company.
 
-
-## Roles and Permissions
-Roles are commonly used groupings of permissions that can be assigned to a user.
-- The system must provide the following permissions:
-    - view all employees
-    - view employees under me
-    - edit all employees
-    - edit employees under me
-    - add new employees
-    - remove any employees
-    - remove employees under me
-    - view all jobs
-    - view jobs under me
-    - view jobs assigned to me
-    - edit all jobs
-    - edit jobs that are under me
-    - edit jobs that are assigned to me
-    - add a new job
-    - remove any job
-    - remove job under me
-    - remove job assigned to me
-    - view all clients
-    - view clients under me
-    - view clients that are assigned to me
-    - edit all clients
-    - edit clients that are under me
-    - edit clients that are assigned to me
-    - add a new clients
-    - remove any clients
-    - remove clients under me
-    - remove clients assigned to me
-    - view all inventory
-    - edit all inventory
-    - add new inventory item
-    - delete inventory item
-    - record inventory use
-    - record job details
-    - company settings
-- The system must provide 2 immutable roles  
-  - "Owner" which represents the owner of the company. This user must have full permissions by default.
-  - "Worker" which represents the worker of the company. This is also the default role in any company. This user must have the following permissions by default:
-    - view jobs assigned to me
-    - view clients that are assigned to me
-    - record job details
-    - record inventory use
-- The system must assign the user who registered the company as the owner.
-- The system must provide a set of default roles when a company is created. These roles are editable.
-- The roles of a given company must be editable (refer to the company setting subsystem
-  above)
-
 ## Employee Subsystem
 All users are employees of companies. Each employee has information associated with them.
 
@@ -247,37 +270,5 @@ The system must allow data pertaining to a client to be stored.
 
 - The system must allow a user to log in to an existing account.
    - The system must allow a user to log in using their username and password.
-
-## Communication and Notification Subsystem
-#### Push Notifications
-- All users of the system should receive push notifications regarding any important changes in the system that involve them.
-- Users should receive notifications when they are added to a job.
-- Users should receive notifications when the status of a job they have access to changes.
-- Users with appropriate permissions should receive notifications about any inventory that needs to be ordered.
-- The system should allow each user to change their notification settings.
-- Users with permission should receive notifications about any client feedback after the job has been completed.
-
-#### SMS Notifications
-- Clients of the company must receive an SMS when an employee is on their way to complete a job.
-
-#### Emails
-- The system should email clients when an employee is on their way to complete a job.
-- The system should have the option to automatically email an invoice to a client.
-- The system should email clients with a link to be able to fill in a feedback form.
-- The settings for emails must be changeable.
-
-## Analytics Subsystem
-- The system should be able to generate analytics:
-   - The system must generate analytics about the inventory system.
-   - The system must generate analytics about the clients of the business. The system should include any client feedback.
-   - The system must generate analytics about the employees of the business.
-     - The system should provide these reports to the users based on their role in the company.
-     - If there is no one under a particular employee, the system should only show a report of the user's own performance.
-     - If there is someone working under the user, then the system should show analytics for everyone and everything under that user.
-- The system must be able to automatically generate a report of those analytics.
-
-## Feedback Subsystem
-- This system is intended to gather feedback from clients.
-- The system must provide a feedback form for each client for each job that has been completed.
 
 </div>

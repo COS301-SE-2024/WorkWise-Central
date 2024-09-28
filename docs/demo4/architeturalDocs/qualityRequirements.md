@@ -37,27 +37,6 @@ Asynchronous messaging between components in the system will allow the system to
 - **MTTR:** Less than 2 hours.
 - **Critical Failures per Month:** 0.
 
-## Security
-Security is crucial in our system, due to the application's access to sensitive data related to clients, employees and businesses. The system must prevent and be capable of easily recovering from a data breach. The system must enforce authorisation through a role-based management system to ensure confidentiality of user data. 
-
-Security will be quantified through measuring the confidentiality and integrity of the system. 
-
-<!-- As such, we plan to implement a Gatekeeper that will serve as a broker between the client requests and the services, to sanitize and validate the requests. -->
-
-Confidentiality will be provided through the use of Authentication and Authorisation in the API Gateway, as well as a role-based system. Each role is associated with a set of permissions, which ensures that crucial endpoints are well-secured. It will be measured by the amount of security measures that are established, and the number of policy violations that occur. 
-
-Lastly, the system will provide full transparency on policies regarding user rights and data protection.
-
-### Quantification 
-- **Number of Security Breaches:** Incidents of unauthorized access.
-- **Policy Violations:** Number of breaches of security policies.
-- **Security Measures Implemented:** Number of implemented security protocols (e.g., encryption, authentication).
-
-### Target
-- **Number of Security Breaches:** Zero breaches per year.
-- **Policy Violations:** No more than 1 per year.
-- **Security Measures Implemented:** At least 5 security protocols in place.
-
 ## Performance and Scalability
 Given that the system will facilitate live communication, system performance is crucial. The system must be responsive and maintain a high throughput with multiple, concurrent requests. The application must have low resource utilisation, to cater for  mobile users on mobile devices.
 
@@ -94,3 +73,25 @@ Our coding standards ensure that all code is uniform and readable. The use of th
 - **Mean Time to Repair (MTTR):** Aim for an MTTR of less than 2 hours, ensuring quick resolution of defects.
 - **Code Coverage:** Achieve at least 80% code coverage through automated tests, ensuring thorough testing and reducing undetected bugs.
 - **Code Duplication:** Maintain code duplication below 5%, promoting code reuse and reducing maintenance overhead.
+
+
+## Security
+Security is crucial in our system, due to the application's access to sensitive data related to clients, employees and businesses. The system must prevent and be capable of easily recovering from a data breach. The system must enforce authorisation through a role-based management system to ensure confidentiality of user data. 
+
+Security will be quantified through measuring the confidentiality and integrity of the system. 
+
+<!-- As such, we plan to implement a Gatekeeper that will serve as a broker between the client requests and the services, to sanitize and validate the requests. -->
+
+Confidentiality will be provided through the use of Authentication and Authorisation in the API Gateway, as well as a role-based system. Each role is associated with a set of permissions, which ensures that crucial endpoints are well-secured. It will be measured by the amount of security measures that are established, and the number of policy violations that occur. 
+
+Lastly, the system will provide full transparency on policies regarding user rights and data protection.
+
+### Quantification 
+- **Number of Security Breaches:** Incidents of unauthorized access.
+- **Policy Violations:** Number of breaches of security policies.
+- **Security Measures Implemented:** Number of implemented security protocols (e.g., encryption, authentication).
+
+### Target
+- **Number of Security Breaches:** Zero breaches per year.
+- **Policy Violations:** No more than 1 per year.
+- **Security Measures Implemented:** At least 5 security protocols in place.

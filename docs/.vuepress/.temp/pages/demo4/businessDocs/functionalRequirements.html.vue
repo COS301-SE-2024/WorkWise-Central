@@ -1,5 +1,101 @@
 <template><div><div class="functional-doc">
 <h1 id="functional-requirements" tabindex="-1"><a class="header-anchor" href="#functional-requirements"><span>Functional Requirements</span></a></h1>
+<h2 id="wow-factors" tabindex="-1"><a class="header-anchor" href="#wow-factors"><span>Wow factors</span></a></h2>
+<p>Given the use case for this system, our team decided that it does not make sense to add one particularly large &quot;wow factor&quot; feature. Since useability is our most important non-functional requirement, we decided that it would be most beneficial to add a group of smaller features that enhances our system</p>
+<h3 id="invoice-and-client-portal-subsystem" tabindex="-1"><a class="header-anchor" href="#invoice-and-client-portal-subsystem"><span>Invoice and client portal subsystem</span></a></h3>
+<h4 id="invoice-subsystem" tabindex="-1"><a class="header-anchor" href="#invoice-subsystem"><span>Invoice subsystem</span></a></h4>
+<ul>
+<li>The system must be able to generate invoices for a particular job</li>
+<li>The system must allow that invoice be to edit if the user has the correct permissions</li>
+<li>The system must provide a view of the invoice</li>
+<li>The system must allow the user to send the invoice to the client</li>
+<li>The system must allow the client to view their invoice</li>
+<li>The system must allow the client to pay their invoice through a payment gateway</li>
+</ul>
+<h4 id="client-portal-subsystem" tabindex="-1"><a class="header-anchor" href="#client-portal-subsystem"><span>Client portal subsystem</span></a></h4>
+<ul>
+<li>The system must provide an interface that clients of the businesses can access</li>
+<li>The system must allow the business to send an email to the client containing a dynamic link that allows the client to access the client portal</li>
+<li>The system must display the jobs the client currently has with the company, as well as a page to review previous jobs and current invoices</li>
+<li>The system must allow the client to pay their invoice through a payment gateway.</li>
+<li>The system must ensure that the invoice gets updated when the user pays their invoice</li>
+</ul>
+<h4 id="feedback-subsystem" tabindex="-1"><a class="header-anchor" href="#feedback-subsystem"><span>Feedback Subsystem</span></a></h4>
+<p>This system is intended to gather feedback from clients. It is linked to the client portal subsystem</p>
+<ul>
+<li>The system must allow the clients to provide a rating on the work done in a job</li>
+<li>The system must allow the client to provide a rating for customer service for the job</li>
+<li>The system must allow the client to submit any feedback they have on the job</li>
+<li>The system must allow the user to access the feedback on jobs if they have the appropriate permissions</li>
+</ul>
+<h3 id="company-structure-and-role-modeling" tabindex="-1"><a class="header-anchor" href="#company-structure-and-role-modeling"><span>Company structure and role modeling</span></a></h3>
+<h4 id="company-structure-modeling" tabindex="-1"><a class="header-anchor" href="#company-structure-modeling"><span>Company structure modeling</span></a></h4>
+<ul>
+<li>The system must provide the ability to specify the superior of employees in the company</li>
+<li>The system must provide the ability to specify the subordinates of an employee in the company</li>
+<li>The system must provide a representation of the structure of the employees of the company</li>
+<li>The system must allow the user to edit that structure if they have the reliant permissions</li>
+</ul>
+<h4 id="role-and-system-permissions" tabindex="-1"><a class="header-anchor" href="#role-and-system-permissions"><span>Role and system permissions</span></a></h4>
+<p>Roles are commonly used groupings of permissions that can be assigned to a employee.</p>
+<ul>
+<li>The system must provide permissions</li>
+<li>The system must provide 2 immutable roles
+<ul>
+<li>&quot;Owner&quot; which represents the owner of the company. This user must have full permissions by default.</li>
+<li>&quot;Worker&quot; which represents the worker of the company. This is also the default role in any company. This user must have the following permissions by default:
+<ul>
+<li>view jobs assigned to me</li>
+<li>view clients that are assigned to me</li>
+<li>record job details</li>
+<li>record inventory use</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The system must assign the user who registered the company as the owner.</li>
+<li>The system must provide a set of default roles when a company is created. These roles are editable.</li>
+<li>The roles of a given company must be editable (refer to the company setting subsystem
+above)</li>
+</ul>
+<h3 id="communication-and-notification-subsystem" tabindex="-1"><a class="header-anchor" href="#communication-and-notification-subsystem"><span>Communication and Notification Subsystem</span></a></h3>
+<h4 id="in-app-notifications" tabindex="-1"><a class="header-anchor" href="#in-app-notifications"><span>In App Notifications</span></a></h4>
+<ul>
+<li>All users of the system should receive push notifications regarding any important changes in the system that involve them.</li>
+<li>Users should receive notifications when they are added to a job.</li>
+<li>Users should receive notifications when the status of a job they have access to changes.</li>
+<li>Users with appropriate permissions should receive notifications about any inventory that needs to be ordered.</li>
+<li>The system should allow each user to change their notification settings.</li>
+<li>Users with permission should receive notifications about any client feedback after the job has been completed.</li>
+</ul>
+<h4 id="emails" tabindex="-1"><a class="header-anchor" href="#emails"><span>Emails</span></a></h4>
+<ul>
+<li>The system should email clients when an employee is on their way to complete a job.</li>
+<li>The system should have the option to automatically email an invoice to a client.</li>
+<li>The system should email clients with a link to be able to fill in a feedback form.</li>
+<li>The settings for emails must be changeable.</li>
+</ul>
+<h3 id="video-conferencing" tabindex="-1"><a class="header-anchor" href="#video-conferencing"><span>Video conferencing</span></a></h3>
+<ul>
+<li></li>
+</ul>
+<h2 id="analytics-subsystem" tabindex="-1"><a class="header-anchor" href="#analytics-subsystem"><span>Analytics Subsystem</span></a></h2>
+<ul>
+<li>The system should be able to generate analytics:
+<ul>
+<li>The system must generate analytics about the inventory system.</li>
+<li>The system must generate analytics about the clients of the business. The system should include any client feedback.</li>
+<li>The system must generate analytics about the employees of the business.
+<ul>
+<li>The system should provide these reports to the users based on their role in the company.</li>
+<li>If there is no one under a particular employee, the system should only show a report of the user's own performance.</li>
+<li>If there is someone working under the user, then the system should show analytics for everyone and everything under that user.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The system must be able to automatically generate a report of those analytics.</li>
+</ul>
 <h2 id="job-subsystem" tabindex="-1"><a class="header-anchor" href="#job-subsystem"><span>Job Subsystem</span></a></h2>
 <ul>
 <li>The system must be able to store information pertaining to a job, such as the title of the job, the client for whom the job is, the date the job must be completed, etc.</li>
@@ -206,65 +302,6 @@
 </ul>
 </li>
 </ul>
-<h2 id="roles-and-permissions" tabindex="-1"><a class="header-anchor" href="#roles-and-permissions"><span>Roles and Permissions</span></a></h2>
-<p>Roles are commonly used groupings of permissions that can be assigned to a user.</p>
-<ul>
-<li>The system must provide the following permissions:
-<ul>
-<li>view all employees</li>
-<li>view employees under me</li>
-<li>edit all employees</li>
-<li>edit employees under me</li>
-<li>add new employees</li>
-<li>remove any employees</li>
-<li>remove employees under me</li>
-<li>view all jobs</li>
-<li>view jobs under me</li>
-<li>view jobs assigned to me</li>
-<li>edit all jobs</li>
-<li>edit jobs that are under me</li>
-<li>edit jobs that are assigned to me</li>
-<li>add a new job</li>
-<li>remove any job</li>
-<li>remove job under me</li>
-<li>remove job assigned to me</li>
-<li>view all clients</li>
-<li>view clients under me</li>
-<li>view clients that are assigned to me</li>
-<li>edit all clients</li>
-<li>edit clients that are under me</li>
-<li>edit clients that are assigned to me</li>
-<li>add a new clients</li>
-<li>remove any clients</li>
-<li>remove clients under me</li>
-<li>remove clients assigned to me</li>
-<li>view all inventory</li>
-<li>edit all inventory</li>
-<li>add new inventory item</li>
-<li>delete inventory item</li>
-<li>record inventory use</li>
-<li>record job details</li>
-<li>company settings</li>
-</ul>
-</li>
-<li>The system must provide 2 immutable roles
-<ul>
-<li>&quot;Owner&quot; which represents the owner of the company. This user must have full permissions by default.</li>
-<li>&quot;Worker&quot; which represents the worker of the company. This is also the default role in any company. This user must have the following permissions by default:
-<ul>
-<li>view jobs assigned to me</li>
-<li>view clients that are assigned to me</li>
-<li>record job details</li>
-<li>record inventory use</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>The system must assign the user who registered the company as the owner.</li>
-<li>The system must provide a set of default roles when a company is created. These roles are editable.</li>
-<li>The roles of a given company must be editable (refer to the company setting subsystem
-above)</li>
-</ul>
 <h2 id="employee-subsystem" tabindex="-1"><a class="header-anchor" href="#employee-subsystem"><span>Employee Subsystem</span></a></h2>
 <p>All users are employees of companies. Each employee has information associated with them.</p>
 <ul>
@@ -359,49 +396,6 @@ above)</li>
 <li>The system must allow a user to log in using their username and password.</li>
 </ul>
 </li>
-</ul>
-<h2 id="communication-and-notification-subsystem" tabindex="-1"><a class="header-anchor" href="#communication-and-notification-subsystem"><span>Communication and Notification Subsystem</span></a></h2>
-<h4 id="push-notifications" tabindex="-1"><a class="header-anchor" href="#push-notifications"><span>Push Notifications</span></a></h4>
-<ul>
-<li>All users of the system should receive push notifications regarding any important changes in the system that involve them.</li>
-<li>Users should receive notifications when they are added to a job.</li>
-<li>Users should receive notifications when the status of a job they have access to changes.</li>
-<li>Users with appropriate permissions should receive notifications about any inventory that needs to be ordered.</li>
-<li>The system should allow each user to change their notification settings.</li>
-<li>Users with permission should receive notifications about any client feedback after the job has been completed.</li>
-</ul>
-<h4 id="sms-notifications" tabindex="-1"><a class="header-anchor" href="#sms-notifications"><span>SMS Notifications</span></a></h4>
-<ul>
-<li>Clients of the company must receive an SMS when an employee is on their way to complete a job.</li>
-</ul>
-<h4 id="emails" tabindex="-1"><a class="header-anchor" href="#emails"><span>Emails</span></a></h4>
-<ul>
-<li>The system should email clients when an employee is on their way to complete a job.</li>
-<li>The system should have the option to automatically email an invoice to a client.</li>
-<li>The system should email clients with a link to be able to fill in a feedback form.</li>
-<li>The settings for emails must be changeable.</li>
-</ul>
-<h2 id="analytics-subsystem" tabindex="-1"><a class="header-anchor" href="#analytics-subsystem"><span>Analytics Subsystem</span></a></h2>
-<ul>
-<li>The system should be able to generate analytics:
-<ul>
-<li>The system must generate analytics about the inventory system.</li>
-<li>The system must generate analytics about the clients of the business. The system should include any client feedback.</li>
-<li>The system must generate analytics about the employees of the business.
-<ul>
-<li>The system should provide these reports to the users based on their role in the company.</li>
-<li>If there is no one under a particular employee, the system should only show a report of the user's own performance.</li>
-<li>If there is someone working under the user, then the system should show analytics for everyone and everything under that user.</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>The system must be able to automatically generate a report of those analytics.</li>
-</ul>
-<h2 id="feedback-subsystem" tabindex="-1"><a class="header-anchor" href="#feedback-subsystem"><span>Feedback Subsystem</span></a></h2>
-<ul>
-<li>This system is intended to gather feedback from clients.</li>
-<li>The system must provide a feedback form for each client for each job that has been completed.</li>
 </ul>
 </div>
 </div></template>
