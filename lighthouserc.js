@@ -2,7 +2,6 @@ module.exports = {
   ci: {
     collect: {
       //staticDistDir: "./src/frontend/dist",
-      startServerCommand: "cd src/frontend && npm run start:prod",
       url: [
         "https://tuksui.sharpsoftwaresolutions.net/",
         "https://tuksui.sharpsoftwaresolutions.net/dashboard",

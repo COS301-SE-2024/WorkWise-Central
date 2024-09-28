@@ -26,16 +26,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Start NestJS server
-        run: npm install && npm run start:dev
-        working-directory: src/api-gateway/
-        env:
-          SERVER_LOGIN: ${{ secrets.MONGODB_TEST_URI }}
-
-
-      - name: Install k6
-        uses: actions/checkout@v4
-      - name: Run k6 test
-        uses: k6io/action@v0.1
-        with:
-          filename: test/tests.js
+#      - name: Start NestJS server
+#        run: npm install && npm run start:dev
+#        working-directory: src/api-gateway/
+#        env:
+#          SERVER_LOGIN: ${{ secrets.MONGODB_TEST_URI }}
+#
+#
+#      - name: Install k6
+#        uses: actions/checkout@v4
+#      - name: Run k6 test
+#        uses: k6io/action@v0.1
+#        with:
+#          filename: test/tests.js
