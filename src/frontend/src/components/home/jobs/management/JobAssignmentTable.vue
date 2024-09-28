@@ -207,7 +207,7 @@
             <v-icon color="white">mdi-alert-circle-outline</v-icon>
             Confirm Deletion
           </v-card-title>
-          <v-card-text> Are you sure you want to delete this job? </v-card-text>
+          <v-card-text> Are you sure you want to delete this job? <strong>This action cannot be reversed</strong></v-card-text>
           <v-card-actions>
             <v-container
               ><v-row
@@ -330,7 +330,7 @@ interface Job {
       houseNumber?: string
     }
     startDate: string
-    endDate?: string
+    endDate: string
   }
   recordedDetails?: {
     imagesTaken?: string[]

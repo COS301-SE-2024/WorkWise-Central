@@ -581,10 +581,28 @@ const getMembersFullName = (item: Member) => {
   return ''
 }
 
-function deleteItem(taskIndex: number, itemIndex: number) {
-  taskList.value[taskIndex].items.splice(itemIndex, 1)
-}
+async function deleteItem(taskIndex: number, itemIndex: number) {
+  const task = taskList.value[taskIndex];
+  const item = task.items[itemIndex];
+  const params = {
+    empId: localStorage.getItem('employeeId') || '',
+    jobId: props.jobID,
+    taskId: task._id,
+    itemId: item._id
+  };
 
+  try {
+    const response = await axios.delete(`${API_URL}job/taskItem`, { params, headers: config.headers });
+    if (response.status >= 200 && response.status < 300) {
+      taskList.value[taskIndex].items.splice(itemIndex, 1);
+      console.log('Item deleted successfully', response.data);
+    } else {
+      console.log('Failed to delete item', response);
+    }
+  } catch (error) {
+    console.error('Error deleting item', error);
+  }
+}
 function openCheckActionsDialog(itemIndex: number) {
   // Handle dialog actions
 }

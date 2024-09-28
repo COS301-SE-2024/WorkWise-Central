@@ -56,7 +56,7 @@
         <!-- Color Picker -->
         <v-row cols="12" class="pt-4">
           <v-col cols="12" class="d-flex justify-center">
-            <v-color-picker v-model="selectedColor" show-swatches hide-inputs hide-canvas></v-color-picker>
+            <v-color-picker v-model="selectedColor" hide-sliders show-swatches hide-inputs hide-canvas></v-color-picker>
           </v-col>
         </v-row>
 

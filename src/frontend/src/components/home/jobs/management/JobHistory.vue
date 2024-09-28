@@ -77,7 +77,8 @@ const itemsPerPage = 10
 
 // Format timestamp to a human-readable string
 const formatTimestamp = (timestamp: string): string => {
-  return formatDistanceToNow(new Date(timestamp), { addSuffix: true })
+  const date = new Date(timestamp)
+  return date.toLocaleString()
 }
 
 // Calculate the total number of pages
@@ -96,6 +97,7 @@ const refreshHistory = async () => {
   try {
     const res = await axios.get(`${API_URL}job/id/${props.jobID}`)
     events.value = res.data.data.history
+    console.log('Events:', events)
     console.log('History updated:', res)
   } catch (error) {
     console.log(error)
@@ -121,5 +123,13 @@ onMounted(() => {
 /* Style for alternating background colors */
 .v-list-item:nth-of-type(odd) {
   background-color: #f0f0f0; /* Example color for odd rows */
+}
+
+.v-list-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.v-list-item:last-child {
+  border-bottom: none;
 }
 </style>
