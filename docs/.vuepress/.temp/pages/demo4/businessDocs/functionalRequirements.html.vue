@@ -28,56 +28,53 @@
 <li>The system must allow the client to submit any feedback they have on the job</li>
 <li>The system must allow the user to access the feedback on jobs if they have the appropriate permissions</li>
 </ul>
-<h3 id="company-structure-and-role-modeling" tabindex="-1"><a class="header-anchor" href="#company-structure-and-role-modeling"><span>Company structure and role modeling</span></a></h3>
-<h4 id="company-structure-modeling" tabindex="-1"><a class="header-anchor" href="#company-structure-modeling"><span>Company structure modeling</span></a></h4>
+<h3 id="company-structure-and-role-modeling-subsystem" tabindex="-1"><a class="header-anchor" href="#company-structure-and-role-modeling-subsystem"><span>Company structure and role modeling subsystem</span></a></h3>
+<h4 id="company-structure-modeling-subsystem" tabindex="-1"><a class="header-anchor" href="#company-structure-modeling-subsystem"><span>Company structure modeling subsystem</span></a></h4>
 <ul>
 <li>The system must provide the ability to specify the superior of employees in the company</li>
 <li>The system must provide the ability to specify the subordinates of an employee in the company</li>
 <li>The system must provide a representation of the structure of the employees of the company</li>
 <li>The system must allow the user to edit that structure if they have the reliant permissions</li>
 </ul>
-<h4 id="role-and-system-permissions" tabindex="-1"><a class="header-anchor" href="#role-and-system-permissions"><span>Role and system permissions</span></a></h4>
+<h4 id="role-and-system-permissions-subsystem" tabindex="-1"><a class="header-anchor" href="#role-and-system-permissions-subsystem"><span>Role and system permissions subsystem</span></a></h4>
 <p>Roles are commonly used groupings of permissions that can be assigned to a employee.</p>
 <ul>
-<li>The system must provide permissions</li>
+<li>The system must provide permissions for all the operations on the system</li>
+<li>The system must restrict access to the actions based on the permissions</li>
+<li>The system must provide default roles when a company is created.</li>
 <li>The system must provide 2 immutable roles
 <ul>
-<li>&quot;Owner&quot; which represents the owner of the company. This user must have full permissions by default.</li>
-<li>&quot;Worker&quot; which represents the worker of the company. This is also the default role in any company. This user must have the following permissions by default:
-<ul>
-<li>view jobs assigned to me</li>
-<li>view clients that are assigned to me</li>
-<li>record job details</li>
-<li>record inventory use</li>
-</ul>
-</li>
+<li>&quot;Owner&quot; which represents the owner of the company. This user must have full permissions.</li>
+<li>&quot;Worker&quot; which represents the worker of the company. This is also the default role in any company. This role must give the most basic access required.</li>
 </ul>
 </li>
 <li>The system must assign the user who registered the company as the owner.</li>
-<li>The system must provide a set of default roles when a company is created. These roles are editable.</li>
-<li>The roles of a given company must be editable (refer to the company setting subsystem
-above)</li>
+<li>The system must allow the permissions associated with a role to be edited if they are not immutable</li>
+<li>The viewing of subsystems such as employee, job and client must be based on the structure of the company (described in the subsystem)</li>
 </ul>
 <h3 id="communication-and-notification-subsystem" tabindex="-1"><a class="header-anchor" href="#communication-and-notification-subsystem"><span>Communication and Notification Subsystem</span></a></h3>
 <h4 id="in-app-notifications" tabindex="-1"><a class="header-anchor" href="#in-app-notifications"><span>In App Notifications</span></a></h4>
 <ul>
 <li>All users of the system should receive push notifications regarding any important changes in the system that involve them.</li>
-<li>Users should receive notifications when they are added to a job.</li>
-<li>Users should receive notifications when the status of a job they have access to changes.</li>
-<li>Users with appropriate permissions should receive notifications about any inventory that needs to be ordered.</li>
-<li>The system should allow each user to change their notification settings.</li>
-<li>Users with permission should receive notifications about any client feedback after the job has been completed.</li>
+<li>The system should allow the user to view their notifications.</li>
+<li>The system should allow the user to mark their notification as read or unread</li>
 </ul>
 <h4 id="emails" tabindex="-1"><a class="header-anchor" href="#emails"><span>Emails</span></a></h4>
 <ul>
-<li>The system should email clients when an employee is on their way to complete a job.</li>
-<li>The system should have the option to automatically email an invoice to a client.</li>
-<li>The system should email clients with a link to be able to fill in a feedback form.</li>
-<li>The settings for emails must be changeable.</li>
+<li>The system should email a user when they joined a company</li>
+<li>The system should email a user when they left or was removed from a company</li>
+<li>The system should email a user when there are any important changes to a job they are assigned to.</li>
+<li>The system should email a user when they have been invited to join a company</li>
+<li>The system should send a email when a user requests to join a company</li>
+<li>The system should email a client with their invoices</li>
+<li>The system should send an email to users to reset their password if they forgot their password.</li>
 </ul>
 <h3 id="video-conferencing" tabindex="-1"><a class="header-anchor" href="#video-conferencing"><span>Video conferencing</span></a></h3>
 <ul>
-<li></li>
+<li>The system must provide video conferencing capabilities.</li>
+<li>THe system must allow the user to schedule a video conference in which they invite certain users to the meeting</li>
+<li>The user must be able to view all the meeting they have scheduled</li>
+<li>The scheduled meeting's must be editable</li>
 </ul>
 <h2 id="analytics-subsystem" tabindex="-1"><a class="header-anchor" href="#analytics-subsystem"><span>Analytics Subsystem</span></a></h2>
 <ul>
@@ -94,7 +91,6 @@ above)</li>
 </li>
 </ul>
 </li>
-<li>The system must be able to automatically generate a report of those analytics.</li>
 </ul>
 <h2 id="job-subsystem" tabindex="-1"><a class="header-anchor" href="#job-subsystem"><span>Job Subsystem</span></a></h2>
 <ul>
