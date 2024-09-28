@@ -178,7 +178,7 @@
 <script>
 import axios from 'axios'
 import Chart from 'primevue/chart'
-import { API_URL } from '@/main.js'
+import { API_URL } from '@/main'
 
 export default {
   components: {
