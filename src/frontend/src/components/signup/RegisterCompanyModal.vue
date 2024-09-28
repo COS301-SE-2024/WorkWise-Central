@@ -507,7 +507,7 @@ export default {
         .post(API_URL + 'company/create', this.req_obj, config)
         .then((res) => {
           console.log(res)
-          localStorage['currentCompany'] = res.data._id
+          localStorage['currentCompany'] = res.data.userId
           localStorage['currentCompanyName'] = res.data.data.name
           localStorage['employeeId'] = res.data.ownerId
           this.register_request_loading = false
@@ -518,7 +518,8 @@ export default {
             life: 3000
           })
           setTimeout(() => {
-            this.$router.push({ name: 'dashboard' })
+           this.$router.push({ name: 'dashboard' })
+           this.$emit('companyRegistered', res.data.data.name)
           }, 3000)
         })
         .catch((res) => {

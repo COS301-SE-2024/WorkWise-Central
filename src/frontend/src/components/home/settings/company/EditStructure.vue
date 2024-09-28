@@ -1,5 +1,7 @@
+e
 <template>
   <v-container>
+    <Toast position="top-center" />
     <v-card height="1500px">
       <v-card-title class="text-center">Edit Structure </v-card-title>
       <v-divider></v-divider>
@@ -81,6 +83,18 @@
     </v-card>
 
     <v-dialog v-model="employeeDialog" max-width="500" height="500">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          rounded="md"
+          class="text-none font-weight-regular hello"
+          color="warning"
+          variant="text"
+          v-bind="activatorProps"
+          :disabled="Disabled"
+          ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon
+          >Edit</v-btn
+        >
+      </template>
       <v-card class="bg-cardColor">
         <v-form ref="form" @submit.prevent="validateEdits">
           <v-card-title class="text-center">Edit Employee</v-card-title>
@@ -110,11 +124,11 @@
                   bg-color="background"
                   variant="solo"
                   :loading="loading"
+                  :disabled="isDeleting"
                 ></v-select>
               </v-col>
               <v-col :cols="12">
                 <v-select
-                  clearable
                   label="Subordinates"
                   hint="Select the employees you'd like to be subordinates of this employee"
                   persistent-hint
@@ -127,6 +141,7 @@
                   variant="solo"
                   multiple
                   :loading="loading"
+                  :disabled="isDeleting"
                 ></v-select> </v-col
               ><v-col :cols="12">
                 <v-select
@@ -141,6 +156,7 @@
                   item-title="name"
                   bg-color="background"
                   variant="solo"
+                  :disabled="isDeleting"
                 ></v-select> </v-col
             ></v-row>
           </v-card-item>
@@ -163,6 +179,7 @@
                       start
                       color="success"
                       size="small"
+                      :disabled="isDeleting"
                     ></v-icon>
                     Save
                   </v-btn>
@@ -198,6 +215,7 @@ import * as vNG from 'v-network-graph'
 import dagre from 'dagre/dist/dagre.min.js'
 import axios from 'axios'
 import { API_URL } from '@/main'
+import Toast from 'primevue/toast'
 
 const nodeSize = 40
 
@@ -283,6 +301,7 @@ export default defineComponent({
           'node:click': this.onNodeClick
         }
       }),
+      loading: true,
       selectedEmployee: '',
       req_obj: {
         currentEmployeeId: localStorage['employeeId'],
@@ -313,7 +332,16 @@ export default defineComponent({
       )
     }
   },
+  components: {
+    Toast
+  },
   methods: {
+    selected_subordiates(a) {
+      console.log(a)
+    },
+    selected_supirior() {
+      console.log(this.req_obj.updateEmployeeDto.superiorId)
+    },
     layout(direction) {
       if (Object.keys(this.data.nodes).length <= 1 || Object.keys(this.data.edges).length == 0) {
         return
@@ -428,9 +456,10 @@ export default defineComponent({
         console.log(response)
         this.selectedEmployee = response.data.data
 
-        this.loadSubordinates()
-        this.loadSuperiors()
         this.loadRoles()
+        this.loadSubordinates().then(() =>
+          this.loadSuperiors().then(() => this.setCurrentSubsAndSuperiors())
+        )
         setTimeout(() => {
           this.employeeDialog = true
           this.isLoading = false
@@ -570,6 +599,31 @@ export default defineComponent({
         console.error('Error fetching data:', error)
       }
     },
+    async setCurrentSubsAndSuperiors() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: { currentEmployeeId: localStorage['employeeId'] }
+      }
+
+      try {
+        let current_subs = await axios.get(
+          API_URL + `employee/detailed/id/${this.selectedItem.id}`,
+          config
+        )
+        this.req_obj.updateEmployeeDto.roleId = current_subs.data.data.role.roleId
+        this.currentRoleId = current_subs.data.data.role.roleId
+        this.req_obj.updateEmployeeDto.superiorId = current_subs.data.data.superiorId
+        this.currentSuperior = current_subs.data.data.superiorId
+        this.req_obj.updateEmployeeDto.subordinates = current_subs.data.data.subordinates
+        this.currentSubordinates = current_subs.data.data.subordinates
+        this.loading = false
+      } catch (error) {
+        console.log(error)
+      }
+    },
     close() {
       this.employeeDialog = false
     },
@@ -578,7 +632,6 @@ export default defineComponent({
       let change_occured = false
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      let API_URL = await this.getRequestUrl()
 
       console.log('current subordinates: ' + this.currentSubordinates)
       console.log('selected subordinates: ' + this.req_obj.updateEmployeeDto.subordinates)

@@ -21,7 +21,7 @@
                 </template>
                 <v-list>
                   <v-list-item>
-                    <RegisterCompanyModal />
+                    <RegisterCompanyModal @companyRegistered="switchCompany" />
                   </v-list-item>
                   <v-list-item>
                     <JoinCompanyModal />
