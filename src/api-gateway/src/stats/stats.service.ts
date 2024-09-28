@@ -430,7 +430,7 @@ export class StatsService {
             jobTitle: (invoice.jobId as any).details.heading,
           },
         });
-        const dateIndex = invoice.receiptOfPaymentDate.getMonth();
+        const dateIndex = await this.getMonth(invoice.receiptOfPaymentDate);
         result.revenue[dateIndex].numUnpaid += invoice.total;
       } else {
         result.numUnpaid++;
@@ -446,5 +446,45 @@ export class StatsService {
       }
     }
     return result;
+  }
+
+  async getMonth(date: Date) {
+    console.log('date: ', date);
+    const dateString = date.toString();
+    const match = dateString.match(/^\d{4}-(\d{2})-\d{2}/);
+
+    if (match) {
+      const month = match[1]; // Extract the month from the match
+      switch (month) {
+        case '01':
+          return 0; // January
+        case '02':
+          return 1; // February
+        case '03':
+          return 2; // March
+        case '04':
+          return 3; // April
+        case '05':
+          return 4; // May
+        case '06':
+          return 5; // June
+        case '07':
+          return 6; // July
+        case '08':
+          return 7; // August
+        case '09':
+          return 8; // September
+        case '10':
+          return 9; // October
+        case '11':
+          return 10; // November
+        case '12':
+          return 11; // December
+        default:
+          return null; // Invalid month
+      }
+    }
+
+    return null; // Return null if no match is found
   }
 }
