@@ -15,36 +15,35 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-#    services:
-#      mongodb:
-#        image: mongo:latest
-#        ports:
-#          - 27017:27017
-#        options: >-
-#          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
-#          --health-interval 10s
-#          --health-timeout 5s
-#          --health-retries 5
-
+  k6:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Run k6 test
+        uses: k6io/action@v0.1
         with:
-          node-version: '16'
+          filename: tests.js
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Start NestJS server
-        run: npm run start:dev &
-        env:
-          MONGODB_URI: ${{ secrets.MONGODB_TEST_URI }}
-
-      - name: Install k6
-        run: sudo apt-get install k6
-
-      - name: Run k6 tests
-        run: ls && k6 run tests/test.js
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Set up Node.js
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: '16'
+#
+#      - name: Install dependencies
+#        run: npm install
+#
+#      - name: Start NestJS server
+#        run: npm run start:dev &
+#        env:
+#          MONGODB_URI: ${{ secrets.MONGODB_TEST_URI }}
+#
+#      - name: Install k6
+#        run: sudo apt-get install k6
+#
+#      - name: Run k6 tests
+#        run: ls && k6 run tests/test.js
