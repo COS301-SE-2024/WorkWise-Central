@@ -470,6 +470,10 @@ export default defineUserConfig({
               text: "Technology Choices",
               link: "/demo4/architeturalDocs/techSpec.md",
             },
+            {
+              text: "Deployment Diagram",
+              link: "/demo4/architeturalDocs/deploymentDiagram.md",
+            },
           ],
         },
         {
