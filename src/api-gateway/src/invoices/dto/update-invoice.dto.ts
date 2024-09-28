@@ -74,6 +74,15 @@ export class UpdateInvoiceDto {
   @IsDateString()
   receiptOfPaymentDate?: Date;
 
+  @ApiProperty()
+  @IsOptional()
+  sent?: boolean;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDateString()
+  sentDate?: Date;
+
   @IsOptional()
   @IsArray()
   @ApiProperty()

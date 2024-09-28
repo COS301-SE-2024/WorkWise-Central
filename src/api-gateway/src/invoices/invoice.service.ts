@@ -1,3 +1,4 @@
+import { ContactInfo } from './../users/entities/user.entity';
 import { JobService } from './../job/job.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateInvoiceDto, Items } from './dto/create-invoice.dto';
@@ -12,6 +13,7 @@ import { InventoryService } from '../inventory/inventory.service';
 import { TimeTrackerService } from '../time-tracker/time-tracker.service';
 import { EmployeeService } from '../employee/employee.service';
 import { InventoryUsedService } from '../inventory-used/inventory-used.service';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class InvoiceService {
@@ -39,6 +41,9 @@ export class InvoiceService {
 
     @Inject(forwardRef(() => InventoryUsedService))
     private readonly inventoryUsedService: InventoryUsedService,
+
+    @Inject(forwardRef(() => EmailService))
+    private readonly emailService: EmailService,
   ) {}
 
   async validateCreateInvoice(Invoice: CreateInvoiceDto) {
@@ -198,6 +203,21 @@ export class InvoiceService {
 
   async findById(id: Types.ObjectId) {
     return await this.invoiceRepository.findById(id);
+  }
+
+  async send(id: Types.ObjectId) {
+    //setting the send variable and date
+    await this.update(id, { sent: true, sentDate: new Date() });
+    //Calling the email service
+    const invoice = await this.findByIdDetailed(id);
+    await this.emailService.sendClientPortalLink(
+      invoice.clientId._id,
+      invoice.clientId.details.contactInfo.email,
+      invoice.clientId.details.firstName,
+      invoice.clientId.details.lastName,
+      invoice.companyId.name,
+      invoice.jobId.details.heading,
+    );
   }
 
   async findByIdDetailed(id: Types.ObjectId) {
