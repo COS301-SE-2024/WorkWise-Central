@@ -21,7 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.18.0'
+          node-version: '^18.19.0'
 
       - name: Install dependencies
         run: npm install
@@ -30,7 +30,7 @@ jobs:
         run: npm install && npm run start:dev
         working-directory: src/api-gateway/
         env:
-          MONGODB_URI: ${{ secrets.MONGODB_TEST_URI }}
+          SERVER_LOGIN: ${{ secrets.MONGODB_TEST_URI }}
 
 
       - name: Install k6
