@@ -187,9 +187,9 @@ export default {
       req_obj: {
         currentEmployeeId: localStorage['employeeId'],
         updateEmployeeDto: {
-          roleId: null,
+          roleId: null as null | string,
           subordinates: [] as string[],
-          superiorId: null
+          superiorId: null as null | string
         }
       } as EmployeeUpdate,
       nameRules: [
@@ -231,6 +231,9 @@ export default {
     }
   },
   methods: {
+    strHasNumberInIt(str: string) {
+      return /\d/.test(str)
+    },
     selected_subordiates(a: any) {
       console.log(a)
     },
@@ -480,7 +483,7 @@ export default {
         this.req_obj.updateEmployeeDto.roleId != this.currentRoleId &&
         this.req_obj.updateEmployeeDto.roleId != '' &&
         this.req_obj.updateEmployeeDto.roleId != null &&
-        this.req_obj.updateEmployeeDto.roleId.length != this.currentRoleId.length
+        this.strHasNumberInIt(this.req_obj.updateEmployeeDto.roleId)
       )
         axios
           .patch(
@@ -509,7 +512,7 @@ export default {
         this.req_obj.updateEmployeeDto.superiorId != this.currentSuperior &&
         this.req_obj.updateEmployeeDto.superiorId != '' &&
         this.req_obj.updateEmployeeDto.superiorId != null &&
-        this.req_obj.updateEmployeeDto.superiorId.length != this.currentSuperior.length
+        this.strHasNumberInIt(this.req_obj.updateEmployeeDto.superiorId)
       )
         axios
           .patch(
