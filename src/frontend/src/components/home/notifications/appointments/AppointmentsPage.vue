@@ -238,6 +238,7 @@
                   item-value="employeeId"
                   item-title="name"
                   clearable
+                  variant="solo"
                   multiple
                   chips
                   label="Participants"
@@ -350,6 +351,7 @@
                   item-value="employeeId"
                   item-title="name"
                   clearable
+                  variant="solo"
                   multiple
                   chips
                   label="Participants"
