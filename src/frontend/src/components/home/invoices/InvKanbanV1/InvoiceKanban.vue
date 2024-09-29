@@ -60,6 +60,37 @@
                   role="option"
                   class="my-5"
                 >
+                  <v-dialog v-model="dialog" max-width="700">
+                    <v-card class="bg-cardColor">
+                      <v-card-title>
+                        <v-icon>mdi-file-document-outline</v-icon>
+                        <span>Invoice Details</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-row>
+                          <v-col cols="12">
+                            <iframe
+                              v-if="pdfSrc"
+                              :src="pdfSrc"
+                              style="width: 100%; height: 600px"
+                            ></iframe>
+                          </v-col>
+                        </v-row>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-container
+                          ><v-row
+                            ><v-col cols="12">
+                              <v-btn color="error" block @click="dialog = false"
+                                ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon
+                                >Close</v-btn
+                              ></v-col
+                            ></v-row
+                          ></v-container
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                   <v-card-item class="text-h6" style="font-family: 'Nunito', sans-serif"
                     ><b>{{ 'Invoice #' + item.invoiceNumber }}</b>
                   </v-card-item>
@@ -96,21 +127,14 @@
       </VueDraggable>
     </v-row>
   </v-container>
-<!--  <v-dialog v-model="dialog" max-width="400" persistent>-->
-<!--    <template v-slot:activator="{ props: activatorProps }">-->
-<!--      <v-btn v-bind="activatorProps"> Open Dialog </v-btn>-->
-<!--    </template>-->
+  <!--  <v-dialog v-model="dialog" max-width="400" persistent>-->
+  <!--    <v-card title="Use Google's location service?">-->
+  <!--      <iframe v-if="pdfSrc" :src="pdfSrc" style="width: 100%; height: 500px"></iframe>-->
+  <!--      <v-btn @click="dialog = false"> Disagree </v-btn>-->
 
-<!--    <v-card title="Use Google's location service?">-->
-<!--      <template v-slot:actions>-->
-<!--        <iframe v-if="pdfSrc" :src="pdfSrc" style="width: 100%; height: 500px"></iframe>-->
-
-<!--        <v-btn @click="dialog = false"> Disagree </v-btn>-->
-
-<!--        <v-btn @click="dialog = false"> Agree </v-btn>-->
-<!--      </template>-->
-<!--    </v-card>-->
-<!--  </v-dialog>-->
+  <!--      <v-btn @click="dialog = false"> Agree </v-btn>-->
+  <!--    </v-card>-->
+  <!--  </v-dialog>-->
 </template>
 
 <script lang="js">
@@ -128,7 +152,7 @@ export default {
   data() {
     return {
       dialog: false,
-      pdfSrc: '',
+      pdfSrc: null,
       delete_all_jobs_dialog: false,
       add_column_dialog: false,
       delete_column_dialog: false,
@@ -219,246 +243,29 @@ export default {
           console.log(error)
         })
     },
-    async ArchiveJob(payload) {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      console.log(this.archive_status_id)
-      console.log(payload)
 
-      axios
-        .patch(API_URL + `job/update/${payload.id}`, { status: this.archive_status_id }, config)
-        .then((res) => {
-          console.log(res.data.data)
-          window.location.reload()
-        })
-        .catch((error) => console.log(error))
-    },
-    async columnArchiveAll(col) {
-      try {
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
-          }
-        }
-
-        for (let i = 0; i < col.cards.length; i++) {
-          axios
-            .patch(
-              API_URL + `job/update/${col.cards[i].id}`,
-              { status: this.archive_status_id },
-              config
-            )
-            .then((res) => {
-              console.log(res.data.data)
-            })
-            .catch((error) => console.log(error))
-        }
-        window.location.reload()
-      } catch (error) {
-        console.log(error)
-      }
-    },
     redirectToArchivePage() {
       this.$router.push('/backlog/archive')
     },
-    async columnDelete(col) {
-      try {
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
-          },
-          data: {
-            statusId: col._id,
-            companyId: localStorage['currentCompany'],
-            employeeId: localStorage['employeeId']
-          }
-        }
 
-        let res = await axios.delete(API_URL + 'job/status', config)
-
-        // for (let i = 0; i < col.cards.length; i++) {
-        //   this.columns[0].cards.push(col.cards[i])
-        //   col.cards[i].status.status = this.columns[0].status
-        //   console.log(col.cards[i].status)
-        // }
-
-        this.columns.splice(this.columns.indexOf(col), 1)
-        this.delete_column_dialog = false
-
-        console.log(res)
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    columnDeleteAllJobs(col) {
-      //add a modal that will ask the user if they are sure they want to delete all the cards in a job column
-      col.cards.splice(0, col.cards.length)
-      this.delete_all_jobs_dialog = false
-      //
-    },
-    async editColumnButtonClickedSave(col) {
-      if (this.new_column_name === '' && this.column_color === '') {
-        this.error_message = 'No changes were made'
-        return
-      }
-
-      if (this.new_column_name.length > 20) {
-        this.error_message = 'Column name length should be shorter than 20 characters'
-      }
-      if (this.new_column_name !== '' && this.column_color !== '') {
-        try {
-          const config = {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('access_token')}`
-            }
-          }
-
-          let res = await axios.patch(
-            API_URL + 'job/status',
-            {
-              statusId: col._id,
-              status: this.new_column_name,
-              colour: this.column_color,
-              companyId: localStorage['currentCompany'],
-              employeeId: localStorage['employeeId']
-            },
-            config
-          )
-          console.log(res)
-
-          this.new_column_name = ''
-          this.column_color = ''
-          this.add_column_dialog = false
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      if (this.new_column_name !== '') {
-        col.status = this.new_column_name
-        try {
-          const config = {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('access_token')}`
-            }
-          }
-
-          let res = await axios.patch(
-            API_URL + 'job/status',
-            {
-              statusId: col._id,
-              status: this.new_column_name,
-              companyId: localStorage['currentCompany'],
-              employeeId: localStorage['employeeId']
-            },
-            config
-          )
-          console.log(res)
-
-          this.new_column_name = ''
-          this.column_color = ''
-          this.add_column_dialog = false
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      if (this.column_color !== '') {
-        col.colour = this.column_color
-        try {
-          const config = {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('access_token')}`
-            }
-          }
-
-          let res = await axios.patch(
-            API_URL + 'job/status',
-            {
-              statusId: col._id,
-              colour: this.column_color,
-              companyId: localStorage['currentCompany'],
-              employeeId: localStorage['employeeId']
-            },
-            config
-          )
-          console.log(res)
-
-          this.new_column_name = ''
-          this.column_color = ''
-          this.add_column_dialog = false
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      this.edit_column_details_dialog = false
-    },
-    async addColumnButtonClickedSave() {
-      if (this.new_column_name === '' && this.column_color === '') {
-        this.error_message = 'No changes were made'
-        return
-      }
-      if (this.new_column_name === '') {
-        this.error_message = 'Column name is empty'
-      }
-      if (this.new_column_name.length > 20) {
-        this.error_message = 'Column name length should be shorter than 20 characters'
-      }
-      if (this.column_color === '') {
-        this.error_message = 'A color should be selected'
-        return
-      }
-
-      try {
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
-          }
-        }
-
-        let res = await axios.post(
-          API_URL + 'job/status',
-          {
-            status: this.new_column_name,
-            colour: this.column_color,
-            companyId: localStorage['currentCompany'],
-            employeeId: localStorage['employeeId']
-          },
-          config
-        )
-        console.log(res)
-
-        this.new_column_name = ''
-        this.column_color = ''
-        this.add_column_dialog = false
-      } catch (error) {
-        console.log(error)
-      }
-      this.add_column_dialog = !this.add_column_dialog
-      // this.columns.push(column)
-    },
-    addColorPickerUpdate() {
-      console.log(this.column_color)
-    },
-    async clickedEvent(payload) {
+    clickedEvent(payload) {
+      console.log('payload: ', payload)
       try {
         if (payload.laborItems.length != 0) {
-          payload.inventoryItems.push(['', '', '', ''])
-          payload.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount','Total',])
-          payload.inventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Discount','Total'])
+          payload.inventoryItems.push(['', '', '', '', ''])
+          payload.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount', 'Total'])
+          payload.inventoryItems.unshift([
+            'Description',
+            'Quantity',
+            'Unit Price',
+            'Discount',
+            'Total'
+          ])
           payload.inventoryItems = payload.inventoryItems.concat(payload.laborItems)
-          payload.inventoryItems.push(['', '', '', ''])
+          payload.inventoryItems.push(['', '', '', '', ''])
         }
         const data = {
-          outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
+          outputType: OutputType.Blob, // Generate the PDF as a Blob to embed it
           fileName: `Invoice ${payload.companyName}`,
           orientationLandscape: false,
           compress: true,
@@ -498,8 +305,8 @@ export default {
             otherInfo: 'www.website.al'
           },
           invoice: {
-            label: `Invoice #: ${payload.invoiceNumber}`,
-            num: 19,
+            label: `Invoice #:`,
+            num: payload.invoiceNumber,
             invDate: `Payment Date: ${this.formatDate(payload.paymentDate)}`,
             invGenDate: `Invoice Date:  ${this.formatDate(payload.invoiceDate)}`,
             headerBorder: false,
@@ -541,9 +348,14 @@ export default {
           pageEnable: true,
           pageLabel: 'Page '
         }
-        console.log(payload)
         console.log(data)
-        this.pdfSrc = URL.createObjectURL(jsPDFInvoiceTemplate(data).blob)
+        const pdf = jsPDFInvoiceTemplate(data)
+        console.log(pdf)
+        const blb = pdf.blob
+        console.log(blb)
+        this.pdfSrc = URL.createObjectURL(blb)
+        this.dialog = true
+        console.log(this.pdfSrc)
       } catch (error) {
         console.log('Error fetching data: ' + error)
       }
@@ -619,14 +431,14 @@ export default {
               inventoryItems: card.inventoryItems.map((obj) => [
                 obj.description,
                 obj.quantity,
-                obj.untiPrice,
+                obj.unitPrice,
                 obj.discount,
                 obj.total
               ]),
               laborItems: card.laborItems.map((obj) => [
                 obj.description,
                 obj.quantity,
-                obj.untiPrice,
+                obj.unitPrice,
                 obj.discount,
                 obj.total
               ])
@@ -675,12 +487,14 @@ export default {
                 obj.description,
                 obj.quantity,
                 obj.unitPrice,
+                obj.discount,
                 obj.total
               ]),
               laborItems: card.laborItems.map((obj) => [
                 obj.description,
                 obj.quantity,
                 obj.unitPrice,
+                obj.discount,
                 obj.total
               ])
             })
@@ -703,62 +517,7 @@ export default {
       const mn = String(date_passed_in.getMinutes()).padStart(2, '0')
       const f_date = `${y}-${m}-${d} ${h}:${mn}`
       return f_date
-    },
-    onDragStart(card, column) {
-      this.draggedCard = card
-      this.sourceColumn = column
-    },
-    onDragEnd() {
-      this.draggedCard = null
-      this.dropTarget = null
-    },
-    onDragOver(column) {
-      this.dropTarget = column
-    },
-    onDragLeave() {
-      this.dropTarget = null
-    },
-    async onDrop(targetColumn) {
-      if (this.draggedCard && this.sourceColumn) {
-        console.log(this.draggedCard)
-        this.sourceColumn.cards = this.sourceColumn.cards.filter(
-          (c) => c.id !== this.draggedCard.id
-        )
-        {
-          targetColumn.cards.push(this.draggedCard)
-
-          const jobid = this.draggedCard.id
-          // this.draggedCard.status.status = targetColumn.status
-
-          const config = {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('access_token')}`
-            }
-          }
-          console.log(jobid)
-          try {
-            let res = await axios.patch(
-              API_URL + `job/update/${jobid}`,
-              { status: targetColumn._id },
-              config
-            )
-            console.log(res)
-          } catch (error) {
-            console.log(error)
-          }
-        }
-        this.draggedCard = null
-        this.sourceColumn = null
-        this.dropTarget = null
-      }
-    },
-    isDropTarget(column) {
-      return this.dropTarget === column
-    },
-    isDragging(card) {
-      return this.draggedCard === card
-    },
+    }
   },
   mounted() {
     // this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))

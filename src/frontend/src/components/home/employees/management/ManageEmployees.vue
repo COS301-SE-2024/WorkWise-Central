@@ -120,22 +120,25 @@ c
                             >
                             <v-list class="bg-background">
                               <v-list-item
-                              v-show="
+                                v-show="
                                   permissions.includes('view all employees') ||
-                                  permissions.includes('view employees under me')"
+                                  permissions.includes('view employees under me')
+                                "
                                 ><EmployeeDetails colors="colors" :EmployeeDetails="selectedItem"
                               /></v-list-item>
 
                               <v-list-item>
                                 <EditEmployee
                                   v-if="permissions.includes('edit employees')"
-                                  @update:item="selectedItem = $event"
+                                  @update="getEmployees"
                                   :editedItem="selectedItem"
                                   :Disabled="false"
                               /></v-list-item>
 
                               <v-list-item v-if="permissions.includes('delete employees')"
-                                ><DeleteEmployee :details="selectedItem"
+                                ><DeleteEmployee
+                                  :details="selectedItem"
+                                  @employeeDeleted="getEmployees"
                               /></v-list-item>
                             </v-list>
                           </v-menu>
@@ -433,7 +436,7 @@ export default {
     getRowClass(item: any) {
       const index = this.clients.indexOf(item)
       return index % 2 === 0 ? 'row-color' : 'second-row-color'
-    },
+    }
   }
 }
 </script>

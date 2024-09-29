@@ -21,7 +21,7 @@
                 </template>
                 <v-list>
                   <v-list-item>
-                    <RegisterCompanyModal />
+                    <RegisterCompanyModal @companyRegistered="switchCompany" />
                   </v-list-item>
                   <v-list-item>
                     <JoinCompanyModal />
@@ -120,7 +120,7 @@ export default defineComponent({
         'Company 8',
         'Company 9',
         'Company 10'
-      ],
+      ]
     }
   },
   methods: {
@@ -146,7 +146,11 @@ export default defineComponent({
       localStorage.setItem('employeeId', employeeId)
       this.companyDialog = false
       setTimeout(() => {
-        window.location.reload()
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000)
+
+        this.$router.push({ name: 'dashboard' })
         this.isDeleting = false
       }, 3000)
     },
@@ -195,7 +199,7 @@ export default defineComponent({
         .catch((error) => {
           console.log(error)
         })
-    },
+    }
   },
   mounted() {
     this.getCompanies()

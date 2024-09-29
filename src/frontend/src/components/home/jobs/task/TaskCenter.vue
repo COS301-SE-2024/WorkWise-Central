@@ -98,7 +98,7 @@ export default defineComponent({
           life: 3000
         })
       }
-    },
+    }
   },
   mounted() {
     this.getJobs()

@@ -23,12 +23,12 @@ import '@/assets/theme.css'
 
 //To refer to API in Dev and Prod
 export const API_URL: string =
-  import.meta.env.ENVIRONMENT == 'prod'
+  import.meta.env.VITE_ENVIRONMENT == 'prod'
     ? import.meta.env.VITE_SERVER_API_PROD
     : import.meta.env.VITE_SERVER_API_DEV
 
 export const APP_URL: string =
-  import.meta.env.ENVIRONMENT == 'prod'
+  import.meta.env.VITE_ENVIRONMENT == 'prod'
     ? import.meta.env.VITE_ROOT_APPLICATION_PROD
     : import.meta.env.VITE_ROOT_APPLICATION_DEV
 
@@ -44,7 +44,7 @@ app.use(vuetify)
 app.use(Vue3Geolocation)
 app.use(router)
 app.use(ToastService)
-app.use(PrimeVue, { theme: { preset: Aura, options: { darkModeSelector : '.my-app-dark'} } })
+app.use(PrimeVue, { theme: { preset: Aura, options: { darkModeSelector: '.my-app-dark' } } })
 app.use(VNetworkGraph)
 app.use(pinia)
 app.use(ConfirmationService)

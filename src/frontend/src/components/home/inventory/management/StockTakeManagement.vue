@@ -200,7 +200,7 @@
           <v-card>
             <v-card-title class="headline">Update Inventory</v-card-title>
             <v-card-text>
-              <p>Do you want to update the inventory table based on this stock take?</p>
+              <p class="pt-5 pb-5">Do you want to update the inventory table based on this stock take?</p>
               <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="400px"></iframe>
             </v-card-text>
             <v-card-actions>
@@ -208,12 +208,13 @@
                 <v-row>
                   <v-col cols="12" lg="6" order="last" order-lg="first">
                     <v-btn @click="confirmUpdate(false)" block color="red darken-1" text
-                    ><v-icon icon="fa: fa-solid fa-cancel" color="red darken-1"></v-icon>No</v-btn
+                      ><v-icon icon="fa: fa-solid fa-cancel" color="red darken-1"></v-icon>No</v-btn
                     >
                   </v-col>
                   <v-col cols="12" lg="6" order="first" order-lg="last">
                     <v-btn @click="confirmUpdate(true)" block color="green darken-1" text
-                    ><v-icon icon="fa: fa-solid fa-check" color="green darken-1"></v-icon>Yes</v-btn
+                      ><v-icon icon="fa: fa-solid fa-check" color="green darken-1"></v-icon
+                      >Yes</v-btn
                     >
                   </v-col>
                 </v-row>
@@ -441,8 +442,9 @@ export default {
       }
       this.filteredInventoryItems.forEach((item) => {
         data.items.push({
-          "inventoryId": item._id,
-          "recordedStockLevel": item.newReorderLevel === null ? item.currentStockLevel : item.newReorderLevel
+          inventoryId: item._id,
+          recordedStockLevel:
+            item.newReorderLevel === null ? item.currentStockLevel : item.newReorderLevel
         })
       })
       console.log('Data', data)

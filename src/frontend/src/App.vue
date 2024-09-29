@@ -65,7 +65,7 @@ async function registerFirebaseToken() {
         const response = await axios.post(`${API_URL}notification/push/token`, body, config)
         console.log('Token registered successfully:', response.data.data)
       } catch (error) {
-        console.log('Error posting the token:', error)
+        //console.log('Error posting the token:', error)
       }
     } else {
       console.log('No registration token available. Request permission to generate one.')

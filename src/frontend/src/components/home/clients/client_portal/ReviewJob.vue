@@ -120,7 +120,7 @@ export default {
       currentJobId: '',
       jobRating: 0,
       feedback: '',
-      customerServiceRating: 0,
+      customerServiceRating: 0
     }
   },
   methods: {
@@ -151,7 +151,7 @@ export default {
         .then((response) => {
           this.completedJobs = response.data.data
           console.log('response.data.data: ', response.data.data)
-          for(const job of this.completedJobs) {
+          for (const job of this.completedJobs) {
             job.details.startDate = this.formatDate(job.details.startDate)
             job.details.endDate = this.formatDate(job.details.endDate)
           }

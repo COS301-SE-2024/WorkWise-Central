@@ -8,11 +8,30 @@
       icon="fa: fa-solid fa-file-pdf"
       class="p-button-success"
     />
+    <!-- Confirmation Dialog with PDF Preview -->
+    <v-dialog v-model="viewDialog" max-width="800px">
+      <v-card>
+        <v-card-title class="headline">View Job Invoice</v-card-title>
+        <v-card-text>
+          <p class="pt-5 pb-5">Below is the generated invoice for your this job</p>
+          <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="500px"></iframe>
+        </v-card-text>
+        <v-card-actions>
+          <v-container>
+            <v-row>
+                <v-btn @click="viewDialog = false" block color="red darken-1" text
+                ><v-icon icon="fa: fa-solid fa-cancel" color="red darken-1"></v-icon>Close</v-btn
+                >
+            </v-row>
+          </v-container>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, defineProps } from 'vue'
+<script setup>
+import { defineProps, ref } from 'vue'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 import Button from 'primevue/button'
 import axios from 'axios'
@@ -29,7 +48,10 @@ const config = {
   }
 }
 
-const formatDate = (date : string) => {
+const viewDialog = ref(false)
+const pdfUrl = ref('')
+
+const formatDate = (date) => {
   const date_passed_in = new Date(date)
   const y = date_passed_in.getFullYear()
   const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
@@ -39,29 +61,63 @@ const formatDate = (date : string) => {
   const f_date = `${y}-${m}-${d} ${h}:${mn}`
   return f_date
 }
+
 // Function to Generate PDF
 const generatePdf = async () => {
-  let invoiceData
+  let invoiceData;
+
   try {
-    let response = await axios.get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`,config)
-    let invoiceId = response.data.data._id
-    response = await axios.get(`${API_URL}invoice/detailed/id/${invoiceId}?currentEmployeeId=${localStorage.getItem('employeeId')}`,config)
-    invoiceData = response.data.data
-    console.log('Returned invoice:', invoiceData)
+    let response = await axios.get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`, config);
+    let invoiceId = response.data.data._id;
+    response = await axios.get(`${API_URL}invoice/detailed/id/${invoiceId}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config);
+    invoiceData = response.data.data;
+    console.log('Returned invoice:', invoiceData);
   } catch (error) {
-    console.error(error)
+    console.error(error);
+    return;  // Exit if the invoice data fetching fails
   }
 
-  if (invoiceData.laborItems.length != 0) {
-    invoiceData.inventoryItems.push(['', '', '', '', ''])
-    invoiceData.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount','Total',])
-    invoiceData.inventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Discount','Total'])
-    invoiceData.inventoryItems = invoiceData.inventoryItems.concat(invoiceData.laborItems)
-    invoiceData.inventoryItems.push(['', '', '', '', ''])
+  const transformedInventoryItems = invoiceData.inventoryItems.map(item => {
+    if (typeof item === 'object') {
+      return [
+        item.description || '',
+        item.quantity || '',
+        item.unitPrice || '',
+        item.discount || '',
+        item.total || ''
+      ];
+    }
+    return item;  // If it's already in array format, return as is
+  });
+
+  // Transform laborItems from object-based format to array format
+  const transformedLaborItems = invoiceData.laborItems.map(item => {
+    if (typeof item === 'object') {
+      return [
+        item.description || '',
+        item.quantity || '',
+        item.unitPrice || '',
+        item.discount || '',
+        item.total || ''
+      ];
+    }
+    return item;  // If it's already in array format, return as is
+  });
+
+  // Check if there are labor items, then add inventory items formatting
+  if (transformedLaborItems.length !== 0) {
+    transformedInventoryItems.push(['', '', '', '', '']);
+    transformedInventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount', 'Total']);
+    transformedInventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Discount', 'Total']);
+    transformedInventoryItems.push(...transformedLaborItems);
+    transformedInventoryItems.push(['', '', '', '', '']);
   }
+
+  // Set the transformed inventory items back to invoiceData
+  invoiceData.inventoryItems = transformedInventoryItems;
 
   const data = {
-    outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
+    outputType: OutputType.Blob, // Generate the PDF as a Blob to embed it
     fileName: `Invoice ${invoiceData.companyId.name}`,
     orientationLandscape: false,
     compress: true,
@@ -143,11 +199,18 @@ const generatePdf = async () => {
     },
     pageEnable: true,
     pageLabel: 'Page '
-  }
+  };
+
   // Generate the PDF using the template
-  jsPDFInvoiceTemplate(data)
+  const doc = jsPDFInvoiceTemplate(data);
+  const blb = doc.blob
+  pdfUrl.value = URL.createObjectURL(blb)
+
+  viewDialog.value = true;
 }
+
 </script>
+
 
 
 <style scoped>

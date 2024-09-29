@@ -274,7 +274,7 @@ export default defineComponent({
           })
           this.request_load = false
         })
-    },
+    }
   },
   mounted() {
     this.req_obj.currentCompany = localStorage['currentCompany']

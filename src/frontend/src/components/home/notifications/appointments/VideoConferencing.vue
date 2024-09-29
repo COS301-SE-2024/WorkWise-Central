@@ -86,7 +86,7 @@
 import { defineComponent, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import axios from 'axios'
 import { io, Socket } from 'socket.io-client'
-import { API_URL } from '@/main'
+import { API_URL, APP_URL } from '@/main'
 
 import router from '@/router'
 
@@ -121,11 +121,11 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      socket = io('http://localhost:3000', {
+      socket = io(API_URL, {
         withCredentials: true,
         transports: ['websocket', 'polling'],
         extraHeaders: {
-          'Access-Control-Allow-Origin': 'http://localhost:5173'
+          'Access-Control-Allow-Origin': APP_URL
         }
       })
 

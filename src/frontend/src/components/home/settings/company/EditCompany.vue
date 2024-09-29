@@ -43,6 +43,7 @@
                 label="Type"
                 :items="type"
                 bg-color="background"
+                variant="solo"
                 required
               ></v-select>
               <v-label>Email</v-label>
@@ -81,6 +82,7 @@
                 :items="provinces"
                 v-model="company.address.province"
                 bg-color="background"
+                variant="solo"
                 required
               ></v-select>
               <v-label>City</v-label>
@@ -374,6 +376,9 @@ export default defineComponent({
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
       const formData = new FormData()

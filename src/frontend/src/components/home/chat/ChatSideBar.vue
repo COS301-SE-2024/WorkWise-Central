@@ -55,14 +55,14 @@
       class="new-chat-dialog"
     >
       <div class="p-fluid pt-5 pb-5">
-          <v-row>
-            <v-col>
-              <label for="chatName">Chat Name</label>
-            </v-col>
-            <v-col>
-              <InputText id="chatName" v-model="newChatName" />
-            </v-col>
-          </v-row>
+        <v-row>
+          <v-col>
+            <label for="chatName">Chat Name</label>
+          </v-col>
+          <v-col>
+            <InputText id="chatName" v-model="newChatName" />
+          </v-col>
+        </v-row>
 
         <v-row>
           <v-col>
@@ -70,11 +70,11 @@
           </v-col>
           <v-col>
             <MultiSelect
-                id="participants"
-                v-model="selectedParticipants"
-                :options="availableUsers"
-                optionLabel="systemDetails.username"
-                placeholder="Select participants"
+              id="participants"
+              v-model="selectedParticipants"
+              :options="availableUsers"
+              optionLabel="systemDetails.username"
+              placeholder="Select participants"
             />
           </v-col>
         </v-row>
@@ -87,19 +87,19 @@
             <input type="file" accept="image/*" @change="handleFileChange" ref="fileInput" />
           </v-col>
         </v-row>
-          <!-- File input for images -->
+        <!-- File input for images -->
       </div>
 
       <template #footer>
         <div class="pt-5">
           <Button
-              label="Cancel"
-              icon="fa: fa-solid fa-times"
-              @click="closeNewChatDialog"
-              class="p-button-text"
-              style="background-color: red; outline-color: red; color: white; margin-right: 5px"
+            label="Cancel"
+            icon="fa: fa-solid fa-times"
+            @click="closeNewChatDialog"
+            class="p-button-text"
+            style="background-color: red; outline-color: red; color: white; margin-right: 5px"
           />
-          <Button label="Create" icon="fa: fa-solid fa-check" class="custom-button"/>
+          <Button label="Create" icon="fa: fa-solid fa-check" class="custom-button" />
         </div>
       </template>
     </Dialog>
@@ -220,15 +220,14 @@ const theKidIsNotMySon = (userId) => {
 </script>
 
 <style scoped>
-
 .custom-button {
-  background-color: #4C9FC3;
-  outline-color: #4C9FC3;
+  background-color: #4c9fc3;
+  outline-color: #4c9fc3;
   border: none; /* Add this line to remove the green outline */
 }
 
 .custom-button:hover {
-  background-color: #4C9FC3 !important; /* Ensure hover color matches */
+  background-color: #4c9fc3 !important; /* Ensure hover color matches */
   border: none !important; /* Add this line to remove the green outline */
 }
 

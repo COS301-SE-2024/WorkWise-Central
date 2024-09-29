@@ -12,6 +12,7 @@ import { InventoryService } from '../inventory/inventory.service';
 import { TimeTrackerService } from '../time-tracker/time-tracker.service';
 import { EmployeeService } from '../employee/employee.service';
 import { InventoryUsedService } from '../inventory-used/inventory-used.service';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class InvoiceService {
@@ -39,6 +40,9 @@ export class InvoiceService {
 
     @Inject(forwardRef(() => InventoryUsedService))
     private readonly inventoryUsedService: InventoryUsedService,
+
+    @Inject(forwardRef(() => EmailService))
+    private readonly emailService: EmailService,
   ) {}
 
   async validateCreateInvoice(Invoice: CreateInvoiceDto) {
@@ -158,7 +162,7 @@ export class InvoiceService {
     dto.taxPercentage = 15;
     dto.taxAmount = total * (15 / 115);
     dto.subTotal = total - dto.taxAmount;
-    dto.total = dto.total + dto.taxAmount;
+    dto.total = dto.subTotal + dto.taxAmount;
     console.log('checkpoint5');
 
     return await this.create(dto);
@@ -200,6 +204,24 @@ export class InvoiceService {
     return await this.invoiceRepository.findById(id);
   }
 
+  async send(id: Types.ObjectId) {
+    console.log('id: ', id);
+    //setting the send variable and date
+    await this.update(id, { sent: true, sentDate: new Date() });
+    //Calling the email service
+    const invoice = await this.findByIdDetailed(id);
+    console.log('invoice: ', invoice);
+    console.log('invoice.clientId._id: ', invoice.clientId._id);
+    await this.emailService.sendInvoiceClientPortalLink(
+      invoice.clientId._id,
+      (invoice.clientId as any).details.contactInfo.email,
+      (invoice.clientId as any).details.firstName,
+      (invoice.clientId as any).details.lastName,
+      (invoice.companyId as any).name,
+      (invoice.jobId as any).details.heading,
+    );
+  }
+
   async findByIdDetailed(id: Types.ObjectId) {
     return await this.invoiceRepository.findByIdDetailed(id);
   }
@@ -217,6 +239,12 @@ export class InvoiceService {
   }
 
   async update(id: Types.ObjectId, updateInvoiceDto: UpdateInvoiceDto) {
+    if (updateInvoiceDto.sent && !updateInvoiceDto.sentDate) {
+      updateInvoiceDto.sentDate = new Date();
+    }
+    if (updateInvoiceDto.paid && !updateInvoiceDto.receiptOfPaymentDate) {
+      updateInvoiceDto.receiptOfPaymentDate = new Date();
+    }
     return await this.invoiceRepository.update(id, updateInvoiceDto);
   }
 

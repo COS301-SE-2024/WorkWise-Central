@@ -129,7 +129,7 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      
+
       await axios
         .patch(
           `${API_URL}admin/request/decide`,
@@ -216,7 +216,7 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      
+
       await axios
         .get(
           `${API_URL}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`,
@@ -229,7 +229,7 @@ export default defineComponent({
         .catch((error) => {
           console.error(error)
         })
-    },
+    }
   },
   mounted() {
     this.getRequests()
