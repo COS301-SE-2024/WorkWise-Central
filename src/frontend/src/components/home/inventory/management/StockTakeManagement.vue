@@ -200,7 +200,7 @@
           <v-card>
             <v-card-title class="headline">Update Inventory</v-card-title>
             <v-card-text>
-              <p>Do you want to update the inventory table based on this stock take?</p>
+              <p class="pt-5 pb-5">Do you want to update the inventory table based on this stock take?</p>
               <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="400px"></iframe>
             </v-card-text>
             <v-card-actions>
