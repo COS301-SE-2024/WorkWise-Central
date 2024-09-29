@@ -236,6 +236,12 @@ export class InvoiceService {
   }
 
   async update(id: Types.ObjectId, updateInvoiceDto: UpdateInvoiceDto) {
+    if (updateInvoiceDto.sent && !updateInvoiceDto.sentDate) {
+      updateInvoiceDto.sentDate = new Date();
+    }
+    if (updateInvoiceDto.paid && !updateInvoiceDto.receiptOfPaymentDate) {
+      updateInvoiceDto.receiptOfPaymentDate = new Date();
+    }
     return await this.invoiceRepository.update(id, updateInvoiceDto);
   }
 

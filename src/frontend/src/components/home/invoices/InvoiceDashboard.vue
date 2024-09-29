@@ -39,12 +39,11 @@
             <v-btn
               class="text-none font-weight-regular hello"
               color="secondary"
-              v-bind="activatorProps"
               block
               variant="elevated"
               @click="showGenerateInvoice"
             >
-              <v-icon icon="fa: fa-solid fa-floppy-disk" color="white"></v-icon>
+              <v-icon icon="fa: fa-solid fa-plus" color="white"></v-icon>
               generate invoice
             </v-btn>
           </v-col>
@@ -70,6 +69,23 @@
           <template v-slot:[`item.paymentDate`]="{ item }">{{
             formatDate(item.paymentDate)
           }}</template>
+
+          <template v-slot:[`item.sentDate`]="{ item }">{{
+            formatDate(item.sentDate)
+          }}</template>
+
+          <template v-slot:[`item.paidDate`]="{ item }">{{
+            formatDate(item.paidDate)
+          }}</template>
+
+          <template v-slot:[`item.paid`]="{ item }">{{
+            formatStatus(item.paid)
+          }}</template>
+
+          <template v-slot:[`item.sent`]="{ item }">{{
+            formatSend(item.sent)
+          }}</template>
+
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu max-width="500px">
               <template v-slot:activator="{ props }">
@@ -83,6 +99,9 @@
                 </v-btn>
               </template>
               <v-list>
+                <v-list-item>
+                  <SendInvoice :invoice_id="selectedItem._id" :client-name="selectedItem.clientName"/>
+                </v-list-item>
                 <v-list-item>
                   <ViewInvoice :invoice="selectedItem" />
                 </v-list-item>
@@ -105,23 +124,61 @@
         <v-card-title class="text-h5">Generate Invoice</v-card-title>
         <v-card-text>
           <!-- Dropdown for selecting job -->
-          <v-select
-            v-model="selectedJob"
-            :items="jobs"
-            label="Select Job"
-            item-text="name"
-            item-value="_id"
-            return-object
-            outlined
-            color="primary"
-            required
-          ></v-select>
+           <v-select
+                clearable
+                label="Jobs"
+                hint="Select the job for which you want to generate an invoice"
+                persistent-hint
+                :items="jobs"
+                item-value="_id"
+                item-title="name"
+                v-model="selectedJob"
+                bg-color="background"
+                variant="solo"
+              ></v-select>
           <p v-if="!selectedJob">Please select a job to generate an invoice.</p>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green" @click="generateInvoice" :disabled="!selectedJob">Yes</v-btn>
-          <v-btn color="red" @click="isModalVisible = false">Cancel</v-btn>
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                <v-btn
+                  color="success"
+                  rounded="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  type="submit"
+                  block
+                  @click="generateInvoice"
+                  :disabled="!selectedJob"
+                >
+                  <v-icon
+                    icon="fa:fa-solid fa-floppy-disk"
+                    start
+                    color="success"
+                    size="small"
+                  ></v-icon>
+                  generate invoice
+                </v-btn>
+              </v-col>
+              <v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn
+                  color="error"
+                  rounded="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  block
+                  @click="close"
+                >
+                  <Toast position="top-center" />
+                  <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
+                  >Cancel
+                </v-btn>
+              </v-col></v-row
+            >
+          </v-container>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -136,6 +193,8 @@ import DeleteInvoice from './DeleteInvoice.vue'
 import EditInvoice from './EditInvoice.vue'
 import ViewInvoice from './ViewInvoices.vue'
 import { API_URL } from '@/main'
+import Toast from 'primevue/toast'
+import SendInvoice from './SendInvoice.vue'
 
 interface Invoice {
   _id: string
@@ -144,6 +203,9 @@ interface Invoice {
   paymentDate: Date
   total: number
   paid: boolean
+  paidDate: Date
+  sent: boolean
+  sentDate: Date
   clientName: string
   jobTitle: string
 }
@@ -159,8 +221,11 @@ export default defineComponent({
         { title: 'Creation date', value: 'creationDate', sortable: true, key: 'creationDate' },
         { title: 'Payment due date', value: 'paymentDate', sortable: true, key: 'paymentDate' },
         { title: 'Amount', value: 'total', sortable: true, key: 'total' },
-        { title: 'Status', value: 'paid', sortable: true, key: 'paid' },
-        { title: '', value: 'actions', key: 'actions', sortable: false, class: 'my-header-style' }
+        { title: 'Sent', value: 'sent', sortable: true, key: 'sent' },
+        { title: 'Sent date', value: 'sentDate', sortable: true, key: 'sentDate' },
+        { title: 'Paid', value: 'paid', sortable: true, key: 'paid' },
+        { title: 'Paid date', value: 'paidDate', sortable: true, key: 'paidDate' },
+        { title: '', value: 'actions', key: 'actions', sortable: false, class: 'my-header-style' },
       ],
       invoiceItems: [] as Invoice[],
       search: '',
@@ -168,15 +233,23 @@ export default defineComponent({
       companyId: '',
       currentEmployee: '',
       isModalVisible: false,
-      jobs: [],
+      jobs: [] as any[],
+      selectedJob: null,
     }
   },
-  components: { DeleteInvoice, EditInvoice, ViewInvoice },
+  components: { DeleteInvoice, EditInvoice, ViewInvoice, Toast, SendInvoice},
   methods: {
     formatDate(dateString: any) {
+      if(!dateString) return ''
       const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' }
       const date = new Date(dateString)
       return date.toLocaleDateString('en-US', options)
+    },
+    formatStatus(status: boolean) {
+      return status ? 'Paid' : 'Unpaid'
+    },
+    formatSend(send: boolean) {
+      return send ? 'Sent' : 'Unsent'
     },
     async getRequests() {
       // Getting all the jobs for the company
@@ -201,13 +274,16 @@ export default defineComponent({
             this.invoiceItems.push({
               _id: invoice._id,
               invoiceNumber: invoice.invoiceNumber,
-              creationDate: this.formatDate(invoice.invoiceDate) as any,
-              paymentDate: this.formatDate(invoice.paymentDate) as any,
+              creationDate: invoice.invoiceDate as any,
+              paymentDate: invoice.paymentDate as any,
               total: invoice.total,
               paid: invoice.paid,
               clientName:
                 invoice.clientId.details.firstName + ' ' + invoice.clientId.details.lastName,
-              jobTitle: invoice.jobId.details.heading
+              jobTitle: invoice.jobId.details.heading,
+              sent: invoice.sent,
+              sentDate: invoice.sentDate as any,
+              paidDate: invoice.paidDate as any
             })
           }
           console.log('this.invoiceItems: ', this.invoiceItems)
@@ -215,29 +291,57 @@ export default defineComponent({
         .catch((error) => {
           console.error(error)
         })
-    },
-    async showGenerateInvoice() {
-      this.isModalVisible = true;
-      //getting all the jobs in the company
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
-      try {
-        await axios.patch(`${API_URL}job/all/company/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config).then(() => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Stock updated successfully'
-          })
+
+         try {
+        await axios
+        .get(`${API_URL}job/all/company/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config)
+        .then((response) => {
+          console.log('response.data.data: ', response.data.data)
+          for (const job of response.data.data) {
+            console.log('job: ', job)
+            this.jobs.push({
+              _id: (job as any)._id,
+              name: (job as any).details.heading
+            })
+          }
+          console.log('this.jobs: ', this.jobs)
           setTimeout(() => {
           }, 3000)
         })
       } catch (error) {
         console.error(error)
       }
+    },
+    async generateInvoice() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      await axios
+        .get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${this.selectedJob}`, config)
+        .then((response) => {
+          console.log('response: ', response)
+          this.invoiceItems = []  
+          this.getRequests()
+          this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Employee Edited Successfully',
+          life: 3000
+        })
+          this.close()
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    },
+    showGenerateInvoice() {
+      this.isModalVisible = true;
+    },
+    close() {
+      this.isModalVisible = false;
     },
     viewInvoice(invoice: Invoice) {
       console.log('Viewing invoice:', invoice)

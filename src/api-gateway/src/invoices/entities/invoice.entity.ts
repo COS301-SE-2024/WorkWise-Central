@@ -83,7 +83,7 @@ export class Invoice {
   sent: boolean;
 
   @ApiProperty()
-  @Prop({ required: true, default: new Date() })
+  @Prop({ required: false })
   sentDate: Date;
 
   @ApiProperty()
