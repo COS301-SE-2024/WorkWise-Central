@@ -114,19 +114,21 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "!**/chat/**",
-      "!**/fleet/**",
-      "!**/utils/**",
-      "!**/stocktake/**",
-      "!**/auth/**",
-      "!**/file/**",
       "**/*.(t|j)s",
       "!**/*.repository.(t|j)s",
       "!**/*.module.(t|j)s",
       "!**/*.guard.(t|j)s",
       "!**/*.service.(t|j)s",
       "!**/*.controller.(t|j)s",
-      "!**/*.gateway.(t|j)s"
+      "!**/*.gateway.(t|j)s",
+      "!**/chat/**",
+      "!**/fleet/**",
+      "!**/utils/**",
+      "!**/stocktake/**",
+      "!**/auth/**",
+      "!**/file/**",
+      "!**/time-tracker/**",
+      "!**/video-call/**"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
