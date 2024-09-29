@@ -246,7 +246,7 @@ export default defineComponent({
       employeePermissions: []
     }
   },
-  components: { DeleteInvoice, EditInvoice, ViewInvoice, Toast, SendInvoice },
+  components: { DeleteInvoice, ViewInvoice, Toast, SendInvoice },
   methods: {
     formatDate(dateString) {
       if (!dateString) return ''
