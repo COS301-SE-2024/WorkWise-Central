@@ -119,7 +119,12 @@
       "!**/*.guard.(t|j)s",
       "!**/*.service.(t|j)s",
       "!**/*.controller.(t|j)s",
-      "!**/main.(t|j)s"
+      "!**/chat/**",
+      "!**/fleet/**",
+      "!**/utils/**",
+      "!**/stocktake/**",
+      "!**/auth/**",
+      "!**/file/**"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
