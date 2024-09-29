@@ -635,11 +635,15 @@ export default defineComponent({
     close() {
       this.employeeDialog = false
     },
+    strHasNumberInIt(str) {
+      return /\d/.test(str)
+    },
     async savechanges() {
       this.isDeleting = true // Indicate the start of the deletion process
       let change_occured = false
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      console.log(this.selectedItem.id)
 
       console.log('current subordinates: ' + this.currentSubordinates)
       console.log('selected subordinates: ' + this.req_obj.updateEmployeeDto.subordinates)
@@ -701,7 +705,11 @@ export default defineComponent({
 
       if (add_sub_array?.length !== 0)
         axios
-          .patch(API_URL + `employee/addSubordinate/${this.selectedItem.id}`, add_object, config)
+          .patch(
+            API_URL + `employee/addSubordinate/${this.selectedItem.id}`,
+            add_object,
+            config
+          )
           .then((res) => {
             change_occured = true
           })
@@ -719,7 +727,8 @@ export default defineComponent({
       if (
         this.req_obj.updateEmployeeDto.roleId != this.currentRoleId &&
         this.req_obj.updateEmployeeDto.roleId != '' &&
-        this.req_obj.updateEmployeeDto.roleId != null
+        this.req_obj.updateEmployeeDto.roleId != null &&
+        this.strHasNumberInIt(this.req_obj.updateEmployeeDto.roleId)
       )
         axios
           .patch(
@@ -747,7 +756,8 @@ export default defineComponent({
       if (
         this.req_obj.updateEmployeeDto.superiorId != this.currentSuperior &&
         this.req_obj.updateEmployeeDto.superiorId != '' &&
-        this.req_obj.updateEmployeeDto.superiorId != null
+        this.req_obj.updateEmployeeDto.superiorId != null &&
+        this.strHasNumberInIt(this.req_obj.updateEmployeeDto.superiorId)
       )
         axios
           .patch(
@@ -781,8 +791,10 @@ export default defineComponent({
           detail: 'Employee Edited Successfully',
           life: 3000
         })
-        this.employeeDialog = false
-        window.location.reload()
+        setTimeout(() => {
+          this.employeeDialog = false
+          this.$emit('update')
+        }, 1500)
       }
     },
     updateLayout(direction) {
