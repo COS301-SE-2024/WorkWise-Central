@@ -42,7 +42,7 @@ export class Invoice {
   }
 
   @ApiProperty()
-  @Prop({ type: Number, required: true, unique: true })
+  @Prop({ type: Number, required: true })
   invoiceNumber: number;
 
   @ApiProperty()
@@ -116,7 +116,7 @@ export class InvoiceApiObject {
   id: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: Number, required: true, unique: true })
+  @Prop({ type: Number, required: true })
   invoiceNumber: number;
 
   @ApiProperty()
