@@ -1406,7 +1406,9 @@ export default defineComponent({
         } else {
           console.log('No inviteId found in URL')
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log(e)
+      }
     },
     async acceptInvite() {
       try {
