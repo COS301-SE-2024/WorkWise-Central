@@ -33,6 +33,21 @@
               single-line
             ></v-text-field>
           </v-col>
+
+          <!-- Save button -->
+          <v-col cols="12" lg="4" class="d-flex align-center justify-end">
+            <v-btn
+              class="text-none font-weight-regular hello"
+              color="secondary"
+              v-bind="activatorProps"
+              block
+              variant="elevated"
+              @click="showGenerateInvoice"
+            >
+              <v-icon icon="fa: fa-solid fa-floppy-disk" color="white"></v-icon>
+              generate invoice
+            </v-btn>
+          </v-col>
         </v-row>
       </v-card-title>
       <v-divider></v-divider>
@@ -83,6 +98,33 @@
         </v-data-table>
       </v-card-text>
     </v-card>
+
+    <!-- Modal for Generate Invoice -->
+    <v-dialog v-model="isModalVisible" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5">Generate Invoice</v-card-title>
+        <v-card-text>
+          <!-- Dropdown for selecting job -->
+          <v-select
+            v-model="selectedJob"
+            :items="jobs"
+            label="Select Job"
+            item-text="name"
+            item-value="_id"
+            return-object
+            outlined
+            color="primary"
+            required
+          ></v-select>
+          <p v-if="!selectedJob">Please select a job to generate an invoice.</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green" @click="generateInvoice" :disabled="!selectedJob">Yes</v-btn>
+          <v-btn color="red" @click="isModalVisible = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -124,7 +166,9 @@ export default defineComponent({
       search: '',
       selectedItem: {} as Invoice,
       companyId: '',
-      currentEmployee: ''
+      currentEmployee: '',
+      isModalVisible: false,
+      jobs: [],
     }
   },
   components: { DeleteInvoice, EditInvoice, ViewInvoice },
@@ -171,6 +215,29 @@ export default defineComponent({
         .catch((error) => {
           console.error(error)
         })
+    },
+    async showGenerateInvoice() {
+      this.isModalVisible = true;
+      //getting all the jobs in the company
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
+      }
+      try {
+        await axios.patch(`${API_URL}job/all/company/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config).then(() => {
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Stock updated successfully'
+          })
+          setTimeout(() => {
+          }, 3000)
+        })
+      } catch (error) {
+        console.error(error)
+      }
     },
     viewInvoice(invoice: Invoice) {
       console.log('Viewing invoice:', invoice)

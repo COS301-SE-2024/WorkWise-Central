@@ -1,4 +1,3 @@
-import { ContactInfo } from './../users/entities/user.entity';
 import { JobService } from './../job/job.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateInvoiceDto, Items } from './dto/create-invoice.dto';
@@ -212,11 +211,11 @@ export class InvoiceService {
     const invoice = await this.findByIdDetailed(id);
     await this.emailService.sendClientPortalLink(
       invoice.clientId._id,
-      invoice.clientId.details.contactInfo.email,
-      invoice.clientId.details.firstName,
-      invoice.clientId.details.lastName,
-      invoice.companyId.name,
-      invoice.jobId.details.heading,
+      (invoice.clientId as any).details.contactInfo.email,
+      (invoice.clientId as any).details.firstName,
+      (invoice.clientId as any).details.lastName,
+      (invoice.companyId as any).name,
+      (invoice.jobId as any).details.heading,
     );
   }
 
