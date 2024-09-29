@@ -53,7 +53,7 @@ export default defineComponent({
     },
     getCidValue() {
       const url = this.$route.fullPath
-      const match = url.match(/cid=([a-zA-Z0-9]+)/)
+      const match = url.match(/cId=([a-zA-Z0-9]+)/)
       if (match[1]) {
         sessionStorage.setItem('clientId', match[1])
         this.clientID = sessionStorage.getItem('clientId').toString()

@@ -383,6 +383,7 @@ export class RoleController {
     @Param('roleId') roleId: Types.ObjectId,
     @Body() externalCreateRoleDto: ExternalUpdateRoleDto,
   ) {
+    console.log('In update');
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, externalCreateRoleDto.currentEmployeeId);
 
@@ -390,8 +391,10 @@ export class RoleController {
     if (currentEmployee.role.permissionSuite.includes('company settings')) {
       let data;
       try {
+        console.log('In try');
         data = await this.roleService.update(roleId, externalCreateRoleDto.updateRoleDto);
       } catch (e) {
+        console.log(e);
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
       return { data: data };

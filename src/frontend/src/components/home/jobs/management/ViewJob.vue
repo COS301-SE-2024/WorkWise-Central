@@ -1,23 +1,23 @@
 <template>
   <v-card elevation="14" rounded="md" :style="cardStyle" :min-height="900">
     <v-row class="position-relative" :style="rowStyle">
-        <v-img
-          :src="imageSrc"
-          aspect-ratio="5.75"
-          @load="(src) => onImageLoad(src)"
-          height="120%"
-        ></v-img>
-        <v-btn color="primary" class="position-absolute bottom-right">
-          <v-icon left>mdi-image</v-icon>
-          <label for="imageInput" class="m-0">Cover</label>
-          <input
-            type="file"
-            id="imageInput"
-            @change="changeImage"
-            accept="image/*"
-            style="display: none"
-          />
-        </v-btn>
+      <v-img
+        :src="imageSrc"
+        aspect-ratio="5.75"
+        @load="(src) => onImageLoad(src)"
+        height="120%"
+      ></v-img>
+      <v-btn color="primary" class="position-absolute bottom-right">
+        <v-icon left>mdi-image</v-icon>
+        <label for="imageInput" class="m-0">Cover</label>
+        <input
+          type="file"
+          id="imageInput"
+          @change="changeImage"
+          accept="image/*"
+          style="display: none"
+        />
+      </v-btn>
     </v-row>
     <v-card-title>
       {{ props.passedInJob?.details?.heading }}
@@ -140,6 +140,8 @@
                 <AddComment
                   :jobComments="props.passedInJob?.comments"
                   :id="props.passedInJob?._id"
+                  :jobComments="props.passedInJob?.comments"
+                  :id="props.passedInJob?._id"
                 />
               </v-col>
             </v-row>
@@ -183,10 +185,10 @@
             <v-col>
               <LogJobInventory :jobID="props.passedInJob?._id" />
             </v-col>
-            <v-divider>
+            <v-divider v-show="checkPermission('generate invoices')">
               <h5 ref="jobInvoiceSection">Generate Invoice</h5>
             </v-divider>
-            <v-col>
+            <v-col v-show="checkPermission('generate invoices')">
               <GenerateInvoice :jobID="props.passedInJob?._id" />
             </v-col>
             <v-divider>
@@ -281,7 +283,7 @@
                 Job Tags
               </v-btn>
             </v-col>
-            <v-col>
+            <v-col v-show="checkPermission('generate invoices')">
               <v-btn
                 width="100%"
                 class="d-flex justify-start"
@@ -382,6 +384,7 @@ const jobTimeTrackerSection = ref<HTMLElement | null>(null)
 const viewJobDialog = ref(false) // Dialog state
 const checklistSection = ref(null)
 const inventorySection = ref(null)
+const employeePermissions = ref<string[]>([])
 
 const dominantColor = ref('transparent')
 
@@ -500,6 +503,12 @@ const changeImage = async (event: Event) => {
   }
 }
 
+const checkPermission = (permission: any) => {
+  console.log('Employee permissions:', employeePermissions.value)
+  console.log(' employeePermissions.value.includes(permission): ', employeePermissions.value.includes(permission))
+  return employeePermissions.value.includes(permission)
+}
+
 const setCardBackgroundColor = (src: string) => {
   const img = new Image()
   img.crossOrigin = 'Anonymous' // This allows loading images from other domains
@@ -551,6 +560,25 @@ onMounted(() => {
     props.passedInJob.coverImage ||
     'https://media.istockphoto.com/id/2162545535/photo/two-male-workers-taking-a-break-at-the-construction-site.jpg?s=612x612&w=is&k=20&c=xceTrLx7-MPKjjLo302DjIw1mGaZiKAceaWIYsRCX0U='
   img.onload = setImageAndBackground*/
+
+  const config1 = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    },
+    params: {
+      currentEmployeeId: localStorage.getItem('employeeId')
+    }
+  }
+  axios
+    .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config1)
+    .then((response) => {
+      console.log(response.data.data.role.permissionSuite)
+      employeePermissions.value.push(...response.data.data.role.permissionSuite)
+    })
+    .catch((error) => {
+      console.error('Failed to fetch employees:', error)
+    })
 })
 </script>
 

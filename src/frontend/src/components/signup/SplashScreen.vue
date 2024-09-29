@@ -1318,7 +1318,11 @@ export default defineComponent({
             // this.resetForm()
             setTimeout(() => {
               this.loading = false
-              this.$router.push({ name: 'dashboard' })
+              if (response.data.user.joinedCompanies.length > 0) {
+                this.$router.push({ name: 'dashboard' })
+              } else {
+                this.$router.push({ name: 'no-access' })
+              }
             }, 2000)
           })
           .catch((error) => {

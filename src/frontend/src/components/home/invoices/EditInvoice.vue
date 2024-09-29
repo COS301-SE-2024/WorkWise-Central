@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog v-model="editDialog" max-height="800" max-width="600" scrollable>
+  <v-dialog v-model="editDialog" max-height="800" max-width="800" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular" color="warning" v-bind="activatorProps">
         <v-icon start color="warning" size="small">mdi-pencil</v-icon>
@@ -16,6 +16,7 @@
       <v-card-text>
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
           <v-col>
+            <!-- Invoice Number -->
             <v-col>
               <small class="text-caption">Invoice Number</small>
               <v-text-field
@@ -26,6 +27,7 @@
                 required
               ></v-text-field>
             </v-col>
+            <!-- Date of Payment -->
             <v-col>
               <small class="text-caption">Date of Payment</small>
               <v-text-field
@@ -35,28 +37,68 @@
                 required
               ></v-text-field>
             </v-col>
-            <v-row>
-              <v-col cols="12" lg="6">
-                <small class="text-caption">Amount</small>
-                <v-text-field
-                  :disabled="isDeleting"
-                  v-model="localEditedInvoice.total"
-                  color="secondary"
-                  type="number"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" lg="6">
-                <small class="text-caption">Status of Payment</small>
-                <v-select
-                  :disabled="isDeleting"
-                  v-model="localEditedInvoice.paid"
-                  :items="statusOptions"
-                  color="secondary"
-                  required
-                ></v-select>
-              </v-col>
-            </v-row>
+            <!-- Inventory Items -->
+            <v-col>
+              <small class="text-caption">Inventory Items</small>
+              <v-row v-for="(item, index) in localEditedInvoice.inventoryItems" :key="index" class="d-flex align-center">
+                <v-col cols="5">
+                  <v-text-field
+                    v-model="item.description"
+                    label="Item Name"
+                    :disabled="isDeleting"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="5">
+                  <v-text-field
+                    v-model="item.quantity"
+                    label="Quantity"
+                    type="number"
+                    :disabled="isDeleting"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="2" class="d-flex align-center">
+                  <v-btn icon @click="removeInventoryItem(index)" :disabled="isDeleting">
+                    <v-icon color="error">mdi-delete</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+              <v-btn text="true" color="primary" @click="addInventoryItem">
+                <v-icon start size="small">mdi-plus</v-icon> Add Inventory Item
+              </v-btn>
+            </v-col>
+            <!-- Labor Items -->
+            <v-col>
+              <small class="text-caption">Labor Items</small>
+              <v-row v-for="(item, index) in localEditedInvoice.laborItems" :key="index" class="d-flex align-center">
+                <v-col cols="5">
+                  <v-text-field
+                    v-model="item.description"
+                    label="Labor Name"
+                    :disabled="isDeleting"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="5">
+                  <v-text-field
+                    v-model="item.hours"
+                    label="Hours"
+                    type="number"
+                    :disabled="isDeleting"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="2" class="d-flex align-center">
+                  <v-btn icon @click="removeLaborItem(index)" :disabled="isDeleting">
+                    <v-icon color="error">mdi-delete</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+              <v-btn text="true" color="primary" @click="addLaborItem">
+                <v-icon start size="small">mdi-plus</v-icon> Add Labor Item
+              </v-btn>
+            </v-col>
           </v-col>
         </v-form>
       </v-card-text>
@@ -96,12 +138,11 @@ import { API_URL } from '@/main'
 interface Invoice {
   _id: string
   invoiceNumber: string
-  creationDate: Date
   paymentDate: Date
   total: number
   paid: boolean
-  clientName: string
-  jobTitle: string
+  inventoryItems: { description: string, quantity: number }[]
+  laborItems: { description: string, hours: number }[]
 }
 
 export default {
@@ -124,18 +165,13 @@ export default {
       } as Invoice,
       editDialog: false,
       valid: false,
-      statusOptions: [true, false] as boolean[],
-      invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
-      dateRules: [(v: string) => !!v || 'Date is required'],
-      amountRules: [
-        (v: string) => !!v || 'Amount is required',
-        (v: string) => /^[+-]?(\d+(\.\d*)?|\.\d+)$/.test(v) || 'Amount must be a valid number'
-      ]
+      invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required']
     }
   },
   created() {
     // Create a deep copy of editedInvoice
     this.localEditedInvoice = this.deepCopy(this.editedInvoice)
+    console.log(this.localEditedInvoice)
   },
   methods: {
     updateInvoice() {
@@ -153,7 +189,6 @@ export default {
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` }
       }
-      console.log(this.localEditedInvoice)
       axios
         .patch(`${API_URL}invoice/${this.invoice_id}`, this.localEditedInvoice, config)
         .then((response) => {
@@ -187,7 +222,18 @@ export default {
     close() {
       this.editDialog = false
     },
-    change(status: any) {},
+    addInventoryItem() {
+      this.localEditedInvoice.inventoryItems.push({ description: '', quantity: 0 })
+    },
+    removeInventoryItem(index: number) {
+      this.localEditedInvoice.inventoryItems.splice(index, 1)
+    },
+    addLaborItem() {
+      this.localEditedInvoice.laborItems.push({ description: '', hours: 0 })
+    },
+    removeLaborItem(index: number) {
+      this.localEditedInvoice.laborItems.splice(index, 1)
+    },
     deepCopy(obj: any) {
       return JSON.parse(JSON.stringify(obj))
     }
