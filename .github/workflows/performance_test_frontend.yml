@@ -1,10 +1,10 @@
 name: Run SpeedCurve Tests
 on:
   push:
-    branches: [ main, develop , test, chore/performance-tests-frontend ]
+    branches: [ main, develop , test ]
 
   pull_request:
-    branches: [ main, develop , test, performance-tests-frontend ]
+    branches: [ main, develop , test ]
 
 jobs:
   create-deployment:
