@@ -1,0 +1,21 @@
+name: Run SpeedCurve Tests
+on:
+  push:
+    branches: [ main, develop , test, chore/performance-tests-frontend ]
+
+  pull_request:
+    branches: [ main, develop , test, performance-tests-frontend ]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Get metrics
+        uses: SpeedCurve-Metrics/speedcurve-test-action@v1.2.2
+        with:
+          api_key: ${{ secrets.SPEEDCURVE_KEY }}
+
+          
+          
