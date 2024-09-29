@@ -18,7 +18,7 @@ e
               color="primary"
               block
               @click="getEmployeeDetails"
-              :disabled="!selectedItem"
+              :disabled="!selectedItem || selectedNode === 'node1'"
               :loading="isLoading"
             >
               <v-icon icon="fa: fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
@@ -301,6 +301,7 @@ export default defineComponent({
         }
       }),
       loading: true,
+      selectedNode: '',
       selectedEmployee: '',
       req_obj: {
         currentEmployeeId: localStorage['employeeId'],
@@ -402,10 +403,12 @@ export default defineComponent({
         // Traverse nodes using for...in loop
         for (const nodeId in this.data.nodes) {
           const node = this.data.nodes[nodeId]
+
           console.log(nodeId)
           if (nodeId === event.node) {
             console.log(this.selectedItem)
             this.selectedItem = node
+            this.selectedNode = nodeId
             break // Exit the loop once the node is found
           }
         }
@@ -612,9 +615,15 @@ export default defineComponent({
           API_URL + `employee/detailed/id/${this.selectedItem.id}`,
           config
         )
-        this.req_obj.updateEmployeeDto.roleId = current_subs.data.data.role.roleId
+
+        let sup_employee = await axios.get(
+          API_URL + `employee/detailed/id/${current_subs.data.data.superiorId}`,
+          config
+        )
+        //this.roleItems
+        this.req_obj.updateEmployeeDto.roleId = current_subs.data.data.role.roleName
         this.currentRoleId = current_subs.data.data.role.roleId
-        this.req_obj.updateEmployeeDto.superiorId = current_subs.data.data.superiorId
+        this.req_obj.updateEmployeeDto.superiorId = sup_employee.data.data.userInfo.firstName
         this.currentSuperior = current_subs.data.data.superiorId
         this.req_obj.updateEmployeeDto.subordinates = current_subs.data.data.subordinates
         this.currentSubordinates = current_subs.data.data.subordinates
