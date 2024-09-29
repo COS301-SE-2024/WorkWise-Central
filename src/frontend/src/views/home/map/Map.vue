@@ -25,7 +25,7 @@
             <DataView :value="currentDrivers">
               <template #list="slotProps">
                 <div class="driver-item">
-                  {{ slotProps.data.profile.displayName }}
+                  {{ slotProps?.data?.profile?.displayName }}
                 </div>
               </template>
             </DataView>
@@ -57,20 +57,37 @@
         </div>
       </div>
       <div class="card">
-        <div class="text-center pt-10">
-          <Button
-              label="Show All Vehicle Data"
-              icon="fa: fa-solid fa-external-link"
-              @click="dialogVisible = true"
-              class="custom-button"
+        <v-row>
+          <v-col cols="12" class="text-center pt-10">
+            <Button
+                label="Show All Vehicle Data"
+                icon="fa: fa-solid fa-external-link"
+                @click="dialogVisible = true"
+                class="custom-button"
+            />
+          </v-col>
+          <v-col cols="12" class="text-center">
+            <Button
+                label="Find Vehicle"
+                icon="fa: fa-solid fa-search"
+                @click="toggleVehicleList"
+                class="custom-button"
+            />
+          </v-col>
+        </v-row>
+        <Dialog v-model:visible="showVehicleList" header="Select Vehicle" :style="{ width: '50vw', margin: 'auto' }">
+          <Listbox
+              v-model="selectedVehicle"
+              :options="vehicles"
+              optionLabel="licensePlate"
+              class="w-full md:w-56 mt-2"
+              @change="searchVehicle"
+              filter
           />
-        </div>
-        <Button
-          label="Show All Vehicle Data"
-          icon="pi pi-external-link"
-          @click="dialogVisible = true"
-        />
-        <Button label="Redirect Map To Find Vehicle" @click="redirectMap(40.7128, -74.0060)"/>
+          <template #footer>
+            <Button label="Close and Redirect" class="p-button-success" icon="fa: fa-solid fa-check" @click="closeAndRedirect" />
+          </template>
+        </Dialog>
         <Dialog
           v-model:visible="dialogVisible"
           header="Flex Scroll"
@@ -245,6 +262,7 @@ import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
 import Tag from 'primevue/tag'
 import Image from 'primevue/image'
+import Listbox from 'primevue/listbox'
 import { VehicleAvailabilityEnum, FuelType } from './models/vehicles'
 
 export default {
@@ -273,7 +291,8 @@ export default {
     InputNumber,
     InputText,
     Select,
-    Tag
+    Tag,
+    Listbox
   },
   data() {
     return {
@@ -303,6 +322,8 @@ export default {
           scale: 0.06,
         },
       },
+      showVehicleList: false,
+      selectedVehicle: null,
       apiKey: GOOGLE_MAPS_API_KEY,
       apiUrl: API_URL,
       company: null,
@@ -341,6 +362,20 @@ export default {
     }
   },
   methods: {
+    closeAndRedirect() {
+      if (this.selectedVehicle) {
+        this.redirectMap(this.selectedVehicle.location.latitude, this.selectedVehicle.location.longitude);
+      }
+      this.showVehicleList = false;
+    },
+    toggleVehicleList() {
+      this.showVehicleList = !this.showVehicleList
+    },
+    searchVehicle() {
+      if (this.selectedVehicle) {
+        console.log("Searching for vehicle", this.selectedVehicle)
+      }
+    },
     redirectMap(latitude, longitude) {
       const newCenter = { lat: latitude, lng: longitude };
       this.mapCenter = newCenter;
@@ -384,7 +419,7 @@ export default {
             location: vehicle?.location
           }))
         )
-        console.log(vehicles)
+        console.log('Vehicles:', this.vehicles)
       } catch (error) {
         console.error('Error fetching vehicles data:', error)
       }
@@ -491,6 +526,7 @@ export default {
   background-color: #4C9FC3;
   outline-color: #4C9FC3;
   border: none; /* Add this line to remove the green outline */
+  width: 80%;
 }
 
 .custom-button:hover {
