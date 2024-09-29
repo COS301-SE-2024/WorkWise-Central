@@ -55,7 +55,7 @@ export class NotificationService implements OnModuleInit {
       // listOfNotifications.push(singularNotification);
       const result = new this.notificationModel(singularNotification);
       await result.save();
-      console.log(result);
+      //console.log(result);
     }
     return {
       data: 'success',
@@ -66,7 +66,7 @@ export class NotificationService implements OnModuleInit {
     this.notificationModel.watch().on('change', async (change) => {
       //console.log(change);
       const document: Notification = change.fullDocument;
-      console.log(document);
+      //console.log(document);
       try {
         const tokens = await this.notificationRepository.findAllTokensForUser(document.recipientId);
         if (tokens.length == 0) {
@@ -97,7 +97,7 @@ export class NotificationService implements OnModuleInit {
       listOfNotifications.push(singularNotification);
     }
     const result = await this.notificationModel.create(listOfNotifications);
-    console.log(result);
+    //console.log(result);
     return {
       data: 'success',
     };
@@ -106,7 +106,7 @@ export class NotificationService implements OnModuleInit {
   async findAllWithEmployeeId(id: Types.ObjectId) {
     try {
       const result = await this.notificationRepository.findAllWithRecipientId(id);
-      console.log(result);
+      //console.log(result);
       return result;
     } catch (error) {
       throw new InternalServerErrorException();
@@ -117,7 +117,7 @@ export class NotificationService implements OnModuleInit {
     //logic will change later
     try {
       const result = await this.notificationRepository.findAllWithRecipientId(id);
-      console.log(result);
+      //console.log(result);
       return result;
     } catch (error) {
       throw new InternalServerErrorException();
