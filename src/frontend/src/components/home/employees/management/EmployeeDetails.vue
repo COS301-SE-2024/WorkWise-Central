@@ -24,7 +24,7 @@
           <v-row>
             <v-col cols="6">
               <b><label> First Name</label></b>
-              ><v-spacer></v-spacer
+              <v-spacer></v-spacer
               ><small class="text-caption">{{
                 EmployeeDetails.firstName.charAt(0).toUpperCase() +
                 EmployeeDetails.firstName.slice(1)
@@ -116,7 +116,7 @@ export default defineComponent({
       clientDialog: false,
       isDeleting: false,
       subnames: [],
-      supname: '',
+      supname: ''
     }
   },
   methods: {
@@ -164,7 +164,7 @@ export default defineComponent({
     close() {
       console.log('closing dialog:' + this.clientDialog)
       this.clientDialog = false
-    },
+    }
   },
   mounted() {
     this.loadEmployeeData()

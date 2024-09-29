@@ -192,7 +192,9 @@ export default {
       }
 
       // Create an Object URL for the PDF to view in the iframe
-      this.pdfSrc = URL.createObjectURL(jsPDFInvoiceTemplate(props).blob)
+      const v = jsPDFInvoiceTemplate(props).blob
+      console.log(v)
+      this.pdfSrc = URL.createObjectURL(v)
     },
     downloadPdf() {
       const props = {
