@@ -167,10 +167,7 @@ export default {
       try {
         const res = await axios.get(localUrl)
         return res.status < 300 && res.status > 199
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
       } catch (error) {
-        return false
         return false
       }
     },
@@ -180,11 +177,8 @@ export default {
     },
     fetchRevenueForMonth(month) {
       const monthlyRevenue = this.invoiceStats.revenue
-      const monthlyRevenue = this.invoiceStats.revenue
 
       // Extract the data for the chart
-      const months = monthlyRevenue.map((entry) => entry.month)
-      const numUnpaid = monthlyRevenue.map((entry) => entry.numUnpaid)
       const months = monthlyRevenue.map((entry) => entry.month)
       const numUnpaid = monthlyRevenue.map((entry) => entry.numUnpaid)
 
@@ -201,7 +195,6 @@ export default {
           }
         ]
       }
-      }
     },
     async getInvoiceStats() {
       const config = {
@@ -213,11 +206,10 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const API_URL = await this.getRequestUrl()
+      const apiURL = await this.getRequestUrl()
       axios
         .get(`${API_URL}stats/invoiceStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          this.invoiceStats = response.data.data
           this.invoiceStats = response.data.data
 
           // Update the pie chart data with API response
@@ -230,20 +222,15 @@ export default {
               }
             ]
           }
-          }
 
           // Fetch revenue data for all months (replace with actual logic if needed)
-          this.fetchRevenueForMonth('January')
           this.fetchRevenueForMonth('January')
         })
         .catch((error) => {
           console.error('Failed to fetch invoice stats:', error)
         })
-          console.error('Failed to fetch invoice stats:', error)
-        })
     }
   }
-}
 }
 </script>
 

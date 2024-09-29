@@ -148,13 +148,7 @@
         @keyup="applyFilter"
       />
       <!-- Client Data Table -->
-      <v-data-table
-        :items="clientDetails"
-        :headers="headers"
-        class="bg-background"
-        :search="search"
-        :row-props="getItemClass"
-      >
+
       <v-data-table
         :items="clientDetails"
         :headers="headers"
@@ -188,18 +182,13 @@
           <v-container>
             <v-row>
               <!-- Jobs chart - only show if job data is not all zeros -->
-              <v-col cols="12" lg="6" v-if="jobsData.datasets[0].data.some((value) => value > 0)">
+
               <v-col cols="12" lg="6" v-if="jobsData.datasets[0].data.some((value) => value > 0)">
                 <h5>Breakdown of the Jobs for {{ selectedClient.firstName }}</h5>
                 <Chart type="pie" :data="jobsData" @chart-click="onChartClick" />
               </v-col>
 
               <!-- Invoices chart - only show if invoice data is not all zeros -->
-              <v-col
-                cols="12"
-                lg="6"
-                v-if="invoiceData.datasets[0].data.some((value) => value > 0)"
-              >
               <v-col
                 cols="12"
                 lg="6"
@@ -217,12 +206,7 @@
               <!-- Only show if there are customer service ratings -->
               <v-col cols="12" lg="6" v-if="totalRatings !== 0">
                 <h5>Average Customer Service ratings given by {{ selectedClient.firstName }}</h5>
-                <v-card
-                  class="d-flex flex-column mx-auto py-4"
-                  elevation="10"
-                  height="auto"
-                  width="360"
-                >
+
                 <v-card
                   class="d-flex flex-column mx-auto py-4"
                   elevation="10"
@@ -247,11 +231,7 @@
                     ></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
-                  <v-list
-                    bg-color="transparent"
-                    class="d-flex flex-column-reverse"
-                    density="compact"
-                  >
+
                   <v-list
                     bg-color="transparent"
                     class="d-flex flex-column-reverse"
@@ -289,12 +269,7 @@
               <!-- Job Quality Rating Section - only show if there are job quality ratings -->
               <v-col cols="12" lg="6" v-if="totalJobRatings !== 0">
                 <h5>Average Job quality ratings given by {{ selectedClient.firstName }}</h5>
-                <v-card
-                  class="d-flex flex-column mx-auto py-4"
-                  elevation="10"
-                  height="auto"
-                  width="360"
-                >
+
                 <v-card
                   class="d-flex flex-column mx-auto py-4"
                   elevation="10"
@@ -319,11 +294,7 @@
                     ></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
-                  <v-list
-                    bg-color="transparent"
-                    class="d-flex flex-column-reverse"
-                    density="compact"
-                  >
+
                   <v-list
                     bg-color="transparent"
                     class="d-flex flex-column-reverse"
@@ -590,88 +561,82 @@ export default {
 
     calculateRatingCounts(ratings) {
       const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
-      const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
       ratings?.forEach((rating) => {
         if (rating.rating >= 1 && rating.rating <= 5) {
           counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
-          counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
         }
       })
       return counts
-    },
+    }
+  },
+  async getClients() {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      },
+      params: {
+        currentEmployeeId: localStorage.getItem('employeeId')
+      }
+    }
+    const API_URL = await this.getRequestUrl()
+
+    axios
+      .get(`${API_URL}client/all/${localStorage.getItem('currentCompany')}`, config)
+      .then((response) => {
+        this.clients = response.data.data
+
+        for (let i = 0; i < this.clients.length; i++) {
+          this.clientIds[i] = this.clients[i]._id
+
+          this.clientDetails[i] = this.clients[i].details
+        }
+
+        this.selectedClient = this.clientDetails[0]
+        this.selectedItemId = this.clientIds[0]
+        this.getClientStats(this.selectedItemId)
       })
-      return counts
-    },
-    async getClients() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-      const API_URL = await this.getRequestUrl()
-
-      axios
-        .get(`${API_URL}client/all/${localStorage.getItem('currentCompany')}`, config)
-        .then((response) => {
-          this.clients = response.data.data
-
-          for (let i = 0; i < this.clients.length; i++) {
-            this.clientIds[i] = this.clients[i]._id
-
-            this.clientDetails[i] = this.clients[i].details
-          }
-
-          this.selectedClient = this.clientDetails[0]
-          this.selectedItemId = this.clientIds[0]
-          this.getClientStats(this.selectedItemId)
-        })
-        .catch((error) => {
-          console.error('Failed to fetch clients:', error)
-        })
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      //const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return API_URL
-    },
-    onChartClick(type, index) {
-      if (type === 'jobs') {
-        if (index === 0) {
-          // Show active jobs in dialog
-
-          this.dialogTitle = `Active Jobs for ${this.selectedClient.firstName}`
-          this.dialogItems = this.clientStats.activeJobs
-        } else if (index === 1) {
-          // Show completed jobs in dialog
-          this.dialogTitle = `Completed Jobs for ${this.selectedClient.firstName}`
-          this.dialogItems = this.clientStats.completedJobs
-        }
-      } else if (type === 'invoices') {
-        if (index === 0) {
-          // Show paid invoices in dialog
-          this.dialogTitle = `Paid Invoices for ${this.selectedClient.firstName}`
-          this.dialogItems = this.clientStats.invoicesPaid
-        } else if (index === 1) {
-          // Show unpaid invoices in dialog
-          this.dialogTitle = `Unpaid Invoices for ${this.selectedClient.firstName}`
-          this.dialogItems = this.clientStats.invoicesUnpaid
-        }
-      }
-      // Show the dialog
-      this.dialog = true
+      .catch((error) => {
+        console.error('Failed to fetch clients:', error)
+      })
+  },
+  async isLocalAvailable(localUrl) {
+    try {
+      const res = await axios.get(localUrl)
+      return res.status < 300 && res.status > 199
+    } catch (error) {
+      return false
     }
+  },
+  async getRequestUrl() {
+    //const localAvailable = await this.isLocalAvailable(this.localUrl)
+    return API_URL
+  },
+  onChartClick(type, index) {
+    if (type === 'jobs') {
+      if (index === 0) {
+        // Show active jobs in dialog
+
+        this.dialogTitle = `Active Jobs for ${this.selectedClient.firstName}`
+        this.dialogItems = this.clientStats.activeJobs
+      } else if (index === 1) {
+        // Show completed jobs in dialog
+        this.dialogTitle = `Completed Jobs for ${this.selectedClient.firstName}`
+        this.dialogItems = this.clientStats.completedJobs
+      }
+    } else if (type === 'invoices') {
+      if (index === 0) {
+        // Show paid invoices in dialog
+        this.dialogTitle = `Paid Invoices for ${this.selectedClient.firstName}`
+        this.dialogItems = this.clientStats.invoicesPaid
+      } else if (index === 1) {
+        // Show unpaid invoices in dialog
+        this.dialogTitle = `Unpaid Invoices for ${this.selectedClient.firstName}`
+        this.dialogItems = this.clientStats.invoicesUnpaid
+      }
     }
+    // Show the dialog
+    this.dialog = true
   },
   async mounted() {
     await this.getClients()

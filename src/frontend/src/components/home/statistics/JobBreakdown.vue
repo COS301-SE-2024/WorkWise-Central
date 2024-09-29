@@ -337,14 +337,11 @@ export default {
     },
     calculateRatingCounts(ratings) {
       const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
-      const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
+
       ratings?.forEach((rating) => {
         if (rating.rating >= 1 && rating.rating <= 5) {
           counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
-          counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
         }
-      })
-      return counts
       })
       return counts
     }
