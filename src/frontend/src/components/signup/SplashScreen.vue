@@ -935,6 +935,7 @@ export default defineComponent({
   },
   data: () => ({
     click_create_client: false,
+    inviteId: null,
     tabs: [
       { title: 'Client Management', icon: 'mdi-account-group' },
       { title: 'Project Management', icon: 'mdi-account-group' },
@@ -1382,12 +1383,38 @@ export default defineComponent({
           localStorage.setItem('id', response.data.data.id)
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
+          this.getInviteIdAndAccept()
         })
         .catch((error) => {
           console.log(error)
           this.alertSignUp = false
           this.alertSignUpFailure = true
         })
+    },
+    getInviteIdAndAccept() {
+      // Get the inviteId from the URL
+      try {
+        const urlParams = new URLSearchParams(window.location.search)
+        this.inviteId = urlParams.get('inviteId')
+
+        if (this.inviteId) {
+          this.acceptInvite()
+        } else {
+          console.log('No inviteId found in URL')
+        }
+      } catch (e) {}
+    },
+    async acceptInvite() {
+      try {
+        const response = await axios.post('${API_URL}admin/invite/accept', {
+          inviteId: this.inviteId
+        })
+        //console.log('Invite accepted:', response.data)
+        // Handle successful response here
+      } catch (error) {
+        //console.error('Error accepting invite:', error)
+        // Handle error here
+      }
     },
     async nextFlow1() {
       try {

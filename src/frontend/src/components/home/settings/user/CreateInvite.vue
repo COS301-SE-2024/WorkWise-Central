@@ -93,10 +93,13 @@ export default defineComponent({
         const body: any = {
           email: this.req_obj.emailToInvite,
           employeeId: this.req_obj.employeeId,
-          superiorId: this.req_obj.superiorId
+          emailToInvite: this.req_obj.emailToInvite
         }
-        if (this.req_obj.roleId) {
-          body.roleId = this.req_obj.roleId
+        // if (this.req_obj.roleId != null) {
+        //   body.roleId = this.req_obj.roleId
+        // }
+        if (this.req_obj.superiorId != null) {
+          body.superiorId = this.req_obj.superiorId
         }
         const response = await axios.post(`${API_URL}admin/invite/create`, body, config)
         console.log(response)
