@@ -484,6 +484,13 @@ export default {
         //this.averageFuelConsumption = data.averageFuelConsumption
         //this.vehiclesDueForService = data.vehiclesDueForService
         //this.updateMapCenter()
+        // Calculate total distance today and average fuel consumption
+        const totalDistance = this.vehicles.reduce((sum, vehicle) => sum + (vehicle.statistics?.totalDistance || 0), 0);
+        const totalFuelConsumption = this.vehicles.reduce((sum, vehicle) => sum + (vehicle.statistics?.averageFuelConsumption || 0), 0);
+        const vehicleCount = this.vehicles.length;
+
+        this.totalDistanceToday = totalDistance;
+        this.averageFuelConsumption = vehicleCount ? totalFuelConsumption / vehicleCount : 0;
       } catch (error) {
         console.error('Error loading fleet data:', error)
       }
