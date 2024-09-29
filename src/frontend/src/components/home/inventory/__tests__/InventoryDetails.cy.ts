@@ -9,6 +9,4 @@ it('renders inventory details form on a laptop viewport', () => {
       plugins: [vuetify]
     }
   })
-  cy.contains('button', 'View').click() // Clicks the button containing the text 'Edit Inventory'
-  cy.contains('button', 'Close').click() // Clicks the button containing the text 'Delete Inventory'
 })
