@@ -140,8 +140,6 @@
                 <AddComment
                   :jobComments="props.passedInJob?.comments"
                   :id="props.passedInJob?._id"
-                  :jobComments="props.passedInJob?.comments"
-                  :id="props.passedInJob?._id"
                 />
               </v-col>
             </v-row>
