@@ -307,6 +307,37 @@ export class InvoiceController {
     status: HttpStatus.NO_CONTENT,
   })
   @ApiOperation({
+    summary: `Send an ${className}`,
+    description: `Sends the ${className} instance with the given id to the client associated with it.`,
+  })
+  @ApiOkResponse({
+    type: InvoiceResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className} to be sent.`,
+  })
+  @Get('send/:id')
+  async send(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    if (!currentEmployeeId) {
+      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
+    }
+    const data = await this.invoiceService.send(id);
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiOperation({
     summary: `Find an ${className}`,
     description: `Returns the ${className} instance with the given id.`,
   })

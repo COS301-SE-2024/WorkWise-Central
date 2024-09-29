@@ -179,4 +179,31 @@ export class EmailService {
     });
     console.log(result);
   }
+
+  async sendInvoiceClientPortalLink(
+    clientId: Types.ObjectId,
+    clientEmail: string,
+    clientName: string,
+    clientSurname: string,
+    companyName: string,
+    jobTitle: string,
+  ) {
+    const url = `${this.globalConfig.frontendUrl}/client-portal?cId=${encodeURIComponent(clientId.toString())}`;
+    const ourEmail = '<support@workwise.com>';
+
+    const result = await this.mailerService.sendMail({
+      to: clientEmail,
+      from: `"Support Team" ${ourEmail}`,
+      subject: 'Invoice Alert',
+      template: './client-portal-invoice',
+      context: {
+        name: clientName,
+        surname: clientSurname,
+        companyName: companyName,
+        jobTitle: jobTitle,
+        link: url,
+      },
+    });
+    console.log(result);
+  }
 }

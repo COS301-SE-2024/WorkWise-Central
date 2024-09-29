@@ -162,6 +162,7 @@ export class JobController {
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    console.log(currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all jobs')) {
       try {
         validateObjectId(companyId);

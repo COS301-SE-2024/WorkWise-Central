@@ -83,7 +83,11 @@
           <v-container
             ><v-row
               ><v-col cols="12" lg="6" order="first" order-lg="last"
-                ><v-btn @click="updateHourlyRateEmployee" block color="success"
+                ><v-btn
+                  @click="updateHourlyRateEmployee"
+                  :disabled="isEditing"
+                  block
+                  color="success"
                   ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
                 ></v-col
               ><v-col cols="12" lg="6"
@@ -165,7 +169,8 @@ export default {
       currentRole: {} as any,
       roleUpdates: [] as any,
       roleIds: [] as any,
-      selectedItem: {} as any
+      selectedItem: {} as any,
+      isEditing: false
     }
   },
   methods: {
@@ -184,12 +189,29 @@ export default {
       }
       this.employeeDialog = false
     },
-    saveRoleChanges() {
-      const index = this.roles.findIndex((r: any) => r.id === this.currentRole.id)
-      if (index !== -1) {
-        this.roles[index] = { ...this.currentRole }
+    async saveRoleChanges() {
+      this.isEditing = true
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        }
       }
-      this.roleDialog = false
+      const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        updateRoleDto: { hourlyRate: parseFloat(this.currentRole.hourlyRate) }
+      }
+      try {
+        console.log('this.currentEmployee: ', this.currentEmployee)
+        const response = await axios.patch(`${API_URL}role/${this.currentRole._id}`, data, config)
+        console.log(response.data.data)
+        this.roleUpdates = []
+        this.getRoles()
+        this.roleDialog = false
+        this.isEditing = false
+      } catch (error) {
+        console.error(error)
+      }
     },
     changeSection(section: string) {
       this.currentTab = section
@@ -211,7 +233,8 @@ export default {
               this.roleUpdates.push({
                 _id: response.data.data[i]._id,
                 roleName: response.data.data[i].roleName,
-                permissionSuite: response.data.data[i].permissionSuite
+                permissionSuite: response.data.data[i].permissionSuite,
+                hourlyRate: response.data.data[i].hourlyRate
               })
               this.roleIds.push(response.data.data[i]._id)
             }
@@ -224,23 +247,29 @@ export default {
         })
     },
     async updateHourlyRateEmployee() {
+      this.isEditing = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        data: {
-          currentEmployeeId: localStorage.getItem('employeeId'),
-          hourlyRate: this.currentEmployee.hourlyRate
         }
       }
+      const data = {
+        currentEmployeeId: localStorage.getItem('employeeId'),
+        hourlyRate: parseFloat(this.currentEmployee.hourlyRate)
+      }
       try {
+        console.log('this.currentEmployee: ', this.currentEmployee)
         const response = await axios.patch(
-          `${API_URL}employee/${this.currentEmployee.employeeId}`,
+          `${API_URL}employee/${this.currentEmployee._id}`,
+          data,
           config
         )
         console.log(response.data.data)
-        this.employees = response.data.data
+        this.employees = []
+        this.getEmployees()
+        this.employeeDialog = false
+        this.isEditing = false
       } catch (error) {
         console.error(error)
       }
@@ -269,7 +298,7 @@ export default {
     selectItem(item: any) {
       console.log(item)
       this.selectedItem = item
-    },
+    }
   },
   mounted() {
     this.getEmployees()
