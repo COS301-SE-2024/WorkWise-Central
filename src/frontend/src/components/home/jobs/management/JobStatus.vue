@@ -40,7 +40,6 @@ const props = defineProps<{ jobID: string; status: Status }>()
 const statusItems = ref<Status[]>([])
 const selectedStatus = ref<Status>(props.status)
 
-
 const getAllStatuses = async () => {
   try {
     const response = await axios.get(

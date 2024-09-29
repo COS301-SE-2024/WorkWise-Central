@@ -40,8 +40,14 @@
                         single-line
                       ></v-text-field>
                     </v-col>
-                    <v-col order-sm="2" order-md="2" cols="12" lg="4" class="d-flex justify-end"
-                    v-if= "checkPermission('add new jobs')">
+                    <v-col
+                      order-sm="2"
+                      order-md="2"
+                      cols="12"
+                      lg="4"
+                      class="d-flex justify-end"
+                      v-if="checkPermission('add new jobs')"
+                    >
                       <AddJob />
                     </v-col>
                   </v-row>
@@ -105,11 +111,23 @@
                       </template>
 
                       <template v-slot:[`item.startDate`]="{ item }">
-                        {{ new Date(item?.details?.startDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
+                        {{
+                          new Date(item?.details?.startDate).toLocaleDateString('en-US', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                          })
+                        }}
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ item }">
-                        {{ new Date(item?.details?.endDate || '').toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
+                        {{
+                          new Date(item?.details?.endDate || '').toLocaleDateString('en-US', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                          })
+                        }}
                       </template>
 
                       <!-- Actions slot -->
@@ -133,11 +151,14 @@
                             </v-btn>
                           </template>
                           <v-list class="bg-background">
-                            <v-list-item class="pl-0" v-show="
+                            <v-list-item
+                              class="pl-0"
+                              v-show="
                                 checkPermission('view all jobs') ||
                                 checkPermission('view jobs under me') ||
                                 checkPermission('view jobs assigned to me')
-                              ">
+                              "
+                            >
                               <v-btn color="success" width="100%" @click.stop="openViewDialog()">
                                 <v-icon
                                   icon="fa:fa-solid fa-eye"
@@ -159,7 +180,7 @@
                               </v-dialog>
                             </v-list-item>
                             <v-list-item class="pl-0" v-show="checkPermission('edit jobs')">
-                              <v-btn color="warning" width="100%" @click.stop="openJobCardDialog()" >
+                              <v-btn color="warning" width="100%" @click.stop="openJobCardDialog()">
                                 <v-icon
                                   icon="fa:fa-solid fa-pencil"
                                   start
@@ -179,7 +200,7 @@
                                 ></ManagerJobCard>
                               </v-dialog>
                             </v-list-item>
-                            <v-list-item v-show=" checkPermission('delete jobs') ">
+                            <v-list-item v-show="checkPermission('delete jobs')">
                               <v-btn color="error" @click.stop="deleteDialog = true">
                                 <v-icon
                                   icon="fa:fa-solid fa-trash"
@@ -207,7 +228,10 @@
             <v-icon color="white">mdi-alert-circle-outline</v-icon>
             Confirm Deletion
           </v-card-title>
-          <v-card-text> Are you sure you want to delete this job? <strong>This action cannot be reversed</strong></v-card-text>
+          <v-card-text>
+            Are you sure you want to delete this job?
+            <strong>This action cannot be reversed</strong></v-card-text
+          >
           <v-card-actions>
             <v-container
               ><v-row
@@ -390,7 +414,7 @@ const search = ref('')
 const isDarkMode = ref(localStorage.getItem('theme') === 'true' ? true : false)
 const viewJobDialogVisible = ref(false)
 const viewManagerJobCardVisible = ref(false)
-const employeePermissions = ref<string[]>([]);
+const employeePermissions = ref<string[]>([])
 
 let isDeleting = ref<boolean>(false)
 
@@ -412,29 +436,29 @@ const closeEditJob = async () => {
   await fetchData()
 }
 
-const checkPermission = (permission: string) =>{
-      return employeePermissions.value.includes(permission)
+const checkPermission = (permission: string) => {
+  return employeePermissions.value.includes(permission)
 }
 
-const getEmployeePermissions = async()=>{
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-      axios
-        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
-        .then((response) => {
-          console.log(response.data.data.role.permissionSuite)
-          employeePermissions.value = response.data.data.role.permissionSuite
-        })
-        .catch((error) => {
-          console.error('Failed to fetch employees:', error)
-        })
+const getEmployeePermissions = async () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    },
+    params: {
+      currentEmployeeId: localStorage.getItem('employeeId')
+    }
+  }
+  axios
+    .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+    .then((response) => {
+      console.log(response.data.data.role.permissionSuite)
+      employeePermissions.value = response.data.data.role.permissionSuite
+    })
+    .catch((error) => {
+      console.error('Failed to fetch employees:', error)
+    })
 }
 
 // Set the table headers
@@ -549,7 +573,7 @@ onMounted(() => {
       life: 3000
     })
     localStorage.removeItem('jobDeleted')
-  }  
+  }
 })
 
 const getRowProps = ({ index }: any) => {

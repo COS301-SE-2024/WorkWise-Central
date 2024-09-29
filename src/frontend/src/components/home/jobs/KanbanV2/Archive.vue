@@ -161,7 +161,8 @@ export default defineComponent({
 
       try {
         const loaded_tags_response = await axios.get(
-          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+          API_URL +
+            `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
 
@@ -207,7 +208,7 @@ export default defineComponent({
       const mn = String(date_passed_in.getMinutes()).padStart(2, '0')
       const f_date = `${y}-${m}-${d} ${h}:${mn}`
       return f_date
-    },
+    }
   },
   mounted() {
     this.loadArchiveData()

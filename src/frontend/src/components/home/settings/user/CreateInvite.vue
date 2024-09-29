@@ -83,7 +83,6 @@ export default defineComponent({
       this.dialog = false
     },
     async inviteUser() {
-      
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +95,7 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
-    },
+    }
   }
 })
 </script>

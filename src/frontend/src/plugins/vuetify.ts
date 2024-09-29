@@ -25,8 +25,8 @@ const vuetify = createVuetify({
         VCardTitle: {
           class: 'text-h5 font-weight-regular bg-secondary justify-end text-center'
         },
-        VCardSubtitle:{
-          class:'justify-center'
+        VCardSubtitle: {
+          class: 'justify-center'
         },
         VCardText: { class: 'text-h7 font-weight-regular justify-center bg-cardColor fill-height' },
         VCardActions: { class: 'text-h6 font-weight-regular justify-center bg-cardColor' }

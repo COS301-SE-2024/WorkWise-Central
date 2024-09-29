@@ -9,31 +9,31 @@
       class="w-full"
     />
 
-<!--        <FileUpload-->
-<!--          mode="basic"-->
-<!--          :maxFileSize="1000000"-->
-<!--          @select="onFileSelect"-->
-<!--          :disabled="disabled"-->
-<!--          :auto="true"-->
-<!--          chooseLabel="Attach"-->
-<!--          class="p-button-rounded p-button-outlined"-->
-<!--        />-->
-      <FileUpload
-          mode="basic"
-          :multiple="true"
-          @select="handleFileChange"
-          @clear="clearFiles"
-          :auto="true"
-          chooseLabel="Attach Files"
-          :customUpload="true"
-          :showCancelButton="false"
-          :showUploadButton="false"
-          :class="{ 'p-button p-button-rounded p-button-outlined': true }"
-      >
-        <template #chooseicon>
-          <i class="fas fa-file"></i>
-        </template>
-      </FileUpload>
+    <!--        <FileUpload-->
+    <!--          mode="basic"-->
+    <!--          :maxFileSize="1000000"-->
+    <!--          @select="onFileSelect"-->
+    <!--          :disabled="disabled"-->
+    <!--          :auto="true"-->
+    <!--          chooseLabel="Attach"-->
+    <!--          class="p-button-rounded p-button-outlined"-->
+    <!--        />-->
+    <FileUpload
+      mode="basic"
+      :multiple="true"
+      @select="handleFileChange"
+      @clear="clearFiles"
+      :auto="true"
+      chooseLabel="Attach Files"
+      :customUpload="true"
+      :showCancelButton="false"
+      :showUploadButton="false"
+      :class="{ 'p-button p-button-rounded p-button-outlined': true }"
+    >
+      <template #chooseicon>
+        <i class="fas fa-file"></i>
+      </template>
+    </FileUpload>
 
     <v-col cols="1">
       <Button

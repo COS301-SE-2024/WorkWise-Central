@@ -68,7 +68,7 @@ export default defineComponent({
     return {
       deleteDialog: false,
       isDeleting: false,
-      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {
@@ -114,7 +114,7 @@ export default defineComponent({
           })
           this.deleteDialog = false
         })
-    },
+    }
   }
 })
 </script>

@@ -228,7 +228,7 @@ export default defineComponent({
       '#9CCC65',
       '#FFEE58'
     ] as string[],
-    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false
   }),
   components: {
     DeleteStatus,

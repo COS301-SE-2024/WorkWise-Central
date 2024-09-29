@@ -139,7 +139,7 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-    
+
       await axios
         .patch(
           `${API_URL}admin/invite/decide`,
@@ -181,7 +181,7 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      
+
       await axios
         .patch(
           `${API_URL}admin/invite/decide`,
@@ -222,7 +222,7 @@ export default defineComponent({
         .catch((error) => {
           console.error(error)
         })
-    },
+    }
   },
   mounted() {
     this.getInvites()

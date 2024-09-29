@@ -80,7 +80,7 @@
               color="primary"
               block
               @click="filterByDateRange"
-              style="color: white !important;"
+              style="color: white !important"
             >
               <v-icon color="white" icon="mdi-calendar-range"></v-icon>
               Filter

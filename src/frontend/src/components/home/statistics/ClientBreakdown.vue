@@ -1,4 +1,119 @@
 <template>
+  <v-dialog v-model="dialog" max-width="600">
+    <v-card>
+      <v-card-title>{{ selectedClient.firstName }}'s Detailed Breakdown</v-card-title>
+      <v-card-text>
+        <v-list class="bg-cardColor">
+          <v-col cols="12">
+            <v-row>
+              <!-- Active Jobs -->
+              <v-col v-if="clientStats.activeJobs.length > 0" cols="12">
+                <h6>Active Jobs</h6>
+                <v-data-table
+                  :headers="[{ title: 'Active Jobs', value: 'jobTitle' }]"
+                  :items="clientStats.activeJobs"
+                  item-value="jobTitle"
+                  class="bg-cardColor"
+                  elevation="1"
+                  border="md"
+                >
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip color="primary">{{ item.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
+              </v-col>
+
+              <!-- All Jobs -->
+              <v-col v-if="clientStats.allJobs.length > 0" cols="12">
+                <h6>All Jobs</h6>
+                <v-data-table
+                  :headers="[{ title: 'All Jobs', value: 'jobTitle' }]"
+                  :items="clientStats.allJobs"
+                  item-value="jobTitle"
+                  class="bg-cardColor"
+                >
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip color="secondary">{{ item.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
+              </v-col>
+
+              <!-- Completed Jobs -->
+              <v-col v-if="clientStats.completedJobs.length > 0" cols="12">
+                <h6>Completed Jobs</h6>
+                <v-data-table
+                  :headers="[{ title: 'Completed Jobs', value: 'jobTitle' }]"
+                  :items="clientStats.completedJobs"
+                  item-value="jobTitle"
+                >
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip color="success">{{ item.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <!-- Invoices Paid -->
+              <v-col v-if="clientStats.invoicesPaid.length > 0" cols="12">
+                <h6>Invoices Paid</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Invoice Number', value: 'invoiceNumber' },
+                    { title: 'Job Title', value: 'jobTitle' },
+                    { title: 'Total Amount', value: 'total' }
+                  ]"
+                  :items="clientStats.invoicesPaid"
+                  class="bg-cardColor"
+                >
+                  <template v-slot:[`item.invoiceNumber`]="{ item }">
+                    <v-chip color="success">{{ item.invoiceNumber }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-list-item-content>{{ item.job.jobTitle }}</v-list-item-content>
+                  </template>
+                  <template v-slot:[`item.total`]="{ item }">
+                    <v-list-item-content>R{{ item.total }}</v-list-item-content>
+                  </template>
+                </v-data-table>
+              </v-col>
+
+              <!-- Invoices Unpaid -->
+              <v-col v-if="clientStats.invoicesUnpaid.length > 0" cols="12">
+                <h6>Invoices Unpaid</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Invoice Number', value: 'invoiceNumber' },
+                    { title: 'Job Title', value: 'jobTitle' },
+                    { title: 'Total Amount', value: 'total' }
+                  ]"
+                  :items="clientStats.invoicesUnpaid"
+                  class="bg-cardColor"
+                >
+                  <template v-slot:[`item.invoiceNumber`]="{ item }">
+                    <v-chip color="error">{{ item.invoiceNumber }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-list-item-content>{{ item.job.jobTitle }}</v-list-item-content>
+                  </template>
+                  <template v-slot:[`item.total`]="{ item }">
+                    <v-list-item-content>R{{ item.total }}</v-list-item-content>
+                  </template>
+                </v-data-table>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-list>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn color="error" @click="dialog = false" block>
+          <v-icon color="error">fa-solid fa-cancel</v-icon>Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <v-card border="" rounded="md" height="auto">
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-briefcase mr-2"></v-icon>
@@ -23,7 +138,9 @@
         class="mb-4"
         @keyup="applyFilter"
       />
+
       <!-- Client Data Table -->
+
       <v-data-table
         :items="clientDetails"
         :headers="headers"
@@ -33,21 +150,9 @@
       >
         <!-- Actions Column -->
         <template v-slot:[`item.actions`]="{ item }">
-          <v-menu max-width="500px">
-            <template v-slot:activator="{ props }">
-              <v-btn rounded="xl" variant="plain" v-bind="props">
-                <v-icon color="primary">mdi-dots-horizontal</v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item>
-                <v-btn @click="showBreakdown(item)" :loading="isloading">
-                  <v-icon icon="fa: fa-solid fa-chart-simple"></v-icon>
-                  View Breakdown
-                </v-btn>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-btn @click="showBreakdown(item)" :loading="isloading">
+            <v-icon icon="fa: fa-solid fa-chart-simple"></v-icon>
+          </v-btn>
         </template>
         <template v-slot:[`item.firstName`]="{ item }">
           <v-chip :color="selectedClient === item ? 'success' : 'secondary'">{{
@@ -60,11 +165,13 @@
       <!-- Breakdown Section (Appears after clicking View Breakdown) -->
       <v-card v-if="showStats">
         <v-card-title>Client Breakdown for {{ selectedClient.firstName }}</v-card-title>
+        <v-btn @click="dialog = true">View Details</v-btn>
         <v-card-text>
           <!-- Bar chart for number of jobs -->
           <v-container>
             <v-row>
               <!-- Jobs chart - only show if job data is not all zeros -->
+
               <v-col cols="12" lg="6" v-if="jobsData.datasets[0].data.some((value) => value > 0)">
                 <h5>Breakdown of the Jobs for {{ selectedClient.firstName }}</h5>
                 <Chart type="pie" :data="jobsData" @chart-click="onChartClick" />
@@ -88,6 +195,7 @@
               <!-- Only show if there are customer service ratings -->
               <v-col cols="12" lg="6" v-if="totalRatings !== 0">
                 <h5>Average Customer Service ratings given by {{ selectedClient.firstName }}</h5>
+
                 <v-card
                   class="d-flex flex-column mx-auto py-4"
                   elevation="10"
@@ -105,14 +213,27 @@
                       color="yellow-darken-3"
                       half-increments
                     ></v-rating>
+                    <v-rating
+                      :model-value="overallCustomerRating"
+                      color="yellow-darken-3"
+                      half-increments
+                    ></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
+
                   <v-list
                     bg-color="transparent"
                     class="d-flex flex-column-reverse"
                     density="compact"
                   >
                     <v-list-item v-for="(rating, i) in 5" :key="i">
+                      <v-progress-linear
+                        :model-value="rating * ratingValueFactor"
+                        class="mx-n5"
+                        color="yellow-darken-3"
+                        height="20"
+                        rounded
+                      ></v-progress-linear>
                       <v-progress-linear
                         :model-value="rating * ratingValueFactor"
                         class="mx-n5"
@@ -137,6 +258,7 @@
               <!-- Job Quality Rating Section - only show if there are job quality ratings -->
               <v-col cols="12" lg="6" v-if="totalJobRatings !== 0">
                 <h5>Average Job quality ratings given by {{ selectedClient.firstName }}</h5>
+
                 <v-card
                   class="d-flex flex-column mx-auto py-4"
                   elevation="10"
@@ -154,14 +276,27 @@
                       color="yellow-darken-3"
                       half-increments
                     ></v-rating>
+                    <v-rating
+                      :model-value="overallRating"
+                      color="yellow-darken-3"
+                      half-increments
+                    ></v-rating>
                     <div class="px-3">{{ totalRatings }} ratings</div>
                   </div>
+
                   <v-list
                     bg-color="transparent"
                     class="d-flex flex-column-reverse"
                     density="compact"
                   >
                     <v-list-item v-for="(rating, i) in 5" :key="i">
+                      <v-progress-linear
+                        :model-value="rating * ratingValueFactor"
+                        class="mx-n5"
+                        color="yellow-darken-3"
+                        height="20"
+                        rounded
+                      ></v-progress-linear>
                       <v-progress-linear
                         :model-value="rating * ratingValueFactor"
                         class="mx-n5"
@@ -194,7 +329,6 @@
 import Chart from 'primevue/chart'
 import axios from 'axios'
 import { API_URL } from '@/main'
-
 export default {
   components: { Chart },
   data() {
@@ -203,6 +337,7 @@ export default {
       isloading: false,
       selectedItemId: '',
       search: '',
+      dialog: false,
       clientStats: '',
       clientDetails: [], // Bind actual client data here
       clientIds: [],
@@ -322,7 +457,6 @@ export default {
           this.selectedItemId = this.clientIds[i]
         }
       }
-      console.log('Deleting client' + this.selectedItemId)
 
       await this.getClientStats(this.selectedItemId)
       this.isloading = false
@@ -342,12 +476,10 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+  
       axios
-        .get(`${apiURL}stats/numClients/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}stats/numClients/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          console.log(response)
           this.totalClients = response.data.data
         })
         .catch((error) => {
@@ -360,8 +492,6 @@ export default {
           this.selectedItemId = this.clientIds[i]
         }
       }
-      console.log('Deleting client' + this.selectedItemId)
-      console.log('Selected item:', this.selectedItem) // Corrected console.log
     },
     async getClientStats(id) {
       const config = {
@@ -371,28 +501,21 @@ export default {
         }
       }
 
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
-      console.log(this.selectedClient)
-      console.log
+
+
       axios
-        .get(`${apiURL}stats/clientStats/${id}`, config)
+        .get(`${API_URL}stats/clientStats/${id}`, config)
         .then((response) => {
           this.clientStats = response.data.data
-          console.log('Client stats response: ', response)
 
           // Update the jobsData chart
           this.jobsData = {
-            labels: ['Active Jobs', 'Completed Jobs', 'Total Jobs'],
+            labels: ['Active Jobs', 'Completed Jobs'],
             datasets: [
               {
                 label: 'Job Breakdown',
-                backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726'],
-                data: [
-                  this.clientStats.numActiveJobs,
-                  this.clientStats.numCompletedJobs,
-                  this.clientStats.numTotalJobs
-                ]
+                backgroundColor: ['#42A5F5', '#66BB6A'],
+                data: [this.clientStats.numActiveJobs, this.clientStats.numCompletedJobs]
               }
             ]
           }
@@ -423,16 +546,6 @@ export default {
           console.error('Failed to fetch clients:', error)
         })
     },
-
-    calculateRatingCounts(ratings) {
-      const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
-      ratings?.forEach((rating) => {
-        if (rating.rating >= 1 && rating.rating <= 5) {
-          counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
-        }
-      })
-      return counts
-    },
     async getClients() {
       const config = {
         headers: {
@@ -443,22 +556,18 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+
       axios
-        .get(`${apiURL}client/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}client/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          console.log(response)
           this.clients = response.data.data
-          console.log(this.clients)
 
           for (let i = 0; i < this.clients.length; i++) {
             this.clientIds[i] = this.clients[i]._id
-            console.log(this.clientIds[i])
+
             this.clientDetails[i] = this.clients[i].details
-            console.log(this.clientDetails[i])
           }
-          console.log(this.clientDetails)
+
           this.selectedClient = this.clientDetails[0]
           this.selectedItemId = this.clientIds[0]
           this.getClientStats(this.selectedItemId)
@@ -467,44 +576,54 @@ export default {
           console.error('Failed to fetch clients:', error)
         })
     },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      //const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return API_URL
-    },
-    onChartClick(type, index) {
-      if (type === 'jobs') {
-        if (index === 0) {
-          // Show active jobs in dialog
-          console.log('jkefh')
-          this.dialogTitle = `Active Jobs for ${this.selectedClient.firstName}`
-          this.dialogItems = this.clientStats.activeJobs
-        } else if (index === 1) {
-          // Show completed jobs in dialog
-          this.dialogTitle = `Completed Jobs for ${this.selectedClient.firstName}`
-          this.dialogItems = this.clientStats.completedJobs
+    calculateRatingCounts(ratings) {
+      const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
+      ratings?.forEach((rating) => {
+        if (rating.rating >= 1 && rating.rating <= 5) {
+          counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
         }
-      } else if (type === 'invoices') {
-        if (index === 0) {
-          // Show paid invoices in dialog
-          this.dialogTitle = `Paid Invoices for ${this.selectedClient.firstName}`
-          this.dialogItems = this.clientStats.invoicesPaid
-        } else if (index === 1) {
-          // Show unpaid invoices in dialog
-          this.dialogTitle = `Unpaid Invoices for ${this.selectedClient.firstName}`
-          this.dialogItems = this.clientStats.invoicesUnpaid
-        }
-      }
-      // Show the dialog
-      this.dialog = true
+      })
+      return counts
     }
+  },
+
+  async isLocalAvailable(localUrl) {
+    try {
+      const res = await axios.get(localUrl)
+      return res.status < 300 && res.status > 199
+    } catch (error) {
+      return false
+    }
+  },
+  async getRequestUrl() {
+    //const localAvailable = await this.isLocalAvailable(this.localUrl)
+    return API_URL
+  },
+  onChartClick(type, index) {
+    if (type === 'jobs') {
+      if (index === 0) {
+        // Show active jobs in dialog
+
+        this.dialogTitle = `Active Jobs for ${this.selectedClient.firstName}`
+        this.dialogItems = this.clientStats.activeJobs
+      } else if (index === 1) {
+        // Show completed jobs in dialog
+        this.dialogTitle = `Completed Jobs for ${this.selectedClient.firstName}`
+        this.dialogItems = this.clientStats.completedJobs
+      }
+    } else if (type === 'invoices') {
+      if (index === 0) {
+        // Show paid invoices in dialog
+        this.dialogTitle = `Paid Invoices for ${this.selectedClient.firstName}`
+        this.dialogItems = this.clientStats.invoicesPaid
+      } else if (index === 1) {
+        // Show unpaid invoices in dialog
+        this.dialogTitle = `Unpaid Invoices for ${this.selectedClient.firstName}`
+        this.dialogItems = this.clientStats.invoicesUnpaid
+      }
+    }
+    // Show the dialog
+    this.dialog = true
   },
   async mounted() {
     await this.getClients()
