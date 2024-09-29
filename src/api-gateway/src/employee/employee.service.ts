@@ -240,6 +240,7 @@ export class EmployeeService {
   }
 
   async update(employeeId: Types.ObjectId, updateEmployeeDto: UpdateEmployeeDto) {
+    console.log('updateEmployeeDto: ', updateEmployeeDto);
     const validation = await this.validateUpdateEmployee(updateEmployeeDto);
     if (!validation.isValid) {
       throw new Error(validation.message);
@@ -259,6 +260,11 @@ export class EmployeeService {
       dto.role.permissionSuite = role.permissionSuite;
       dto.role.roleName = role.roleName;
     }
+
+    if (updateEmployeeDto.hourlyRate) {
+      dto.hourlyRate = updateEmployeeDto.hourlyRate;
+    }
+    console.log('dto: ', dto);
     return await this.employeeRepository.update(employeeId, dto);
   }
 

@@ -43,38 +43,6 @@
                 <span>Invoice Details</span>
               </v-card-title>
               <v-card-text>
-                <v-row>
-                  <v-col cols="6">
-                    <label class="font-weight-light" style="font-size: 20px">Invoice Number</label>
-                    <v-spacer></v-spacer>
-                    <small class="text-caption" style="font-size: 12px">{{
-                      invoice?.invoiceNumber
-                    }}</small>
-                  </v-col>
-                  <v-col cols="6">
-                    <label class="font-weight-light" style="font-size: 20px">Date</label>
-                    <v-spacer></v-spacer>
-                    <small class="text-caption" style="font-size: 12px">{{
-                      invoice?.paymentDate
-                    }}</small>
-                  </v-col>
-                </v-row>
-                <v-divider></v-divider>
-                <v-row>
-                  <v-col cols="6">
-                    <label class="font-weight-light" style="font-size: 20px">Amount</label>
-                    <v-spacer></v-spacer>
-                    <small class="text-caption" style="font-size: 12px">{{ invoice?.total }}</small>
-                  </v-col>
-                  <v-col cols="6">
-                    <label class="font-weight-light" style="font-size: 20px">Status</label>
-                    <v-spacer></v-spacer>
-                    <small class="text-caption" style="font-size: 12px">{{
-                      invoice?.paid ? 'Paid' : 'Unpaid'
-                    }}</small>
-                  </v-col>
-                </v-row>
-
                 <!-- Embed the PDF inside an iframe -->
                 <v-row>
                   <v-col cols="12">
@@ -159,9 +127,9 @@ export default defineComponent({
         invoiceNumber: payload.invoiceNumber,
         invoiceDate: this.formatDate(payload.invoiceDate),
         paymentDate: this.formatDate(payload.paymentDate),
-        subTotal: payload.subTotal,
-        total: payload.total,
-        taxAmount: payload.taxAmount,
+        subTotal: Number(payload.subTotal.toFixed(2)),
+        total: Number(payload.total.toFixed(2)),
+        taxAmount: Number(payload.taxAmount.toFixed(2)),
         taxPercentage: payload.taxPercentage,
         paid: payload.paid,
         clientId: payload.clientId._id,
@@ -198,14 +166,14 @@ export default defineComponent({
           obj.quantity,
           obj.unitPrice,
           obj.discount,
-          obj.total
+          Number(obj.total.toFixed(2))
         ]),
         laborItems: payload.laborItems.map((obj) => [
           obj.description,
-          obj.quantity,
+          Number(obj.quantity.toFixed(2)),
           obj.unitPrice,
           obj.discount,
-          obj.total
+          Number(obj.total.toFixed(2))
         ])
       })
     },
@@ -416,6 +384,7 @@ export default defineComponent({
           this.invoices = response.data.data
           for (const invoice of this.invoices) {
             invoice.paymentDate = this.formatDate(invoice.paymentDate)
+            invoice.total = Number(invoice.total.toFixed(2))
           }
         })
         .catch((error) => {

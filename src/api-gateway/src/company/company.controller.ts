@@ -311,23 +311,23 @@ export class CompanyController {
     @Headers() headers: any,
     @Param('cid') companyId: string,
     @UploadedFile() logo: Express.Multer.File,
-    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+    // @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
     //console.log('In update endpoint');
-    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('company settings')) {
-      try {
-        validateObjectId(companyId);
-        const userId = extractUserId(this.jwtService, headers);
-        return {
-          data: await this.companyService.updateLogo(userId, new Types.ObjectId(companyId), logo),
-        };
-      } catch (e) {
-        throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // if (currentEmployee.role.permissionSuite.includes('company settings')) {
+    try {
+      validateObjectId(companyId);
+      const userId = extractUserId(this.jwtService, headers);
+      return {
+        data: await this.companyService.updateLogo(userId, new Types.ObjectId(companyId), logo),
+      };
+    } catch (e) {
+      throw new HttpException('internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    // } else {
+    //   throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    // }
   }
 
   @UseGuards(AuthGuard)

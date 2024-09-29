@@ -595,6 +595,7 @@ export class EmployeeController {
     @Body() updateEmployeeDto: UpdateEmployeeDto,
     @Param('employeeId') employeeId: Types.ObjectId,
   ) {
+    console.log('In update');
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, updateEmployeeDto.currentEmployeeId);
 

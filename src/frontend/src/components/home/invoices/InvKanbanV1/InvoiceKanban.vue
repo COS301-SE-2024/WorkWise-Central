@@ -60,7 +60,7 @@
                   role="option"
                   class="my-5"
                 >
-                  <v-dialog v-model="dialog" max-width="600">
+                  <v-dialog v-model="dialog" max-width="700">
                     <v-card class="bg-cardColor">
                       <v-card-title>
                         <v-icon>mdi-file-document-outline</v-icon>
@@ -68,48 +68,11 @@
                       </v-card-title>
                       <v-card-text>
                         <v-row>
-                          <v-col cols="6">
-                            <label class="font-weight-light" style="font-size: 20px"
-                              >Invoice Number</label
-                            >
-                            <v-spacer></v-spacer>
-                            <small class="text-caption" style="font-size: 12px">{{
-                              item?.invoiceNumber
-                            }}</small>
-                          </v-col>
-                          <v-col cols="6">
-                            <label class="font-weight-light" style="font-size: 20px">Date</label>
-                            <v-spacer></v-spacer>
-                            <small class="text-caption" style="font-size: 12px">{{
-                              item?.paymentDate
-                            }}</small>
-                          </v-col>
-                        </v-row>
-                        <v-divider></v-divider>
-                        <v-row>
-                          <v-col cols="6">
-                            <label class="font-weight-light" style="font-size: 20px">Amount</label>
-                            <v-spacer></v-spacer>
-                            <small class="text-caption" style="font-size: 12px">{{
-                              item?.total
-                            }}</small>
-                          </v-col>
-                          <v-col cols="6">
-                            <label class="font-weight-light" style="font-size: 20px">Status</label>
-                            <v-spacer></v-spacer>
-                            <small class="text-caption" style="font-size: 12px">{{
-                              item?.paid ? 'Paid' : 'Unpaid'
-                            }}</small>
-                          </v-col>
-                        </v-row>
-
-                        <!-- Embed the PDF inside an iframe -->
-                        <v-row>
                           <v-col cols="12">
                             <iframe
                               v-if="pdfSrc"
                               :src="pdfSrc"
-                              style="width: 100%; height: 500px"
+                              style="width: 100%; height: 600px"
                             ></iframe>
                           </v-col>
                         </v-row>
@@ -286,6 +249,7 @@ export default {
     },
 
     clickedEvent(payload) {
+      console.log('payload: ', payload)
       try {
         if (payload.laborItems.length != 0) {
           payload.inventoryItems.push(['', '', '', '', ''])
