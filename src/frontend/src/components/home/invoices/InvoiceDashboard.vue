@@ -91,7 +91,7 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item>
+                <v-list-item v-if="checkPermission('send invoices')">
                   <SendInvoice
                     :invoice_id="selectedItem._id"
                     :client-name="selectedItem.clientName"
@@ -242,7 +242,8 @@ export default defineComponent({
       currentEmployee: '',
       isModalVisible: false,
       jobs: [],
-      selectedJob: null
+      selectedJob: null,
+      employeePermissions:[],
     }
   },
   components: { DeleteInvoice, EditInvoice, ViewInvoice, Toast, SendInvoice },
@@ -260,6 +261,25 @@ export default defineComponent({
       return send ? 'Sent' : 'Unsent'
     },
     async getRequests() {
+      //getting the current employee 
+      const config1 = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      axios
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config1)
+        .then((response) => {
+          console.log(response.data.data.role.permissionSuite)
+          this.employeePermissions = response.data.data.role.permissionSuite
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
       // Getting all the jobs for the company
       const config = {
         headers: {
@@ -362,6 +382,9 @@ export default defineComponent({
       } catch (error) {
         console.error(error)
       }
+    },
+    checkPermission(permission) {
+      return this.employeePermissions.includes(permission)
     },
     async generateInvoice() {
       const config = {
