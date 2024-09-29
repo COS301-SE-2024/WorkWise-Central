@@ -1,18 +1,5 @@
 <template>
   <v-container fluid>
-    <!-- <v-row class="align-center">
-      <v-col cols="auto"></v-col>
-
-      <v-col class="text-center">
-        <h4>Job Board</h4>
-      </v-col>
-      <v-col cols="auto">
-        <v-btn size="x-large" @click="redirectToArchivePage">
-          <v-icon>{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row> -->
-
     <v-row>
       <VueDraggable
         ref="el"
@@ -39,7 +26,7 @@
             variant="flat"
             elevation="1"
             color="red"
-            :min-width="350"
+            :max-width="350"
             :max-height="800"
             class="overflow-auto"
           >
@@ -882,7 +869,8 @@ export default {
 
       try {
         const loaded_tags_response = await axios.get(
-          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+          API_URL +
+            `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(loaded_tags_response)
@@ -1003,7 +991,7 @@ export default {
 
         return tracker1 - tracker2
       })
-    },
+    }
   },
   mounted() {
     this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))

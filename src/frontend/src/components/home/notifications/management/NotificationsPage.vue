@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height>
+  <v-container>
     <Toast position="top-center" />
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
@@ -67,17 +67,9 @@
                       :key="i"
                       @click="handleNotificationClick(notification._id)"
                     >
-                      <Panel :class="'bg-background'">
+                      <Panel class="bg-background">
                         <template #header>
                           <div class="flex items-center gap-2">
-                            <!--                            <v-icon-->
-                            <!--                              :icon="-->
-                            <!--                                !notification.isRead-->
-                            <!--                                  ? 'fa: fa-regular fa-bell'-->
-                            <!--                                  : 'fa: fa-solid fa-bell'-->
-                            <!--                              "-->
-                            <!--                            >-->
-                            <!--                            </v-icon>-->
                             <v-badge v-if="!notification.isRead" dot color="green" overlap>
                               <v-icon icon="fa: fa-regular fa-bell"></v-icon>
                             </v-badge>
