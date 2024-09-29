@@ -74,7 +74,38 @@
                 class="custom-button"
             />
           </v-col>
+          <v-col cols="12" class="text-center">
+            <Button
+                label="Assign Vehicle"
+                icon="fa: fa-solid fa-user-plus"
+                @click="assignDialogVisible = true"
+                class="custom-button"
+            />
+          </v-col>
         </v-row>
+        <Dialog v-model:visible="assignDialogVisible" header="Assign Vehicle" :style="{ width: '50vw' }" modal>
+          <div>
+            <Listbox
+                v-model="selectedVehicle"
+                :options="vehicles"
+                optionLabel="licensePlate"
+                class="w-full md:w-56 mt-2"
+                @change="fetchEmployees"
+                filter
+            />
+            <Listbox
+                v-model="selectedEmployee"
+                :options="employees"
+                optionLabel="userInfo.displayName"
+                class="w-full md:w-56 mt-2"
+                filter
+            />
+          </div>
+          <template #footer>
+            <Button label="Assign" class="p-button-success" icon="fa: fa-solid fa-check" @click="assignVehicle" />
+            <Button label="Cancel" class="p-button-danger" icon="fa: fa-solid fa-times" @click="assignDialogVisible = false" />
+          </template>
+        </Dialog>
         <Dialog v-model:visible="showVehicleList" header="Select Vehicle" :style="{ width: '50vw', margin: 'auto' }">
           <Listbox
               v-model="selectedVehicle"
@@ -341,6 +372,9 @@ export default {
       fuelTypes: Object.entries(FuelType).map(([key, value]) => ({ label: value, value: value })),
       currentDrivers: [],
       recentAlerts: [],
+      employees: [],
+      assignDialogVisible: false,
+      selectedEmployee: null,
       totalDistanceToday: 0,
       averageFuelConsumption: 0,
       vehiclesDueForService: 0
@@ -522,6 +556,46 @@ export default {
         .catch((error) => {
           console.error('Error updating vehicle:', error)
         })
+    },
+    async getEmployees() {
+      try {
+        const response = await axios.get(`${this.apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`, this.getAuthConfig())
+        this.employees = response.data.data
+        console.log('Employees:', this.employees)
+      } catch (error) {
+        console.error('Error fetching employees:', error)
+        this.employees = []
+      }
+    },
+    async fetchEmployees() {
+      if (this.selectedVehicle) {
+        await this.getEmployees()
+      }
+    },
+    async assignVehicle() {
+      if (this.selectedVehicle && this.selectedEmployee) {
+        try {
+          await axios.patch(
+              `${this.apiUrl}fleet/update`,
+              {
+                ...this.selectedVehicle,
+                availability: {
+                  ...this.selectedVehicle.availability,
+                  assignedTo: this.selectedEmployee._id
+                },
+                vehicleId: this.selectedVehicle._id,
+                currentEmployeeId: localStorage.getItem('employeeId')
+              },
+              this.getAuthConfig()
+          )
+          this.assignDialogVisible = false
+          this.selectedVehicle = null
+          this.selectedEmployee = null
+          this.getVehiclesData()
+        } catch (error) {
+          console.error('Error assigning vehicle:', error)
+        }
+      }
     }
   }
 }
