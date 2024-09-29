@@ -23,7 +23,7 @@ export class FileService {
     //this.uploadPath = this.configService.get<string>('UPLOAD_PATH') || join(__dirname, '..', '../../../uploads');
   }
   ///
-  AWS_S3_BUCKET = 'work-wise-central';
+  AWS_S3_BUCKET = 'wwcentral-rsa';
   s3 = new AWS.S3({
     accessKeyId: this.globalConfig.aws_key,
     secretAccessKey: this.globalConfig.aws_secret,
