@@ -61,15 +61,15 @@
             <v-col>
               <small class="text-caption">Assign Job</small>
               <v-select
-                  v-model="selectedJobs"
-                  :items="jobList"
-                  multiple
-                  item-title="details.heading"
-                  item-value="_id"
-                  required
-                  variant="solo"
-                  color="primary"
-                  background-color="#f5f5f5"
+                v-model="selectedJobs"
+                :items="jobList"
+                multiple
+                item-title="details.heading"
+                item-value="_id"
+                required
+                variant="solo"
+                color="primary"
+                background-color="#f5f5f5"
               ></v-select>
             </v-col>
           </v-col>
@@ -219,12 +219,12 @@ export default {
         this.getEmployeeIdByName(this.selectedTeamLeader !== this.intialTeamLeader)
       ) {
         const data = {
-          teamName: this.localEditedItem.teamName,
-          teamMembers: this.selectedTeamMembers.map((name) => this.getEmployeeIdByName(name)),
-          teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader),
-          companyId: localStorage.getItem('currentCompany')
-        },
-        currentEmployeeId = localStorage.getItem('employeeId')
+            teamName: this.localEditedItem.teamName,
+            teamMembers: this.selectedTeamMembers.map((name) => this.getEmployeeIdByName(name)),
+            teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader),
+            companyId: localStorage.getItem('currentCompany')
+          },
+          currentEmployeeId = localStorage.getItem('employeeId')
       }
       console.log(data)
 
@@ -233,11 +233,14 @@ export default {
       for (const job of this.assignedJobs) {
         if (!this.selectedJobs.includes(job)) {
           console.log('Removing job... :', job)
-          await axios.patch(`${API_URL}job/team`, {
-                employeeId: localStorage.getItem('employeeId'),
-                teamId: this.teamId,
-                jobId: job
-              }, config
+          await axios.patch(
+            `${API_URL}job/team`,
+            {
+              employeeId: localStorage.getItem('employeeId'),
+              teamId: this.teamId,
+              jobId: job
+            },
+            config
           )
         }
       }
@@ -245,11 +248,15 @@ export default {
       // Assign new jobs to the team
       for (const job of this.selectedJobs) {
         if (!this.assignedJobs.includes(job)) {
-          await axios.put(`${API_URL}job/team`, {
-            employeeId: localStorage.getItem('employeeId'),
-            teamId: this.teamId,
-            jobId: job
-          }, config)
+          await axios.put(
+            `${API_URL}job/team`,
+            {
+              employeeId: localStorage.getItem('employeeId'),
+              teamId: this.teamId,
+              jobId: job
+            },
+            config
+          )
         }
       }
 
@@ -302,15 +309,12 @@ export default {
         }
       }
       try {
-        const response = await axios.get(
-            `${API_URL}team/id/${this.teamId}`,
-            config
-        )
+        const response = await axios.get(`${API_URL}team/id/${this.teamId}`, config)
         for (const job of response.data.data.currentJobAssignments) {
           this.assignedJobs.push(job)
         }
         for (const job of this.jobList) {
-          if (this.assignedJobs.some(assignedJob => assignedJob === job._id)) {
+          if (this.assignedJobs.some((assignedJob) => assignedJob === job._id)) {
             this.selectedJobs.push(job._id)
           }
         }
@@ -327,8 +331,8 @@ export default {
       }
       try {
         const response = await axios.get(
-            `${API_URL}job/all/company/${localStorage.getItem('currentCompany')}`,
-            config
+          `${API_URL}job/all/company/${localStorage.getItem('currentCompany')}`,
+          config
         )
         response.data.data.forEach((job) => {
           this.jobList.push(job)
@@ -372,7 +376,7 @@ export default {
     },
     close() {
       this.editDialog = false
-    },
+    }
   }
 }
 </script>

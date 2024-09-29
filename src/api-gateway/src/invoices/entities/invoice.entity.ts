@@ -34,15 +34,16 @@ export class Invoice {
     this.total = createInvoiceDto.total ? createInvoiceDto.total : 0;
     this.taxAmount = createInvoiceDto.taxAmount ? createInvoiceDto.taxAmount : 0;
     this.taxPercentage = createInvoiceDto.taxPercentage ? createInvoiceDto.taxPercentage : 0;
-    this.paid = createInvoiceDto.paid ? createInvoiceDto.paid : false;
+    this.paid = false;
     this.clientId = createInvoiceDto.clientId;
     this.jobId = createInvoiceDto.jobId;
     this.companyId = createInvoiceDto.companyId;
     this.createdAt = new Date();
+    this.sent = false;
   }
 
   @ApiProperty()
-  @Prop({ type: Number, required: true, unique: true })
+  @Prop({ type: Number, required: true })
   invoiceNumber: number;
 
   @ApiProperty()
@@ -76,6 +77,14 @@ export class Invoice {
   @ApiProperty()
   @Prop({ required: true, default: new Date() })
   receiptOfPaymentDate: Date;
+
+  @ApiProperty()
+  @Prop({ type: Boolean, required: true, default: false })
+  sent: boolean;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  sentDate: Date;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'Client' })
@@ -116,7 +125,7 @@ export class InvoiceApiObject {
   id: Types.ObjectId;
 
   @ApiProperty()
-  @Prop({ type: Number, required: true, unique: true })
+  @Prop({ type: Number, required: true })
   invoiceNumber: number;
 
   @ApiProperty()

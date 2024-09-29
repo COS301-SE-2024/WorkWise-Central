@@ -61,7 +61,7 @@ export default defineComponent({
   data: () => ({
     deleteDialog: false,
     isDeleting: false,
-    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false
   }),
   methods: {
     async deleteTeam() {
@@ -106,7 +106,7 @@ export default defineComponent({
     },
     close() {
       this.deleteDialog = false
-    },
+    }
   }
 })
 </script>

@@ -83,7 +83,6 @@ export default defineComponent({
       this.dialog = false
     },
     async inviteUser() {
-      
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -91,12 +90,23 @@ export default defineComponent({
         }
       }
       try {
-        const response = await axios.post(`${API_URL}admin/invite/create`, this.req_obj, config)
+        const body: any = {
+          email: this.req_obj.emailToInvite,
+          employeeId: this.req_obj.employeeId,
+          emailToInvite: this.req_obj.emailToInvite
+        }
+        // if (this.req_obj.roleId != null) {
+        //   body.roleId = this.req_obj.roleId
+        // }
+        if (this.req_obj.superiorId != null) {
+          body.superiorId = this.req_obj.superiorId
+        }
+        const response = await axios.post(`${API_URL}admin/invite/create`, body, config)
         console.log(response)
       } catch (error) {
         console.error(error)
       }
-    },
+    }
   }
 })
 </script>

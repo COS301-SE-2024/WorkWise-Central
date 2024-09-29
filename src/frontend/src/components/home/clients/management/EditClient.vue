@@ -288,11 +288,7 @@ export default {
       }
       console.log(data)
       try {
-        const response = await axios.patch(
-          `${API_URL}client/${this._clientID}`,
-          data,
-          config
-        )
+        const response = await axios.patch(`${API_URL}client/${this._clientID}`, data, config)
         console.log(response)
         this.$toast.add({
           severity: 'success',

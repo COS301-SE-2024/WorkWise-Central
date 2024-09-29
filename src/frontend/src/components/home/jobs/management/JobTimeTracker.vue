@@ -61,8 +61,8 @@ const getEmployeeId = (): string | null => {
 
 const makeApiCall = async (endpoint: string, action: string) => {
   try {
-    const url = `${API_URL}${endpoint}`;
-    const employeeId = getEmployeeId();
+    const url = `${API_URL}${endpoint}`
+    const employeeId = getEmployeeId()
 
     if (!employeeId) {
       console.error('Employee ID not found')

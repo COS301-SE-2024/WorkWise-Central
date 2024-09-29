@@ -60,7 +60,7 @@ export default defineComponent({
   },
   data: () => ({
     deleteDialog: false,
-    isDeleting: false,
+    isDeleting: false
   }),
   methods: {
     async deleteInvoice() {
@@ -100,7 +100,7 @@ export default defineComponent({
     },
     close() {
       this.deleteDialog = false
-    },
+    }
   }
 })
 </script>

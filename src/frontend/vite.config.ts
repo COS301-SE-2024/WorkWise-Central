@@ -15,7 +15,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       manifest: {
-        name: 'My Awesome App',
+        name: 'WorkWise Central',
         short_name: 'WorkWise',
         description: 'WorkWise Central is a service delivery job tracking PWA',
         theme_color: '#F0984D',

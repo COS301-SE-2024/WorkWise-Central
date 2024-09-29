@@ -187,9 +187,9 @@ export default {
       req_obj: {
         currentEmployeeId: localStorage['employeeId'],
         updateEmployeeDto: {
-          roleId: '',
+          roleId: null as null | string,
           subordinates: [] as string[],
-          superiorId: null
+          superiorId: null as null | string
         }
       } as EmployeeUpdate,
       nameRules: [
@@ -231,6 +231,9 @@ export default {
     }
   },
   methods: {
+    strHasNumberInIt(str: string) {
+      return /\d/.test(str)
+    },
     selected_subordiates(a: any) {
       console.log(a)
     },
@@ -317,9 +320,15 @@ export default {
           API_URL + `employee/detailed/id/${this.editedItem.employeeId}`,
           config
         )
-        this.req_obj.updateEmployeeDto.roleId = current_subs.data.data.role.roleId
+
+        let sup_employee = await axios.get(
+          API_URL + `employee/detailed/id/${current_subs.data.data.superiorId}`,
+          config
+        )
+        //this.roleItems
+        this.req_obj.updateEmployeeDto.roleId = current_subs.data.data.role.roleName
         this.currentRoleId = current_subs.data.data.role.roleId
-        this.req_obj.updateEmployeeDto.superiorId = current_subs.data.data.superiorId
+        this.req_obj.updateEmployeeDto.superiorId = sup_employee.data.data.userInfo.firstName
         this.currentSuperior = current_subs.data.data.superiorId
         this.req_obj.updateEmployeeDto.subordinates = current_subs.data.data.subordinates
         this.currentSubordinates = current_subs.data.data.subordinates
@@ -473,7 +482,8 @@ export default {
       if (
         this.req_obj.updateEmployeeDto.roleId != this.currentRoleId &&
         this.req_obj.updateEmployeeDto.roleId != '' &&
-        this.req_obj.updateEmployeeDto.roleId != null
+        this.req_obj.updateEmployeeDto.roleId != null &&
+        this.strHasNumberInIt(this.req_obj.updateEmployeeDto.roleId)
       )
         axios
           .patch(
@@ -501,7 +511,8 @@ export default {
       if (
         this.req_obj.updateEmployeeDto.superiorId != this.currentSuperior &&
         this.req_obj.updateEmployeeDto.superiorId != '' &&
-        this.req_obj.updateEmployeeDto.superiorId != null
+        this.req_obj.updateEmployeeDto.superiorId != null &&
+        this.strHasNumberInIt(this.req_obj.updateEmployeeDto.superiorId)
       )
         axios
           .patch(
@@ -535,12 +546,14 @@ export default {
           detail: 'Employee Edited Successfully',
           life: 3000
         })
-        this.employeeDialog = false
-        window.location.reload()
+        setTimeout(() => {
+          this.employeeDialog = false
+          this.$emit('update')
+        }, 1500)
       }
-    },
+    }
   },
-  created() {
+  mounted() {
     this.showlocalvalues()
     this.loadRoles()
     this.loadSubordinates().then(() =>

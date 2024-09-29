@@ -218,7 +218,7 @@ export default defineComponent({
     },
     close() {
       this.addDialog = false
-    },
+    }
   },
   mounted() {
     this.getEmployees()

@@ -18,7 +18,9 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "start:dev": "concurrently \"cd src/frontend && npm run dev\" \"cd src/api-gateway && npm run start:dev\"",
-    "installAll": "npm install && cd src/api-gateway && npm install && cd ../frontend && npm install && cd ../../"
+    "installAll": "npm install && cd src/api-gateway && npm install && cd ../frontend && npm install && cd ../../",
+    "test:cypress": "cypress open",
+    "test": "concurrently \"cd src/api-gateway && npm run start:dev\" \"cd  src/frontend && npx cypress open\""
   },
   "dependencies": {
     "https-localhost": "^4.7.1",
