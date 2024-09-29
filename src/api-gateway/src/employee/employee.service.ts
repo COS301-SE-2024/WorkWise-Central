@@ -221,7 +221,7 @@ export class EmployeeService {
   }
 
   async detailedFindById(id: Types.ObjectId) {
-    console.log('In detailedFindById, id: ', id);
+    //console.log('In detailedFindById, id: ', id);
     const employee: any = await this.employeeRepository.DetailedFindById(id, ['userId']);
     console.log('employee: ', employee);
     return employee;

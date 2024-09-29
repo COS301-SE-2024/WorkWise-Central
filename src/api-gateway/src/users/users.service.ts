@@ -103,8 +103,7 @@ export class UsersService {
       email: email,
       token: randomStringGenerator(),
     };
-    const req = await this.userPasswordResetModel.create(passwordResetRequest);
-    await req.save();
+    const req = await (await this.userPasswordResetModel.create(passwordResetRequest)).save();
     await this.emailService.sendResetPasswordRequest(
       {
         userId: user._id,

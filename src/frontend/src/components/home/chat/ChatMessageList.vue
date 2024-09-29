@@ -173,9 +173,11 @@ const cancelEdit = () => {
 
 const formatTimestamp = (timestamp) => {
   return new Intl.DateTimeFormat('en-US', {
+    day: 'numeric',
+    month: 'short',
     hour: 'numeric',
     minute: 'numeric',
-    hour12: true
+    hour12: false
   }).format(new Date(timestamp))
 }
 

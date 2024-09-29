@@ -8,7 +8,7 @@ export class Chat {
   @Prop({ type: String, required: true, default: randomStringGenerator() })
   name: string;
 
-  @Prop({ type: String, required: true, default: '' })
+  @Prop({ type: String, required: false, default: '' })
   description: string = '';
 
   @Prop({
@@ -24,11 +24,25 @@ export class Chat {
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }], required: true })
   participants: Types.ObjectId[];
 
-  constructor(name: string, participants: Types.ObjectId[], admin?: Types.ObjectId, image?: string) {
+  constructor(
+    name: string,
+    participants: Types.ObjectId[],
+    admin?: Types.ObjectId,
+    image?: string,
+    description?: string,
+  ) {
     this.name = name;
     this.participants = participants;
-    this.admin = admin;
-    this.image = image;
+    if (admin) {
+      this.admin = admin;
+    }
+    if (image) {
+      this.image = image;
+    }
+    if (description) this.description = description;
+    else {
+      this.description = '';
+    }
   }
 
   @Prop({ default: Date.now })

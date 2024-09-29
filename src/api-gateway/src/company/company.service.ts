@@ -76,7 +76,7 @@ export class CompanyService {
       console.log('Uploading image');
       const picture = await this.fileService.uploadBase64Image(createCompanyDto.logo);
       if (picture.secure_url != null) {
-        console.log('Saving company with a logo');
+        //console.log('Saving company with a logo');
         createCompanyDto.logo = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
     }
@@ -241,7 +241,7 @@ export class CompanyService {
     if (result == null) {
       throw new ConflictException('Client not found');
     }
-    console.log(result);
+    //console.log(result);
     return result;
   }
 
@@ -269,7 +269,7 @@ export class CompanyService {
       throw new ConflictException(inputValidated.message);
     }
 
-    console.log('addUserDto', addUserDto);
+    //console.log('addUserDto', addUserDto);
     //Get company and user
     const company = await this.getCompanyById(addUserDto.currentCompany);
     const user = await this.usersService.getUserByUsername(addUserDto.newUserUsername);
@@ -327,15 +327,16 @@ export class CompanyService {
       companyName: company.name,
     };
 
-    const updatedUser = await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
+    /*const updatedUser = */
+    await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
     //console.log('Add New Employee ID');
     //await this.addNewEmployeeId(company._id, addedEmployee._id);
-    console.log(updatedUser);
+    //console.log(updatedUser);
     return newJoinedCompany;
   }
 
   async addEmployeeFromInvite(inviteDto: AddUserFromInviteDto) {
-    console.log('addUserDto', inviteDto);
+    //console.log('addUserDto', inviteDto);
     //Get company and user
     const company = await this.getCompanyById(inviteDto.companyId);
     const user = await this.usersService.getUserById(inviteDto.newUserId);
@@ -395,10 +396,11 @@ export class CompanyService {
       companyName: company.name,
     };
 
-    const updatedUser = await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
+    /*const updatedUser = */
+    await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
     //console.log('Add New Employee ID');
     //await this.addNewEmployeeId(company._id, addedEmployee._id);
-    console.log(updatedUser);
+    //console.log(updatedUser);
     return newJoinedCompany;
   }
 
@@ -437,9 +439,9 @@ export class CompanyService {
   }
 
   encrypt(data: string) {
-    console.log('In encryption function: ', data);
+    //console.log('In encryption function: ', data);
     const payKey = this.configService.get<string>('PAY_KEY');
-    console.log('Secret: ', payKey);
+    //console.log('Secret: ', payKey);
 
     let ENCRYPTION_KEY = Buffer.from(payKey, 'base64');
 
@@ -448,15 +450,15 @@ export class CompanyService {
       ENCRYPTION_KEY = Buffer.concat([ENCRYPTION_KEY], 32); // Pads or truncates to 32 bytes
     }
 
-    console.log('ENCRYPTION_KEY length: ', ENCRYPTION_KEY.length); // Should be 32
-    console.log('ENCRYPTION_KEY: ', ENCRYPTION_KEY);
+    //console.log('ENCRYPTION_KEY length: ', ENCRYPTION_KEY.length); // Should be 32
+    //console.log('ENCRYPTION_KEY: ', ENCRYPTION_KEY);
 
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
 
-    console.log('Encrypted data: ', encrypted);
+    //console.log('Encrypted data: ', encrypted);
 
     return iv.toString('hex') + ':' + encrypted;
   }
@@ -496,13 +498,13 @@ export class CompanyService {
 
     //Save files In Bucket, and store URLs (if provided)
     if (updateCompanyDto.logo) {
-      console.log('Uploading image');
+      //console.log('Uploading image');
       const picture = await this.fileService.uploadBase64Image(updateCompanyDto.logo);
       if (picture.secure_url != null) {
         updateCompanyDto.logo = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
     }
-    console.log('Before encryption: ', updateCompanyDto);
+    //console.log('Before encryption: ', updateCompanyDto);
 
     //checking if accountDetails are being updated and encrypting the details
     if (updateCompanyDto.accountDetails.merchantId) {
@@ -517,10 +519,10 @@ export class CompanyService {
       updateCompanyDto.accountDetails.passPhrase = this.encrypt(updateCompanyDto.accountDetails.passPhrase);
     }
 
-    console.log('After encryption: ', updateCompanyDto);
+    //console.log('After encryption: ', updateCompanyDto);
 
     const updatedCompany = await this.companyRepository.update(companyId, updateCompanyDto);
-    console.log(updatedCompany);
+    //console.log(updatedCompany);
 
     //Update All Users' JoinedCompanies
     if (updateCompanyDto.name) await this.usersService.updateJoinedCompanyName(updatedCompany._id, updatedCompany.name);
@@ -540,7 +542,7 @@ export class CompanyService {
       company.logo = uploadApiResponse.secure_url;
       return await this.companyRepository.save(company);
     } else {
-      console.log('Failed to upload image');
+      //console.log('Failed to upload image');
       throw new InternalServerErrorException('Upload failed');
     }
   }
@@ -780,7 +782,7 @@ export class CompanyService {
 
   async getCompanyStatusNames(companyId: Types.ObjectId) {
     const statArr = await this.companyRepository.findAllStatusNamesInCompany(companyId);
-    console.log(statArr);
+    //console.log(statArr);
     return statArr;
   }
 
