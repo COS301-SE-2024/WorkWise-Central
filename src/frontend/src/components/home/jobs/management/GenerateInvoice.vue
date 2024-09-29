@@ -8,11 +8,30 @@
       icon="fa: fa-solid fa-file-pdf"
       class="p-button-success"
     />
+    <!-- Confirmation Dialog with PDF Preview -->
+    <v-dialog v-model="viewDialog" max-width="800px">
+      <v-card>
+        <v-card-title class="headline">View Job Invoice</v-card-title>
+        <v-card-text>
+          <p class="pt-5 pb-5">Below is the generated invoice for your this job</p>
+          <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="500px"></iframe>
+        </v-card-text>
+        <v-card-actions>
+          <v-container>
+            <v-row>
+                <v-btn @click="viewDialog = false" block color="red darken-1" text
+                ><v-icon icon="fa: fa-solid fa-cancel" color="red darken-1"></v-icon>Close</v-btn
+                >
+            </v-row>
+          </v-container>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 import Button from 'primevue/button'
 import axios from 'axios'
@@ -28,6 +47,9 @@ const config = {
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
 }
+
+const viewDialog = ref(false)
+const pdfUrl = ref('')
 
 const formatDate = (date) => {
   const date_passed_in = new Date(date)
@@ -95,7 +117,7 @@ const generatePdf = async () => {
   invoiceData.inventoryItems = transformedInventoryItems;
 
   const data = {
-    outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
+    outputType: OutputType.Blob, // Generate the PDF as a Blob to embed it
     fileName: `Invoice ${invoiceData.companyId.name}`,
     orientationLandscape: false,
     compress: true,
@@ -180,7 +202,11 @@ const generatePdf = async () => {
   };
 
   // Generate the PDF using the template
-  jsPDFInvoiceTemplate(data);
+  const doc = jsPDFInvoiceTemplate(data);
+  const blb = doc.blob
+  pdfUrl.value = URL.createObjectURL(blb)
+
+  viewDialog.value = true;
 }
 
 </script>
