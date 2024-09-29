@@ -117,14 +117,6 @@
         label="Search Employees"
         class="mb-4"
       />
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        variant="outlined"
-        color="primary"
-        label="Search Employees"
-        class="mb-4"
-      />
 
       <!-- Employee Stats Table -->
       <v-data-table :items="employees" :headers="employeeHeaders" class="bg-background">
@@ -394,7 +386,7 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const API_URL = await this.getRequestUrl()
+  
       try {
         const response = await axios.get(`${API_URL}stats/employeeStats/${employee._id}`, config)
         const data = response.data.data
@@ -418,6 +410,50 @@ export default {
         console.error('Failed to fetch employee stats:', error)
       }
     },
+    async getNumEmployees() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+
+      axios
+        .get(`${API_URL}stats/numEmployees/${localStorage.getItem('currentCompany')}`, config)
+        .then((response) => {
+          this.totalEmployees = response.data.data
+        })
+        .catch((error) => {
+          console.error('Failed to fetch number of employees:', error)
+        })
+    },
+    async getEmployees() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const API_URL = await this.getRequestUrl()
+      try {
+        const response = await axios.get(
+          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
+
+        this.employees = response.data.data
+        this.selectedEmployee = this.employees[0]
+        await this.getEmployeeStats(this.employees[0])
+      } catch (error) {
+        console.error(error)
+      }
+    },
     calculateRatingCounts(ratings) {
       const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
 
@@ -429,51 +465,7 @@ export default {
       return counts
     }
   },
-  async getNumEmployees() {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`
-      },
-      params: {
-        currentEmployeeId: localStorage.getItem('employeeId')
-      }
-    }
-    const API_URL = await this.getRequestUrl()
 
-    axios
-      .get(`${API_URL}stats/numEmployees/${localStorage.getItem('currentCompany')}`, config)
-      .then((response) => {
-        this.totalEmployees = response.data.data
-      })
-      .catch((error) => {
-        console.error('Failed to fetch number of employees:', error)
-      })
-  },
-  async getEmployees() {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`
-      },
-      params: {
-        currentEmployeeId: localStorage.getItem('employeeId')
-      }
-    }
-    const API_URL = await this.getRequestUrl()
-    try {
-      const response = await axios.get(
-        `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
-        config
-      )
-
-      this.employees = response.data.data
-      this.selectedEmployee = this.employees[0]
-      await this.getEmployeeStats(this.employees[0])
-    } catch (error) {
-      console.error(error)
-    }
-  },
   mounted() {
     this.getEmployees()
     this.getNumEmployees()

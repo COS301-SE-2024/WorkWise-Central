@@ -138,15 +138,7 @@
         class="mb-4"
         @keyup="applyFilter"
       />
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        variant="outlined"
-        color="primary"
-        label="Search Clients"
-        class="mb-4"
-        @keyup="applyFilter"
-      />
+
       <!-- Client Data Table -->
 
       <v-data-table
@@ -163,9 +155,6 @@
           </v-btn>
         </template>
         <template v-slot:[`item.firstName`]="{ item }">
-          <v-chip :color="selectedClient === item ? 'success' : 'secondary'">{{
-            item.firstName
-          }}</v-chip>
           <v-chip :color="selectedClient === item ? 'success' : 'secondary'">{{
             item.firstName
           }}</v-chip>
@@ -487,8 +476,7 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const API_URL = await this.getRequestUrl()
-
+  
       axios
         .get(`${API_URL}stats/numClients/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
@@ -513,7 +501,7 @@ export default {
         }
       }
 
-      const API_URL = await this.getRequestUrl()
+
 
       axios
         .get(`${API_URL}stats/clientStats/${id}`, config)
@@ -558,7 +546,36 @@ export default {
           console.error('Failed to fetch clients:', error)
         })
     },
+    async getClients() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
 
+      axios
+        .get(`${API_URL}client/all/${localStorage.getItem('currentCompany')}`, config)
+        .then((response) => {
+          this.clients = response.data.data
+
+          for (let i = 0; i < this.clients.length; i++) {
+            this.clientIds[i] = this.clients[i]._id
+
+            this.clientDetails[i] = this.clients[i].details
+          }
+
+          this.selectedClient = this.clientDetails[0]
+          this.selectedItemId = this.clientIds[0]
+          this.getClientStats(this.selectedItemId)
+        })
+        .catch((error) => {
+          console.error('Failed to fetch clients:', error)
+        })
+    },
     calculateRatingCounts(ratings) {
       const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
       ratings?.forEach((rating) => {
@@ -569,37 +586,7 @@ export default {
       return counts
     }
   },
-  async getClients() {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`
-      },
-      params: {
-        currentEmployeeId: localStorage.getItem('employeeId')
-      }
-    }
-    const API_URL = await this.getRequestUrl()
 
-    axios
-      .get(`${API_URL}client/all/${localStorage.getItem('currentCompany')}`, config)
-      .then((response) => {
-        this.clients = response.data.data
-
-        for (let i = 0; i < this.clients.length; i++) {
-          this.clientIds[i] = this.clients[i]._id
-
-          this.clientDetails[i] = this.clients[i].details
-        }
-
-        this.selectedClient = this.clientDetails[0]
-        this.selectedItemId = this.clientIds[0]
-        this.getClientStats(this.selectedItemId)
-      })
-      .catch((error) => {
-        console.error('Failed to fetch clients:', error)
-      })
-  },
   async isLocalAvailable(localUrl) {
     try {
       const res = await axios.get(localUrl)
