@@ -234,13 +234,12 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default {
   components: { Chart },
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       currentTab: 'Team Breakdown',
       teamStats: {
         totalNumTeams: 0,
@@ -296,8 +295,7 @@ export default {
       return ratings.filter((r) => r === starValue).length
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      return API_URL
     },
     async getTeamStats() {
       const config = {

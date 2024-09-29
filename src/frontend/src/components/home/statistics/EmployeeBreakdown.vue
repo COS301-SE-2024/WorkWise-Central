@@ -117,6 +117,14 @@
         label="Search Employees"
         class="mb-4"
       />
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        variant="outlined"
+        color="primary"
+        label="Search Employees"
+        class="mb-4"
+      />
 
       <!-- Employee Stats Table -->
       <v-data-table :items="employees" :headers="employeeHeaders" class="bg-background">
@@ -143,6 +151,9 @@
           <v-chip :color="selectedEmployee === item ? 'success' : 'secondary'">{{
             item.userInfo.firstName
           }}</v-chip>
+          <v-chip :color="selectedEmployee === item ? 'success' : 'secondary'">{{
+            item.userInfo.firstName
+          }}</v-chip>
         </template>
       </v-data-table>
 
@@ -162,6 +173,8 @@
               <h5>
                 Jobs completed on time vs jobs completed late for
                 {{ selectedEmployee.userInfo.firstName }}
+                Jobs completed on time vs jobs completed late for
+                {{ selectedEmployee.userInfo.firstName }}
               </h5>
               <Chart type="pie" :data="onTimeJobsChartData" height="300px" />
             </v-col>
@@ -172,6 +185,12 @@
           <v-row>
             <v-col cols="12" v-if="totalCustomerRatings !== 0">
               <h5>Average Customer Service ratings given by</h5>
+              <v-card
+                class="d-flex flex-column mx-auto py-4"
+                elevation="10"
+                height="auto"
+                width="360"
+              >
               <v-card
                 class="d-flex flex-column mx-auto py-4"
                 elevation="10"
@@ -189,10 +208,22 @@
                     color="yellow-darken-3"
                     half-increments
                   ></v-rating>
+                  <v-rating
+                    :model-value="customerServiceRatingAverage"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
                   <div class="px-3">{{ totalCustomerRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
+                    <v-progress-linear
+                      :model-value="ratingCounts[i] * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
                     <v-progress-linear
                       :model-value="ratingCounts[i] * ratingValueFactor"
                       class="mx-n5"
@@ -221,6 +252,12 @@
                 height="auto"
                 width="360"
               >
+              <v-card
+                class="d-flex flex-column mx-auto py-4"
+                elevation="10"
+                height="auto"
+                width="360"
+              >
                 <div class="d-flex justify-center mt-auto text-h5">Job Performance Rating</div>
                 <div class="d-flex align-center flex-column my-auto">
                   <div class="text-h2 mt-5">
@@ -232,10 +269,22 @@
                     color="yellow-darken-3"
                     half-increments
                   ></v-rating>
+                  <v-rating
+                    :model-value="jobPerformanceRatingAverage"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
                   <div class="px-3">{{ totalJobRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
+                    <v-progress-linear
+                      :model-value="jobRatingCounts[i] * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
                     <v-progress-linear
                       :model-value="jobRatingCounts[i] * ratingValueFactor"
                       class="mx-n5"
@@ -275,8 +324,6 @@ export default {
     return {
       currentTab: 'Employee Breakdown',
       totalEmployees: 0,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       employees: [],
       employeeStats: '',
       dialog: false,
@@ -340,8 +387,8 @@ export default {
       }
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      //const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return API_URL
     },
     showBreakdown(employee) {
       this.selectedEmployee = employee
@@ -385,10 +432,15 @@ export default {
     },
     calculateRatingCounts(ratings) {
       const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
+      const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
       ratings?.forEach((rating) => {
         if (rating.rating >= 1 && rating.rating <= 5) {
           counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
+          counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
         }
+      })
+      return counts
+    },
       })
       return counts
     },

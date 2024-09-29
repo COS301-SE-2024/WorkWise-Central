@@ -95,14 +95,9 @@ export default {
       this.clientDialog = false
     },
     async deleteEmployee() {
-      const employee_to_be_deleted = {
-        currentEmployeeId: localStorage['employeeId']
-      }
-      console.log(employee_to_be_deleted)
       this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        data: employee_to_be_deleted,
         params: {
           currentEmployeeId: localStorage['employeeId']
         }
@@ -117,9 +112,11 @@ export default {
             detail: 'Employee deleted successfully',
             life: 3000
           })
-          this.clientDialog = false
-          this.clientDialog = false
-          window.location.reload()
+
+          setTimeout(() => {
+           this.$emit('employeeDeleted')
+           this.clientDialog = false
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)

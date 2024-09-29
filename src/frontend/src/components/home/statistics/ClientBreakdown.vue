@@ -138,7 +138,23 @@
         class="mb-4"
         @keyup="applyFilter"
       />
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        variant="outlined"
+        color="primary"
+        label="Search Clients"
+        class="mb-4"
+        @keyup="applyFilter"
+      />
       <!-- Client Data Table -->
+      <v-data-table
+        :items="clientDetails"
+        :headers="headers"
+        class="bg-background"
+        :search="search"
+        :row-props="getItemClass"
+      >
       <v-data-table
         :items="clientDetails"
         :headers="headers"
@@ -156,6 +172,9 @@
           <v-chip :color="selectedClient === item ? 'success' : 'secondary'">{{
             item.firstName
           }}</v-chip>
+          <v-chip :color="selectedClient === item ? 'success' : 'secondary'">{{
+            item.firstName
+          }}</v-chip>
         </template>
       </v-data-table>
 
@@ -170,11 +189,17 @@
             <v-row>
               <!-- Jobs chart - only show if job data is not all zeros -->
               <v-col cols="12" lg="6" v-if="jobsData.datasets[0].data.some((value) => value > 0)">
+              <v-col cols="12" lg="6" v-if="jobsData.datasets[0].data.some((value) => value > 0)">
                 <h5>Breakdown of the Jobs for {{ selectedClient.firstName }}</h5>
                 <Chart type="pie" :data="jobsData" @chart-click="onChartClick" />
               </v-col>
 
               <!-- Invoices chart - only show if invoice data is not all zeros -->
+              <v-col
+                cols="12"
+                lg="6"
+                v-if="invoiceData.datasets[0].data.some((value) => value > 0)"
+              >
               <v-col
                 cols="12"
                 lg="6"
@@ -198,12 +223,23 @@
                   height="auto"
                   width="360"
                 >
+                <v-card
+                  class="d-flex flex-column mx-auto py-4"
+                  elevation="10"
+                  height="auto"
+                  width="360"
+                >
                   <div class="d-flex justify-center mt-auto text-h5">Customer Service Rating</div>
                   <div class="d-flex align-center flex-column my-auto">
                     <div class="text-h2 mt-5">
                       {{ overallCustomerRating }}
                       <span class="text-h6 ml-n3">/5</span>
                     </div>
+                    <v-rating
+                      :model-value="overallCustomerRating"
+                      color="yellow-darken-3"
+                      half-increments
+                    ></v-rating>
                     <v-rating
                       :model-value="overallCustomerRating"
                       color="yellow-darken-3"
@@ -216,7 +252,19 @@
                     class="d-flex flex-column-reverse"
                     density="compact"
                   >
+                  <v-list
+                    bg-color="transparent"
+                    class="d-flex flex-column-reverse"
+                    density="compact"
+                  >
                     <v-list-item v-for="(rating, i) in 5" :key="i">
+                      <v-progress-linear
+                        :model-value="rating * ratingValueFactor"
+                        class="mx-n5"
+                        color="yellow-darken-3"
+                        height="20"
+                        rounded
+                      ></v-progress-linear>
                       <v-progress-linear
                         :model-value="rating * ratingValueFactor"
                         class="mx-n5"
@@ -247,12 +295,23 @@
                   height="auto"
                   width="360"
                 >
+                <v-card
+                  class="d-flex flex-column mx-auto py-4"
+                  elevation="10"
+                  height="auto"
+                  width="360"
+                >
                   <div class="d-flex justify-center mt-auto text-h5">Job Quality Rating</div>
                   <div class="d-flex align-center flex-column my-auto">
                     <div class="text-h2 mt-5">
                       {{ overallRating }}
                       <span class="text-h6 ml-n3">/5</span>
                     </div>
+                    <v-rating
+                      :model-value="overallRating"
+                      color="yellow-darken-3"
+                      half-increments
+                    ></v-rating>
                     <v-rating
                       :model-value="overallRating"
                       color="yellow-darken-3"
@@ -265,7 +324,19 @@
                     class="d-flex flex-column-reverse"
                     density="compact"
                   >
+                  <v-list
+                    bg-color="transparent"
+                    class="d-flex flex-column-reverse"
+                    density="compact"
+                  >
                     <v-list-item v-for="(rating, i) in 5" :key="i">
+                      <v-progress-linear
+                        :model-value="rating * ratingValueFactor"
+                        class="mx-n5"
+                        color="yellow-darken-3"
+                        height="20"
+                        rounded
+                      ></v-progress-linear>
                       <v-progress-linear
                         :model-value="rating * ratingValueFactor"
                         class="mx-n5"
@@ -303,8 +374,6 @@ export default {
   data() {
     return {
       totalClients: 0, // Example data, replace with actual
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       isloading: false,
       selectedItemId: '',
       search: '',
@@ -521,10 +590,15 @@ export default {
 
     calculateRatingCounts(ratings) {
       const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
+      const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
       ratings?.forEach((rating) => {
         if (rating.rating >= 1 && rating.rating <= 5) {
           counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
+          counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
         }
+      })
+      return counts
+    },
       })
       return counts
     },
@@ -568,8 +642,8 @@ export default {
       }
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      //const localAvailable = await this.isLocalAvailable(this.localUrl)
+      return API_URL
     },
     onChartClick(type, index) {
       if (type === 'jobs') {
@@ -596,6 +670,7 @@ export default {
       }
       // Show the dialog
       this.dialog = true
+    }
     }
   },
   async mounted() {

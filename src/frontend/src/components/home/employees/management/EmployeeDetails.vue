@@ -24,7 +24,7 @@
           <v-row>
             <v-col cols="6">
               <b><label> First Name</label></b>
-              ><v-spacer></v-spacer
+              <v-spacer></v-spacer
               ><small class="text-caption">{{
                 EmployeeDetails.firstName.charAt(0).toUpperCase() +
                 EmployeeDetails.firstName.slice(1)

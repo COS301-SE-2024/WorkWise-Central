@@ -136,6 +136,12 @@
               :options="chartOptions"
               height="600px"
             />
+            <Chart
+              type="doughnut"
+              :data="highestUsageItemsChartData"
+              :options="chartOptions"
+              height="600px"
+            />
           </v-col>
 
           <!-- Bar Chart for Loss of Stock -->
@@ -158,8 +164,6 @@ export default {
   data() {
     return {
       currentTab: 'Inventory Breakdown',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       totalItems: 0,
 
       itemsToReorder: [],
@@ -202,8 +206,12 @@ export default {
   computed: {
     hasHighestUsageData() {
       return this.itemUsage.length > 0 && this.itemUsage.some((item) => item.quantity > 0)
+      return this.itemUsage.length > 0 && this.itemUsage.some((item) => item.quantity > 0)
     },
     hasLossOfStockData() {
+      return (
+        this.stockLost.length > 0 && this.stockLost.some((item) => item.inventoryItem.quantity > 0)
+      )
       return (
         this.stockLost.length > 0 && this.stockLost.some((item) => item.inventoryItem.quantity > 0)
       )
@@ -219,8 +227,7 @@ export default {
       }
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      return API_URL
     },
     async getInventoryStats() {
       const config = {
@@ -261,15 +268,26 @@ export default {
         itemCount,
         this.highestUsageItemsChartData.datasets[0].backgroundColor
       )
+      this.highestUsageItemsChartData.datasets[0].backgroundColor = this.generateColors(
+        itemCount,
+        this.highestUsageItemsChartData.datasets[0].backgroundColor
+      )
 
       // Update Loss of Stock Chart
       this.lossOfStockChartData.labels = this.stockLost.map((item) => item.inventoryItem.itemName)
       this.lossOfStockChartData.datasets[0].data = this.stockLost.map(
         (item) => item.inventoryItem.quantity
       )
+      this.lossOfStockChartData.datasets[0].data = this.stockLost.map(
+        (item) => item.inventoryItem.quantity
+      )
 
       // Ensure there are enough background colors for the lost stock items
       const stockLostCount = this.stockLost.length
+      this.lossOfStockChartData.datasets[0].backgroundColor = this.generateColors(
+        stockLostCount,
+        this.lossOfStockChartData.datasets[0].backgroundColor
+      )
       this.lossOfStockChartData.datasets[0].backgroundColor = this.generateColors(
         stockLostCount,
         this.lossOfStockChartData.datasets[0].backgroundColor

@@ -67,6 +67,7 @@ import EmployeeBreakdown from './EmployeeBreakdown.vue'
 import InventoryBreakdown from './InventoryBreakdown.vue'
 import InvoiceBreakdown from './InvoiceBreakdown.vue'
 import TeamBreakdown from './TeamBreakdown.vue'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'StatisticsDashboard',
@@ -81,8 +82,6 @@ export default defineComponent({
   data() {
     return {
       activeTab: 0,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       currentTab: 'Client Breakdown',
       tabs: [
         'Client Breakdown',
@@ -108,8 +107,7 @@ export default defineComponent({
       }
     },
     async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      return API_URL
     }
   },
   mounted() {

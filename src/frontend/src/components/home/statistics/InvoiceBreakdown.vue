@@ -155,9 +155,11 @@ export default {
     // Computed property to check if revenue chart data has meaningful values
     revenueChartHasData() {
       return this.revenueChartData.datasets?.[0]?.data?.some((value) => value > 0)
+      return this.revenueChartData.datasets?.[0]?.data?.some((value) => value > 0)
     }
   },
   mounted() {
+    this.getInvoiceStats()
     this.getInvoiceStats()
   },
   methods: {
@@ -165,7 +167,10 @@ export default {
       try {
         const res = await axios.get(localUrl)
         return res.status < 300 && res.status > 199
+        const res = await axios.get(localUrl)
+        return res.status < 300 && res.status > 199
       } catch (error) {
+        return false
         return false
       }
     },
@@ -175,8 +180,11 @@ export default {
     },
     fetchRevenueForMonth(month) {
       const monthlyRevenue = this.invoiceStats.revenue
+      const monthlyRevenue = this.invoiceStats.revenue
 
       // Extract the data for the chart
+      const months = monthlyRevenue.map((entry) => entry.month)
+      const numUnpaid = monthlyRevenue.map((entry) => entry.numUnpaid)
       const months = monthlyRevenue.map((entry) => entry.month)
       const numUnpaid = monthlyRevenue.map((entry) => entry.numUnpaid)
 
@@ -192,6 +200,7 @@ export default {
             borderWidth: 1
           }
         ]
+      }
       }
     },
     async getInvoiceStats() {
@@ -209,6 +218,7 @@ export default {
         .get(`${API_URL}stats/invoiceStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           this.invoiceStats = response.data.data
+          this.invoiceStats = response.data.data
 
           // Update the pie chart data with API response
           this.paidVsUnpaidChartData = {
@@ -220,15 +230,20 @@ export default {
               }
             ]
           }
+          }
 
           // Fetch revenue data for all months (replace with actual logic if needed)
+          this.fetchRevenueForMonth('January')
           this.fetchRevenueForMonth('January')
         })
         .catch((error) => {
           console.error('Failed to fetch invoice stats:', error)
         })
+          console.error('Failed to fetch invoice stats:', error)
+        })
     }
   }
+}
 }
 </script>
 

@@ -11,8 +11,8 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, defineProps } from 'vue'
+<script setup>
+import { defineProps } from 'vue'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 import Button from 'primevue/button'
 import axios from 'axios'
@@ -29,7 +29,7 @@ const config = {
   }
 }
 
-const formatDate = (date: string) => {
+const formatDate = (date) => {
   const date_passed_in = new Date(date)
   const y = date_passed_in.getFullYear()
   const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
@@ -39,38 +39,60 @@ const formatDate = (date: string) => {
   const f_date = `${y}-${m}-${d} ${h}:${mn}`
   return f_date
 }
+
 // Function to Generate PDF
 const generatePdf = async () => {
-  let invoiceData
+  let invoiceData;
+
   try {
-    let response = await axios.get(
-      `${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`,
-      config
-    )
-    let invoiceId = response.data.data._id
-    response = await axios.get(
-      `${API_URL}invoice/detailed/id/${invoiceId}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
-      config
-    )
-    invoiceData = response.data.data
-    console.log('Returned invoice:', invoiceData)
+    let response = await axios.get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`, config);
+    let invoiceId = response.data.data._id;
+    response = await axios.get(`${API_URL}invoice/detailed/id/${invoiceId}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config);
+    invoiceData = response.data.data;
+    console.log('Returned invoice:', invoiceData);
   } catch (error) {
-    console.error(error)
+    console.error(error);
+    return;  // Exit if the invoice data fetching fails
   }
 
-  if (invoiceData.laborItems.length != 0) {
-    invoiceData.inventoryItems.push(['', '', '', '', ''])
-    invoiceData.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount', 'Total'])
-    invoiceData.inventoryItems.unshift([
-      'Description',
-      'Quantity',
-      'Unit Price',
-      'Discount',
-      'Total'
-    ])
-    invoiceData.inventoryItems = invoiceData.inventoryItems.concat(invoiceData.laborItems)
-    invoiceData.inventoryItems.push(['', '', '', '', ''])
+  const transformedInventoryItems = invoiceData.inventoryItems.map(item => {
+    if (typeof item === 'object') {
+      return [
+        item.description || '',
+        item.quantity || '',
+        item.unitPrice || '',
+        item.discount || '',
+        item.total || ''
+      ];
+    }
+    return item;  // If it's already in array format, return as is
+  });
+
+  // Transform laborItems from object-based format to array format
+  const transformedLaborItems = invoiceData.laborItems.map(item => {
+    if (typeof item === 'object') {
+      return [
+        item.description || '',
+        item.quantity || '',
+        item.unitPrice || '',
+        item.discount || '',
+        item.total || ''
+      ];
+    }
+    return item;  // If it's already in array format, return as is
+  });
+
+  // Check if there are labor items, then add inventory items formatting
+  if (transformedLaborItems.length !== 0) {
+    transformedInventoryItems.push(['', '', '', '', '']);
+    transformedInventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount', 'Total']);
+    transformedInventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Discount', 'Total']);
+    transformedInventoryItems.push(...transformedLaborItems);
+    transformedInventoryItems.push(['', '', '', '', '']);
   }
+
+  // Set the transformed inventory items back to invoiceData
+  invoiceData.inventoryItems = transformedInventoryItems;
 
   const data = {
     outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
@@ -155,11 +177,15 @@ const generatePdf = async () => {
     },
     pageEnable: true,
     pageLabel: 'Page '
-  }
+  };
+
   // Generate the PDF using the template
-  jsPDFInvoiceTemplate(data)
+  jsPDFInvoiceTemplate(data);
 }
+
 </script>
+
+
 
 <style scoped>
 /* No display-specific styles are needed since we're not displaying data */

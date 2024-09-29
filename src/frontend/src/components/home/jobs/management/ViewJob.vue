@@ -1,7 +1,6 @@
 <template>
   <v-card elevation="14" rounded="md" :style="cardStyle" :min-height="900">
     <v-row class="position-relative" :style="rowStyle">
-      <v-col class="d-flex justify-end">
         <v-img
           :src="imageSrc"
           aspect-ratio="5.75"
@@ -19,7 +18,6 @@
             style="display: none"
           />
         </v-btn>
-      </v-col>
     </v-row>
     <v-card-title>
       {{ props.passedInJob?.details?.heading }}

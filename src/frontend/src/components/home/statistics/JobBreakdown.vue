@@ -141,10 +141,22 @@
                     color="yellow-darken-3"
                     half-increments
                   ></v-rating>
+                  <v-rating
+                    :model-value="jobStats.workPerformanceRatingAverage"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
                   <div class="px-3">{{ totalWorkPerformanceRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
+                    <v-progress-linear
+                      :model-value="workRatingCounts[i] * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
                     <v-progress-linear
                       :model-value="workRatingCounts[i] * ratingValueFactor"
                       class="mx-n5"
@@ -184,10 +196,22 @@
                     color="yellow-darken-3"
                     half-increments
                   ></v-rating>
+                  <v-rating
+                    :model-value="jobStats.customerServiceRatingAverage"
+                    color="yellow-darken-3"
+                    half-increments
+                  ></v-rating>
                   <div class="px-3">{{ totalCustomerServiceRatings }} ratings</div>
                 </div>
                 <v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
                   <v-list-item v-for="(rating, i) in 5" :key="i">
+                    <v-progress-linear
+                      :model-value="customerServiceRatingCounts[i] * ratingValueFactor"
+                      class="mx-n5"
+                      color="yellow-darken-3"
+                      height="20"
+                      rounded
+                    ></v-progress-linear>
                     <v-progress-linear
                       :model-value="customerServiceRatingCounts[i] * ratingValueFactor"
                       class="mx-n5"
@@ -231,8 +255,6 @@ export default {
     return {
       currentTab: 'Job Breakdown',
       statsShown: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       jobStats: {
         totalNumJobs: 0,
         numActiveJobs: 0,
@@ -270,12 +292,7 @@ export default {
   },
   methods: {
     async getRequestUrl() {
-      try {
-        const res = await axios.get(this.localUrl)
-        return res.status < 300 && res.status > 199 ? this.localUrl : this.remoteUrl
-      } catch {
-        return this.remoteUrl
-      }
+      return API_URL
     },
     async getJobStats() {
       const config = {
@@ -309,6 +326,9 @@ export default {
           this.customerServiceRatingCounts = this.calculateRatingCounts(
             this.jobStats.customerServiceRating
           )
+          this.customerServiceRatingCounts = this.calculateRatingCounts(
+            this.jobStats.customerServiceRating
+          )
         })
         .catch((error) => {
           console.error('Failed to fetch job stats:', error)
@@ -317,10 +337,14 @@ export default {
     },
     calculateRatingCounts(ratings) {
       const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
+      const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
       ratings?.forEach((rating) => {
         if (rating.rating >= 1 && rating.rating <= 5) {
           counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
+          counts[Math.floor(rating.rating) - 1]++ // Adjust index for 0-based array
         }
+      })
+      return counts
       })
       return counts
     }
