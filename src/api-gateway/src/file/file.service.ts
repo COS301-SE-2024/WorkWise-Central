@@ -14,7 +14,7 @@ import * as AWS from 'aws-sdk';
 @Global()
 @Injectable()
 export class FileService {
-  private readonly uploadPath: string;
+  //private readonly uploadPath: string;
   constructor(
     private configService: ConfigService,
     @Inject('GLOBAL_CONFIG')

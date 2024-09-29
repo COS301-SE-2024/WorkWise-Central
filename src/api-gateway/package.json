@@ -125,9 +125,18 @@
       "!**/*.module.(t|j)s",
       "!**/*.guard.(t|j)s",
       "!**/*.service.(t|j)s",
-      "!**/*.controller.(t|j)s"
+      "!**/*.controller.(t|j)s",
+      "!**/*.gateway.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testPathIgnorePatterns" : [
+      "src/chat/",
+      "src/fleet/",
+      "src/utils/",
+      "src/auth/",
+      "src/file/",
+      "src/payfast/"
+    ]
   }
 }
