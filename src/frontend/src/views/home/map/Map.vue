@@ -575,12 +575,12 @@ export default {
     async assignVehicle() {
       if (this.selectedVehicle && this.selectedEmployee) {
         try {
-          await axios.patch(
+          const response = await axios.patch(
               `${this.apiUrl}fleet/update`,
               {
                 ...this.selectedVehicle,
                 availability: {
-                  ...this.selectedVehicle.availability,
+                  status: 'In Use',
                   assignedTo: this.selectedEmployee._id
                 },
                 vehicleId: this.selectedVehicle._id,
@@ -588,6 +588,7 @@ export default {
               },
               this.getAuthConfig()
           )
+          console.log('Assigned To:', response.data.data)
           this.assignDialogVisible = false
           this.selectedVehicle = null
           this.selectedEmployee = null
