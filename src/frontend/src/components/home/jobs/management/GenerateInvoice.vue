@@ -39,9 +39,25 @@ const formatDate = (date : string) => {
   const f_date = `${y}-${m}-${d} ${h}:${mn}`
   return f_date
 }
-// Function to Generate PDF
+interface ItemObject {
+  description: string;
+  quantity: number | string;
+  unitPrice?: number | string | null;
+  discount?: number | string | null;
+  total: number | string | null;
+}
+
+// The inventoryItems and laborItems could either be arrays or objects
+type ItemArray = [string, number | string, number | string | null, number | string | null, number | string | null];
+
+// Define the types for the invoice data
+interface InvoiceData {
+  inventoryItems: (ItemObject | ItemArray)[];
+  laborItems: (ItemObject | ItemArray)[];
+}
+
 const generatePdf = async () => {
-  let invoiceData;
+  let invoiceData: InvoiceData;
 
   try {
     let response = await axios.get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`, config);
@@ -64,34 +80,36 @@ const generatePdf = async () => {
   }
 
   // Transform inventoryItems from object-based format to array format
-  const transformedInventoryItems = invoiceData.inventoryItems.map(item => {
-    if (typeof item === 'object') {
+  const transformedInventoryItems: ItemArray[] = invoiceData.inventoryItems.map((item) => {
+    if (typeof item === 'object' && !Array.isArray(item)) {
+      const obj = item as ItemObject;
       return [
-        item.description || '',
-        item.quantity || '',
-        item.unitPrice || '',
-        item.discount || '',
-        item.total || ''
+        obj.description || '',
+        obj.quantity || '',
+        obj.unitPrice || '',
+        obj.discount || '',
+        obj.total || ''
       ];
     }
-    return item;  // If it's already in array format, return as is
+    return item as ItemArray;  // If it's already in array format, return as is
   });
 
   // Transform laborItems from object-based format to array format
-  const transformedLaborItems = invoiceData.laborItems.map(item => {
-    if (typeof item === 'object') {
+  const transformedLaborItems: ItemArray[] = invoiceData.laborItems.map((item) => {
+    if (typeof item === 'object' && !Array.isArray(item)) {
+      const obj = item as ItemObject;
       return [
-        item.description || '',
-        item.quantity || '',
-        item.unitPrice || '',
-        item.discount || '',
-        item.total || ''
+        obj.description || '',
+        obj.quantity || '',
+        obj.unitPrice || '',
+        obj.discount || '',
+        obj.total || ''
       ];
     }
-    return item;  // If it's already in array format, return as is
+    return item as ItemArray;  // If it's already in array format, return as is
   });
 
-  // Check if there are labor items, then add inventory items formatting
+  // Add inventory and labor items header
   if (transformedLaborItems.length !== 0) {
     transformedInventoryItems.push(['', '', '', '', '']);
     transformedInventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount', 'Total']);
@@ -102,7 +120,6 @@ const generatePdf = async () => {
 
   // Set the transformed inventory items back to invoiceData
   invoiceData.inventoryItems = transformedInventoryItems;
-
   const data = {
     outputType: OutputType.Save, // Generate the PDF as a Blob to embed it
     fileName: `Invoice ${invoiceData.companyId.name}`,
