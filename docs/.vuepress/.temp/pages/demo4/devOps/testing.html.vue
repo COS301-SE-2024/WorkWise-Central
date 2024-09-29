@@ -103,8 +103,22 @@
 <h4 id="the-feedback-form" tabindex="-1"><a class="header-anchor" href="#the-feedback-form"><span>The feedback form</span></a></h4>
 <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScKcqRHh2YjRvmo7_j1sI28zvajIzNomIxhUSi-VGWnBT-NBg/viewform?usp=sf_linkQiEZqpipQq7snRH3QuOq0chcQwYVLjmkA0SIAQJhX4g/viewform?embedded=true" width="640" height="2258" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 <h4 id="results" tabindex="-1"><a class="header-anchor" href="#results"><span>Results</span></a></h4>
-<h3 id="performance-testing" tabindex="-1"><a class="header-anchor" href="#performance-testing"><span>Performance testing</span></a></h3>
-<h3 id="load-testing" tabindex="-1"><a class="header-anchor" href="#load-testing"><span>Load testing</span></a></h3>
+<img src="/userTest1.png" alt="User test result 1" >
+<img src="/userTest2.png" alt="User test result 2" >
+<img src="/userTest3.png" alt="User test result 3" >
+<img src="/userTest4.png" alt="User test result 4" >
+<img src="/userTest5.png" alt="User test result 5" >
+<img src="/userTest6.png" alt="User test result 6" >
+<img src="/userTest7.png" alt="User test result 7" >
+<img src="/userTest8.png" alt="User test result 8" >
+<img src="/userTest9.png" alt="User test result 9" >
+<img src="/userTest10.png" alt="User test result 10" >
+<h3 id="load-and-performance-testing" tabindex="-1"><a class="header-anchor" href="#load-and-performance-testing"><span>Load and Performance testing</span></a></h3>
+<p>To perform automated load and performance tests, we made use of SpeedCurve, a powerful tool designed to monitor and analyze the performance of websites. SpeedCurve allows us to track various metrics such as page load times, rendering speed, and user experience under different conditions. By leveraging its capabilities, we can simulate real-world scenarios, measure performance at scale, and identify bottlenecks or potential issues. This tool provides valuable insights into how our site behaves under load, helping us to optimize and improve overall performance, ensuring a smooth experience for all users.</p>
+<h4 id="performance-test" tabindex="-1"><a class="header-anchor" href="#performance-test"><span>Performance test</span></a></h4>
+<img src="/performanceTests.jpg" alt="Load and performance tests" >
+<h4 id="load-test" tabindex="-1"><a class="header-anchor" href="#load-test"><span>Load test</span></a></h4>
+<img src="/Loadtest.jpg" alt="Load and performance tests" >
 </div></template>
 
 

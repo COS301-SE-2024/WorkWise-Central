@@ -96,8 +96,34 @@ User testing is a critical phase in the development of the WorkWise application 
 
 
 #### Results 
+<img src="/userTest1.png" alt="User test result 1" >
+
+<img src="/userTest2.png" alt="User test result 2" >
+
+<img src="/userTest3.png" alt="User test result 3" >
+
+<img src="/userTest4.png" alt="User test result 4" >
+
+<img src="/userTest5.png" alt="User test result 5" >
+
+<img src="/userTest6.png" alt="User test result 6" >
+
+<img src="/userTest7.png" alt="User test result 7" >
+
+<img src="/userTest8.png" alt="User test result 8" >
+
+<img src="/userTest9.png" alt="User test result 9" >
+
+<img src="/userTest10.png" alt="User test result 10" >
 
 
-### Performance testing
 
-### Load testing
+### Load and Performance testing
+To perform automated load and performance tests, we made use of SpeedCurve, a powerful tool designed to monitor and analyze the performance of websites. SpeedCurve allows us to track various metrics such as page load times, rendering speed, and user experience under different conditions. By leveraging its capabilities, we can simulate real-world scenarios, measure performance at scale, and identify bottlenecks or potential issues. This tool provides valuable insights into how our site behaves under load, helping us to optimize and improve overall performance, ensuring a smooth experience for all users.
+
+#### Performance test 
+<img src="/performanceTests.jpg" alt="Load and performance tests" >
+
+#### Load test
+<img src="/Loadtest.jpg" alt="Load and performance tests" >
+
