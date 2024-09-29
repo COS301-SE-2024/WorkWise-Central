@@ -162,7 +162,7 @@ export class InvoiceService {
     dto.taxPercentage = 15;
     dto.taxAmount = total * (15 / 115);
     dto.subTotal = total - dto.taxAmount;
-    dto.total = dto.total + dto.taxAmount;
+    dto.total = dto.subTotal + dto.taxAmount;
     console.log('checkpoint5');
 
     return await this.create(dto);
@@ -205,11 +205,14 @@ export class InvoiceService {
   }
 
   async send(id: Types.ObjectId) {
+    console.log('id: ', id);
     //setting the send variable and date
     await this.update(id, { sent: true, sentDate: new Date() });
     //Calling the email service
     const invoice = await this.findByIdDetailed(id);
-    await this.emailService.sendClientPortalLink(
+    console.log('invoice: ', invoice);
+    console.log('invoice.clientId._id: ', invoice.clientId._id);
+    await this.emailService.sendInvoiceClientPortalLink(
       invoice.clientId._id,
       (invoice.clientId as any).details.contactInfo.email,
       (invoice.clientId as any).details.firstName,

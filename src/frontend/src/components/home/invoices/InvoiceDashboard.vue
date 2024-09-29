@@ -284,7 +284,7 @@ export default defineComponent({
               invoiceNumber: invoice.invoiceNumber,
               creationDate: invoice.invoiceDate ? invoice.invoiceDate : null,
               paymentDate: invoice.paymentDate ? invoice.paymentDate : null,
-              total: invoice.total ? invoice.total : null,
+              total: invoice.total ? Number(invoice.total.toFixed(2)) : null,
               paid: invoice.paid !== undefined ? invoice.paid : null,
               clientName: invoice.clientId?.details
                 ? invoice.clientId.details.firstName + ' ' + invoice.clientId.details.lastName
@@ -321,18 +321,18 @@ export default defineComponent({
                 obj.quantity,
                 obj.unitPrice,
                 obj.discount,
-                obj.total
+                Number(obj.total.toFixed(2))
               ]),
               laborItems: invoice.laborItems.map((obj) => [
                 obj.description,
-                obj.quantity,
+                Number(obj.quantity.toFixed(2)),
                 obj.unitPrice,
                 obj.discount,
-                obj.total
+                Number(obj.total.toFixed(2))
               ]),
               taxPercentage: invoice.taxPercentage ? invoice.taxPercentage : null,
               taxAmount: invoice.taxAmount ? invoice.taxAmount : null,
-              subtotal: invoice.subtotal ? invoice.subtotal : null
+              subTotal: invoice.subTotal ? Number(invoice.subTotal.toFixed(2)) : null
             })
           }
           console.log('this.invoiceItems: ', this.invoiceItems)

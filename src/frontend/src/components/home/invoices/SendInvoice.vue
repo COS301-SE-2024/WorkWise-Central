@@ -75,11 +75,11 @@ export default defineComponent({
         }
       }
       try {
-        await axios.delete(`${API_URL}invoice/${this.invoice_id}`, config).then((response) => {
+        await axios.get(`${API_URL}invoice/send/${this.invoice_id}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config).then((response) => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Invoice deleted successfully',
+            detail: 'Invoice successfully sent',
             life: 3000
           })
           setTimeout(() => {
