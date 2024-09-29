@@ -105,7 +105,9 @@ export class RoleService {
     } catch (error) {}
     //Checking that the role is not Worker or owner
     if (roleToBeUpdate.roleName === 'Owner' || roleToBeUpdate.roleName === 'Worker') {
-      return new ValidationResult(false, `Not allowed to edit this role`);
+      if (updateRoleDto.roleName || updateRoleDto.permissionSuite) {
+        return new ValidationResult(false, `Not allowed to edit this role`);
+      }
     }
 
     return new ValidationResult(true, `All good`);
