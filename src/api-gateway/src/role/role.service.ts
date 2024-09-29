@@ -57,6 +57,7 @@ export class RoleService {
     this.permissionsArray.push('view invoices');
     this.permissionsArray.push('edit invoices');
     this.permissionsArray.push('delete invoices');
+    this.permissionsArray.push('send invoices');
     this.permissionsArray.push('generate invoices');
     this.permissionsArray.push('view fleet');
   }
@@ -265,30 +266,55 @@ export class RoleService {
     adminRoleDto.permissionSuite.push('edit jobs');
     adminRoleDto.permissionSuite.push('add new jobs');
     adminRoleDto.permissionSuite.push('delete jobs');
+    adminRoleDto.permissionSuite.push('record inventory use');
+    adminRoleDto.permissionSuite.push('record job details');
     adminRoleDto.permissionSuite.push('view all clients');
     adminRoleDto.permissionSuite.push('edit clients');
     adminRoleDto.permissionSuite.push('add new clients');
     adminRoleDto.permissionSuite.push('delete clients');
-    adminRoleDto.permissionSuite.push('view all inventory');
-    adminRoleDto.permissionSuite.push('record job details');
+    adminRoleDto.permissionSuite.push('view statistics');
+    adminRoleDto.permissionSuite.push('view customer feedback');
+    adminRoleDto.permissionSuite.push('record stock take');
+    adminRoleDto.permissionSuite.push('view movements');
     adminRoleDto.permissionSuite.push('company settings');
-
+    adminRoleDto.permissionSuite.push('company requests');
+    adminRoleDto.permissionSuite.push('view teams');
+    adminRoleDto.permissionSuite.push('add new teams');
+    adminRoleDto.permissionSuite.push('edit teams');
+    adminRoleDto.permissionSuite.push('delete teams');
+    adminRoleDto.permissionSuite.push('view invoices');
+    adminRoleDto.permissionSuite.push('edit invoices');
+    adminRoleDto.permissionSuite.push('delete invoices');
+    adminRoleDto.permissionSuite.push('send invoices');
+    adminRoleDto.permissionSuite.push('generate invoices');
+    adminRoleDto.permissionSuite.push('view fleet');
     await this.internalCreate(adminRoleDto);
 
     // Foreman
     const foremanRoleDto = new CreateRoleDto();
     foremanRoleDto.companyId = companyId;
     foremanRoleDto.roleName = 'Foreman';
+
     foremanRoleDto.permissionSuite.push('view employees under me');
     foremanRoleDto.permissionSuite.push('edit employees');
+    foremanRoleDto.permissionSuite.push('add new employees');
     foremanRoleDto.permissionSuite.push('view jobs under me');
     foremanRoleDto.permissionSuite.push('edit jobs');
     foremanRoleDto.permissionSuite.push('add new jobs');
+    foremanRoleDto.permissionSuite.push('record inventory use');
+    foremanRoleDto.permissionSuite.push('record job details');
     foremanRoleDto.permissionSuite.push('view clients under me');
     foremanRoleDto.permissionSuite.push('edit clients');
     foremanRoleDto.permissionSuite.push('add new clients');
-    foremanRoleDto.permissionSuite.push('view all inventory');
-    foremanRoleDto.permissionSuite.push('record job details');
+    foremanRoleDto.permissionSuite.push('view statistics');
+    foremanRoleDto.permissionSuite.push('view customer feedback');
+    foremanRoleDto.permissionSuite.push('view teams');
+    foremanRoleDto.permissionSuite.push('add new teams');
+    foremanRoleDto.permissionSuite.push('edit teams');
+    foremanRoleDto.permissionSuite.push('view invoices');
+    foremanRoleDto.permissionSuite.push('edit invoices');
+    foremanRoleDto.permissionSuite.push('generate invoices');
+    foremanRoleDto.permissionSuite.push('view fleet');
     await this.internalCreate(foremanRoleDto);
 
     // Team Leader
@@ -298,11 +324,12 @@ export class RoleService {
 
     teamRoleDto.permissionSuite.push('view employees under me');
     teamRoleDto.permissionSuite.push('view jobs under me');
-    teamRoleDto.permissionSuite.push('view jobs assigned to me');
-    teamRoleDto.permissionSuite.push('view clients under me');
-    teamRoleDto.permissionSuite.push('view clients that are assigned to me');
+    teamRoleDto.permissionSuite.push('record inventory use');
     teamRoleDto.permissionSuite.push('record job details');
-
+    teamRoleDto.permissionSuite.push('view clients under me');
+    teamRoleDto.permissionSuite.push('view customer feedback');
+    teamRoleDto.permissionSuite.push('view teams');
+    teamRoleDto.permissionSuite.push('view fleet');
     await this.internalCreate(teamRoleDto);
 
     // Inventory manager
@@ -312,10 +339,10 @@ export class RoleService {
 
     inventoryRoleDto.permissionSuite.push('view all inventory');
     inventoryRoleDto.permissionSuite.push('edit inventory');
-    inventoryRoleDto.permissionSuite.push('delete inventory item');
     inventoryRoleDto.permissionSuite.push('add new inventory item');
-    inventoryRoleDto.permissionSuite.push('record inventory use');
+    inventoryRoleDto.permissionSuite.push('delete inventory item');
     inventoryRoleDto.permissionSuite.push('record stock take');
+    inventoryRoleDto.permissionSuite.push('view movements');
 
     await this.internalCreate(inventoryRoleDto);
 
@@ -323,9 +350,14 @@ export class RoleService {
     const workerRoleDto = new CreateRoleDto();
     workerRoleDto.companyId = companyId;
     workerRoleDto.roleName = 'Worker';
+
     workerRoleDto.permissionSuite.push('view jobs assigned to me');
-    workerRoleDto.permissionSuite.push('view clients that are assigned to me');
+    workerRoleDto.permissionSuite.push('record inventory use');
     workerRoleDto.permissionSuite.push('record job details');
+    workerRoleDto.permissionSuite.push('view clients that are assigned to me');
+    workerRoleDto.permissionSuite.push('view customer feedback');
+    workerRoleDto.permissionSuite.push('view teams');
+    workerRoleDto.permissionSuite.push('view fleet');
 
     await this.internalCreate(workerRoleDto);
   }
