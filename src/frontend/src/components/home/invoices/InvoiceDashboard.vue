@@ -86,7 +86,6 @@
   </v-container>
 </template>
 
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
@@ -142,7 +141,7 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      
+
       if (localStorage.getItem('currentCompany') !== null) {
         this.companyId = localStorage.getItem('currentCompany') as string
       }

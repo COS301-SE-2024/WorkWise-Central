@@ -518,8 +518,8 @@ export default {
             life: 3000
           })
           setTimeout(() => {
-           this.$router.push({ name: 'dashboard' })
-           this.$emit('companyRegistered', res.data.data.name)
+            this.$router.push({ name: 'dashboard' })
+            this.$emit('companyRegistered', res.data.data.name)
           }, 3000)
         })
         .catch((res) => {

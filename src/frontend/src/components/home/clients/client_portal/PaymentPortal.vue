@@ -86,7 +86,7 @@ export default defineComponent({
       cancel_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal',
       notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
       testingMode: true,
-      pfHost:'sandbox.payfast.co.za',
+      pfHost: 'sandbox.payfast.co.za',
       forms: {} as { [key: string]: any }
     }
   },
@@ -158,7 +158,7 @@ export default defineComponent({
       await axios
         .get(`${API_URL}company/id/${this.companyId}`, config)
         .then((response) => {
-          if(response.data.data.name.includes('DemoAccount')) {
+          if (response.data.data.name.includes('DemoAccount')) {
             this.testingMode = true
             this.pfHost = 'https://sandbox.payfast.co.za/eng/process'
           }
@@ -185,7 +185,7 @@ export default defineComponent({
         .then((response) => {
           // console.log('Invoices:', response)
           this.invoices = response.data.data
-          for(const invoice of this.invoices) {
+          for (const invoice of this.invoices) {
             invoice.paymentDate = this.formatDate(invoice.paymentDate)
           }
         })

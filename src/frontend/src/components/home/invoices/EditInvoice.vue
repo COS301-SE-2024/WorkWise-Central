@@ -190,7 +190,7 @@ export default {
     change(status: any) {},
     deepCopy(obj: any) {
       return JSON.parse(JSON.stringify(obj))
-    },
+    }
   }
 }
 </script>

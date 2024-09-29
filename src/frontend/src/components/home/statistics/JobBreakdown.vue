@@ -3,77 +3,79 @@
     <v-card>
       <v-card-title> Detailed Breakdown</v-card-title>
       <v-card-text>
-        <v-list class="bg-cardColor">
+        <v-list class="bg-background">
           <v-col cols="12">
             <v-row>
               <!-- Active Jobs -->
-              <v-col v-if="jobStats.activeJobs.length > 0" cols="12" lg="6">
-                <v-list-item-group>
-                  <v-subheader>Active Jobs</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in jobStats.activeJobs"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="primary">{{ job.jobTitle }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <v-col v-if="jobStats.activeJobs.length > 0" cols="12">
+                <h6>Active Jobs</h6>
+                <v-data-table
+                  :headers="[{ title: 'Job Title', value: 'jobTitle' }]"
+                  :items="jobStats.activeJobs"
+                  item-value="jobTitle"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip color="primary">{{ item.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
 
-              <!-- All Jobs -->
-              <v-col v-if="jobStats.archivedJobs.length > 0" cols="12" lg="6">
-                <v-list-item-group>
-                  <v-subheader>All Jobs</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in jobStats.archivedJobs"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="secondary">{{ job.jobTitle }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <!-- Archived Jobs -->
+              <v-col v-if="jobStats.archivedJobs.length > 0" cols="12">
+                <h6>Archived Jobs</h6>
+                <v-data-table
+                  :headers="[{ title: 'Job Title', value: 'jobTitle' }]"
+                  :items="jobStats.archivedJobs"
+                  item-value="jobTitle"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip color="secondary">{{ item.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
-
-              <!-- Completed Jobs -->
-              
             </v-row>
 
-            <v-row><v-col v-if="jobStats.completedJobs.length > 0" cols="12" lg="6">
-                <v-list-item-group>
-                  <v-subheader>Completed Jobs</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in jobStats.completedJobs"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="success">{{ job.jobTitle }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+            <v-row>
+              <!-- Completed Jobs -->
+              <v-col v-if="jobStats.completedJobs.length > 0" cols="12">
+                <h6>Completed Jobs</h6>
+                <v-data-table
+                  :headers="[{ title: 'Job Title', value: 'jobTitle' }]"
+                  :items="jobStats.completedJobs"
+                  item-value="jobTitle"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip color="success">{{ item.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
+
               <!-- Invoices Unpaid -->
-              <v-col v-if="jobStats.jobsUnpaidInvoice.length > 0" cols="12" lg="6">
-                <v-list-item-group>
-                  <v-subheader>Invoices Unpaid</v-subheader>
-                  <v-list-item
-                    v-for="(invoice, index) in jobStats.jobsUnpaidInvoice"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-chip color="error">
-                      <v-list-item-content>{{ invoice.invoiceNumber }}.</v-list-item-content>
-                      <br />
-                      <v-list-item-content>{{ invoice.job.jobTitle }}</v-list-item-content>
-                      <br />
-                      <v-list-item-content>R{{ invoice.total }}</v-list-item-content>
-                    </v-chip>
-                  </v-list-item>
-                </v-list-item-group>
+              <v-col v-if="jobStats.jobsUnpaidInvoice.length > 0" cols="12">
+                <h6>Invoices Unpaid</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Invoice Number', value: 'invoiceNumber' },
+                    { title: 'Job Title', value: 'job.jobTitle' },
+                    { title: 'Total', value: 'total' }
+                  ]"
+                  :items="jobStats.jobsUnpaidInvoice"
+                  item-value="invoiceNumber"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.invoiceNumber`]="{ item }">
+                    <v-chip color="error">{{ item.invoiceNumber }}</v-chip>
+                  </template>
+                  <template v-slot:[`itemjob.jobTitle`]="{ item }">
+                    <v-chip>{{ item.job.jobTitle }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.total`]="{ item }">
+                    <v-chip color="error">R{{ item.total }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
             </v-row>
           </v-col>
@@ -92,12 +94,11 @@
       <v-icon icon="fa: fa-solid fa-clock mr-2"></v-icon>
       {{ currentTab }}
     </v-card-title>
-  
 
     <!-- Total Jobs Information -->
     <v-card-subtitle>
       <v-btn @click="dialog = true">View Details</v-btn>
-      <br/>
+      <br />
       <v-chip color="primary">
         <h5>Total Jobs: {{ jobStats.totalNumJobs }}</h5>
       </v-chip>
@@ -113,7 +114,7 @@
         <!-- Overall Rating Cards -->
         <v-container>
           <v-row>
-            <v-col cols="12" lg="6">
+            <v-col cols="12">
               <Chart
                 type="pie"
                 :data="activeJobsChartData"
@@ -122,7 +123,7 @@
               />
             </v-col>
 
-            <v-col cols="12" lg="6">
+            <v-col cols="12">
               <v-card
                 class="d-flex flex-column mx-auto py-4"
                 elevation="10"
@@ -165,7 +166,7 @@
               </v-card>
             </v-col>
 
-            <v-col cols="12" lg="6">
+            <v-col cols="12">
               <v-card
                 class="d-flex flex-column mx-auto py-4"
                 elevation="10"
@@ -223,7 +224,7 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
-
+import { API_URL } from '@/main'
 export default {
   components: { Chart },
   data() {
@@ -286,9 +287,9 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+      const API_URL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}stats/jobStats/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}stats/jobStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           this.jobStats = response.data.data
 

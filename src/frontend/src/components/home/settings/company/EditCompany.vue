@@ -377,9 +377,8 @@ export default defineComponent({
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
-        params:{
+        params: {
           currentEmployeeId: localStorage.getItem('employeeId')
-          
         }
       }
       const formData = new FormData()

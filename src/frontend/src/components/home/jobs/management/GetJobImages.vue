@@ -2,13 +2,7 @@
   <v-container>
     <v-carousel height="400">
       <v-carousel-item v-for="(image, index) in images" :key="index">
-        <v-img
-            :src="image.src"
-            height="100%"
-            width="100%"
-            cover
-            @click="openImageOverlay(index)"
-        >
+        <v-img :src="image.src" height="100%" width="100%" cover @click="openImageOverlay(index)">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
               <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
@@ -16,22 +10,22 @@
           </template>
         </v-img>
         <v-btn
-            @click="openImageActionsDialog(index)"
-            class="image-actions-btn"
-            icon
-            elevation="2"
-            color="secondary"
-            style="position: absolute; bottom: 16px; right: 16px;"
+          @click="openImageActionsDialog(index)"
+          class="image-actions-btn"
+          icon
+          elevation="2"
+          color="secondary"
+          style="position: absolute; bottom: 16px; right: 16px"
         >
           <v-icon class="pl-3" color="primary">{{ 'fa: fa-solid fa-ellipsis-h' }}</v-icon>
         </v-btn>
         <v-dialog
-            v-model="image.dialog"
-            max-width="300px"
-            location="bottom"
-            location-strategy="connected"
-            opacity="0"
-            origin="top center"
+          v-model="image.dialog"
+          max-width="300px"
+          location="bottom"
+          location-strategy="connected"
+          opacity="0"
+          origin="top center"
         >
           <template v-slot:default="{ isActive }">
             <v-card class="bg-cardColor">

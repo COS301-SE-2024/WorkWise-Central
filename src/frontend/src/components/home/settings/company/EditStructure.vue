@@ -238,7 +238,6 @@ export default defineComponent({
       subordinateItemNames: [],
       superiorItemNames: [],
       roleItems: [],
-      loading: false,
       nodeSize,
       graph: null,
       configs: vNG.defineConfigs({

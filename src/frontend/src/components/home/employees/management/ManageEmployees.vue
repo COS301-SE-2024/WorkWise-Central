@@ -120,9 +120,10 @@ c
                             >
                             <v-list class="bg-background">
                               <v-list-item
-                              v-show="
+                                v-show="
                                   permissions.includes('view all employees') ||
-                                  permissions.includes('view employees under me')"
+                                  permissions.includes('view employees under me')
+                                "
                                 ><EmployeeDetails colors="colors" :EmployeeDetails="selectedItem"
                               /></v-list-item>
 
@@ -433,7 +434,7 @@ export default {
     getRowClass(item: any) {
       const index = this.clients.indexOf(item)
       return index % 2 === 0 ? 'row-color' : 'second-row-color'
-    },
+    }
   }
 }
 </script>

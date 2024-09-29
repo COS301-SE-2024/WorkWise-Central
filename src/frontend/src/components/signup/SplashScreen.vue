@@ -1507,7 +1507,7 @@ export default defineComponent({
         console.log(this.isDarkMode)
       }
       localStorage.setItem('theme', this.isDarkMode) // save the theme to session storage
-    },
+    }
   }
 })
 </script>

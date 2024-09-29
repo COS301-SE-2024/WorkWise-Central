@@ -3,59 +3,78 @@
     <v-card>
       <v-card-title>Detailed Breakdown</v-card-title>
       <v-card-text>
-        <v-list class="bg-cardColor">
+        <v-list class="bg-background">
           <v-col cols="12">
             <v-row>
-              <!-- Active Jobs -->
-              <v-col v-if="invoiceStats.paidInvoices.length > 0" cols="12" lg="6">
-                <v-list-item-group>
-                  <v-subheader>Paid Invoices</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in invoiceStats.paidInvoices"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="secondary"
-                        >{{ job.invoiceNumber }}, R{{ job.total }}, {{ job.job.jobTitle }}</v-chip
-                      >
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <!-- Paid Invoices -->
+              <v-col v-if="invoiceStats.paidInvoices.length > 0" cols="12">
+                <h6>Paid Invoice</h6>
+                <v-data-table
+                  :headers="[
+                    { text: 'Invoice Number', value: 'invoiceNumber' },
+                    { text: 'Total', value: 'total' },
+                    { text: 'Job Title', value: 'jobTitle' }
+                  ]"
+                  :items="invoiceStats.paidInvoices"
+                  item-value="invoiceNumber"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.invoiceNumber`]="{ item }">
+                    <v-chip color="secondary">{{ item.invoiceNumber }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.total`]="{ item }">
+                    <v-chip color="secondary">R{{ item.total }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip>{{ item.job.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
 
-              <!-- All Jobs -->
-              <v-col v-if="invoiceStats.unpaidInvoices.length > 0" cols="12" lg="5">
-                <v-list-item-group>
-                  <v-subheader>Unpaid Invoices</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in invoiceStats.unpaidInvoices"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="secondary"
-                        >{{ job.invoiceNumber }}, R{{ job.total }}, {{ job.job.jobTitle }}</v-chip
-                      >
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <!-- Unpaid Invoices -->
+              <v-col v-if="invoiceStats.unpaidInvoices.length > 0" cols="12">
+                <h6>Unpaid Invoice</h6>
+                <v-data-table
+                  :headers="[
+                    { text: 'Invoice Number', value: 'invoiceNumber' },
+                    { text: 'Total', value: 'total' },
+                    { text: 'Job Title', value: 'jobTitle' }
+                  ]"
+                  :items="invoiceStats.unpaidInvoices"
+                  item-value="invoiceNumber"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.invoiceNumber`]="{ item }">
+                    <v-chip color="secondary">{{ item.invoiceNumber }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.total`]="{ item }">
+                    <v-chip color="secondary">R{{ item.total }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip>{{ item.job.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
 
-              <!-- Completed Jobs -->
-              <v-col v-if="invoiceStats.revenue.length > 0" cols="12" lg="4">
-                <v-list-item-group>
-                  <v-subheader>Revenue</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in invoiceStats.revenue"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="success">{{ job.month }},R{{ job.numUnpaid }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <!-- Revenue -->
+              <v-col v-if="invoiceStats.revenue.length > 0" cols="12">
+                <h6>Revenue</h6>
+                <v-data-table
+                  :headers="[
+                    { text: 'Month', value: 'month' },
+                    { text: 'Unpaid Invoices', value: 'numUnpaid' }
+                  ]"
+                  :items="invoiceStats.revenue"
+                  item-value="month"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.month`]="{ item }">
+                    <v-chip color="success">{{ item.month }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.numUnpaid`]="{ item }">
+                    <v-chip>R{{ item.numUnpaid }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
             </v-row>
           </v-col>
@@ -87,13 +106,13 @@
         <!-- Conditionally Render Pie Chart for Paid vs Unpaid Invoices -->
         <v-container v-if="invoiceStats.numPaid || invoiceStats.numUnpaid">
           <v-row>
-            <v-col cols="12" lg="6">
+            <v-col cols="12">
               <p><strong>Paid vs Unpaid Invoices:</strong></p>
               <Chart type="pie" :data="paidVsUnpaidChartData" height="300px" />
             </v-col>
 
             <!-- Conditionally Render Bar Chart for Revenue Per Month -->
-            <v-col cols="12" lg="6" v-if="revenueChartHasData">
+            <v-col cols="12" v-if="revenueChartHasData">
               <p><strong>Revenue Per Month:</strong></p>
               <Chart type="bar" :data="revenueChartData" :options="chartOptions" height="300px" />
             </v-col>
@@ -107,7 +126,7 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
-
+import { API_URL } from '@/main'
 export default {
   components: { Chart },
   data() {
@@ -185,9 +204,9 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+      const API_URL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}stats/invoiceStats/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}stats/invoiceStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           this.invoiceStats = response.data.data
 

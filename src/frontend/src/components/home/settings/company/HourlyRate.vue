@@ -269,7 +269,7 @@ export default {
     selectItem(item: any) {
       console.log(item)
       this.selectedItem = item
-    },
+    }
   },
   mounted() {
     this.getEmployees()

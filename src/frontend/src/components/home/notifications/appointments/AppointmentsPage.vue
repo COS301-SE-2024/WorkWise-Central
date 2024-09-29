@@ -496,7 +496,7 @@ export default defineComponent({
           config
         )
         for (const employee of response.data.data) {
-          this.employeeList.push({name: employee.userInfo.displayName, employeeId: employee._id})
+          this.employeeList.push({ name: employee.userInfo.displayName, employeeId: employee._id })
           this.teamMemberNames.push(employee.userInfo.displayName)
           this.teamLeaderIds.push(employee._id)
         }

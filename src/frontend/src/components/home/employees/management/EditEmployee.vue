@@ -538,7 +538,7 @@ export default {
         this.employeeDialog = false
         window.location.reload()
       }
-    },
+    }
   },
   created() {
     this.showlocalvalues()

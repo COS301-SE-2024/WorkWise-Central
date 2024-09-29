@@ -3,55 +3,70 @@
     <v-card>
       <v-card-title>Detailed Breakdown</v-card-title>
       <v-card-text>
-        <v-list class="bg-cardColor">
+        <v-list class="bg-background">
           <v-col cols="12">
             <v-row>
-              <!-- Active Jobs -->
-              <v-col v-if="inventoryStats.itemsToReorder.length > 0" cols="12" lg="4">
-                <v-list-item-group>
-                  <v-subheader>Items To Reorder</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in inventoryStats.itemsToReorder"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="warning">{{ job.itemName }}, {{ job.quantity }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <!-- Items To Reorder -->
+              <v-col v-if="inventoryStats.itemsToReorder.length > 0" cols="12">
+                <h6>Items to Reorder</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Item Name', value: 'itemName' },
+                    { title: 'Quantity', value: 'quantity' }
+                  ]"
+                  :items="inventoryStats.itemsToReorder"
+                  item-value="itemName"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.itemName`]="{ item }">
+                    <v-chip color="warning">{{ item.itemName }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.quantity`]="{ item }">
+                    <v-chip>{{ item.quantity }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
 
-              <!-- All Jobs -->
-              <v-col v-if="inventoryStats.itemUsage.length > 0" cols="12" lg="4">
-                <v-list-item-group>
-                  <v-subheader>Item Usage</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in inventoryStats.itemsToReorder"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="success">{{ job.itemName }}, {{ job.quantity }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <!-- Item Usage -->
+              <v-col v-if="inventoryStats.itemUsage.length > 0" cols="12">
+                <h6>Item Usage</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Item Name', value: 'itemName' },
+                    { title: 'Quantity', value: 'quantity' }
+                  ]"
+                  :items="inventoryStats.itemUsage"
+                  item-value="itemName"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.itemName`]="{ item }">
+                    <v-chip color="success">{{ item.itemName }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.quantity`]="{ item }">
+                    <v-chip>{{ item.quantity }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
 
-              <!-- Completed Jobs -->
-              <v-col v-if="inventoryStats.stockLost.length > 0" cols="12" lg="4">
-                <v-list-item-group>
-                  <v-subheader>Stock Lost</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in inventoryStats.itemsToReorder"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="error">{{ job.itemName }}, {{ job.quantity }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <!-- Stock Lost -->
+              <v-col v-if="inventoryStats.stockLost.length > 0" cols="12">
+                <h6>Stock Lost</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Item Name', value: 'inventoryItem.itemName' },
+                    { title: 'Quantity', value: 'inventoryItem.quantity' }
+                  ]"
+                  :items="inventoryStats.stockLost"
+                  item-value="itemName"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.inventoryItem.itemName`]="{ item }">
+                    <v-chip color="error">{{ item.inventoryItem.itemName }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.inventoryItem.quantity`]="{ item }">
+                    <v-chip>{{ item.inventoryItem.quantity }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
             </v-row>
           </v-col>
@@ -137,7 +152,7 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
-
+import { API_URL } from '@/main'
 export default {
   components: { Chart },
   data() {
@@ -217,18 +232,17 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+      const API_URL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}stats/inventoryStats/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}stats/inventoryStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          console.log('Inventory Stats: ', response)
           this.inventoryStats = response.data.data
           this.totalItems = this.inventoryStats.totalNumItems
           this.itemsToReorder = this.inventoryStats.itemsToReorder
           this.itemUsage = this.inventoryStats.itemUsage
           this.stockLost = this.inventoryStats.stockLost
           this.costDueToStockLoss = this.inventoryStats.costDueToStockLoss
-
+          console.log(this.inventoryStats)
           // Update chart data
           this.updateCharts()
         })

@@ -882,7 +882,8 @@ export default {
 
       try {
         const loaded_tags_response = await axios.get(
-          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+          API_URL +
+            `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(loaded_tags_response)
@@ -1003,7 +1004,7 @@ export default {
 
         return tracker1 - tracker2
       })
-    },
+    }
   },
   mounted() {
     this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))

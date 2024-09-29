@@ -29,7 +29,7 @@ const config = {
   }
 }
 
-const formatDate = (date : string) => {
+const formatDate = (date: string) => {
   const date_passed_in = new Date(date)
   const y = date_passed_in.getFullYear()
   const m = String(date_passed_in.getMonth() + 1).padStart(2, '0')
@@ -43,9 +43,15 @@ const formatDate = (date : string) => {
 const generatePdf = async () => {
   let invoiceData
   try {
-    let response = await axios.get(`${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`,config)
+    let response = await axios.get(
+      `${API_URL}invoice/generate/${localStorage.getItem('employeeId')}/${props.jobID}`,
+      config
+    )
     let invoiceId = response.data.data._id
-    response = await axios.get(`${API_URL}invoice/detailed/id/${invoiceId}?currentEmployeeId=${localStorage.getItem('employeeId')}`,config)
+    response = await axios.get(
+      `${API_URL}invoice/detailed/id/${invoiceId}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+      config
+    )
     invoiceData = response.data.data
     console.log('Returned invoice:', invoiceData)
   } catch (error) {
@@ -54,8 +60,14 @@ const generatePdf = async () => {
 
   if (invoiceData.laborItems.length != 0) {
     invoiceData.inventoryItems.push(['', '', '', '', ''])
-    invoiceData.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount','Total',])
-    invoiceData.inventoryItems.unshift(['Description', 'Quantity', 'Unit Price', 'Discount','Total'])
+    invoiceData.inventoryItems.push(['Description', 'Hours', 'Hourly Rate', 'Discount', 'Total'])
+    invoiceData.inventoryItems.unshift([
+      'Description',
+      'Quantity',
+      'Unit Price',
+      'Discount',
+      'Total'
+    ])
     invoiceData.inventoryItems = invoiceData.inventoryItems.concat(invoiceData.laborItems)
     invoiceData.inventoryItems.push(['', '', '', '', ''])
   }
@@ -148,7 +160,6 @@ const generatePdf = async () => {
   jsPDFInvoiceTemplate(data)
 }
 </script>
-
 
 <style scoped>
 /* No display-specific styles are needed since we're not displaying data */

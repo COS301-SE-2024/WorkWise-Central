@@ -7,93 +7,99 @@
           <v-col cols="12">
             <v-row>
               <!-- Active Jobs -->
-              <v-col v-if="clientStats.activeJobs.length > 0" cols="12" lg="4">
-                <v-list-item-group>
-                  <v-subheader>Active Jobs</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in clientStats.activeJobs"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="primary">{{ job.jobTitle }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <v-col v-if="clientStats.activeJobs.length > 0" cols="12">
+                <h6>Active Jobs</h6>
+                <v-data-table
+                  :headers="[{ title: 'Active Jobs', value: 'jobTitle' }]"
+                  :items="clientStats.activeJobs"
+                  item-value="jobTitle"
+                  class="bg-cardColor"
+                  elevation="1"
+                  border="md"
+                >
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip color="primary">{{ item.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
 
               <!-- All Jobs -->
-              <v-col v-if="clientStats.allJobs.length > 0" cols="12" lg="4">
-                <v-list-item-group>
-                  <v-subheader>All Jobs</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in clientStats.allJobs"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="secondary">{{ job.jobTitle }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <v-col v-if="clientStats.allJobs.length > 0" cols="12">
+                <h6>All Jobs</h6>
+                <v-data-table
+                  :headers="[{ title: 'All Jobs', value: 'jobTitle' }]"
+                  :items="clientStats.allJobs"
+                  item-value="jobTitle"
+                  class="bg-cardColor"
+                >
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip color="secondary">{{ item.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
 
               <!-- Completed Jobs -->
-              <v-col v-if="clientStats.completedJobs.length > 0" cols="12" lg="4">
-                <v-list-item-group>
-                  <v-subheader>Completed Jobs</v-subheader>
-                  <v-list-item
-                    v-for="(job, index) in clientStats.completedJobs"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-list-item-content>
-                      <v-chip color="success">{{ job.jobTitle }}</v-chip>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+              <v-col v-if="clientStats.completedJobs.length > 0" cols="12">
+                <h6>Completed Jobs</h6>
+                <v-data-table
+                  :headers="[{ title: 'Completed Jobs', value: 'jobTitle' }]"
+                  :items="clientStats.completedJobs"
+                  item-value="jobTitle"
+                >
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-chip color="success">{{ item.jobTitle }}</v-chip>
+                  </template>
+                </v-data-table>
               </v-col>
             </v-row>
 
             <v-row>
               <!-- Invoices Paid -->
-              <v-col v-if="clientStats.invoicesPaid.length > 0" cols="12" lg="6">
-                <v-list-item-group>
-                  <v-subheader>Invoices Paid</v-subheader>
-                  <v-list-item
-                    v-for="(invoice, index) in clientStats.invoicesPaid"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-chip color="success">
-                      <v-list-item-content>{{ invoice.invoiceNumber }}.</v-list-item-content>
-                      <br/>
-                      <v-list-item-content>{{ invoice.job.jobTitle }}</v-list-item-content>
-                      <br/>
-                      <v-list-item-content>R{{ invoice.total }}</v-list-item-content>
-                    </v-chip>
-                  </v-list-item>
-                </v-list-item-group>
+              <v-col v-if="clientStats.invoicesPaid.length > 0" cols="12">
+                <h6>Invoices Paid</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Invoice Number', value: 'invoiceNumber' },
+                    { title: 'Job Title', value: 'jobTitle' },
+                    { title: 'Total Amount', value: 'total' }
+                  ]"
+                  :items="clientStats.invoicesPaid"
+                  class="bg-cardColor"
+                >
+                  <template v-slot:[`item.invoiceNumber`]="{ item }">
+                    <v-chip color="success">{{ item.invoiceNumber }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-list-item-content>{{ item.job.jobTitle }}</v-list-item-content>
+                  </template>
+                  <template v-slot:[`item.total`]="{ item }">
+                    <v-list-item-content>R{{ item.total }}</v-list-item-content>
+                  </template>
+                </v-data-table>
               </v-col>
 
               <!-- Invoices Unpaid -->
-              <v-col v-if="clientStats.invoicesUnpaid.length > 0" cols="12" lg="6">
-                <v-list-item-group>
-                  <v-subheader>Invoices Unpaid</v-subheader>
-                  <v-list-item
-                    v-for="(invoice, index) in clientStats.invoicesUnpaid"
-                    :key="index"
-                    class="bg-cardColor"
-                  >
-                    <v-chip color="error">
-                      <v-list-item-content>{{ invoice.invoiceNumber }}.</v-list-item-content>
-                      <br/>
-                      <v-list-item-content>{{ invoice.job.jobTitle }}</v-list-item-content>
-                      <br/>
-                      <v-list-item-content>R{{ invoice.total }}</v-list-item-content>
-                    </v-chip>
-                  </v-list-item>
-                </v-list-item-group>
+              <v-col v-if="clientStats.invoicesUnpaid.length > 0" cols="12">
+                <h6>Invoices Unpaid</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Invoice Number', value: 'invoiceNumber' },
+                    { title: 'Job Title', value: 'jobTitle' },
+                    { title: 'Total Amount', value: 'total' }
+                  ]"
+                  :items="clientStats.invoicesUnpaid"
+                  class="bg-cardColor"
+                >
+                  <template v-slot:[`item.invoiceNumber`]="{ item }">
+                    <v-chip color="error">{{ item.invoiceNumber }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.jobTitle`]="{ item }">
+                    <v-list-item-content>{{ item.job.jobTitle }}</v-list-item-content>
+                  </template>
+                  <template v-slot:[`item.total`]="{ item }">
+                    <v-list-item-content>R{{ item.total }}</v-list-item-content>
+                  </template>
+                </v-data-table>
               </v-col>
             </v-row>
           </v-col>
@@ -291,7 +297,7 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
-
+import { API_URL } from '@/main'
 export default {
   components: { Chart },
   data() {
@@ -422,7 +428,6 @@ export default {
           this.selectedItemId = this.clientIds[i]
         }
       }
-      console.log('Deleting client' + this.selectedItemId)
 
       await this.getClientStats(this.selectedItemId)
       this.isloading = false
@@ -442,12 +447,11 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+      const API_URL = await this.getRequestUrl()
+
       axios
-        .get(`${apiURL}stats/numClients/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}stats/numClients/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          console.log(response)
           this.totalClients = response.data.data
         })
         .catch((error) => {
@@ -460,8 +464,6 @@ export default {
           this.selectedItemId = this.clientIds[i]
         }
       }
-      console.log('Deleting client' + this.selectedItemId)
-      console.log('Selected item:', this.selectedItem) // Corrected console.log
     },
     async getClientStats(id) {
       const config = {
@@ -471,15 +473,12 @@ export default {
         }
       }
 
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
-      console.log(this.selectedClient)
-      console.log
+      const API_URL = await this.getRequestUrl()
+
       axios
-        .get(`${apiURL}stats/clientStats/${id}`, config)
+        .get(`${API_URL}stats/clientStats/${id}`, config)
         .then((response) => {
           this.clientStats = response.data.data
-          console.log('Client stats response: ', response)
 
           // Update the jobsData chart
           this.jobsData = {
@@ -539,22 +538,19 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+      const API_URL = await this.getRequestUrl()
+
       axios
-        .get(`${apiURL}client/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}client/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          console.log(response)
           this.clients = response.data.data
-          console.log(this.clients)
 
           for (let i = 0; i < this.clients.length; i++) {
             this.clientIds[i] = this.clients[i]._id
-            console.log(this.clientIds[i])
+
             this.clientDetails[i] = this.clients[i].details
-            console.log(this.clientDetails[i])
           }
-          console.log(this.clientDetails)
+
           this.selectedClient = this.clientDetails[0]
           this.selectedItemId = this.clientIds[0]
           this.getClientStats(this.selectedItemId)
@@ -579,7 +575,7 @@ export default {
       if (type === 'jobs') {
         if (index === 0) {
           // Show active jobs in dialog
-          console.log('jkefh')
+
           this.dialogTitle = `Active Jobs for ${this.selectedClient.firstName}`
           this.dialogItems = this.clientStats.activeJobs
         } else if (index === 1) {

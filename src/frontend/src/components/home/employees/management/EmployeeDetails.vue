@@ -116,7 +116,7 @@ export default defineComponent({
       clientDialog: false,
       isDeleting: false,
       subnames: [],
-      supname: '',
+      supname: ''
     }
   },
   methods: {
@@ -164,7 +164,7 @@ export default defineComponent({
     close() {
       console.log('closing dialog:' + this.clientDialog)
       this.clientDialog = false
-    },
+    }
   },
   mounted() {
     this.loadEmployeeData()

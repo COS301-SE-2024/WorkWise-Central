@@ -21,7 +21,6 @@ const invoicesSubItems = ref([
   { title: 'Invoice Board', icon: 'fa: fa-solid fa-table-columns', routeName: 'invoice-kanban' }
 ])
 
-
 const companySubItems = ref([
   { title: 'Company Settings', icon: 'fa: fa-solid fa-cog', routeName: 'companySettingsView' },
   {
@@ -102,7 +101,7 @@ export default defineComponent({
     logoutDialog: false,
     selected: '',
     new_notification: false,
-    employeePermissions: [] as string[],
+    employeePermissions: [] as string[]
   }),
   methods: {
     redirectToDashBoard() {
@@ -203,7 +202,13 @@ export default defineComponent({
         ></v-icon>
       </div>
     </v-app-bar>
-    <v-navigation-drawer class="bg-background " app v-model="isVisible" min-height="100%" width="300">
+    <v-navigation-drawer
+      class="bg-background"
+      app
+      v-model="isVisible"
+      min-height="100%"
+      width="300"
+    >
       <v-list v-model:open="open">
         <v-list-group fluid value="Dashboard">
           <template v-slot:activator="{ props }">
@@ -264,9 +269,7 @@ export default defineComponent({
         </v-list-group>
       </v-list>
 
-      <v-list
-        v-model:open="open"
-      >
+      <v-list v-model:open="open">
         <v-list-group fluid value="Employees">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -282,7 +285,9 @@ export default defineComponent({
             value="Employee details"
             title="Employee details"
             prepend-icon="fa: fa-solid fa-table"
-            v-show="checkPermission('view all employees') || checkPermission('view employees under me')"
+            v-show="
+              checkPermission('view all employees') || checkPermission('view employees under me')
+            "
           ></v-list-item>
           <v-list-item
             class="list-item-large"
@@ -295,7 +300,14 @@ export default defineComponent({
         </v-list-group>
       </v-list>
 
-      <v-list v-model:open="open" v-show="checkPermission('view all jobs') || checkPermission('view jobs under me') || checkPermission('view jobs assigned to me')">
+      <v-list
+        v-model:open="open"
+        v-show="
+          checkPermission('view all jobs') ||
+          checkPermission('view jobs under me') ||
+          checkPermission('view jobs assigned to me')
+        "
+      >
         <v-list-group fluid value="Jobs">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -317,7 +329,7 @@ export default defineComponent({
         </v-list-group>
       </v-list>
 
-      <v-list v-model:open="open"  v-show="checkPermission('view invoices')">
+      <v-list v-model:open="open" v-show="checkPermission('view invoices')">
         <v-list-group fluid value="Invoices">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -463,14 +475,14 @@ export default defineComponent({
 
 <style scoped>
 .icon-padding {
-  padding: 8px; 
+  padding: 8px;
 }
 
 .list-item-large {
-  height: 70px; 
+  height: 70px;
 }
 
 .list-item-small {
-  height: 40px; 
+  height: 40px;
 }
 </style>
