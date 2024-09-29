@@ -91,7 +91,7 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item v-if="checkPermission('send invoices')">
+                <v-list-item v-show="checkPermission('send invoices')">
                   <SendInvoice
                     :invoice_id="selectedItem._id"
                     :client-name="selectedItem.clientName"
@@ -100,9 +100,9 @@
                 <v-list-item>
                   <ViewInvoice :invoice="selectedItem" />
                 </v-list-item>
-                <v-list-item>
+                <!-- <v-list-item>
                   <EditInvoice :editedInvoice="selectedItem" :invoice_id="selectedItem._id" />
-                </v-list-item>
+                </v-list-item> -->
                 <v-list-item>
                   <DeleteInvoice :invoice_id="selectedItem._id" @InvoiceDeleted="getRequests" />
                 </v-list-item>
@@ -243,7 +243,7 @@ export default defineComponent({
       isModalVisible: false,
       jobs: [],
       selectedJob: null,
-      employeePermissions:[],
+      employeePermissions: []
     }
   },
   components: { DeleteInvoice, EditInvoice, ViewInvoice, Toast, SendInvoice },
@@ -261,7 +261,7 @@ export default defineComponent({
       return send ? 'Sent' : 'Unsent'
     },
     async getRequests() {
-      //getting the current employee 
+      //getting the current employee
       const config1 = {
         headers: {
           'Content-Type': 'application/json',
@@ -272,9 +272,9 @@ export default defineComponent({
         }
       }
       axios
-        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config1)
+        .get(`${API_URL}employee/id/${localStorage.getItem('employeeId')}`, config1)
         .then((response) => {
-          console.log(response.data.data.role.permissionSuite)
+          console.log('response.data.data.role.permissionSuite: ', response.data.data.role.permissionSuite)
           this.employeePermissions = response.data.data.role.permissionSuite
         })
         .catch((error) => {
@@ -384,6 +384,8 @@ export default defineComponent({
       }
     },
     checkPermission(permission) {
+      console.log('Checking permission:', permission)
+      console.log('Employee permissions:', this.employeePermissions)
       return this.employeePermissions.includes(permission)
     },
     async generateInvoice() {
