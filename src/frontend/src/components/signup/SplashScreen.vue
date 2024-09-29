@@ -1233,7 +1233,8 @@ export default defineComponent({
         this.forgotPasswordDialog = false
         const config = {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            'Content-Type': 'application/json'
+            // Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
         try {
@@ -1507,7 +1508,7 @@ export default defineComponent({
         console.log(this.isDarkMode)
       }
       localStorage.setItem('theme', this.isDarkMode) // save the theme to session storage
-    },
+    }
   }
 })
 </script>

@@ -85,7 +85,7 @@ export class EmailService {
 
   async sendResetPasswordRequest(resetDto: PasswordResetDto, token: string) {
     //const serverUrl = `http://localhost:5173`;
-    const url = `${this.globalConfig.frontendUrl}/new-password?uId=${encodeURIComponent(resetDto.userId.toString())}&tok=${encodeURIComponent(token)}`;
+    const url = `${this.globalConfig.frontendUrl}new-password?uId=${encodeURIComponent(resetDto.userId.toString())}&tok=${encodeURIComponent(token)}`;
     console.log(token);
     const ourEmail = '<support@workwise.com>';
     const result = await this.mailerService.sendMail({
@@ -108,8 +108,8 @@ export class EmailService {
     // const existingUserLink = `https://tuksui.sharpsoftwaresolutions.net/?inviteId=${encodeURIComponent(inviteId.toString())}`;
 
     const url = this.globalConfig.frontendUrl;
-    const newUserLink = `${url}/?inviteId=${encodeURIComponent(inviteId.toString())}`;
-    const existingUserLink = `${url}/company-invites?inviteId=${encodeURIComponent(inviteId.toString())}`;
+    const newUserLink = `${url}?inviteId=${encodeURIComponent(inviteId.toString())}`;
+    const existingUserLink = `${url}company-invites?inviteId=${encodeURIComponent(inviteId.toString())}`;
 
     if (hasAccount) {
       if (userId) {
@@ -161,7 +161,7 @@ export class EmailService {
     companyName: string,
     jobTitle: string,
   ) {
-    const url = `${this.globalConfig.frontendUrl}/client-portal?cId=${encodeURIComponent(clientId.toString())}`;
+    const url = `${this.globalConfig.frontendUrl}client-portal?cId=${encodeURIComponent(clientId.toString())}`;
     const ourEmail = '<support@workwise.com>';
 
     const result = await this.mailerService.sendMail({
