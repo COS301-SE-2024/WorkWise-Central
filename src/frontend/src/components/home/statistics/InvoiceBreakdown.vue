@@ -155,7 +155,7 @@ export default {
     // Computed property to check if revenue chart data has meaningful values
     revenueChartHasData() {
       return this.revenueChartData.datasets?.[0]?.data?.some((value) => value > 0)
-      return this.revenueChartData.datasets?.[0]?.data?.some((value) => value > 0)
+    
     }
   },
   mounted() {
