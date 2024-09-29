@@ -7,15 +7,31 @@ on:
     branches: [ main, develop , test, performance-tests-frontend ]
 
 jobs:
-  run:
+  create-deployment:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
+    permissions:
+      deployments: write
     steps:
-      - name: Get metrics
-        uses: SpeedCurve-Metrics/speedcurve-test-action@v1.2.2
+      - uses: actions/checkout@v1
+
+      - name: Start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
         with:
-          api_key: ${{ secrets.SPEEDCURVE_KEY }}
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: preview
+          ref: ${{ github.head_ref }}
+
+      - name: Update deployment status
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          env: ${{ steps.deployment.outputs.env }}
+          env_url: ${{ secrets.TEST_DEPLOYMENT_URL }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
           
           
