@@ -96,7 +96,7 @@ export class NotificationService implements OnModuleInit {
       const singularNotification = new Notification(senderId, recipient, message);
       listOfNotifications.push(singularNotification);
     }
-    const result = await this.notificationModel.create(listOfNotifications);
+    /* const result = */ await this.notificationModel.create(listOfNotifications);
     //console.log(result);
     return {
       data: 'success',

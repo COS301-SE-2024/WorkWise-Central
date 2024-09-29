@@ -51,7 +51,7 @@ export class EmailService {
       });
     }*/
 
-    const result = await this.mailerService.sendMail({
+    /*const result =*/ await this.mailerService.sendMail({
       to: details.email,
       from: '"Support Team" <support@workwise.com>',
       subject: 'Welcome to WorkWise Central!',
@@ -68,9 +68,9 @@ export class EmailService {
 
   async sendGoodbye(details: EmailInfoDto, token?: string) {
     //?const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
-    //console.log(token);
+    console.log(token);
     const ourEmail = '<support@workwise.com>';
-    const result = await this.mailerService.sendMail({
+    /*const result =*/ await this.mailerService.sendMail({
       to: details.emailAddress,
       from: `"Support Team" ${ourEmail}`,
       subject: 'Farewell from WorkWise',
@@ -88,7 +88,7 @@ export class EmailService {
     const url = `${this.globalConfig.frontendUrl}new-password?uId=${encodeURIComponent(resetDto.userId.toString())}&tok=${encodeURIComponent(token)}`;
     //console.log(token);
     const ourEmail = '<support@workwise.com>';
-    const result = await this.mailerService.sendMail({
+    /*const result = */ await this.mailerService.sendMail({
       to: resetDto.emailAddress,
       from: `"Support Team" ${ourEmail}`,
       subject: 'Password Reset',
@@ -121,7 +121,7 @@ export class EmailService {
         });
       }
 
-      const result = await this.mailerService.sendMail({
+      /*const result = */ await this.mailerService.sendMail({
         to: inviteDto.emailBeingInvited,
         from: '"Support Team" <support@workwise.com>',
         subject: subject,
@@ -136,7 +136,7 @@ export class EmailService {
       });
       //console.log(result);
     } else {
-      const result = await this.mailerService.sendMail({
+      /*const result =*/ await this.mailerService.sendMail({
         to: inviteDto.emailBeingInvited,
         from: '"Support Team" <support@workwise.com>',
         subject: subject,
@@ -164,7 +164,7 @@ export class EmailService {
     const url = `${this.globalConfig.frontendUrl}client-portal?cId=${encodeURIComponent(clientId.toString())}`;
     const ourEmail = '<support@workwise.com>';
 
-    const result = await this.mailerService.sendMail({
+    /*const result = */ await this.mailerService.sendMail({
       to: clientEmail,
       from: `"Support Team" ${ourEmail}`,
       subject: 'New Job Alert',

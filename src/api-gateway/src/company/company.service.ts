@@ -327,7 +327,8 @@ export class CompanyService {
       companyName: company.name,
     };
 
-    const updatedUser = await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
+    /*const updatedUser = */
+    await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
     //console.log('Add New Employee ID');
     //await this.addNewEmployeeId(company._id, addedEmployee._id);
     //console.log(updatedUser);
@@ -395,7 +396,8 @@ export class CompanyService {
       companyName: company.name,
     };
 
-    const updatedUser = await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
+    /*const updatedUser = */
+    await this.usersService.addJoinedCompany(user._id, newJoinedCompany);
     //console.log('Add New Employee ID');
     //await this.addNewEmployeeId(company._id, addedEmployee._id);
     //console.log(updatedUser);
