@@ -165,7 +165,10 @@ export default defineComponent({
         this.companyId = localStorage.getItem('currentCompany') as string
       }
       await axios
-        .get(`${API_URL}job/all/company/${this.companyId}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config)
+        .get(
+          `${API_URL}job/all/company/${this.companyId}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+          config
+        )
         .then((response) => {
           for (const job of response.data.data) {
             if (job.clientFeedback != null) {

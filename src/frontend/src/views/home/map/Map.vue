@@ -59,10 +59,10 @@
       <div class="card">
         <div class="text-center pt-10">
           <Button
-              label="Show All Vehicle Data"
-              icon="fa: fa-solid fa-external-link"
-              @click="dialogVisible = true"
-              class="custom-button"
+            label="Show All Vehicle Data"
+            icon="fa: fa-solid fa-external-link"
+            @click="dialogVisible = true"
+            class="custom-button"
           />
         </div>
         <Dialog
@@ -167,7 +167,12 @@
             ></Column>
           </DataTable>
           <template #footer>
-            <Button label="Close" class="p-button-danger" icon="fa: fa-solid fa-check" @click="dialogVisible = false" />
+            <Button
+              label="Close"
+              class="p-button-danger"
+              icon="fa: fa-solid fa-check"
+              @click="dialogVisible = false"
+            />
           </template>
         </Dialog>
       </div>
@@ -228,9 +233,9 @@ import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import Card from 'primevue/card';
-import Panel from 'primevue/panel';
-import DataView from 'primevue/dataview';
+import Card from 'primevue/card'
+import Panel from 'primevue/panel'
+import DataView from 'primevue/dataview'
 import Message from 'primevue/message'
 // import Image from 'primevue/image'
 import { VehicleAvailabilityEnum, FuelType } from './models/vehicles'
@@ -431,15 +436,14 @@ export default {
 </script>
 
 <style scoped>
-
 .custom-button {
-  background-color: #4C9FC3;
-  outline-color: #4C9FC3;
+  background-color: #4c9fc3;
+  outline-color: #4c9fc3;
   border: none; /* Add this line to remove the green outline */
 }
 
 .custom-button:hover {
-  background-color: #4C9FC3 !important; /* Ensure hover color matches */
+  background-color: #4c9fc3 !important; /* Ensure hover color matches */
   border: none !important; /* Add this line to remove the green outline */
 }
 

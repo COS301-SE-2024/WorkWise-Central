@@ -1,4 +1,85 @@
 <template>
+  <v-dialog v-model="dialog" max-width="600">
+    <v-card>
+      <v-card-title>Detailed Breakdown</v-card-title>
+      <v-card-text>
+        <v-list class="bg-background">
+          <v-col cols="12">
+            <v-row>
+              <!-- Items To Reorder -->
+              <v-col v-if="inventoryStats.itemsToReorder.length > 0" cols="12">
+                <h6>Items to Reorder</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Item Name', value: 'itemName' },
+                    { title: 'Quantity', value: 'quantity' }
+                  ]"
+                  :items="inventoryStats.itemsToReorder"
+                  item-value="itemName"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.itemName`]="{ item }">
+                    <v-chip color="warning">{{ item.itemName }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.quantity`]="{ item }">
+                    <v-chip>{{ item.quantity }}</v-chip>
+                  </template>
+                </v-data-table>
+              </v-col>
+
+              <!-- Item Usage -->
+              <v-col v-if="inventoryStats.itemUsage.length > 0" cols="12">
+                <h6>Item Usage</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Item Name', value: 'itemName' },
+                    { title: 'Quantity', value: 'quantity' }
+                  ]"
+                  :items="inventoryStats.itemUsage"
+                  item-value="itemName"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.itemName`]="{ item }">
+                    <v-chip color="success">{{ item.itemName }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.quantity`]="{ item }">
+                    <v-chip>{{ item.quantity }}</v-chip>
+                  </template>
+                </v-data-table>
+              </v-col>
+
+              <!-- Stock Lost -->
+              <v-col v-if="inventoryStats.stockLost.length > 0" cols="12">
+                <h6>Stock Lost</h6>
+                <v-data-table
+                  :headers="[
+                    { title: 'Item Name', value: 'inventoryItem.itemName' },
+                    { title: 'Quantity', value: 'inventoryItem.quantity' }
+                  ]"
+                  :items="inventoryStats.stockLost"
+                  item-value="itemName"
+                  class="bg-background"
+                >
+                  <template v-slot:[`item.inventoryItem.itemName`]="{ item }">
+                    <v-chip color="error">{{ item.inventoryItem.itemName }}</v-chip>
+                  </template>
+                  <template v-slot:[`item.inventoryItem.quantity`]="{ item }">
+                    <v-chip>{{ item.inventoryItem.quantity }}</v-chip>
+                  </template>
+                </v-data-table>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-list>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn color="error" @click="dialog = false" block>
+          <v-icon color="error">fa-solid fa-cancel</v-icon>Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-card border="md" rounded="md" height="auto">
     <!-- Items to Reorder Section -->
     <v-card-title>
@@ -10,13 +91,7 @@
       <v-container>
         <v-row>
           <!-- Each item in a small red card -->
-          <v-col
-            cols="12"
-            sm="6"
-            md="4"
-            v-for="item in itemsToReorder"
-            :key="item.inventoryItem.inventoryId"
-          >
+          <v-col cols="12" sm="6" md="4" v-for="item in itemsToReorder" :key="item.inventoryId">
             <v-card
               class="colourCard1"
               elevation="2"
@@ -25,10 +100,10 @@
               color="red important"
             >
               <v-card-title class="colourCard2" colour="black">
-                {{ item.inventoryItem.nameOfItem }}
+                {{ item.itemName }}
               </v-card-title>
               <v-card-subtitle>
-                <strong>Stock Level: {{ item.inventoryItem.quantity }}</strong>
+                <strong>Stock Level: {{ item.quantity }}</strong>
               </v-card-subtitle>
             </v-card>
           </v-col>
@@ -41,7 +116,7 @@
       <v-icon icon="fa: fa-solid fa-calendar-alt mr-2"></v-icon>
       {{ currentTab }}
     </v-card-title>
-
+    <v-btn @click="dialog = true">View Details</v-btn>
     <!-- Total Number of Items Display -->
     <v-card-subtitle>
       <v-chip color="primary">
@@ -55,6 +130,12 @@
           <!-- Doughnut Chart for Highest Usage Items -->
           <v-col v-if="hasHighestUsageData" cols="12" lg="6">
             <p><strong>Highest Usage Items:</strong></p>
+            <Chart
+              type="doughnut"
+              :data="highestUsageItemsChartData"
+              :options="chartOptions"
+              height="600px"
+            />
             <Chart
               type="doughnut"
               :data="highestUsageItemsChartData"
@@ -78,7 +159,6 @@
 import Chart from 'primevue/chart'
 import axios from 'axios'
 import { API_URL } from '@/main'
-
 export default {
   components: { Chart },
   data() {
@@ -90,6 +170,7 @@ export default {
       itemUsage: [],
       stockLost: [],
       costDueToStockLoss: 0,
+      dialog: false,
 
       // Doughnut chart data for highest usage items
       highestUsageItemsChartData: {
@@ -125,11 +206,13 @@ export default {
   computed: {
     hasHighestUsageData() {
       return this.itemUsage.length > 0 && this.itemUsage.some((item) => item.quantity > 0)
+      
     },
     hasLossOfStockData() {
       return (
         this.stockLost.length > 0 && this.stockLost.some((item) => item.inventoryItem.quantity > 0)
       )
+      
     }
   },
   methods: {
@@ -154,18 +237,17 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+      const API_URL = await this.getRequestUrl()
       axios
-        .get(`${apiURL}stats/inventoryStats/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}stats/inventoryStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
-          console.log('Inventory Stats: ', response)
           this.inventoryStats = response.data.data
           this.totalItems = this.inventoryStats.totalNumItems
           this.itemsToReorder = this.inventoryStats.itemsToReorder
           this.itemUsage = this.inventoryStats.itemUsage
           this.stockLost = this.inventoryStats.stockLost
           this.costDueToStockLoss = this.inventoryStats.costDueToStockLoss
-
+          console.log(this.inventoryStats)
           // Update chart data
           this.updateCharts()
         })
@@ -184,15 +266,26 @@ export default {
         itemCount,
         this.highestUsageItemsChartData.datasets[0].backgroundColor
       )
+      this.highestUsageItemsChartData.datasets[0].backgroundColor = this.generateColors(
+        itemCount,
+        this.highestUsageItemsChartData.datasets[0].backgroundColor
+      )
 
       // Update Loss of Stock Chart
       this.lossOfStockChartData.labels = this.stockLost.map((item) => item.inventoryItem.itemName)
       this.lossOfStockChartData.datasets[0].data = this.stockLost.map(
         (item) => item.inventoryItem.quantity
       )
+      this.lossOfStockChartData.datasets[0].data = this.stockLost.map(
+        (item) => item.inventoryItem.quantity
+      )
 
       // Ensure there are enough background colors for the lost stock items
       const stockLostCount = this.stockLost.length
+      this.lossOfStockChartData.datasets[0].backgroundColor = this.generateColors(
+        stockLostCount,
+        this.lossOfStockChartData.datasets[0].backgroundColor
+      )
       this.lossOfStockChartData.datasets[0].backgroundColor = this.generateColors(
         stockLostCount,
         this.lossOfStockChartData.datasets[0].backgroundColor

@@ -33,8 +33,12 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" lg="4" class="d-flex justify-end"
-             v-if="checkPermission('add new teams')">
+            <v-col
+              cols="12"
+              lg="4"
+              class="d-flex justify-end"
+              v-if="checkPermission('add new teams')"
+            >
               <CreateTeam @teamCreated="getTeams" />
             </v-col>
           </v-row>
@@ -61,31 +65,32 @@
             <template v-slot:[`item.actions`]="{ item }">
               <v-menu max-width="500px" v-bind="menuProps">
                 <template v-slot:activator="{ props }">
-                  <v-btn rounded="xl" variant="plain" v-bind="props" @click="selectItem(item)"
-                  v-show="
-                          checkPermission('view teams') ||
-                          checkPermission('edit teams') ||
-                          checkPermission('delete teams') ">
+                  <v-btn
+                    rounded="xl"
+                    variant="plain"
+                    v-bind="props"
+                    @click="selectItem(item)"
+                    v-show="
+                      checkPermission('view teams') ||
+                      checkPermission('edit teams') ||
+                      checkPermission('delete teams')
+                    "
+                  >
                     <v-icon color="primary">mdi-dots-horizontal</v-icon>
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item
-                  v-show="checkPermission('view teams') "
-                  >
+                  <v-list-item v-show="checkPermission('view teams')">
                     <ViewTeam :team="selectedItem" />
                   </v-list-item>
-                  <v-list-item
-                  v-show="checkPermission('edit teams') ">
+                  <v-list-item v-show="checkPermission('edit teams')">
                     <UpdateTeam
                       @teamUpdated="getTeams"
                       :teamId="selectedItemID"
                       :editedItem="selectedItem"
                     />
                   </v-list-item>
-                  <v-list-item
-                  v-show="checkPermission('delete teams') "
-                  >
+                  <v-list-item v-show="checkPermission('delete teams')">
                     <DeleteTeam
                       @teamDeleted="getTeams"
                       :team_id="selectedItemID"
@@ -289,7 +294,7 @@ export default defineComponent({
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
         })
-    },
+    }
   },
   mounted() {
     this.getTeams()

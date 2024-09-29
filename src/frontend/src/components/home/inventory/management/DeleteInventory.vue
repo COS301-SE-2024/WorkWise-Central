@@ -67,7 +67,7 @@ export default defineComponent({
     deleteDialog: false,
     clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
     isDeleting: false,
-    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false
   }),
   methods: {
     async deleteInventory() {
@@ -111,7 +111,7 @@ export default defineComponent({
     },
     close() {
       this.deleteDialog = false
-    },
+    }
   }
 })
 </script>
