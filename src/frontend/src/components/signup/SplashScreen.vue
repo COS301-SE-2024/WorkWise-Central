@@ -1318,7 +1318,11 @@ export default defineComponent({
             // this.resetForm()
             setTimeout(() => {
               this.loading = false
-              this.$router.push({ name: 'dashboard' })
+              if (response.data.user.joinedCompanies.length > 0) {
+                this.$router.push({ name: 'dashboard' })
+              } else {
+                this.$router.push({ name: 'no-access' })
+              }
             }, 2000)
           })
           .catch((error) => {
@@ -1507,7 +1511,7 @@ export default defineComponent({
         console.log(this.isDarkMode)
       }
       localStorage.setItem('theme', this.isDarkMode) // save the theme to session storage
-    },
+    }
   }
 })
 </script>
