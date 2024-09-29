@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script lang="js" setup>
+<script setup>
 import { defineProps } from 'vue'
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template'
 import Button from 'primevue/button'
