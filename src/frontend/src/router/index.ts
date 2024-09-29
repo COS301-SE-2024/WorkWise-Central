@@ -414,15 +414,15 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  const accessToken = localStorage.getItem('access_token')
+// router.beforeEach((to, from, next) => {
+//   const accessToken = localStorage.getItem('access_token')
 
-  if (to.name !== 'splash' && !accessToken && to.name !== 'new-password') {
-    next({ name: 'splash' }) // Redirect to splash page if no access_token and trying to access a protected route
-  } else if (to.name === 'splash' && accessToken) {
-    next({ name: 'dashboard' }) // Optional: Redirect to a protected route if already logged in and trying to access splash page
-  } else {
-    next() // Proceed to the route
-  }
-})
+//   if (to.name !== 'splash' && !accessToken && to.name !== 'new-password') {
+//     next({ name: 'splash' }) // Redirect to splash page if no access_token and trying to access a protected route
+//   } else if (to.name === 'splash' && accessToken) {
+//     next({ name: 'dashboard' }) // Optional: Redirect to a protected route if already logged in and trying to access splash page
+//   } else {
+//     next() // Proceed to the route
+//   }
+// })
 export default router
