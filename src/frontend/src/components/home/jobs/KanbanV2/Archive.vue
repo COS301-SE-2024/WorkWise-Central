@@ -7,11 +7,11 @@
     </v-col></v-row
   >
   <v-data-table
+    :show-select="false"
     v-model="selected"
     :items="starting_cards"
     item-value="name"
     :headers="headers"
-    show-select
   >
     <template v-slot:[`item.status`]="{ value }">
       <v-chip variant="tonal" :color="value.colour"> {{ value.status }}</v-chip>
@@ -63,8 +63,6 @@ export default defineComponent({
       selected: [],
       isDarkMode: localStorage['theme'] !== 'false',
       actionsDialog: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       nostatusID: '',
       starting_cards: [] as JobCardDataFormat[],
       headers: [
@@ -100,7 +98,11 @@ export default defineComponent({
         )
         .then((res) => {
           console.log(res.data.data)
-          window.location.reload()
+
+          this.starting_cards = this.starting_cards.filter(
+            (item) => item.jobId !== this.selectedItem?.jobId
+          )
+          // window.location.reload()
         })
         .catch((error) => console.log(error))
     },
@@ -116,7 +118,9 @@ export default defineComponent({
         .delete(API_URL + `job/full/${this.selectedItem?.jobId}`, config)
         .then((res) => {
           console.log(res.data.data)
-          window.location.reload()
+          this.starting_cards = this.starting_cards.filter(
+            (item) => item.jobId !== this.selectedItem?.jobId
+          )
         })
         .catch((error) => console.log(error))
     },
@@ -157,7 +161,7 @@ export default defineComponent({
 
       try {
         const loaded_tags_response = await axios.get(
-          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}`,
+          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
 
@@ -204,18 +208,6 @@ export default defineComponent({
       const f_date = `${y}-${m}-${d} ${h}:${mn}`
       return f_date
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.loadArchiveData()

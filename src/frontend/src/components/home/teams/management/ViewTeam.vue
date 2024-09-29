@@ -54,7 +54,7 @@
             <label class="font-weight-light" style="font-size: 20px"> Date Created</label>
             <v-spacer></v-spacer>
             <small class="text-caption" style="font-size: 12px">{{
-              formatDatec(team.createdAt)
+              formatDate(team.createdAt)
             }}</small>
           </v-col>
         </v-row>
@@ -81,6 +81,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'ViewTeam',
@@ -109,18 +110,16 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
-
       try {
         const leaderResponse = await axios.get(
-          `${apiURL}employee/${this.team.teamLeaderId}`,
+          `${API_URL}employee/${this.team.teamLeaderId}`,
           config
         )
         this.teamLeaderName = leaderResponse.data.userInfo.displayName
 
         const memberResponses = await Promise.all(
           this.team.teamMembers.map((memberId) =>
-            axios.get(`${apiURL}employee/${memberId}`, config)
+            axios.get(`${API_URL}employee/${memberId}`, config)
           )
         )
         this.teamMemberNames = memberResponses.map((res) => res.data.userInfo.displayName)
@@ -134,22 +133,12 @@ export default defineComponent({
         })
       }
     },
-    async getRequestUrl() {
-      const localUrl = 'http://localhost:3000/'
-      const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
-      const isLocalAvailable = await axios
-        .get(localUrl)
-        .then(() => true)
-        .catch(() => false)
-      return isLocalAvailable ? localUrl : remoteUrl
-    },
     formatDate(date) {
       return new Date(date).toLocaleDateString()
     }
   },
   mounted() {
     console.log(this.team)
-    this.fetchTeamLeaderAndMembers()
   }
 })
 </script>

@@ -29,6 +29,7 @@
                 </label>
 
                 <v-text-field
+                  :disabled="request_load"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Enter the title of the job"
@@ -46,6 +47,7 @@
                 </label>
 
                 <v-autocomplete
+                  :disabled="request_load"
                   density="compact"
                   color="grey-lighten-4"
                   label="Choose the employee for whom the job must be complete"
@@ -92,6 +94,7 @@
                 </label>
 
                 <v-textarea
+                  :disabled="request_load"
                   placeholder="Enter the details of the job"
                   rounded="md"
                   variant="solo"
@@ -120,6 +123,7 @@
               <v-row>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
+                    :disabled="request_load"
                     title="SELECT START DATE"
                     header="Start date of job"
                     border="md"
@@ -136,6 +140,7 @@
                 </v-col>
                 <v-col cols="12" md="6" align="center">
                   <v-time-picker
+                    :disabled="request_load"
                     format="24hr"
                     :allowed-hours="allowedHours"
                     :allowed-minutes="allowedMinutes"
@@ -145,6 +150,7 @@
                 </v-col>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
+                    :disabled="request_load"
                     title="SELECT END DATE"
                     header="End date of job"
                     border="md"
@@ -161,6 +167,7 @@
                 </v-col>
                 <v-col cols="12" md="6" align="center">
                   <v-time-picker
+                    :disabled="request_load"
                     :allowed-hours="allowedHours2"
                     :allowed-minutes="allowedMinutes2"
                     format="24hr"
@@ -174,6 +181,7 @@
                   <label style="font-size: 14px; font-weight: lighter">Assign Employees</label>
 
                   <v-select
+                    :disabled="request_load"
                     v-model="req_obj.assignedEmployees.employeeIds"
                     :items="employeesArray"
                     item-value="employeeId"
@@ -192,6 +200,7 @@
                   <label style="font-size: 14px; font-weight: lighter">Status</label>
 
                   <v-select
+                    :disabled="request_load"
                     :items="statusOptionsArray"
                     label="Select the status of the job"
                     chips
@@ -213,6 +222,7 @@
                   </label>
 
                   <v-select
+                    :disabled="request_load"
                     :items="priorityOptionsArray"
                     label="Select the priority level of this job"
                     chips
@@ -239,6 +249,7 @@
                   <label style="font-size: 14px; font-weight: lighter">Tags</label>
 
                   <v-select
+                    :disabled="request_load"
                     :items="tagOptionsArray"
                     item-value="_id"
                     item-title="label"
@@ -258,6 +269,7 @@
                 <v-col>
                   <small class="text-caption">Cover Image</small>
                   <v-file-input
+                    :disabled="request_load"
                     variant="solo"
                     accept="image/*"
                     width="100%"
@@ -285,6 +297,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="Street"
@@ -302,6 +315,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="Suburb"
@@ -349,6 +363,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="City/Town"
@@ -366,6 +381,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="Postal Code"
@@ -381,6 +397,7 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Complex/Building</label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="Complex"
@@ -404,6 +421,7 @@
           <v-row>
             <v-col cols="12" lg="6" order="last" order-lg="first">
               <v-btn
+                :disabled="request_load"
                 color="error"
                 rounded="md"
                 boarder="md"
@@ -490,8 +508,6 @@ export default defineComponent({
     const currentHour = now.getHours()
     const currentMinute = now.getMinutes()
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       click_create_employee: false,
       valid: false,
       selectedDate: '',
@@ -675,7 +691,6 @@ export default defineComponent({
         console.log(update)
         this.date_validation_error_alert = !update
         if (update) {
-          this.request_load = true
           await this.handleSubmission()
         }
       }
@@ -701,6 +716,8 @@ export default defineComponent({
       return `${year}-${month}-${day}`
     },
     async handleSubmission() {
+      this.request_load = true
+
       console.log(this.req_obj)
 
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -715,9 +732,6 @@ export default defineComponent({
               summary: 'Success',
               detail: 'Job Added Successfully'
             })
-            this.createClientLoadClicked = false
-            this.request_load = false
-            window.location.reload()
           }
           axios
             .put(
@@ -742,13 +756,13 @@ export default defineComponent({
             })
             .catch((error) => {
               console.log(error)
-              this.request_load = false
             })
         })
         .catch((error) => {
           this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
           console.log(error)
         })
+      this.request_load = false
     },
     updateDates() {
       if (this.endDate && this.startDate && this.startTime && this.endTime) {
@@ -906,18 +920,6 @@ export default defineComponent({
       } catch (error) {
         console.log('Error fetching data:', error)
       }
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     updateClient() {
       console.log(this.req_obj.clientId)

@@ -32,20 +32,33 @@ export class RoleService {
     this.permissionsArray.push('edit jobs');
     this.permissionsArray.push('add new jobs');
     this.permissionsArray.push('delete jobs');
+    this.permissionsArray.push('record inventory use');
+    this.permissionsArray.push('record job details');
     this.permissionsArray.push('view all clients');
     this.permissionsArray.push('view clients under me');
     this.permissionsArray.push('view clients that are assigned to me');
     this.permissionsArray.push('edit clients');
     this.permissionsArray.push('add new clients');
     this.permissionsArray.push('delete clients');
+    this.permissionsArray.push('view statistics');
+    this.permissionsArray.push('view customer feedback');
     this.permissionsArray.push('view all inventory');
-    this.permissionsArray.push('edit all inventory');
+    this.permissionsArray.push('edit inventory');
     this.permissionsArray.push('add new inventory item');
     this.permissionsArray.push('delete inventory item');
     this.permissionsArray.push('record stock take');
-    this.permissionsArray.push('record inventory use');
-    this.permissionsArray.push('record job details');
+    this.permissionsArray.push('view movements');
     this.permissionsArray.push('company settings');
+    this.permissionsArray.push('company requests');
+    this.permissionsArray.push('view teams');
+    this.permissionsArray.push('add new teams');
+    this.permissionsArray.push('edit teams');
+    this.permissionsArray.push('delete teams');
+    this.permissionsArray.push('view invoices');
+    this.permissionsArray.push('edit invoices');
+    this.permissionsArray.push('delete invoices');
+    this.permissionsArray.push('generate invoices');
+    this.permissionsArray.push('view fleet');
   }
 
   async validateCreateRole(role: CreateRoleDto) {
@@ -296,7 +309,7 @@ export class RoleService {
     inventoryRoleDto.roleName = 'Inventory manager';
 
     inventoryRoleDto.permissionSuite.push('view all inventory');
-    inventoryRoleDto.permissionSuite.push('edit all inventory');
+    inventoryRoleDto.permissionSuite.push('edit inventory');
     inventoryRoleDto.permissionSuite.push('delete inventory item');
     inventoryRoleDto.permissionSuite.push('add new inventory item');
     inventoryRoleDto.permissionSuite.push('record inventory use');

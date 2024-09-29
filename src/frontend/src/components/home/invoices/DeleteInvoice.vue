@@ -26,7 +26,7 @@
         <v-container>
           <v-row justify="end">
             <v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn label="Cancel" color="secondary" @click="close" block
+              <v-btn label="Cancel" color="secondary" @click="close" block :disabled="isDeleting"
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn>
             </v-col>
@@ -61,8 +61,6 @@ export default defineComponent({
   data: () => ({
     deleteDialog: false,
     isDeleting: false,
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://yourapi.example.com/'
   }),
   methods: {
     async deleteInvoice() {
@@ -86,7 +84,6 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.deleteDialog = false
-            this.isDeleting = false
             this.$emit('InvoiceDeleted', response.data.data)
           }, 3000)
         })
@@ -98,24 +95,12 @@ export default defineComponent({
           detail: 'An error occurred while deleting the invoice',
           life: 3000
         })
-        this.isDeleting = false
       }
+      this.isDeleting = false
     },
     close() {
       this.deleteDialog = false
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   }
 })
 </script>

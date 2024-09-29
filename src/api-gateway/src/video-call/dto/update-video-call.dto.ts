@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsDateString, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateVideoCallDto {
@@ -10,13 +10,18 @@ export class UpdateVideoCallDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  @IsDateString()
-  scheduledStartTime: Date;
+  @IsString()
+  date: string;
 
   @IsNotEmpty()
   @ApiProperty()
-  @IsDateString()
-  scheduledEndTime: Date;
+  @IsString()
+  startTime: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  endTime: string;
 
   @IsArray()
   @IsNotEmpty()

@@ -22,7 +22,14 @@
         <v-container
           ><v-row justify="end">
             <v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn label="Cancel" color="secondary" text @click="clientDialog = false" block
+              <v-btn
+                label="Cancel"
+                color="secondary"
+                text
+                @click="clientDialog = false"
+                block
+                :disabled="isDeleting"
+              >
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" start size="small"></v-icon
                 >Cancel
               </v-btn></v-col
@@ -59,8 +66,6 @@ export default {
   components: { Toast },
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       clientDialog: false,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
@@ -81,7 +86,6 @@ export default {
       // Consider removing this for SPA behavior
     },
     async deleteClient() {
-      this.isDeleting = true // Indicate the start of the deletion process
       console.log('meow', this.client_id)
       console.log(localStorage.getItem('employeeId'))
       const config = {
@@ -109,7 +113,6 @@ export default {
             life: 3000
           })
           setTimeout(() => {
-            this.clientDialog = false
             this.$emit('deleteClient', this.client_id)
           }, 1500)
         })
@@ -126,18 +129,7 @@ export default {
         this.isDeleting = false // Reset the deletion indicator
       }
     },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
+    
   }
 }
 </script>

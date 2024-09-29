@@ -1,7 +1,33 @@
 import { Types } from 'mongoose';
-import { IsArray, IsDate, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Items } from './create-invoice.dto';
+
+export class Items {
+  @IsOptional()
+  @ApiProperty()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsNumber()
+  quantity?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsNumber()
+  unitPrice?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsNumber()
+  discount?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsNumber()
+  total?: number;
+}
 
 export class UpdateInvoiceDto {
   @IsOptional()
@@ -11,12 +37,12 @@ export class UpdateInvoiceDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   invoiceDate?: Date;
 
   @ApiProperty()
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   paymentDate?: Date;
 
   @IsOptional()
@@ -45,7 +71,7 @@ export class UpdateInvoiceDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   receiptOfPaymentDate?: Date;
 
   @IsOptional()

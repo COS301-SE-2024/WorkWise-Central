@@ -197,12 +197,17 @@
       <v-container>
         <v-row>
           <v-col class="d-flex flex-column" order="last" order-lg="first" cols="12" lg="6">
-            <v-btn class="mb-4" @click="cancelJob" color="error" block
+            <v-btn class="mb-4" @click="cancelJob" color="error" block :disabled="req_loading"
               ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
             >
           </v-col>
           <v-col class="d-flex flex-column" order="first" order-lg="last" cols="12" lg="6">
-            <v-btn class="mb-4" @click="patchJobDetails" color="success" block
+            <v-btn
+              class="mb-4"
+              @click="patchJobDetails"
+              color="success"
+              block
+              :loading="req_loading"
               ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
             >
           </v-col></v-row
@@ -230,10 +235,6 @@ const emits = defineEmits(['close', 'save'])
 
 // Toast for notifications
 const toast = useToast()
-
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
 // Province Options
 const provinceOptions = [
@@ -289,21 +290,6 @@ const allowedMinutes = ref<(minute: number) => boolean>(() => true)
 const allowedHours2 = ref<(hour: number) => boolean>(() => true)
 const allowedMinutes2 = ref<(minute: number) => boolean>(() => true)
 
-// Utility Functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
-
 // Function to Update Allowed Start Times
 const updateAllowedTimes = () => {
   const isToday = startDate.value === minDate
@@ -335,6 +321,7 @@ const updateAllowedTimesEnd = () => {
     allowedMinutes2.value = () => true
   }
 }
+let req_loading = ref<boolean>(false)
 
 // Patch Job Details
 const patchJobDetails = async () => {
@@ -345,6 +332,7 @@ const patchJobDetails = async () => {
     }
   }
   try {
+    req_loading.value = true
     // Validate and set startDate
     if (startDate.value && startTime.value) {
       const startTimeString = startTime.value
@@ -390,7 +378,10 @@ const patchJobDetails = async () => {
   } catch (error) {
     console.error('Error getting editing job details', error)
     showEditError()
+  } finally {
+    req_loading.value = false
   }
+  emits('close')
 }
 
 // Event Handlers

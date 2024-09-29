@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsDate, IsMongoId, IsNotEmpty, IsNumber, IsString, IsArray, IsOptional } from 'class-validator';
+import { IsDateString, IsMongoId, IsNotEmpty, IsNumber, IsString, IsArray, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Items {
@@ -18,10 +18,10 @@ export class Items {
   @IsNumber()
   unitPrice: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
   @IsNumber()
-  discount: number;
+  discount?: number;
 
   @IsNotEmpty()
   @ApiProperty()
@@ -37,12 +37,12 @@ export class CreateInvoiceDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   invoiceDate: Date;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   paymentDate: Date;
 
   @IsNotEmpty()

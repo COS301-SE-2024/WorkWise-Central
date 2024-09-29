@@ -57,26 +57,12 @@ export default defineComponent({
     return {
       deleteDialog: false,
       isDeleting: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false
     }
   },
   methods: {
     close() {
       this.deleteDialog = false
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
     },
     async deleteRole() {
       this.isDeleting = true // Indicate the start of the deletion process

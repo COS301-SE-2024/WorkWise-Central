@@ -376,6 +376,7 @@
 <script lang="ts">
 import axios from 'axios'
 import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 
 type ContactDetails = {
   email: string
@@ -419,8 +420,6 @@ export default {
       valid: true,
       dark: '#2b2b2b',
       light: '#FFFFFF',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       company_name_rules: [
         (v: string) => !!v || 'Company name is required',
         (v: string) => /^[A-Z]/.test(v) || 'Company name must start with a capital letter',
@@ -504,10 +503,8 @@ export default {
       console.log(JSON.stringify(this.req_obj))
       console.log(this.req_obj)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
       axios
-        .post(apiURL + 'company/create', this.req_obj, config)
+        .post(API_URL + 'company/create', this.req_obj, config)
         .then((res) => {
           console.log(res)
           localStorage['currentCompany'] = res.data._id
@@ -534,19 +531,6 @@ export default {
           console.log(res)
           this.register_request_loading = false
         })
-    },
-
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     close() {
       this.dialog = false

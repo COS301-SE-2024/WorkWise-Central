@@ -242,8 +242,6 @@ export default defineComponent({
       },
       employeeData: [],
       selectedItem: '',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       items: [],
       jobStatusLabels: []
     }
@@ -358,21 +356,9 @@ export default defineComponent({
         console.error(error)
       }
     },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
     selectItem(item) {
       console.log(item)
       this.selectedItem = item
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     async convertJobIdtoJobName(id) {
       const config = {

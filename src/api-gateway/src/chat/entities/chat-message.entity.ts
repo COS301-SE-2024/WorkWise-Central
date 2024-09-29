@@ -7,27 +7,26 @@ import { currentDate } from '../../utils/Utils';
 @Schema()
 export class ChatMessage {
   constructor(chatId: Types.ObjectId, userId: Types.ObjectId, textContent: string, attachments?: string[]) {
+    //this._id = new Types.ObjectId();
     this.chatId = chatId;
     this.userId = userId;
     this.textContent = textContent;
     if (attachments) this.attachments = attachments;
   }
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
-  _id: Types.ObjectId = new Types.ObjectId();
 
-  @Prop({ type: Types.ObjectId, ref: Chat.name, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, ref: Chat.name, required: true, index: true })
   chatId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: User.name, required: true })
+  @Prop({ type: SchemaTypes.ObjectId, ref: User.name, required: true, index: true })
   userId: Types.ObjectId;
 
   @Prop({ type: String, required: true })
   textContent: string;
 
-  @Prop({ type: Boolean, required: true, default: false })
-  isRead: boolean = false;
+  @Prop({ type: [SchemaTypes.ObjectId], required: true, default: [] })
+  usersWhoHaveReadMessage: Types.ObjectId[] = [];
 
-  @Prop({ type: [String], required: true, default: [] })
+  @Prop({ type: [String], required: false, default: [] })
   attachments?: string[] = [];
 
   @Prop({ default: Date.now })

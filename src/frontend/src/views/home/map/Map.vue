@@ -1,43 +1,70 @@
 <template>
   <Splitter style="height: 100%">
     <SplitterPanel class="flex items-center justify-center" :size="25" :minSize="10">
-      <div class="sidebar">
+      <div>
         <!--        <Image src="https://picsum.photos/200/300" alt="Image" width="100%" height="20%" />-->
-        <h2>Fleet Overview</h2>
-        <div class="status-cards">
-          <div class="status-card active">
-            <h3>Active Vehicles</h3>
-            <p>{{ activeVehicles }}</p>
+        <div class="fleet-overview text-center">
+          <h2>Fleet Overview</h2>
+
+          <div class="status-cards">
+            <Card class="status-card active">
+              <template #title>Active Vehicles</template>
+              <template #content>
+                <h1>{{ activeVehicles }}</h1>
+              </template>
+            </Card>
+            <Card class="status-card inactive">
+              <template #title>Inactive Vehicles</template>
+              <template #content>
+                <h1>{{ inactiveVehicles }}</h1>
+              </template>
+            </Card>
           </div>
-          <div class="status-card inactive">
-            <h3>Inactive Vehicles</h3>
-            <p>{{ inactiveVehicles }}</p>
-          </div>
-        </div>
-        <div class="driver-list">
-          <h3>Current Drivers</h3>
-          <ul>
-            <li v-for="driver in currentDrivers" :key="driver.id">
-              {{ driver?.profile?.displayName }}
-            </li>
-          </ul>
-        </div>
-        <div class="fleet-stats">
-          <h3>Fleet Statistics</h3>
-          <p>Total Distance Today: {{ totalDistanceToday }} km</p>
-          <p>Average Fuel Consumption: {{ averageFuelConsumption }} L/100km</p>
-          <p>Vehicles Due for Service: {{ vehiclesDueForService }}</p>
-        </div>
-        <div class="alerts">
-          <h3>Alerts</h3>
-          <ul>
-            <li v-for="alert in recentAlerts" :key="alert.id" :class="alert.severity">
-              {{ alert.message }}
-            </li>
-          </ul>
+
+          <Panel header="Current Drivers">
+            <DataView :value="currentDrivers">
+              <template #list="slotProps">
+                <div class="driver-item">
+                  {{ slotProps.data.profile.displayName }}
+                </div>
+              </template>
+            </DataView>
+          </Panel>
+
+          <Panel header="Fleet Statistics">
+            <div class="fleet-stats">
+              <div class="p-grid">
+                <div class="p-col-4">
+                  <strong>Total Distance Today:</strong> {{ totalDistanceToday }} km
+                </div>
+                <div class="p-col-4">
+                  <strong>Average Fuel Consumption:</strong> {{ averageFuelConsumption }} L/100km
+                </div>
+                <div class="p-col-4">
+                  <strong>Vehicles Due for Service:</strong> {{ vehiclesDueForService }}
+                </div>
+              </div>
+            </div>
+          </Panel>
+
+          <Panel header="Alerts">
+            <DataView :value="recentAlerts">
+              <template #list="slotProps">
+                <Message :severity="slotProps.data.severity" :text="slotProps.data.message" />
+              </template>
+            </DataView>
+          </Panel>
         </div>
       </div>
       <div class="card">
+        <div class="text-center pt-10">
+          <Button
+              label="Show All Vehicle Data"
+              icon="fa: fa-solid fa-external-link"
+              @click="dialogVisible = true"
+              class="custom-button"
+          />
+        </div>
         <Button
           label="Show All Vehicle Data"
           icon="pi pi-external-link"
@@ -147,7 +174,7 @@
             ></Column>
           </DataTable>
           <template #footer>
-            <Button label="Close" icon="pi pi-check" @click="dialogVisible = false" />
+            <Button label="Close" class="p-button-danger" icon="fa: fa-solid fa-check" @click="dialogVisible = false" />
           </template>
         </Dialog>
       </div>
@@ -208,6 +235,11 @@ import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
+import Card from 'primevue/card';
+import Panel from 'primevue/panel';
+import DataView from 'primevue/dataview';
+import Message from 'primevue/message'
+// import Image from 'primevue/image'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
@@ -232,6 +264,11 @@ export default {
     Column,
     // eslint-disable-next-line vue/no-reserved-component-names
     Button,
+    //Image
+    Card,
+    Panel,
+    DataView,
+    Message,
     Image,
     InputNumber,
     InputText,
@@ -293,7 +330,6 @@ export default {
     this.getCompanyData()
     this.getVehiclesData().then(() => this.loadFleetData())
     //this.loadFleetData()
-    //VehicleService.getVehicles().then((data) => (this.vehicles = data))
   },
   computed: {
     activeVehicles() {
@@ -450,10 +486,63 @@ export default {
 </script>
 
 <style scoped>
+
+.custom-button {
+  background-color: #4C9FC3;
+  outline-color: #4C9FC3;
+  border: none; /* Add this line to remove the green outline */
+}
+
+.custom-button:hover {
+  background-color: #4C9FC3 !important; /* Ensure hover color matches */
+  border: none !important; /* Add this line to remove the green outline */
+}
+
 .centered {
   display: block;
   margin: 8px auto;
   max-width: 100%;
   height: auto;
+}
+
+.fleet-overview {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.status-cards {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.status-card {
+  flex: 1;
+  margin: 0 0.5rem;
+}
+
+.status-card.active :deep(.p-card) {
+  background-color: #c8e6c9;
+}
+
+.status-card.inactive :deep(.p-card) {
+  background-color: #ffcdd2;
+}
+
+.driver-item {
+  padding: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.driver-item:last-child {
+  border-bottom: none;
+}
+
+.fleet-stats {
+  padding: 1rem;
+}
+
+.panel-header-center .p-panel-header {
+  text-align: center;
 }
 </style>

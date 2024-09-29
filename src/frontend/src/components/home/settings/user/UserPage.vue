@@ -191,27 +191,10 @@ import userAvatar from '@/components/home/settings/user/UserProfileAvatar.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import { API_URL } from '@/main'
 
 const emit = defineEmits(['UploadImage'])
 // Use router
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString)
@@ -234,11 +217,10 @@ const getUserData = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   const userId = localStorage.getItem('id')
 
   try {
-    const response = await axios.get(`${apiUrl}users/id/${userId}`, config)
+    const response = await axios.get(`${API_URL}users/id/${userId}`, config)
     const data = response.data.data
 
     user.value.firstName = data.personalInfo.firstName
@@ -267,7 +249,6 @@ const patchUser = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
 
   const updatedUserData = {
     personalInfo: {
@@ -293,7 +274,7 @@ const patchUser = async () => {
   }
 
   try {
-    await axios.patch(`${apiUrl}users/update`, updatedUserData, config)
+    await axios.patch(`${API_URL}users/update`, updatedUserData, config)
     return 'pass'
   } catch (error) {
     return 'fail'

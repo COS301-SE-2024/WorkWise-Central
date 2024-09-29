@@ -43,6 +43,7 @@
             background-color="#f5f5f5"
             rounded="l"
             variant="solo"
+            :disabled="req_loading"
           ></v-select>
         </v-card-text>
 
@@ -50,11 +51,11 @@
           <v-container
             ><v-row
               ><v-col cols="12" lg="6" order="last" order-lg="first">
-                <v-btn @click="saveMembers" color="success" block
+                <v-btn @click="saveMembers" color="success" block :loading="req_loading"
                   ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
                 ></v-col
               ><v-col cols="12" lg="6" order="last" order-lg="first">
-                <v-btn @click="isActive.value = false" color="error" block
+                <v-btn @click="isActive.value = false" color="error" block :disabled="req_loading"
                   ><v-icon icon="fa:fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
                 ></v-col
               ></v-row
@@ -92,29 +93,11 @@ const selectedMembers = ref<Member[]>([])
 const members = ref<Member[]>([]) // Populate with your states data
 const originalSelectedMembers = ref<Member[]>([])
 
-// API URLs and config
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 const config = {
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
-}
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
 }
 
 const showAssignEmployeesSuccess = () => {
@@ -159,9 +142,11 @@ const getTeamMembers = async () => {
     console.error('Error updating job:', error)
   }
 }
+let req_loading = ref<boolean>(false)
 
 const saveMembers = async () => {
   try {
+    req_loading.value = true
     // Find members to remove
     const membersToRemove = originalSelectedMembers.value.filter(
       (originalMember) =>
@@ -222,9 +207,12 @@ const saveMembers = async () => {
 
     // Update the original selected members
     originalSelectedMembers.value = [...selectedMembers.value]
+    membersDialog.value = false
   } catch (error) {
     console.log(error)
     showAssignEmployeesError()
+  } finally {
+    req_loading.value = false
   }
 }
 

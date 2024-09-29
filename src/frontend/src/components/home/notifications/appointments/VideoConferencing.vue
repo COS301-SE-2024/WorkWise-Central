@@ -1,9 +1,14 @@
 <template>
   <v-container>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" class="text-center">
+        <h2 class="text-xl font-semibold">{{ roomName }}</h2>
+      </v-col>
+    </v-row>
     <v-card class="bg-cardColor">
       <v-card-text
         ><v-row>
-          <v-col cols="12" md="6" lg="3" class="local-video">
+          <v-col cols="12" lg="6" class="local-video">
             <video
               :ref="
                 (el) => {
@@ -16,7 +21,7 @@
             ></video>
           </v-col>
 
-          <v-col v-for="peer in peers" :key="peer.id" cols="12" md="6" lg="3" class="remote-video">
+          <v-col v-for="peer in peers" :key="peer.id" cols="12" lg="6" class="remote-video">
             <video
               :ref="
                 (el) => {
@@ -81,6 +86,7 @@
 import { defineComponent, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import axios from 'axios'
 import { io, Socket } from 'socket.io-client'
+import { API_URL, APP_URL } from '@/main'
 
 import router from '@/router'
 
@@ -103,10 +109,9 @@ export default defineComponent({
     const peers = ref<{ id: string; connection: RTCPeerConnection }[]>([])
     let socket: Socket
     let localStream: MediaStream | null = null
-    const localUrl = 'http://localhost:3000/'
-    const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
     const roomId = localStorage.getItem('RoomId')
     const employeeId = localStorage.getItem('employeeId')
+    const roomName = ref(localStorage.getItem('RoomName') || 'Default Room Name')
 
     const configuration = {
       iceServers: [
@@ -116,11 +121,11 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      socket = io('http://localhost:3000', {
+      socket = io(API_URL, {
         withCredentials: true,
         transports: ['websocket', 'polling'],
         extraHeaders: {
-          'Access-Control-Allow-Origin': 'http://localhost:5173'
+          'Access-Control-Allow-Origin': APP_URL
         }
       })
 
@@ -165,19 +170,6 @@ export default defineComponent({
         localStream.getTracks().forEach((track) => track.stop())
       }
     })
-    const getRequestUrl = async () => {
-      const localAvailable = await isLocalAvailable(localUrl)
-      return localAvailable ? localUrl : remoteUrl
-    }
-
-    const isLocalAvailable = async (localUrl: string) => {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    }
 
     const scheduleCall = async () => {
       console.log('Scheduled time:', new Date(scheduledTime.value))
@@ -187,10 +179,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await getRequestUrl()
       try {
         await axios.post(
-          `${apiURL}video-calls/schedule`,
+          `${API_URL}video-calls/schedule`,
           {
             title: title.value,
             scheduledTime: new Date(scheduledTime.value)
@@ -314,34 +305,68 @@ export default defineComponent({
     }
 
     const toggleScreenShare = async () => {
+      const localVideoElement = document.getElementById('localVideo') // Local video element
+
       if (isScreenSharing.value) {
+        // Stop screen sharing and revert to the camera
         if (localStream) {
           const screenTrack = localStream.getVideoTracks().find((track) => track.label === 'screen')
           if (screenTrack) {
-            localStream.removeTrack(screenTrack)
-            screenTrack.stop()
+            screenTrack.stop() // Stop the screen track
+            localStream.removeTrack(screenTrack) // Remove it from localStream
           }
-          const cameraTrack = await navigator.mediaDevices
-            .getUserMedia({ video: true })
-            .then((stream) => stream.getVideoTracks()[0])
+
+          // Get the camera stream again
+          const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true })
+          const cameraTrack = cameraStream.getVideoTracks()[0]
+
+          // Replace the current video track with the camera track
           localStream.addTrack(cameraTrack)
-          updateTrackForAllPeers(cameraTrack)
+
+          // Update the local video element's stream
+          if (localVideoElement) {
+            if (localVideoElement) {
+              if (localVideoElement) {
+                if (localVideoElement) {
+                  ;(localVideoElement as HTMLVideoElement).srcObject = null // Reset the stream first
+                }
+              }
+            }
+            ;(localVideoElement as HTMLVideoElement).srcObject = localStream // Re-assign the updated stream
+          }
+
+          updateTrackForAllPeers(cameraTrack) // Notify other peers about the new track
         }
       } else {
+        // Start screen sharing
         try {
           const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true })
           const screenTrack = screenStream.getVideoTracks()[0]
+
           if (localStream) {
             const videoTrack = localStream.getVideoTracks()[0]
-            localStream.removeTrack(videoTrack)
-            localStream.addTrack(screenTrack)
-            updateTrackForAllPeers(screenTrack)
+            if (videoTrack) {
+              localStream.removeTrack(videoTrack) // Remove the current camera track
+            }
+
+            localStream.addTrack(screenTrack) // Add the screen track
+
+            // Update the local video element's stream
+            if (localVideoElement) {
+              if (localVideoElement) {
+                ;(localVideoElement as HTMLVideoElement).srcObject = null // Reset the stream first
+              } // Reset the stream first
+              ;(localVideoElement as HTMLVideoElement).srcObject = localStream // Re-assign the updated stream
+            }
+
+            updateTrackForAllPeers(screenTrack) // Notify other peers about the screen track
           }
         } catch (error) {
           console.error('Failed to share screen:', error)
         }
       }
-      isScreenSharing.value = !isScreenSharing.value
+
+      isScreenSharing.value = !isScreenSharing.value // Toggle the state
     }
 
     const updateTrackForAllPeers = (newTrack: MediaStreamTrack) => {
@@ -380,7 +405,8 @@ export default defineComponent({
       toggleAudio,
       toggleVideo,
       toggleScreenShare,
-      endCall
+      endCall,
+      roomName
     }
   }
 })
@@ -401,8 +427,8 @@ export default defineComponent({
 .remote-video {
   width: 100%;
   height: 100%;
-  max-width: 400px; /* Adjust max size of video */
-  max-height: 300px;
+  max-width: 600px; /* Adjust max size of video */
+  max-height: 500px;
 }
 
 video {

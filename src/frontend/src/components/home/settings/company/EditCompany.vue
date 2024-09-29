@@ -143,9 +143,6 @@ export default defineComponent({
   data: () => ({
     isDarkMode: false,
     isDeleting: false,
-
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     currentCompanyID: localStorage.getItem('currentCompany'),
     valid: false,
     company: {
@@ -303,7 +300,7 @@ export default defineComponent({
       }
       const company_id = localStorage.getItem('currentCompany')
       await axios
-        .get(`http://localhost:3000/company/id/${company_id}`, config)
+        .get(`${API_URL}company/id/${company_id}`, config)
         .then((response) => {
           this.company = response.data.data
           console.log(this.company)
@@ -405,18 +402,6 @@ export default defineComponent({
             life: 3000
           })
         })
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     toast() {},
     rulesPassed() {

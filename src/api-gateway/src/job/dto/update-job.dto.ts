@@ -84,6 +84,10 @@ export class ClientFeedback {
   @IsString()
   @IsOptional()
   comments?: string;
+
+  @IsOptional()
+  @IsDateString()
+  date: Date;
 }
 export class Details {
   @ApiProperty()

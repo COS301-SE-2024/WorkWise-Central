@@ -32,6 +32,7 @@
 <script>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { io } from 'socket.io-client'
+import { API_URL } from '@/main'
 
 const SystemMessage = {
   id: 1,
@@ -39,7 +40,7 @@ const SystemMessage = {
   author: 'Bot'
 }
 
-const socket = io('http://localhost:3000', { autoConnect: true })
+const socket = io(API_URL, { autoConnect: true })
 
 export default {
   props: {
@@ -54,7 +55,7 @@ export default {
       socket.connect()
 
       socket.on('connect', () => {
-        console.log('Socket connected')
+        //console.log('Socket connected')
       })
 
       socket.on('disconnect', () => {

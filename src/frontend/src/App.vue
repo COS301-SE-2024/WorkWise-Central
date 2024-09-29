@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
 
+const toast = useToast()
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import { getMessaging, getToken, onMessage } from 'firebase/messaging'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,27 +22,11 @@ const firebaseConfig = {
   appId: '1:950285135964:web:1778c46e488b5d20033699',
   measurementId: 'G-TVE6WF34J2'
 }
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-// TODO: Change config to pull jwt from localStorage
 const config = {
   headers: {
     'Content-Type': 'application/json',
-    Authorization: ''
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
-}
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
 }
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
@@ -49,6 +36,15 @@ const app = initializeApp(firebaseConfig)
 const messaging = getMessaging()
 onMessage(messaging, (payload) => {
   console.log('Message received. ', payload)
+  if (payload) {
+    toast.add({
+      severity: 'info',
+      summary: payload?.notification?.title,
+      detail: payload?.notification?.body,
+      life: 10000,
+      closable: true
+    })
+  }
   // ...
 })
 
@@ -62,12 +58,11 @@ async function registerFirebaseToken() {
     })
     if (currentToken) {
       console.log('Token is:', currentToken)
-      const apiUrl = await getRequestUrl()
       const body = {
         newToken: currentToken
       }
       try {
-        const response = await axios.post(`${apiUrl}notification/push/token`, body, config)
+        const response = await axios.post(`${API_URL}notification/push/token`, body, config)
         console.log('Token registered successfully:', response.data.data)
       } catch (error) {
         console.log('Error posting the token:', error)

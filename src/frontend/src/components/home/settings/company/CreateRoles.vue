@@ -71,8 +71,6 @@ export default defineComponent({
       dialog: false,
       isDeleting: false,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       formIsValid: false,
       Role: {
         roleName: '',
@@ -124,18 +122,6 @@ export default defineComponent({
           this.isDeleting = false
         })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
     async getPermissions() {
       const config = {
         headers: {
@@ -144,7 +130,7 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}role/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response)
           for (let i = 0; i < response.data.data.length; i++) {

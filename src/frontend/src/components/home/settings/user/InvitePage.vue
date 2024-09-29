@@ -94,6 +94,7 @@
 import axios from 'axios'
 import { defineComponent } from 'vue'
 import CreateInvite from './CreateInvite.vue'
+import { API_URL } from '@/main'
 
 interface Invite {
   companyId: number
@@ -114,35 +115,13 @@ export default defineComponent({
     return {
       search: '' as string,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       headers: [
         { title: 'Company Name', value: 'companyName' },
         { title: 'Email Being Invited', value: 'emailBeingInvited' },
         { title: 'Created At', value: 'createdAt' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
-      invites: [
-        {
-          companyId: 1,
-          superiorId: 101,
-          companyName: 'Tech Corp',
-          roleIdForInvite: 1,
-          roleName: 'Worker',
-          emailBeingInvited: 'newuser@example.com',
-          createdAt: '2024-08-11T14:48:30.335Z'
-        },
-        {
-          companyId: 2,
-          superiorId: 102,
-          companyName: 'Innovate LLC',
-          roleIdForInvite: 2,
-          roleName: 'Worker',
-          emailBeingInvited: 'anothernewuser@example.com',
-          createdAt: '2024-08-11T15:30:25.123Z'
-        }
-        // Add more mock data as needed
-      ] as Invite[]
+      invites: [] as Invite[]
     }
   },
   methods: {
@@ -160,10 +139,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = this.getRequestUrl()
+    
       await axios
         .patch(
-          `${url}admin/invite/decide`,
+          `${API_URL}admin/invite/decide`,
           {
             companyId: invite.companyId,
             emailBeingInvited: invite.emailBeingInvited,
@@ -202,10 +181,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = this.getRequestUrl()
+      
       await axios
         .patch(
-          `${url}admin/invite/decide`,
+          `${API_URL}admin/invite/decide`,
           {
             companyId: invite.companyId,
             emailBeingInvited: invite.emailBeingInvited,
@@ -234,12 +213,8 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
       await axios
-        .get(
-          `${url}admin/invite/all/company/${localStorage.getItem('currentCompany')}/detailed`,
-          config
-        )
+        .get(`${API_URL}admin/invite/all/e/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
           console.log(response)
           this.invites = response.data.data
@@ -248,18 +223,6 @@ export default defineComponent({
           console.error(error)
         })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.getInvites()

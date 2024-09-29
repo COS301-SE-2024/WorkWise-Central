@@ -117,7 +117,7 @@ const router = createRouter({
       component: () => import('../views/TestView.vue')
     },
     {
-      path: '/manager-employees-t',
+      path: '/manageremployees',
       name: 'manageremployees',
       component: () => import('@/views/home/employees/ManageEmployees.vue')
     },
@@ -405,6 +405,11 @@ const router = createRouter({
       path: '/map',
       name: 'map',
       component: GoogleMapsView
+    },
+    {
+      path: '/chatHome',
+      name: 'chatHome',
+      component: () => import('@/views/home/chat/ChatHome.vue')
     }
   ]
 })

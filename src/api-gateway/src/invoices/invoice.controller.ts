@@ -109,7 +109,7 @@ export class InvoiceController {
   })
   @ApiOperation({
     summary: `Get all ${className} instances for a given Company`,
-    description: `Returns all ${className} instances in the database for a given Company.`,
+    description: `Generates an invoice for a given job.`,
   })
   @ApiOkResponse({
     type: InvoiceListResponseDto,
@@ -119,7 +119,7 @@ export class InvoiceController {
     name: 'id',
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
-  @Get('/generate')
+  @Get('/generate/:currentEmployeeId/:jobId')
   async generate(
     @Headers() headers: any,
     @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
@@ -128,19 +128,17 @@ export class InvoiceController {
     if (!currentEmployeeId) {
       throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
     }
-
-    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    // if (currentEmployee.role.permissionSuite.includes('view all Invoice')) {
+    console.log('In generate invoice controller');
+    console.log('jobId: ', jobId);
+    console.log('currentEmployeeId: ', currentEmployeeId);
     let data;
     try {
       data = await this.invoiceService.generate(jobId);
     } catch (e) {
+      console.log('Error: ', e);
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
     return { data: data };
-    // } else {
-    //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
-    // }
   }
 
   @UseGuards(AuthGuard)
@@ -296,6 +294,42 @@ export class InvoiceController {
     // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     // if (currentEmployee.role.permissionSuite.includes('view all Invoice')) {
     const data = await this.invoiceService.findById(id);
+    return { data: data };
+    // } else {
+    //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    // }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiOperation({
+    summary: `Find an ${className}`,
+    description: `Returns the ${className} instance with the given id.`,
+  })
+  @ApiOkResponse({
+    type: InvoiceResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'id',
+    description: `The _id attribute of the ${className} to be retrieved.`,
+  })
+  @Get('detailed/id/:id')
+  async findByIdDetailed(
+    @Headers() headers: any,
+    @Param('id') id: Types.ObjectId,
+    @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    if (!currentEmployeeId) {
+      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
+    }
+    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // if (currentEmployee.role.permissionSuite.includes('view all Invoice')) {
+    const data = await this.invoiceService.findByIdDetailed(id);
     return { data: data };
     // } else {
     //   throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);

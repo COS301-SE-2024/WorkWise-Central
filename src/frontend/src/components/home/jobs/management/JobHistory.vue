@@ -54,6 +54,7 @@ import { ref, computed, onMounted } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
 import axios from 'axios'
 import Button from 'primevue/button'
+import { API_URL } from '@/main'
 
 // Define the type for an event
 interface Event {
@@ -74,28 +75,10 @@ const showHistory = ref<boolean>(false)
 const currentPage = ref<number>(1)
 const itemsPerPage = 10
 
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
-
 // Format timestamp to a human-readable string
 const formatTimestamp = (timestamp: string): string => {
-  return formatDistanceToNow(new Date(timestamp), { addSuffix: true })
+  const date = new Date(timestamp)
+  return date.toLocaleString()
 }
 
 // Calculate the total number of pages
@@ -111,10 +94,10 @@ const paginatedEvents = computed(() => {
 })
 
 const refreshHistory = async () => {
-  const apiUrl = await getRequestUrl()
   try {
-    const res = await axios.get(`${apiUrl}job/id/${props.jobID}`)
+    const res = await axios.get(`${API_URL}job/id/${props.jobID}`)
     events.value = res.data.data.history
+    console.log('Events:', events)
     console.log('History updated:', res)
   } catch (error) {
     console.log(error)
@@ -140,5 +123,13 @@ onMounted(() => {
 /* Style for alternating background colors */
 .v-list-item:nth-of-type(odd) {
   background-color: #f0f0f0; /* Example color for odd rows */
+}
+
+.v-list-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.v-list-item:last-child {
+  border-bottom: none;
 }
 </style>

@@ -13,7 +13,7 @@ c
                 >
                   <v-row align="center" justify="space-between">
                     <v-col cols="12" lg="4" class="d-flex align-center">
-                      <v-icon icon="mdi-account-hard-hat"></v-icon>
+                      <v-icon icon="fa: fa-solid fa-users"></v-icon>
                       <v-label
                         class="ms-2 h2 font-family-Nunito text-headingTextColor"
                         height="auto"
@@ -108,25 +108,37 @@ c
                                 :style="'transform: rotate(90deg) dots'"
                                 v-bind="props"
                                 @click="(actionsDialog = true), selectItem(item)"
+                                v-show="
+                                  permissions.includes('view all employees') ||
+                                  permissions.includes('view employees under me') ||
+                                  permissions.includes('edit employees') ||
+                                  permissions.includes('delete employees')
+                                "
                               >
                                 <v-icon color="primary">mdi-dots-horizontal</v-icon>
                               </v-btn></template
                             >
                             <v-list class="bg-background">
                               <v-list-item
+                                v-show="
+                                  permissions.includes('view all employees') ||
+                                  permissions.includes('view employees under me')
+                                "
                                 ><EmployeeDetails colors="colors" :EmployeeDetails="selectedItem"
                               /></v-list-item>
 
                               <v-list-item>
                                 <EditEmployee
                                   v-if="permissions.includes('edit employees')"
-                                  @update:item="selectedItem = $event"
+                                  @update="getEmployees"
                                   :editedItem="selectedItem"
                                   :Disabled="false"
                               /></v-list-item>
 
                               <v-list-item v-if="permissions.includes('delete employees')"
-                                ><DeleteEmployee :details="selectedItem"
+                                ><DeleteEmployee
+                                  :details="selectedItem"
+                                  @employeeDeleted="getEmployees"
                               /></v-list-item>
                             </v-list>
                           </v-menu>
@@ -167,8 +179,6 @@ export default {
       details: {}
     },
     selectedItemName: '',
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     selectedItemSurname: '',
     loading_data: true,
     permissions: [] as string[],
@@ -296,7 +306,7 @@ export default {
 
       try {
         const employee_response = await axios.get(
-          API_URL + `employee/id/${localStorage['employeeId']}`,
+          `${API_URL}employee/id/${localStorage['employeeId']}`,
           config
         )
         console.log(employee_response.data.data)
@@ -319,7 +329,7 @@ export default {
 
       try {
         const employee_response = await axios.get(
-          API_URL + `employee/detailed/all/${localStorage['employeeId']}`,
+          `${API_URL}employee/detailed/all/${localStorage['employeeId']}`,
           config
         )
 
@@ -426,18 +436,6 @@ export default {
     getRowClass(item: any) {
       const index = this.clients.indexOf(item)
       return index % 2 === 0 ? 'row-color' : 'second-row-color'
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     }
   }
 }

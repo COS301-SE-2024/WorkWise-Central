@@ -1,6 +1,6 @@
 export type EventTime = {
   start: string
-  end: string
+  end?: string
 }
 
 export type Event = {

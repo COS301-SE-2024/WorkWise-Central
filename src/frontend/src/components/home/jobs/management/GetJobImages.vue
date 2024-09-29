@@ -1,25 +1,37 @@
 <template>
   <v-container>
-    <v-carousel v-if="hasImages" hide-delimiters>
+    <v-carousel height="400">
       <v-carousel-item v-for="(image, index) in images" :key="index">
         <v-img
-          :src="image.src"
-          min-height="auto"
-          min-width="auto"
-          @click="openImageOverlay(index)"
-        ></v-img>
-        <v-btn @click="openImageActionsDialog(index)" class="image-actions-btn">
-          <v-icon>
-            {{ 'fa: fa-solid fa-ellipsis-h' }}
-          </v-icon>
+            :src="image.src"
+            height="100%"
+            width="100%"
+            cover
+            @click="openImageOverlay(index)"
+        >
+          <template v-slot:placeholder>
+            <v-row class="fill-height ma-0" align="center" justify="center">
+              <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+            </v-row>
+          </template>
+        </v-img>
+        <v-btn
+            @click="openImageActionsDialog(index)"
+            class="image-actions-btn"
+            icon
+            elevation="2"
+            color="secondary"
+            style="position: absolute; bottom: 16px; right: 16px;"
+        >
+          <v-icon class="pl-3" color="primary">{{ 'fa: fa-solid fa-ellipsis-h' }}</v-icon>
         </v-btn>
         <v-dialog
-          v-model="image.dialog"
-          max-width="300px"
-          location="bottom"
-          location-strategy="connected"
-          opacity="0"
-          origin="top center"
+            v-model="image.dialog"
+            max-width="300px"
+            location="bottom"
+            location-strategy="connected"
+            opacity="0"
+            origin="top center"
         >
           <template v-slot:default="{ isActive }">
             <v-card class="bg-cardColor">
@@ -27,28 +39,20 @@
                 Image Actions
               </v-card-title>
               <v-card-actions class="d-flex flex-column">
-                <v-btn color="info" @click="changeImage(index)">
-                  <v-icon>
-                    {{ 'fa: fa-solid fa-sync' }}
-                  </v-icon>
+                <v-btn color="info" @click="changeImage(index)" :loading="isDownloading">
+                  <v-icon left>{{ 'fa: fa-solid fa-sync' }}</v-icon>
                   Change Image
                 </v-btn>
                 <v-btn color="success" @click="downloadImage(index)">
-                  <v-icon>
-                    {{ 'fa: fa-solid fa-download' }}
-                  </v-icon>
+                  <v-icon left>{{ 'fa: fa-solid fa-download' }}</v-icon>
                   Download
                 </v-btn>
-                <v-btn color="error" @click="deleteImage(index)">
-                  <v-icon>
-                    {{ 'fa: fa-solid fa-trash' }}
-                  </v-icon>
+                <v-btn color="error" @click="deleteImage(index)" :loading="isDeleting">
+                  <v-icon left>{{ 'fa: fa-solid fa-trash' }}</v-icon>
                   Delete
                 </v-btn>
                 <v-btn color="error" @click="isActive.value = false">
-                  <v-icon>
-                    {{ 'fa: fa-solid fa-times' }}
-                  </v-icon>
+                  <v-icon left>{{ 'fa: fa-solid fa-times' }}</v-icon>
                   Cancel
                 </v-btn>
               </v-card-actions>
@@ -94,6 +98,9 @@ import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import { API_URL } from '@/main'
 
+let isDeleting = ref<boolean>(false)
+let isDownloading = ref<boolean>(false)
+
 const toast = useToast()
 interface Image {
   src: string
@@ -106,30 +113,12 @@ const images = ref<Image[]>([])
 const newFile = ref<File | null>(null)
 const imageOverlay = ref(false)
 const overlayImageSrc = ref('')
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
 
 const config = {
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
-}
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
 }
 
 const getJobData = async () => {
@@ -237,6 +226,7 @@ const changeImage = (index: number): void => {
             }
           }
           const url = `${API_URL}job/add/attachments/?jId=${props.id}&eId=${localStorage.getItem('employeeId')}`
+          isDownloading.value = true
           try {
             const response = await axios.patch(url, formData, config)
             if (response.status === 200) {
@@ -255,6 +245,8 @@ const changeImage = (index: number): void => {
               detail: 'Failed to update image',
               life: 3000
             })
+          } finally {
+            isDownloading.value = false
           }
         }
       }
@@ -293,6 +285,7 @@ const deleteImage = async (index: number): Promise<void> => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
+  isDeleting.value = true
   try {
     const response = await axios.patch(url, body, config)
     if (response.status === 200) {
@@ -311,6 +304,8 @@ const deleteImage = async (index: number): Promise<void> => {
       detail: 'Failed to delete image',
       life: 3000
     })
+  } finally {
+    isDeleting.value = false
   }
 }
 const hasImages = computed(() => images.value.length > 0)
@@ -324,5 +319,9 @@ onMounted(() => {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+.v-carousel {
+  overflow: hidden;
 }
 </style>

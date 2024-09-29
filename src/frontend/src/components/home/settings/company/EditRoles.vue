@@ -147,8 +147,6 @@ export default defineComponent({
     CreateRoles
   },
   data: () => ({
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dialog: false,
     items: [],
     isDeleting: false,
@@ -156,12 +154,7 @@ export default defineComponent({
     rolePermissions: [],
     permissions: [],
     value: [],
-    roleUpdates: [
-      {
-        permissionSuite: [],
-        roleName: ''
-      }
-    ],
+    roleUpdates: [],
     roleIds: [{}],
     headers: [
       { title: 'Role', key: 'roleName' },
@@ -191,22 +184,24 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/all/${localStorage.getItem('currentCompany')}`, config)
+        .get(`${API_URL}role/all/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
           console.log(response.data.data.length)
 
-          for (let i = 0; i < response.data.data.length; i++) {
-            if (response.data.data[i].roleName) {
+          for (const data of response.data.data) {
+            if (data.roleName) {
               this.roleUpdates.push({
-                _id: response.data.data[i]._id,
-                roleName: response.data.data[i].roleName,
-                permissionSuite: response.data.data[i].permissionSuite
+                _id: data._id,
+                roleName: data.roleName,
+                permissionSuite: data.permissionSuite
               })
-              this.roleIds.push(response.data.data[i]._id)
+              this.roleIds.push(data._id)
             }
           }
 
           console.log(this.roleUpdates)
+          //removing the first element of the array
+          // this.roleUpdates.shift();
         })
         .catch((error) => {
           console.log(error)
@@ -227,11 +222,11 @@ export default defineComponent({
         }
       }
       await axios
-        .get(`http://localhost:3000/role/allPermissions`, config)
+        .get(`${API_URL}role/allPermissions`, config)
         .then((response) => {
           console.log(response.data.data)
-          for (let i = 0; i < response.data.data.length; i++) {
-            this.permissions.push(response.data.data[i])
+          for (const data of response.data.data) {
+            this.permissions.push(data)
           }
         })
         .catch((error) => {
@@ -253,7 +248,7 @@ export default defineComponent({
       }
       console.log(JSON.stringify(data))
       await axios
-        .patch(`http://localhost:3000/role/${this.selectedItem._id}`, config, data)
+        .patch(`${API_URL}role/${this.selectedItem._id}`, config, data)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -350,18 +345,6 @@ export default defineComponent({
         detail: 'Company updated',
         life: 3000
       })
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
     },
     selectItem(item) {
       console.log(item)

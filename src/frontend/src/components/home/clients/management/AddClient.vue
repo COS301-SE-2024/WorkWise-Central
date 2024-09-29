@@ -233,7 +233,14 @@
         <v-spacer></v-spacer>
         <v-row class="fixed">
           <v-col cols="12" lg="6" order="last" order-lg="first">
-            <v-btn color="error" width="100%" height="35" variant="text" @click="close">
+            <v-btn
+              color="error"
+              width="100%"
+              height="35"
+              variant="text"
+              @click="close"
+              :disabled="request_loading"
+            >
               <v-icon icon="fa: fa-solid fa-ban" color="error" start></v-icon> Cancel
             </v-btn>
           </v-col>
@@ -310,8 +317,6 @@ export default defineComponent({
   },
   data() {
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       valid: false,
       isDeleting: false,
       addDialog: this.showDialog,
@@ -483,7 +488,7 @@ export default defineComponent({
     phhoneNumberCheck() {
       if (this.req_obj.details.contactInfo.phoneNumber != '') {
         axios
-          .get('http://localhost:3000/client/checkPhoneNumber', {
+          .get('${API_URL}client/checkPhoneNumber', {
             params: {
               phoneNumber: this.req_obj.details.contactInfo.phoneNumber
             }
@@ -535,7 +540,6 @@ export default defineComponent({
             detail: 'Client created successfully',
             life: 3000
           })
-          this.request_loading = false
           setTimeout(() => {
             this.addDialog = false
             this.isDeleting = false
@@ -548,18 +552,7 @@ export default defineComponent({
           console.log('Client creation failed')
           console.log(res)
         })
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      this.request_loading = false
     },
     resetFields() {
       this.req_obj = {

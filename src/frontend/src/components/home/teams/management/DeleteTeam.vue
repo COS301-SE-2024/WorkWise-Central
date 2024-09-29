@@ -47,6 +47,7 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'DeleteTeam',
@@ -61,8 +62,6 @@ export default defineComponent({
     deleteDialog: false,
     isDeleting: false,
     isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   methods: {
     async deleteTeam() {
@@ -77,10 +76,9 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
       try {
         this.isDeleting = true
-        await axios.delete(`${apiURL}team/${this.team_id}`, config)
+        await axios.delete(`${API_URL}team/${this.team_id}`, config)
         console.log('Team deleted successfully')
         this.$toast.add({
           severity: 'success',
@@ -109,18 +107,6 @@ export default defineComponent({
     close() {
       this.deleteDialog = false
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status >= 200 && res.status < 300
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   }
 })
 </script>

@@ -45,6 +45,19 @@ export class InvoiceRepository {
     }).lean();
   }
 
+  async findAllForJob(identifier: Types.ObjectId) {
+    return await this.InvoiceModel.find({
+      $and: [
+        {
+          jobId: identifier,
+        },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    }).lean();
+  }
+
   async detailedFindAllInCompany(identifier: Types.ObjectId) {
     const result: (FlattenMaps<Invoice> & { _id: Types.ObjectId })[] = await this.InvoiceModel.find({
       $and: [
@@ -72,7 +85,9 @@ export class InvoiceRepository {
           $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
         },
       ],
-    }).lean();
+    })
+      .populate(['clientId', 'jobId', 'companyId'])
+      .lean();
   }
 
   async findById(identifier: Types.ObjectId) {
@@ -84,6 +99,19 @@ export class InvoiceRepository {
         },
       ],
     }).lean();
+  }
+
+  async findByIdDetailed(identifier: Types.ObjectId) {
+    return this.InvoiceModel.findOne({
+      $and: [
+        { _id: identifier },
+        {
+          $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+        },
+      ],
+    })
+      .populate(['clientId', 'jobId', 'companyId'])
+      .lean();
   }
 
   async InvoiceExists(id: Types.ObjectId): Promise<boolean> {

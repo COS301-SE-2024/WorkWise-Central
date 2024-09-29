@@ -142,7 +142,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-
 import DeleteStatus from './DeleteStatus.vue'
 import Toast from 'primevue/toast'
 import CreateStatus from './CreateStatus.vue'
@@ -230,8 +229,6 @@ export default defineComponent({
       '#FFEE58'
     ] as string[],
     isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
   }),
   components: {
     DeleteStatus,
@@ -264,14 +261,6 @@ export default defineComponent({
         console.error(error)
       }
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
     selectItem(item: any) {
       console.log(item)
       this.selectedItem = {
@@ -281,10 +270,6 @@ export default defineComponent({
         companyId: localStorage.getItem('currentCompany'),
         employeeId: localStorage.getItem('employeeId')
       }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     async updateStatus() {
       this.isDeleting = true // Indicate the start of the deletion process

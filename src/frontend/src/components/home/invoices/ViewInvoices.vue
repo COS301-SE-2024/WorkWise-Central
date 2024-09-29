@@ -59,13 +59,9 @@
       <v-card-actions>
         <v-container
           ><v-row
-            ><v-col cols="12" lg="6">
+            ><v-col cols="12">
               <v-btn color="error" block @click="dialog = false"
                 ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
-              ></v-col
-            ><v-col cols="12" lg="6"
-              ><v-btn color="success" block @click="downloadPdf"
-                ><v-icon icon="fa: fa-solid fa-file" color="success"></v-icon>Download PDF</v-btn
               ></v-col
             ></v-row
           ></v-container
@@ -196,7 +192,9 @@ export default {
       }
 
       // Create an Object URL for the PDF to view in the iframe
-      this.pdfSrc = URL.createObjectURL(jsPDFInvoiceTemplate(props).blob)
+      const v = jsPDFInvoiceTemplate(props).blob
+      console.log(v)
+      this.pdfSrc = URL.createObjectURL(v)
     },
     downloadPdf() {
       const props = {

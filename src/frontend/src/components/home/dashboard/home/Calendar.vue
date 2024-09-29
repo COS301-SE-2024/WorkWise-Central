@@ -63,8 +63,6 @@ export default {
         'brown'
       ],
       are_events_loading: true,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       SelectedEvent: {} as Job,
       JobCardVisibility: false,
       request_config: {
@@ -997,7 +995,7 @@ export default {
       console.log(payload_event_id)
       console.log('event deleted')
       // uncomment this when youre ready to run an event delete
-      // const API_URL = await this.getRequestUrl()
+
       // axios
       //   .delete(API_URL + `job/${payload_event_id}`, this.request_config)
       //   .then((res) => {
@@ -1023,21 +1021,22 @@ export default {
 
       try {
         const employee_jobs = await axios(
-          API_URL + `job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+          API_URL + `job/all/company/detailed/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
 
         let jobs: Job[] = employee_jobs.data.data
+        console.log(jobs)
         jobs.map((job: Job) => {
-          if (job.status.status === 'Archive') return null
-
+          if (job.status.status === 'Archive' || !job?.details?.endDate) return null
+          console.log(job?.details?.endDate)
           if (job.clientId != null) {
             const evnt: Event = {
               title: job.details.heading,
               with: job.clientId.details.firstName + ' ' + job.clientId.details.lastName,
               time: {
                 start: this.formatDate(job.details.startDate),
-                end: this.formatDate(job.details.endDate)
+                end: this.formatDate(job.details?.endDate)
               },
               color:
                 this.available_event_colors[this.randNum(0, this.available_event_colors.length)],
@@ -1108,18 +1107,6 @@ export default {
       const f_date = `${y}-${m}-${d} ${h}:${mn}`
       // console.log(f_date)
       return f_date
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     randNum(min: number, max: number /*excluding*/) {
       min = Math.ceil(min)

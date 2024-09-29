@@ -48,7 +48,12 @@
               >
             </v-col>
             <v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn color="secondary" variant="text" @click="clientDialog = false" block
+              <v-btn
+                :disabled="isDeleting"
+                color="secondary"
+                variant="text"
+                @click="clientDialog = false"
+                block
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon
                 >Cancel</v-btn
               >
@@ -82,9 +87,7 @@ export default {
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       modal_dark_theme_color: '#2b2b2b',
-      modal_light_theme_color: '#FFFFFF',
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+      modal_light_theme_color: '#FFFFFF'
     }
   },
   methods: {
@@ -92,14 +95,12 @@ export default {
       this.clientDialog = false
     },
     async deleteEmployee() {
-      const employee_to_be_deleted = {
-        currentEmployeeId: localStorage['employeeId']
-      }
-      console.log(employee_to_be_deleted)
       this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
-        data: employee_to_be_deleted
+        params: {
+          currentEmployeeId: localStorage['employeeId']
+        }
       }
       axios
         .delete(API_URL + `employee/${this.details.employeeId}`, config)
@@ -111,11 +112,11 @@ export default {
             detail: 'Employee deleted successfully',
             life: 3000
           })
-          this.isDeleting = false
-          this.clientDialog = false
-          this.isDeleting = false
-          this.clientDialog = false
-          window.location.reload()
+
+          setTimeout(() => {
+           this.$emit('employeeDeleted')
+           this.clientDialog = false
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)
@@ -127,18 +128,7 @@ export default {
             life: 3000
           })
         })
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      this.isDeleting = false
     }
   }
 }

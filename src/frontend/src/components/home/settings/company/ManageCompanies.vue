@@ -162,29 +162,11 @@ const leftCompanyHeaders = [
 // Table Data
 const companies = ref<Company[]>([])
 
-// API URLs and configs
-const localUrl = 'http://localhost:3000/'
-const remoteUrl = 'https://tuksapi.sharpsoftwaresolutions.net/'
 const config = {
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
-}
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status >= 200 && res.status < 300
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
 }
 
 const getRowProps = ({ index }: any) => ({
@@ -307,7 +289,6 @@ const switchCompany = async (company: Company) => {
   localStorage.setItem('currentCompany', company.companyId)
   localStorage.setItem('employeeId', company.employeeId)
   localStorage.setItem('currentCompanyName', company.name)
-  const API_URL = getRequestUrl()
   try {
     const response = await axios.get(`${API_URL}employee/id/${company.employeeId}`, config)
     console.log('Returned employee', response)

@@ -23,7 +23,13 @@
     <Button label="Add Item" icon="pi pi-plus" @click="addItem" class="p-mt-3" />
 
     <template #footer>
-      <Button label="Save All" icon="pi pi-check" @click="saveAllItems" autofocus />
+      <Button
+        label="Save All"
+        icon="pi pi-check"
+        @click="saveAllItems"
+        autofocus
+        :loading="req_loading"
+      />
       <Button label="Cancel" icon="pi pi-times" @click="closeDialog" class="p-button-text" />
     </template>
   </Dialog>
@@ -44,6 +50,7 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Button from 'primevue/button'
+import { API_URL } from '@/main'
 
 const toast = useToast()
 const inventoryDialog = ref(false)
@@ -61,25 +68,6 @@ interface UpdateRecordedDetails {
 }
 
 const props = defineProps<{ recordedDetails: UpdateRecordedDetails; jobID: string }>()
-
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
 
 const openInventoryDialog = () => {
   inventoryDialog.value = true
@@ -116,6 +104,8 @@ const saveItem = (index: number) => {
   }
 }
 
+let req_loading = ref<boolean>(false)
+
 const saveAllItems = async () => {
   if (inventory.value.length === 0) {
     toast.add({
@@ -134,8 +124,6 @@ const saveAllItems = async () => {
     }
   }
 
-  const apiUrl = await getRequestUrl()
-
   const updatedInventory = inventory.value.map((item) => ({
     inventoryItemId: '', // Provide or retrieve this from somewhere
     inventoryItemName: item.name,
@@ -143,7 +131,8 @@ const saveAllItems = async () => {
   }))
 
   try {
-    const response = await axios.patch(`${apiUrl}job/${props.jobID}`, updatedInventory, config)
+    req_loading.value = true
+    const response = await axios.patch(`${API_URL}job/${props.jobID}`, updatedInventory, config)
     console.log(response)
     toast.add({
       severity: 'success',
@@ -160,6 +149,8 @@ const saveAllItems = async () => {
       detail: 'An error occurred while logging the inventory item',
       life: 3000
     })
+  } finally {
+    req_loading.value = false
   }
 }
 </script>

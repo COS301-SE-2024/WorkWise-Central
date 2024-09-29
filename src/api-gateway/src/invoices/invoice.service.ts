@@ -42,6 +42,7 @@ export class InvoiceService {
   ) {}
 
   async validateCreateInvoice(Invoice: CreateInvoiceDto) {
+    console.log('Invoice: ', Invoice);
     //Checking that the company exists
     if (!(await this.companyService.companyIdExists(Invoice.companyId))) {
       return new ValidationResult(false, `Company not found`);
@@ -66,20 +67,43 @@ export class InvoiceService {
   }
 
   async create(createInvoiceDto: CreateInvoiceDto) {
-    console.log('createInvoiceDto: ', createInvoiceDto);
+    console.log('in create invoice');
     const validation = await this.validateCreateInvoice(createInvoiceDto);
-    console.log('validation: ', validation);
+    console.log('checkpoint7');
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
+    console.log('checkpoint8');
     const newInvoice = new Invoice(createInvoiceDto);
-    newInvoice.inventoryItems = createInvoiceDto.inventoryItems;
-    newInvoice.laborItems = createInvoiceDto.laborItems;
+    newInvoice.inventoryItems = [];
+    for (const item of createInvoiceDto.inventoryItems) {
+      newInvoice.inventoryItems.push({
+        description: item.description ? item.description : '',
+        quantity: item.quantity ? item.quantity : 0,
+        unitPrice: item.unitPrice ? item.unitPrice : 0,
+        discount: item.discount ? item.discount : 0,
+        total: item.total ? item.total : 0,
+      });
+    }
+    console.log('checkpoint9');
+    newInvoice.laborItems = [];
+    for (const item of createInvoiceDto.laborItems) {
+      newInvoice.laborItems.push({
+        description: item.description ? item.description : '',
+        quantity: item.quantity ? item.quantity : 0,
+        unitPrice: item.unitPrice ? item.unitPrice : 0,
+        discount: item.discount ? item.discount : 0,
+        total: item.total ? item.total : 0,
+      });
+    }
+    console.log('checkpoint10');
     return await this.invoiceRepository.save(newInvoice);
   }
 
   async generate(jobId: Types.ObjectId) {
+    console.log('in generate invoice');
     const dto = new CreateInvoiceDto();
+    dto.jobId = jobId;
     const job = await this.jobService.getJobById(jobId);
     dto.clientId = job.clientId;
     dto.companyId = job.companyId;
@@ -89,12 +113,11 @@ export class InvoiceService {
     } else {
       dto.invoiceNumber = number + 1;
     }
-
+    console.log('checkpoint1');
     dto.invoiceDate = new Date();
     dto.inventoryItems = [];
     dto.laborItems = [];
     let total = 0;
-
     //Adding the inventory items used for the job
     const inventoryUsedList = await this.inventoryUsedService.findAllForJob(jobId);
     for (const inventoryUsed of inventoryUsedList) {
@@ -114,15 +137,29 @@ export class InvoiceService {
       total = total + item.total;
       dto.inventoryItems.push(item);
     }
+    console.log('checkpoint2');
 
     //TODO: add labor to invoice
+    for (const employeeId of job.assignedEmployees.employeeIds) {
+      const employee = await this.employeeService.findById(employeeId);
+      const timeSpent = await this.timeTrackerService.getTotalTimeSpentOnJob(employeeId, jobId);
+      const item = new Items();
+      item.description = employee.userInfo.firstName + ' ' + employee.userInfo.surname;
+      item.quantity = timeSpent.timeWorked / 60;
+      item.unitPrice = employee.hourlyRate;
+      item.discount = 0;
+      item.total = item.unitPrice * item.quantity;
+      total = total + item.total;
+      dto.laborItems.push(item);
+    }
+    console.log('checkpoint3');
 
     dto.paid = false;
-    dto.taxPercentage = 15; //VAT percentage in South Africa
+    dto.taxPercentage = 15;
     dto.taxAmount = total * (15 / 115);
     dto.subTotal = total - dto.taxAmount;
-
     dto.total = dto.total + dto.taxAmount;
+    console.log('checkpoint5');
 
     return await this.create(dto);
   }
@@ -137,6 +174,10 @@ export class InvoiceService {
       throw new Error('CompanyId does not exist');
     }
     return await this.invoiceRepository.findAllInCompany(companyId);
+  }
+
+  async findAllForJob(jobId: Types.ObjectId) {
+    return await this.invoiceRepository.findAllForJob(jobId);
   }
 
   async detailedFindAllInCompany(companyId: Types.ObjectId) {
@@ -157,6 +198,10 @@ export class InvoiceService {
 
   async findById(id: Types.ObjectId) {
     return await this.invoiceRepository.findById(id);
+  }
+
+  async findByIdDetailed(id: Types.ObjectId) {
+    return await this.invoiceRepository.findByIdDetailed(id);
   }
 
   async InvoiceExists(id: Types.ObjectId): Promise<boolean> {

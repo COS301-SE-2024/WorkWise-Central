@@ -40,7 +40,8 @@
                         single-line
                       ></v-text-field>
                     </v-col>
-                    <v-col order-sm="2" order-md="2" cols="12" lg="4" class="d-flex justify-end">
+                    <v-col order-sm="2" order-md="2" cols="12" lg="4" class="d-flex justify-end"
+                    v-if= "checkPermission('add new jobs')">
                       <AddJob />
                     </v-col>
                   </v-row>
@@ -104,11 +105,11 @@
                       </template>
 
                       <template v-slot:[`item.startDate`]="{ item }">
-                        {{ formatDate(item?.details?.startDate) }}
+                        {{ new Date(item?.details?.startDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
                       </template>
 
                       <template v-slot:[`item.endDate`]="{ item }">
-                        {{ item?.details?.endDate }}
+                        {{ new Date(item?.details?.endDate || '').toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) }}
                       </template>
 
                       <!-- Actions slot -->
@@ -120,12 +121,23 @@
                               variant="plain"
                               v-bind="props"
                               @click="openDialog(item)"
+                              v-show="
+                                checkPermission('view all jobs') ||
+                                checkPermission('view jobs under me') ||
+                                checkPermission('view jobs assigned to me') ||
+                                checkPermission('edit jobs') ||
+                                checkPermission('delete jobs')
+                              "
                             >
                               <v-icon color="primary">mdi-dots-horizontal</v-icon>
                             </v-btn>
                           </template>
                           <v-list class="bg-background">
-                            <v-list-item class="pl-0">
+                            <v-list-item class="pl-0" v-show="
+                                checkPermission('view all jobs') ||
+                                checkPermission('view jobs under me') ||
+                                checkPermission('view jobs assigned to me')
+                              ">
                               <v-btn color="success" width="100%" @click.stop="openViewDialog()">
                                 <v-icon
                                   icon="fa:fa-solid fa-eye"
@@ -146,8 +158,8 @@
                                 ></ViewJob>
                               </v-dialog>
                             </v-list-item>
-                            <v-list-item class="pl-0">
-                              <v-btn color="warning" width="100%" @click.stop="openJobCardDialog()">
+                            <v-list-item class="pl-0" v-show="checkPermission('edit jobs')">
+                              <v-btn color="warning" width="100%" @click.stop="openJobCardDialog()" >
                                 <v-icon
                                   icon="fa:fa-solid fa-pencil"
                                   start
@@ -167,7 +179,7 @@
                                 ></ManagerJobCard>
                               </v-dialog>
                             </v-list-item>
-                            <v-list-item>
+                            <v-list-item v-show=" checkPermission('delete jobs') ">
                               <v-btn color="error" @click.stop="deleteDialog = true">
                                 <v-icon
                                   icon="fa:fa-solid fa-trash"
@@ -195,7 +207,7 @@
             <v-icon color="white">mdi-alert-circle-outline</v-icon>
             Confirm Deletion
           </v-card-title>
-          <v-card-text> Are you sure you want to delete this job? </v-card-text>
+          <v-card-text> Are you sure you want to delete this job? <strong>This action cannot be reversed</strong></v-card-text>
           <v-card-actions>
             <v-container
               ><v-row
@@ -318,7 +330,7 @@ interface Job {
       houseNumber?: string
     }
     startDate: string
-    endDate?: string
+    endDate: string
   }
   recordedDetails?: {
     imagesTaken?: string[]
@@ -367,17 +379,20 @@ interface Job {
   }[]
   createdAt: string
   updatedAt: string
+  employeePermissions: string[]
 }
 
 // Define state variables with types
 const selectedJob = ref<Job | null>(null)
 const deleteDialog = ref(false)
-const isDeleting = ref(false)
 const detailedJobData = ref<Job[]>([])
 const search = ref('')
 const isDarkMode = ref(localStorage.getItem('theme') === 'true' ? true : false)
 const viewJobDialogVisible = ref(false)
 const viewManagerJobCardVisible = ref(false)
+const employeePermissions = ref<string[]>([]);
+
+let isDeleting = ref<boolean>(false)
 
 const openJobCardDialog = () => {
   viewManagerJobCardVisible.value = true
@@ -397,23 +412,29 @@ const closeEditJob = async () => {
   await fetchData()
 }
 
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
+const checkPermission = (permission: string) =>{
+      return employeePermissions.value.includes(permission)
 }
 
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
+const getEmployeePermissions = async()=>{
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      axios
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .then((response) => {
+          console.log(response.data.data.role.permissionSuite)
+          employeePermissions.value = response.data.data.role.permissionSuite
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
 }
 
 // Set the table headers
@@ -438,7 +459,7 @@ const fetchData = async () => {
   }
   try {
     const response = await axios.get(
-      `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}`,
+      `${API_URL}job/all/company/detailed/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
       config
     )
     if (response.status > 199 && response.status < 300) {
@@ -499,11 +520,9 @@ const confirmDelete = async () => {
       })
       setTimeout(() => {
         deleteDialog.value = false
-        isDeleting.value = false
       }, 3000)
       closeDialog()
     } catch (error) {
-      isDeleting.value = false
       toast.add({
         severity: 'error',
         summary: 'Delete Error',
@@ -512,11 +531,13 @@ const confirmDelete = async () => {
       })
     } finally {
       localStorage.setItem('jobDeleted', 'true')
+      isDeleting.value = false
     }
   }
 }
 
 onMounted(() => {
+  getEmployeePermissions()
   fetchData()
   const jobDeleted = localStorage.getItem('jobDeleted')
 
@@ -528,7 +549,7 @@ onMounted(() => {
       life: 3000
     })
     localStorage.removeItem('jobDeleted')
-  }
+  }  
 })
 
 const getRowProps = ({ index }: any) => {

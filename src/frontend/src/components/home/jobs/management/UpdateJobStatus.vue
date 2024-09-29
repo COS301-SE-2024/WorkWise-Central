@@ -31,6 +31,7 @@
           <v-radio-group
             v-model="displayJob.status"
             column
+            :disabled="req_loading"
             class="my-custom-radio-group"
             row
             background-color="#f5f5f5"
@@ -58,10 +59,14 @@
           <v-container>
             <v-row>
               <v-col cols="12" lg="6">
-                <v-btn @click="saveStatus" color="success" block> Save </v-btn></v-col
+                <v-btn @click="saveStatus" color="success" :loading="req_loading" block>
+                  Save
+                </v-btn></v-col
               >
               <v-col cols="12" lg="6"
-                ><v-btn @click="isActive.value = false" color="error" block> Cancel </v-btn></v-col
+                ><v-btn @click="isActive.value = false" color="error" block :disabled="req_loading">
+                  Cancel
+                </v-btn></v-col
               ></v-row
             ></v-container
           >
@@ -87,25 +92,6 @@ const toast = useToast()
 const props = defineProps({
   passedInJob: Object
 })
-
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
 
 const restructureJob = (job: any) => {
   if (!job) {
@@ -179,6 +165,8 @@ const showJobCommentError = () => {
   })
 }
 
+let req_loading = ref<boolean>(false)
+
 // Method to save status
 const saveStatus = async () => {
   console.log(props.passedInJob)
@@ -194,6 +182,7 @@ const saveStatus = async () => {
   }
 
   try {
+    req_loading.value = true
     console.log(props.passedInJob)
     const job = restructureJob(props.passedInJob)
 
@@ -213,6 +202,8 @@ const saveStatus = async () => {
   } catch (error) {
     console.error('Error updating job:', error)
     showJobCommentError()
+  } finally {
+    req_loading.value = false
   }
   statusDialog.value = false
 }

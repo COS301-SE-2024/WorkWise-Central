@@ -96,6 +96,7 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
 import type { CompanyListItem } from '@/components/signup/types'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'RegisterCompanyModal',
@@ -106,8 +107,6 @@ export default defineComponent({
     buttonColor: String
   },
   data: () => ({
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dialog: false,
     valid: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -153,22 +152,9 @@ export default defineComponent({
     close() {
       this.dialog = false
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
     async createJoinCompanyRequest() {
       console.log('Creating request')
       try {
-        const apiURL = await this.getRequestUrl()
         const config = {
           headers: {
             'Content-Type': 'application/json',
@@ -180,7 +166,7 @@ export default defineComponent({
           companyId: this.req_obj.company_name
         }
         console.log(body)
-        const response = await axios.post(`${apiURL}admin/request/create`, body, config)
+        const response = await axios.post(`${API_URL}admin/request/create`, body, config)
         console.log(response.data.data)
         if (response.data.data !== true) {
           console.log('Request unsuccessful')
@@ -200,8 +186,7 @@ export default defineComponent({
       }
 
       try {
-        const apiURL = await this.getRequestUrl()
-        const response = await axios.get(`${apiURL}company/all/names`, config)
+        const response = await axios.get(`${API_URL}company/all/names`, config)
         console.log(response.data.data)
         response.data.data.forEach((e: CompanyListItem) => {
           this.companyNameArr.push(e)

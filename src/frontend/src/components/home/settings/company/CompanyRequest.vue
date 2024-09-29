@@ -92,6 +92,7 @@
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
+import { API_URL } from '@/main'
 
 interface Request {
   companyId: number
@@ -109,8 +110,6 @@ export default defineComponent({
     return {
       search: '' as string,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       headers: [
         { title: 'Company Name', value: 'companyName' },
         { title: 'User to Join', value: 'userToJoin' },
@@ -130,10 +129,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
+      
       await axios
         .patch(
-          `${url}admin/request/decide`,
+          `${API_URL}admin/request/decide`,
           {
             companyId: request.companyId,
             userToJoinId: request.userToJoin._id,
@@ -173,10 +172,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = this.getRequestUrl()
       await axios
         .patch(
-          `${url}admin/request/decide`,
+          `${API_URL}admin/request/decide`,
           {
             companyId: request.companyId,
             userToJoin: request.userToJoin,
@@ -218,10 +216,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
+      
       await axios
         .get(
-          `${url}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`,
+          `${API_URL}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`,
           config
         )
         .then((response) => {
@@ -232,18 +230,6 @@ export default defineComponent({
           console.error(error)
         })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.getRequests()

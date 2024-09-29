@@ -10,7 +10,7 @@
         User's Companies
       </h2>
       <v-card-text class="bg-background">
-        <v-container>
+        <v-container fluid fill-height>
           <v-row>
             <v-col cols="2"
               ><v-menu v-model="modalMenu" activator="parent">
@@ -43,7 +43,7 @@
         </v-container>
       </v-card-text>
       <v-actions @click="closeCompanyDialog" class="bg-background">
-        <v-container>
+        <v-container fluid fill-height>
           <v-row>
             <v-col cols="12" lg="6" align-self="center" order="last" order-lg="first">
               <v-btn
@@ -121,8 +121,6 @@ export default defineComponent({
         'Company 9',
         'Company 10'
       ],
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
     }
   },
   methods: {
@@ -198,18 +196,6 @@ export default defineComponent({
           console.log(error)
         })
     },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    }
   },
   mounted() {
     this.getCompanies()

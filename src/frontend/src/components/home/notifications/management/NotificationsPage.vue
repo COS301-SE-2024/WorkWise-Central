@@ -67,18 +67,17 @@
                       :key="i"
                       @click="handleNotificationClick(notification._id)"
                     >
-                      <Panel :class="'bg-background'">
+                      <Panel class="bg-background">
                         <template #header>
                           <div class="flex items-center gap-2">
-                            <v-icon
-                              :icon="
-                                !notification.isRead
-                                  ? 'fa: fa-regular fa-bell'
-                                  : 'fa: fa-solid fa-bell'
-                              "
-                            >
-                            </v-icon>
-                            <span class="font-bold h6">{{ notification.message.title }}</span>
+                            <v-badge v-if="!notification.isRead" dot color="green" overlap>
+                              <v-icon icon="fa: fa-regular fa-bell"></v-icon>
+                            </v-badge>
+                            <v-icon icon="fa: fa-regular fa-bell" v-else></v-icon>
+
+                            <span class="font-bold h6 notification-title" style="color: #f0984d">{{
+                              notification.message.title
+                            }}</span>
                           </div>
                         </template>
                         <template #footer>
@@ -221,8 +220,6 @@ export default {
       currentInbox: 'Inbox', // Track the current inbox
       currentCompany: '', // Track the current company
       currentFilter: '', // Track the current filter
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       apply: false
     }
   },
@@ -307,18 +304,6 @@ export default {
           console.log(error)
         })
       this.populateCompanies()
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     setInbox(inbox: string) {
       this.currentInbox = inbox
@@ -525,11 +510,17 @@ export default {
       const user_id = localStorage.getItem('id')
       try {
         const res = await axios.get(`${API_URL}notification/user?userId=${user_id}`, config)
-        //console.log('User Notifications', res)
+        console.log('User Notifications', res.data.data)
         //this.items = res.data.data
         for (const datum of res.data.data) {
           this.notifications.push(datum)
           this.allNotifications.push(datum)
+        }
+
+        for (const datum of res.data.data) {
+          axios.patch(`${API_URL}notification/markAsRead/${datum._id}`, {}, config).then(() => {
+            console.log('message marked as red')
+          })
         }
       } catch (error) {
         console.error(error)
@@ -542,5 +533,9 @@ export default {
 <style scoped>
 .highlight {
   background-color: #9e20c4; /* Change to your desired highlight color */
+}
+
+.notification-title {
+  margin-left: 10px; /* Small space between the icon and the text */
 }
 </style>
