@@ -155,7 +155,7 @@
     <SplitterPanel class="flex items-center justify-center" :size="75">
       <GoogleMap :api-key="apiKey" style="width: 100%; height: 100%" :center="mapCenter" :zoom="12">
         <!-- Company Marker -->
-        <Marker v-if="company" :options="{ position: companyLocation, icon: 'fa: fa-solid fa-building' }">
+        <Marker v-if="company" :options="{ position: companyLocation }">
           <InfoWindow>
             <div id="companyContent">
               <img class="centered" v-if="company.logo" :src="company.logo" alt="Company Logo" />
@@ -168,7 +168,7 @@
         </Marker>
 
         <!-- Current Location Marker -->
-        <Marker :options="{ position: currentLocation, icons: 'fa: fa-solid fa-user' }">
+        <Marker :options="{ position: currentLocation }">
           <InfoWindow>
             <div id="content">
               <h1 id="firstHeading" style="color: black">You Are Here</h1>
@@ -180,7 +180,7 @@
         <Marker
           v-for="vehicle in vehicles"
           :key="vehicle.id"
-          :options="{ position: vehicle.location, label: vehicle.driver, icon: 'fa: fa-solid fa-car' }"
+          :options="{ position: vehicle.location, label: vehicle.driver }"
         >
           <InfoWindow>
             <div style="color: black">
