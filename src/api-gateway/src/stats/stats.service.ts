@@ -139,7 +139,7 @@ export class StatsService {
           total: invoice.total,
           job: {
             jobId: invoice.jobId,
-            jobTitle: jobs.find((job) => job._id.toString() === invoice.jobId.toString()).details.heading,
+            jobTitle: jobs.find((job) => job._id.toString() === invoice.jobId._id.toString()).details.heading,
           },
         });
       }
