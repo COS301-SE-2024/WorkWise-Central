@@ -419,42 +419,17 @@ const router = createRouter({
     }
   ]
 })
-router.beforeEach((to, from, next) => {
-  const accessToken = localStorage.getItem('access_token')
-  const currentEmployeeId = localStorage.getItem('employeeId')
-  const currentCompanyId = localStorage.getItem('currentCompany')
 
-  // Check if access token is available and if trying to access a protected route
-  if (
-    to.name !== 'splash' &&
-    !accessToken &&
-    to.name !== 'new-password' &&
-    to.name !== 'no-access'
-  ) {
-    return next({ name: 'splash' }) // Redirect to splash page if no access_token
-  }
 
-  // If user is already logged in, prevent access to splash page
-  if (to.name === 'splash' && accessToken && currentCompanyId && currentEmployeeId) {
-    return next({ name: 'dashboard' }) // Redirect to dashboard if trying to access splash when logged in
-  }
+// router.beforeEach((to, from, next) => {
+//   const accessToken = localStorage.getItem('access_token')
 
-  // Allow navigation to 'splash' from 'no-access'
-  if (to.name === 'splash' && from.name === 'no-access') {
-    return next() // Allow access to splash from no-access page
-  }
-
-  // Check if the employeeId is missing and prevent access to restricted routes, except for 'no-access'
-  if (
-    to.name !== 'no-access' &&
-    to.name !== '' &&
-    (currentEmployeeId === null || currentEmployeeId === undefined)
-  ) {
-    return next({ name: 'no-access' }) // Redirect to no-access if no employeeId
-  }
-
-  // Proceed to the intended route
-  next()
-})
-
+//   if (to.name !== 'splash' && !accessToken && to.name !== 'new-password') {
+//     next({ name: 'splash' }) // Redirect to splash page if no access_token and trying to access a protected route
+//   } else if (to.name === 'splash' && accessToken) {
+//     next({ name: 'dashboard' }) // Optional: Redirect to a protected route if already logged in and trying to access splash page
+//   } else {
+//     next() // Proceed to the route
+//   }
+// })
 export default router
