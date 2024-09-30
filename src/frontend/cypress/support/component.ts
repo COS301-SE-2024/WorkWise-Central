@@ -12,7 +12,7 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
-
+//ORIGINAL CONFIGURATION
 // Import commands.js using ES2015 syntax:
 import './commands'
 import 'vuetify/styles'
@@ -35,6 +35,47 @@ declare global {
 }
 
 Cypress.Commands.add('mount', mount)
-
 // Example use:
 // cy.mount(MyComponent)
+
+//CONFIGURATION WITH MICHAEL AND KUBOS
+// import { h } from 'vue'
+// import { mount } from 'cypress/vue'
+// import { VApp } from 'vuetify/components'
+// import vuetify from '../../src/plugins/vuetify'
+//
+// type MountParams = Parameters<typeof mount>
+// type OptionsParam = MountParams[1]
+//
+// declare global {
+//   namespace Cypress {
+//     interface Chainable {
+//       mount(
+//         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//         component: any,
+//         options?: OptionsParam
+//         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//       ): Chainable<any>
+//     }
+//   }
+// }
+//
+// Cypress.Commands.add('mount', (component, options = {}) => {
+//   options.global = options.global || {}
+//   options.global.plugins = options.global.plugins || []
+//
+//   options.global.plugins.push({
+//     install(app) {
+//       app.use(vuetify)
+//     }
+//   })
+//
+//   return mount(VApp, {
+//     ...options,
+//     slots: {
+//       default: h(component, options.props, {
+//         ...options.slots
+//       })
+//     }
+//   })
+// })

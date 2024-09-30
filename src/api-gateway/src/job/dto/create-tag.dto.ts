@@ -1,5 +1,5 @@
 import { IsHexColor, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { defaultPriorityColour, defaultTagColour } from '../entities/job-tag.entity';
+import { defaultPriorityColour, defaultTagColour, JobPriorityTag } from '../entities/job-tag.entity';
 import { Types } from 'mongoose';
 import { AddHashtag } from '../../utils/Custom Transformers/add-hashtag.transformer';
 import { CapitalizeWords } from '../../utils/Custom Transformers/capitalise-words.transformer';
@@ -61,4 +61,8 @@ export class CreateStatusDto {
   @IsHexColor()
   @AddHashtag()
   colour?: string = defaultTagColour; //Will be hex value
+}
+
+export class PriorityTagDto {
+  data: JobPriorityTag;
 }

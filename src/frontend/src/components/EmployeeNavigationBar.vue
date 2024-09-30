@@ -33,7 +33,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-card>
+  <v-card class="bg-cardColor">
     <v-app>
       <v-app-bar app>
         <v-app-bar-nav-icon @click="isVisible = !isVisible">

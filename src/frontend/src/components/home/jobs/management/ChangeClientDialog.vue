@@ -15,15 +15,12 @@
         @click="openClientDialogAndFetchClients"
         v-bind="activatorProps"
       >
-        <v-icon left>
-          {{ 'fa: fa-solid fa-user-edit' }}
-        </v-icon>
         Change Client
       </v-btn>
     </template>
 
     <template v-slot:default="{ isActive }">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title class="text-h5 font-weight-regular bg-blue-grey text-center">
           Change the client
         </v-card-title>
@@ -32,9 +29,12 @@
           <div class="text-caption pa-3">Select a client</div>
 
           <v-autocomplete
-            v-model="selectedClientName"
+            :disabled="isDeleting"
+            v-model="selectedClient"
             hint="Click the field to select a client"
-            :items="clientNames"
+            :items="clientData.filter((item) => getClientFullName(item))"
+            :item-title="getClientFullName"
+            item-value="_id"
             label="Select Client"
             prepend-icon="fa: fa-solid fa-handshake"
             persistent-hint
@@ -50,13 +50,24 @@
         </v-card-text>
 
         <v-card-actions class="d-flex flex-column">
-          <v-btn @click="saveClient" color="success">Save</v-btn>
-          <v-btn @click="isActive.value = false" color="error">Cancel</v-btn>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="6">
+                <v-btn @click="saveClient" color="success" block :loading="isDeleting"
+                  ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
+                ></v-col
+              ><v-col cols="12" lg="6">
+                <v-btn @click="isActive.value = false" color="error" block :disabled="isDeleting"
+                  ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Close</v-btn
+                ></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </template>
   </v-dialog>
-  <Toast />
+  <Toast position="top-center" />
 </template>
 
 <script setup lang="ts">
@@ -64,40 +75,14 @@ import { ref, defineProps, onMounted } from 'vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-
-interface Address {
-  street: string
-  province: string
-  suburb: string
-  city: string
-  postalCode: string
-  complex?: string
-  houseNumber?: string
-}
-
-interface ContactInfo {
-  phoneNumber: string
-  email: string
-}
-
-interface Details {
-  firstName: string
-  lastName: string
-  preferredLanguage?: string
-  contactInfo: ContactInfo
-  address: Address
-  vatNumber?: string
-  companyId: any // Replace with appropriate type if known
-  idNumber?: string
-  type?: string
-}
-
+import { API_URL } from '@/main'
+let isDeleting = ref<boolean>(false)
 interface Client {
-  _id: any // Replace with appropriate type if known
-  registrationNumber?: string
-  details: Details
-  createdAt: string
-  updatedAt: string
+  _id: string
+  details: {
+    firstName: string
+    lastName: string
+  }
 }
 
 const props = defineProps<{
@@ -106,27 +91,20 @@ const props = defineProps<{
 
 const toast = useToast()
 const clientDialog = ref<boolean>(false)
-const selectedClientName = ref<string>('')
-const clientNames = ref<string[]>([])
+const selectedClient = ref<Client>({
+  _id: '',
+  details: {
+    firstName: '',
+    lastName: ''
+  }
+})
 const clientData = ref<Client[]>([])
 
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
   }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
 }
 
 const showClientChangeSuccess = () => {
@@ -136,6 +114,7 @@ const showClientChangeSuccess = () => {
     detail: 'Changed client successfully',
     life: 3000
   })
+  clientDialog.value = false
 }
 
 const showClientChangeError = () => {
@@ -147,38 +126,79 @@ const showClientChangeError = () => {
   })
 }
 
-const getClients = async (): Promise<string> => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('access_token')}`
-    }
-  }
-  const apiUrl = await getRequestUrl()
+const getClients = async () => {
   try {
-    const response = await axios.get(`${apiUrl}client/all`, config)
+    const response = await axios.get(
+      `${API_URL}client/all/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+      config
+    )
     if (response.status < 300 && response.status > 199) {
-      console.log('Got client data')
-      console.log(response.data.data)
+      console.log(response)
       clientData.value = response.data.data
     } else {
       console.log('failed')
     }
   } catch (error) {
+    console.log(error)
     console.error('Error updating job:', error)
   }
-  return 'cheese'
+}
+
+const getCurrentClient = async () => {
+  try {
+    const response = await axios.get(`${API_URL}job/id/${props.jobID}`, config)
+    if (response.status > 199 && response.status < 300) {
+      console.log('Client job data', response.data.data.clientId)
+      selectedClient.value = {
+        _id: response.data.data.clientId._id,
+        details: {
+          firstName: response.data.data.clientId.details.firstName,
+          lastName: response.data.data.clientId.details.lastName
+        }
+      }
+    } else {
+      console.log('Wtf happened?', response)
+    }
+  } catch (error) {
+    console.error('Error fetching current client:', error)
+  }
 }
 
 const openClientDialogAndFetchClients = () => {
   clientDialog.value = true
 }
 
-const saveClient = () => {
-  clientDialog.value = false
+const saveClient = async () => {
+  try {
+    isDeleting.value = true
+    const response = await axios.patch(
+      `${API_URL}job/update/${props.jobID}`,
+      { clientId: selectedClient.value },
+      config
+    )
+    if (response.status > 199 && response.status < 300) {
+      console.log(response)
+      showClientChangeSuccess()
+    } else {
+      console.log('Wtf happened?', response)
+    }
+  } catch (error) {
+    console.error('Error updating job:', error)
+    showClientChangeError()
+  } finally {
+    isDeleting.value = false
+  }
 }
 
 onMounted(() => {
+  getCurrentClient()
   getClients()
 })
+
+const getClientFullName = (item: Client) => {
+  if (item.details && item.details.firstName && item.details.lastName) {
+    return `${item.details.firstName} ${item.details.lastName}`
+  }
+  return ''
+}
 </script>

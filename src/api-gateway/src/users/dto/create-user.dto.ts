@@ -22,7 +22,7 @@ import { SignInUserDto } from '../entities/user.entity';
 class ContactInfo {
   @ApiProperty()
   @IsString()
-  @Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
+  //@Transform(({ value }) => (value.startsWith('0') ? `+27${value.slice(1)}` : value))
   //@IsPhoneNumber(null)
   phoneNumber: string;
 
@@ -117,7 +117,6 @@ class Profile {
 
   /*  @IsOptional()
   @IsString()
-  @Validate(Base64ContentIsImage)
   displayImage?: string;*/
 }
 
@@ -160,8 +159,10 @@ export class CreateUserDto {
   @Type(() => String)
   skills?: string[] = [];
 
-  @ApiProperty({ type: 'string', format: 'binary', required: false })
-  profilePicture?: Express.Multer.File;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  profilePicture?: string;
 }
 
 export class CreateUserResponseDto {

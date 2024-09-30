@@ -1,136 +1,145 @@
 <template>
-  <v-dialog
-    v-model="clientDialog"
-    max-width="600"
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
-    :opacity="0"
-  >
+  <Toast position="top-center" />
+  <v-dialog v-model="clientDialog" max-width="600" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon>Edit
       </v-btn>
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card class="bg-cardColor">
       <v-card-title class="text-center"> Edit Client </v-card-title>
 
       <v-card-text>
-        <v-row>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Name </small>
-            <v-text-field v-model="localEditedItem.firstName" :rules="nameRules"></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Surname </small>
-            <v-text-field
-              v-model="localEditedItem.lastName"
-              :rules="surnameRules"
-              hide-details="auto"
-            ></v-text-field> </v-col
-        ></v-row>
+        <v-form v-model="valid">
+          <v-row>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Name </small>
+              <v-text-field
+                v-model="localEditedItem.firstName"
+                :rules="nameRules"
+                :disabled="isDeleting"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Surname </small>
+              <v-text-field
+                v-model="localEditedItem.lastName"
+                :rules="surnameRules"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-text-field> </v-col
+          ></v-row>
 
-        <v-row>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Phone Number </small>
-            <v-text-field
-              v-model="localEditedItem.contactInfo.phoneNumber"
-              :rules="phoneRules"
-              hide-details="auto"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Email </small>
-            <v-text-field
-              v-model="localEditedItem.contactInfo.email"
-              :rules="emailRules"
-              hide-details="auto"
-            ></v-text-field> </v-col
-        ></v-row>
+          <v-row>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Phone Number </small>
+              <v-text-field
+                v-model="localEditedItem.contactInfo.phoneNumber"
+                :rules="phoneRules"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Email </small>
+              <v-text-field
+                v-model="localEditedItem.contactInfo.email"
+                :rules="emailRules"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-text-field> </v-col
+          ></v-row>
 
-        <v-row>
-          <v-col cols="6"
-            ><small class="text-caption font-weight-bold"> Street </small>
-            <v-text-field
-              v-model="localEditedItem.address.street"
-              hide-details="auto"
-            ></v-text-field
-          ></v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Suburb </small>
-            <v-text-field
-              v-model="localEditedItem.address.suburb"
-              hide-details="auto"
-            ></v-text-field> </v-col
-        ></v-row>
+          <v-row>
+            <v-col cols="6"
+              ><small class="text-caption font-weight-bold"> Street </small>
+              <v-text-field
+                v-model="localEditedItem.address.street"
+                :rules="streetRules"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-text-field
+            ></v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Suburb </small>
+              <v-text-field
+                v-model="localEditedItem.address.suburb"
+                :rules="suburbRules"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-text-field> </v-col
+          ></v-row>
 
-        <v-row>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> City </small>
-            <v-text-field v-model="localEditedItem.address.city" hide-details="auto"></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> Postal Code </small>
-            <v-text-field
-              v-model="localEditedItem.address.postalCode"
-              hide-details="auto"
-            ></v-text-field></v-col
-        ></v-row>
+          <v-row>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> City </small>
+              <v-text-field
+                v-model="localEditedItem.address.city"
+                :rules="cityRules"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> Postal Code </small>
+              <v-text-field
+                v-model="localEditedItem.address.postalCode"
+                :rules="postalCodeRules"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-text-field></v-col
+          ></v-row>
 
-        <v-row
-          ><v-col cols="6">
-            <small class="text-caption font-weight-bold"> Complex </small>
-            <v-text-field
-              theme="cardColor"
-              v-model="localEditedItem.address.complex"
-              hide-details="auto"
-            ></v-text-field
-          ></v-col>
-          <v-col cols="6">
-            <small class="text-caption font-weight-bold"> House Number </small>
-            <v-text-field
-              v-model="localEditedItem.address.houseNumber"
-              hide-details="auto"
-            ></v-text-field></v-col
-        ></v-row>
-        <v-row>
-          <v-col cols="12">
-            <small class="text-caption font-weight-bold">Preferred Language</small>
-            <v-select
-              :items="languages"
-              v-model="localEditedItem.preferred_Language"
-              variant="solo"
-              hide-details="auto"
-            ></v-select>
-          </v-col>
-        </v-row>
+          <v-row
+            ><v-col cols="6">
+              <small class="text-caption font-weight-bold"> Complex </small>
+              <v-text-field
+                theme="cardColor"
+                v-model="localEditedItem.address.complex"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-text-field
+            ></v-col>
+            <v-col cols="6">
+              <small class="text-caption font-weight-bold"> House Number </small>
+              <v-text-field
+                v-model="localEditedItem.address.houseNumber"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-text-field></v-col
+          ></v-row>
+          <v-row>
+            <v-col cols="12">
+              <small class="text-caption font-weight-bold">Preferred Language</small>
+              <v-select
+                :items="languages"
+                v-model="localEditedItem.preferred_Language"
+                variant="solo"
+                hide-details="auto"
+                :disabled="isDeleting"
+              ></v-select>
+            </v-col>
+          </v-row>
+        </v-form>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
         <v-container>
           <v-row align-self="center" justify="end"
-            ><v-col
-              cols="12"
-              lg="6"
-              md="6"
-              sm="6"
-              order="last"
-              order-lg="first"
-              order-md="first"
-              order-sm="first"
-            >
-              <v-btn color="error" width="85%" height="35" variant="text" @click="close" block>
-                <v-icon icon="fa:fa-solid fa-cancel" start color="error" size="small"></v-icon>
+            ><v-col cols="12" lg="6" order="last" order-lg="first">
+              <v-btn
+                color="error"
+                width="85%"
+                height="35"
+                variant="text"
+                @click="close"
+                block
+                :disabled="isDeleting"
+              >
+                <v-icon icon="fa:fa-solid fa-cancel" color="error" start d size="small"></v-icon>
                 Cancel
               </v-btn> </v-col
-            ><v-col
-              cols="12"
-              lg="6"
-              md="6"
-              sm="6"
-              order="first"
-              order-lg="last"
-              order-md="last"
-              order-sm="last"
-            >
+            ><v-col cols="12" lg="6" order="first" order-lg="last">
               <Toast position="top-center" />
               <v-btn
                 color="success"
@@ -138,7 +147,8 @@
                 height="35"
                 variant="text"
                 @click="update"
-                :disabled="allRulesPass()"
+                :disabled="!valid"
+                :loading="isDeleting"
                 block
                 ><v-icon
                   icon="fa:fa-solid fa-floppy-disk"
@@ -158,20 +168,25 @@
 
 <script>
 import axios from 'axios'
+import Toast from 'primevue/toast'
+import { API_URL } from '@/main'
 export default {
   name: 'EditClient',
   props: {
-    isDarkMode: Boolean,
     colors: Object,
     editedItem: Object,
     item: Object,
     _clientID: Number
   },
+  components: {
+    Toast
+  },
   data() {
     return {
       localEditedItem: this.editedItem,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       clientDialog: false,
+      valid: true,
       clientName: '', // Assuming you have a way to set this, e.g., when opening the dialog
       isDeleting: false,
       languages: [
@@ -201,7 +216,15 @@ export default {
       phoneRules: [
         (v) => !!v || 'Phone number is required',
         (v) => (v && v.length >= 10) || 'Phone number must be at least 10 digits'
-      ]
+      ],
+      cityRules: [(v) => !!v || 'City is required'],
+      postalCodeRules: [
+        (v) => !!v || 'Postal code is required',
+        (v) => (v && v.length >= 4) || 'Postal code must be at least 4 digits'
+      ],
+      streetRules: [(v) => !!v || 'Street is required'],
+      provinceRules: [(v) => !!v || 'Province is required'],
+      suburbRules: [(v) => !!v || 'Suburb is required']
     }
   },
   watch: {
@@ -229,6 +252,7 @@ export default {
       this.clientDialog = false
     },
     async update() {
+      this.isDeleting = true // Indicate the start of the deletion process
       console.log(this.localEditedItem.firstName)
       console.log(localStorage.getItem('access_token'))
 
@@ -239,15 +263,13 @@ export default {
         }
       }
 
-      // const apiURL = await this.getRequestUrl();
-
       const data = {
         // registrationNumber: this.localEditedItem.registrationNumber,
         currentEmployeeId: localStorage.getItem('employeeId'),
         updateClientDto: {
           details: {
-            firstname: this.localEditedItem.firstName,
-            lastname: this.localEditedItem.surname,
+            firstName: this.localEditedItem.firstName,
+            lastName: this.localEditedItem.lastName,
             preferred_Language: this.localEditedItem.preferred_Language,
             contactInfo: {
               phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
@@ -264,36 +286,34 @@ export default {
           }
         }
       }
-
+      console.log(data)
       try {
-        const response = await axios.patch(
-          `http://localhost:3000/client/${this._clientID}`,
-          data,
-          config
-        )
+        const response = await axios.patch(`${API_URL}client/${this._clientID}`, data, config)
         console.log(response)
-        alert('Client updated')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Client updated successfully',
+          life: 3000
+        })
+        setTimeout(() => {
+          this.clientDialog = false
+          this.$emit('clientUpdated', response.data.data)
+        }, 3000)
+
         return true
       } catch (error) {
         console.error('Error updating client:', error)
-        alert('Error updating client')
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'An error occurred while updating the client',
+          life: 3000
+        })
         return false
       } finally {
-        this.clientDialog = false
-        //  window.location.reload()
+        this.isDeleting = false
       }
-    },
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     allRulesPass() {
       if (

@@ -14,9 +14,9 @@ export class EmployeeRepository {
   }
 
   async save(employee: Employee) {
-    console.log('in the save function');
+    // console.log('in the save function');
     const newEmployeeModel = new this.employeeModel(employee);
-    console.log('newEmployeeModel: ', newEmployeeModel);
+    // console.log('newEmployeeModel: ', newEmployeeModel);
     return await newEmployeeModel.save();
   }
 
@@ -37,6 +37,21 @@ export class EmployeeRepository {
     return result;
   }
 
+  async findAllInCompanyWithEmployee(identifier: Types.ObjectId) {
+    return await this.employeeModel
+      .find({
+        $and: [
+          {
+            $or: [{ superiorId: identifier }, { subordinates: { $in: identifier } }],
+          },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+  }
+
   async findAllInCompanyWithRoleName(identifier: Types.ObjectId, roleName: string) {
     const result: (FlattenMaps<Employee> & { _id: Types.ObjectId })[] = await this.employeeModel
       .find({
@@ -45,7 +60,7 @@ export class EmployeeRepository {
             companyId: identifier,
           },
           {
-            'role.name': roleName,
+            'role.roleName': roleName,
           },
           {
             $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
@@ -96,7 +111,11 @@ export class EmployeeRepository {
   }
 
   async findById(identifier: Types.ObjectId) {
-    identifier = new Types.ObjectId(identifier);
+    // console.log('identifier: ', identifier);
+    if (typeof identifier === 'string') {
+      identifier = new Types.ObjectId(identifier);
+    }
+    // console.log('identifier: ', identifier);
     const result = this.employeeModel
       .findOne({
         $and: [
@@ -183,7 +202,7 @@ export class EmployeeRepository {
 
   async update(id: Types.ObjectId, updateEmployeeDto: InternalUpdateEmployeeDto) {
     id = new Types.ObjectId(id);
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
+    return await this.employeeModel
       .findOneAndUpdate(
         {
           $and: [
@@ -196,44 +215,23 @@ export class EmployeeRepository {
         { $set: { ...updateEmployeeDto }, updatedAt: new Date() },
       )
       .lean();
-    console.log('Repository response: ', previousObject);
-    return previousObject;
   }
 
-  async addAssignedJob(id: Types.ObjectId, jobId: Types.ObjectId) {
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $push: { currentJobAssignments: jobId }, updatedAt: new Date() },
-      )
-      .lean();
-
-    return previousObject;
-  }
-
-  async removeAssignedJob(id: Types.ObjectId, jobId: Types.ObjectId) {
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
-      .findOneAndUpdate(
-        {
-          $and: [
-            { _id: id },
-            {
-              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-            },
-          ],
-        },
-        { $pull: { currentJobAssignments: jobId }, updatedAt: new Date() },
-      )
-      .lean();
-
-    return previousObject;
+  async removeAllReferencesToTeam(teamId: Types.ObjectId) {
+    const allEmployeesInCompany = await this.employeeModel
+      .find({
+        $and: [
+          { teams: { $in: teamId } },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .exec();
+    for (const employee of allEmployeesInCompany) {
+      employee.teams = employee.teams.filter((team) => team.toString() != teamId.toString());
+      employee.save();
+    }
   }
 
   async updateSuperior(id: Types.ObjectId, superiorIdentifcation: Types.ObjectId) {
@@ -304,7 +302,7 @@ export class EmployeeRepository {
 
   async updateRole(roleId: Types.ObjectId, companyIdentification: Types.ObjectId, newRole: roleObject) {
     roleId = new Types.ObjectId(roleId);
-    const previousObject: FlattenMaps<Employee> & { _id: Types.ObjectId } = await this.employeeModel
+    const previousObject = await this.employeeModel
       .updateMany(
         {
           $and: [
@@ -325,7 +323,37 @@ export class EmployeeRepository {
       )
       .lean();
 
-    console.log('Repository response: ', previousObject);
+    return previousObject;
+  }
+
+  async updateHourlyRate(
+    roleId: Types.ObjectId,
+    companyIdentification: Types.ObjectId,
+    newHourlyRate: number,
+    oldHourlyRate: number,
+  ) {
+    roleId = new Types.ObjectId(roleId);
+    const previousObject = await this.employeeModel
+      .updateMany(
+        {
+          $and: [
+            { 'role.roleId': roleId },
+            { companyId: companyIdentification },
+            { hourlyRate: oldHourlyRate },
+            {
+              $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+            },
+          ],
+        },
+        {
+          $set: {
+            hourlyRate: newHourlyRate,
+            updatedAt: new Date(),
+          },
+        },
+        { new: true, lean: true },
+      )
+      .lean();
 
     return previousObject;
   }
@@ -347,17 +375,17 @@ export class EmployeeRepository {
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {
-    const employeeToDelete = await this.findById(id);
+    // const employeeToDelete = await this.findById(id);
 
-    if (employeeToDelete == null) {
-      return false;
-    }
+    // if (employeeToDelete == null) {
+    //   return false;
+    // }
 
     const result: Document<unknown, NonNullable<unknown>, User> & User & { _id: Types.ObjectId } =
       await this.employeeModel.findOneAndUpdate(
         {
           $and: [
-            { _id: employeeToDelete._id },
+            { _id: new Types.ObjectId(id) },
             {
               $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
             },

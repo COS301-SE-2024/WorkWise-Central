@@ -185,7 +185,6 @@ export class AdminController {
     summary: `Invite a user to join your company`,
     description: 'This is an created by an administrative employee',
   })
-  @ApiBody({ type: BooleanResponseDto })
   @ApiResponse({
     status: 201,
     type: BooleanResponseDto,

@@ -1,12 +1,7 @@
 <template>
+  <Toast position="top-center"></Toast>
   <v-container fluid fill-height>
-    <v-card
-      height="auto"
-      class="pa-11 ma-0 bg-cardColor"
-      rounded="md"
-      :theme="isdarkmode ? 'themes.dark' : 'themes.light'"
-      border="md"
-    >
+    <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -59,13 +54,13 @@
                 <v-chip variant="text">{{ value }}</v-chip>
               </template>
               <template v-slot:[`item.userToJoin`]="{ value }">
-                <v-chip variant="text">{{ value }}</v-chip>
+                <v-chip variant="text">{{ value.systemDetails.username }}</v-chip>
               </template>
               <template v-slot:[`item.createdAt`]="{ value }">
                 <v-chip variant="text">{{ convertDate(value) }}</v-chip>
               </template>
               <template v-slot:[`item.actions`]="{ item }">
-                <v-menu max-width="200px" :theme="isdarkmode === true ? 'dark' : 'light'">
+                <v-menu max-width="200px">
                   <template v-slot:activator="{ props }">
                     <v-btn rounded="xl" variant="plain" v-bind="props">
                       <v-icon color="primary">mdi-dots-horizontal</v-icon>
@@ -97,43 +92,31 @@
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
+import { API_URL } from '@/main'
 
 interface Request {
   companyId: number
   companyName: string
-  userToJoin: string
+  userToJoin: any
   createdAt: string
 }
 
 export default defineComponent({
   name: 'CompanyRequest',
+  components: {
+    Toast
+  },
   data() {
     return {
       search: '' as string,
-      isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       headers: [
         { title: 'Company Name', value: 'companyName' },
         { title: 'User to Join', value: 'userToJoin' },
         { title: 'Created At', value: 'createdAt' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
-      requests: [
-        {
-          companyId: 1,
-          companyName: 'Tech Corp',
-          userToJoin: 'user@example.com',
-          createdAt: '2024-08-11T15:39:21.375Z'
-        },
-        {
-          companyId: 2,
-          companyName: 'Innovate LLC',
-          userToJoin: 'anotheruser@example.com',
-          createdAt: '2024-08-11T16:20:35.123Z'
-        }
-        // Add more mock data as needed
-      ] as Request[]
+      requests: [] as Request[]
     }
   },
   methods: {
@@ -146,20 +129,19 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = this.getRequestUrl()
+
       await axios
         .patch(
-          `${url}admin/request/decide`,
+          `${API_URL}admin/request/decide`,
           {
             companyId: request.companyId,
-            userToJoin: request.userToJoin,
+            userToJoinId: request.userToJoin._id,
             superiorId: localStorage.getItem('employeeId'),
             accept: true
           },
           config
         )
         .then((res) => {
-          this.getRequests()
           console.log(res)
           this.$toast.add({
             severity: 'success',
@@ -167,13 +149,16 @@ export default defineComponent({
             detail: 'Request accepted successfully',
             life: 3000
           })
+          setTimeout(() => {
+            this.getRequests()
+          }, 3000)
         })
         .catch((error) => {
           console.error(error)
           this.$toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Failed to accept request',
+            detail: error.response.data.message,
             life: 3000
           })
         })
@@ -187,10 +172,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = this.getRequestUrl()
       await axios
         .patch(
-          `${url}admin/request/decide`,
+          `${API_URL}admin/request/decide`,
           {
             companyId: request.companyId,
             userToJoin: request.userToJoin,
@@ -201,10 +185,24 @@ export default defineComponent({
         )
         .then((res) => {
           console.log(res)
-          this.getRequests()
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Request declined successfully',
+            life: 3000
+          })
+          setTimeout(() => {
+            this.getRequests()
+          }, 3000)
         })
         .catch((error) => {
           console.error(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
+          })
         })
     },
     convertDate(date: string) {
@@ -218,10 +216,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const url = await this.getRequestUrl()
+
       await axios
         .get(
-          `${url}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`,
+          `${API_URL}admin/request/all/company/${localStorage.getItem('currentCompany')}/detailed`,
           config
         )
         .then((response) => {
@@ -231,18 +229,6 @@ export default defineComponent({
         .catch((error) => {
           console.error(error)
         })
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     }
   },
   mounted() {

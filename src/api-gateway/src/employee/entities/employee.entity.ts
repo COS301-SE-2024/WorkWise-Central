@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { SchemaTypes, Types } from 'mongoose';
-// import { CreateEmployeeDto } from '../dto/create-employee.dto';
-// import { currentDate } from '../../utils/Utils';
 import { Role } from '../../role/entity/role.entity';
+import { User } from '../../users/entities/user.entity';
 
 export class UserInfo {
   @ApiProperty()
@@ -70,7 +69,7 @@ export class Employee {
     default: [],
     ref: 'Team',
   })
-  subordinateTeams?: Types.ObjectId[];
+  teams?: Types.ObjectId[];
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true, ref: 'User' })
@@ -85,6 +84,10 @@ export class Employee {
   companyId: Types.ObjectId;
 
   @ApiProperty()
+  @Prop({ type: Number, required: true, default: 0 })
+  hourlyRate: number;
+
+  @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: true,
@@ -92,6 +95,15 @@ export class Employee {
     ref: 'Job',
   })
   currentJobAssignments?: Types.ObjectId[];
+
+  @ApiProperty()
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    required: true,
+    default: [],
+    ref: 'Job',
+  })
+  currentTaskAssignments?: Types.ObjectId[];
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
@@ -150,6 +162,10 @@ export class EmployeeApiObject {
   companyId: Types.ObjectId;
 
   @ApiProperty()
+  @Prop({ type: Number, required: true })
+  hourlyRate: number;
+
+  @ApiProperty()
   @Prop({
     type: [SchemaTypes.ObjectId],
     required: true,
@@ -194,11 +210,15 @@ export class joinedEmployeeApiObject {
 
   @ApiProperty()
   @Prop({ type: Object, required: true })
-  userId: object;
+  userId: User;
 
   @ApiProperty()
   @Prop({ type: SchemaTypes.ObjectId, required: true })
   companyId: Types.ObjectId;
+
+  @ApiProperty()
+  @Prop({ type: Number, required: true })
+  hourlyRate: number;
 
   @ApiHideProperty()
   @Prop({ required: true, default: new Date() })
@@ -213,6 +233,48 @@ export class joinedEmployeeApiObject {
   public deletedAt: Date;
 }
 
+export class Node {
+  @ApiProperty()
+  @Prop({ type: String, required: true, unique: true })
+  name: string;
+
+  @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, required: true, unique: true })
+  id: Types.ObjectId;
+}
+
+export class Edge {
+  @ApiProperty()
+  @Prop({ type: String, required: true, unique: true })
+  source: string;
+
+  @ApiProperty()
+  @Prop({ type: String, required: true, unique: true })
+  target: string;
+}
+
+export class Nodes {
+  @ApiProperty()
+  @Prop({ type: Node, required: true, unique: true })
+  node1: Node;
+}
+
+export class Edges {
+  @ApiProperty()
+  @Prop({ type: Edge, required: true, unique: true })
+  edge1: Edge;
+}
+
+export class Graph {
+  @ApiProperty()
+  @Prop({ type: { Nodes }, required: true, unique: true })
+  nodes: Nodes;
+
+  @ApiProperty()
+  @Prop({ type: { Edges }, required: true, unique: true })
+  edges: Edges;
+}
+
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);
 
 export class EmployeeListResponseDto {
@@ -220,6 +282,13 @@ export class EmployeeListResponseDto {
     this.data = data;
   }
   data: EmployeeApiObject[];
+}
+
+export class GraphResponseDto {
+  constructor(data: Graph) {
+    this.data = data;
+  }
+  data: Graph;
 }
 
 export class joinedEmployeeListResponseDto {

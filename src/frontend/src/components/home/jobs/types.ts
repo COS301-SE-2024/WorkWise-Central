@@ -195,13 +195,12 @@ export type JobCardDataFormat = {
   postalCode: string
   complex?: string
   houseNumber?: string
-  imagesTaken: string[]
-  inventoryUsed: string[]
   taskList: string[]
   comments: string[]
   tags: Tag[]
   status: Status
   priorityTag: PriorityTag
+  coverImage: string
 }
 
 export type Job = {
@@ -275,7 +274,13 @@ export type Job = {
     employeeIds?: string[]
     teamIds?: string[]
   }
-  status: string
+  status: {
+    _id: string
+    status: string
+    colour: string
+    companyId: string
+    __v: number
+  }
   tags?: string[]
   priorityTag?: string
   attachments: string[]
@@ -335,9 +340,10 @@ export type Job = {
 }
 
 export type Column = {
-  id: string
+  _id: string
+  __v: 0
   status: string
-  color: string
+  colour: string
   companyId: string
   cards: JobCardDataFormat[]
 }

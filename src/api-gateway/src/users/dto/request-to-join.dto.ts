@@ -23,9 +23,13 @@ export class UserInviteRequestDto {
   @IsEmail()
   emailToInvite: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsMongoId()
-  roleId: Types.ObjectId;
+  roleId?: Types.ObjectId;
+
+  @IsOptional()
+  @IsMongoId()
+  superiorId?: Types.ObjectId;
 }
 
 export class CancelRequestDto {

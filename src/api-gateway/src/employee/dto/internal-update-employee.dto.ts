@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { roleObject, UserInfo } from '../entities/employee.entity';
 
@@ -27,7 +27,7 @@ export class UpdateEmployeeUserInfoDto {
 export class InternalUpdateEmployeeDto {
   @IsMongoId()
   @IsOptional()
-  role?: roleObject = new roleObject();
+  role?: roleObject;
 
   @IsArray()
   @IsMongoId({ each: true })
@@ -36,21 +36,32 @@ export class InternalUpdateEmployeeDto {
 
   @IsMongoId()
   @IsOptional()
+  @ApiProperty()
   superiorId?: Types.ObjectId;
 
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
+  @ApiProperty()
   subordinates?: Types.ObjectId[];
 
   @IsArray()
   @IsMongoId({ each: true })
   @IsOptional()
-  subordinateTeams?: Types.ObjectId[];
+  teams?: Types.ObjectId[];
 
   @ApiProperty()
   @IsMongoId()
   userInfo?: UserInfo;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  hourlyRate?: number;
+
+  @IsOptional()
+  @IsMongoId()
+  currentTaskAssignments?: Types.ObjectId[];
 }
 
 export class updateEmployeeResponseDto {

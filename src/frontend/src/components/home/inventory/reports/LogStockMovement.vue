@@ -14,7 +14,7 @@
       </v-btn>
     </template>
 
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title>
         <span class="text-h6">Log Stock Movement</span>
       </v-card-title>
@@ -75,19 +75,40 @@
               ></v-text-field>
             </template>
             <v-date-picker v-model="stockMovement.date" no-title scrollable>
-              <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.menu.save(stockMovement.date)">OK</v-btn>
+              <v-container>
+                <v-row
+                  ><v-col cols="12" lg="6">
+                    <v-btn text color="error" @click="menu = false" block
+                      ><v-icon icon="fa: fa-solid fa-cancel" color="error"></v-icon>Cancel</v-btn
+                    ></v-col
+                  >
+                  <v-col cols="12" lg="6">
+                    <v-btn text color="success" @click="$refs.menu.save(stockMovement.date)" block
+                      ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>OK</v-btn
+                    ></v-col
+                  ></v-row
+                ></v-container
+              >
             </v-date-picker>
           </v-menu>
         </v-form>
       </v-card-text>
 
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="dialog = false">Cancel</v-btn>
-        <v-btn text color="primary" @click="logStockMovement" :disabled="!valid"
-          >Log Movement</v-btn
+        <v-container
+          ><v-row
+            ><v-col cols="12" lg="6">
+              <v-btn text color="error" @click="dialog = false" block
+                ><v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
+                >Cancel</v-btn
+              ></v-col
+            ><v-col cols="12" lg="6"
+              ><v-btn text color="success" @click="logStockMovement" :disabled="!valid" block
+                ><v-icon icon="fa:fa-solid fa-plus" color="success" size="small" start></v-icon>Log
+                Movement</v-btn
+              ></v-col
+            ></v-row
+          ></v-container
         >
       </v-card-actions>
     </v-card>

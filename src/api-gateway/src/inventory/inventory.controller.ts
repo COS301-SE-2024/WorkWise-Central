@@ -11,28 +11,41 @@ import {
   UseGuards,
   Headers,
   Query,
+  BadRequestException,
+  Put,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
-import { UpdateInventoryDto } from './dto/update-inventory.dto';
+import { ExternalInventoryUpdateDto } from './dto/update-inventory.dto';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
+  ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { InventoryListResponseDto, InventoryResponseDto } from './entities/inventory.entity';
+import { InventoryListResponseDto, InventoryResponseDto, InventoryUsedResponseDto } from './entities/inventory.entity';
 import { Types } from 'mongoose';
 import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
-import { CreateInventoryDto, CreateInventoryResponseDto } from './dto/create-inventory.dto';
+import { CreateInventoryDto, CreateInventoryOuterDto, CreateInventoryResponseDto } from './dto/create-inventory.dto';
 import { AuthGuard } from '../auth/auth.guard';
-// import { extractUserId } from '../utils/Utils';
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeService } from '../employee/employee.service';
-import { validateObjectId } from '../utils/Utils';
+import { extractUserId, isBase64Uri } from '../utils/Utils';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { UsersService } from '../users/users.service';
+import { CurrentEmployeeDto } from '../shared/dtos/current-employee.dto';
+import { ListOfUpdatesForUsedInventory, ListOfUsedInventory } from './dto/use-inventory.dto';
+import { InventoryUsedService } from '../inventory-used/inventory-used.service';
 
 const className = 'Inventory';
 
@@ -43,15 +56,37 @@ export class InventoryController {
     private readonly inventoryService: InventoryService,
     private readonly jwtService: JwtService,
     private readonly employeeService: EmployeeService,
+    private readonly userService: UsersService,
+    private readonly inventoryUsedService: InventoryUsedService,
   ) {}
 
+  async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+    const user = await this.userService.getUserById(userId);
+    console.log('user', user);
+    console.log('currentEmployeeId: ', currentEmployeeId);
+    if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  //********Endpoints for test purposes - Start**********/
   @ApiOperation({
-    summary: `Refer to Documentation`,
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
+  })
+  @Get('/all')
+  async findAll() {
+    const data = await await this.inventoryService.findAll();
+    return { data: data };
+  }
+
+  @ApiOperation({
+    summary: `Used for testing. DO NOT USE IN PRODUCTION`,
   })
   @Get()
   hello() {
     return { message: 'Refer to /documentation for details on the API' };
   }
+  //********Endpoints for test purposes - End**********/
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
@@ -73,16 +108,25 @@ export class InventoryController {
   async create(
     @Headers() headers: any,
     @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      createInventoryDto: CreateInventoryDto;
-    },
+    createInventoryOuterDto: CreateInventoryOuterDto,
   ) {
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, createInventoryOuterDto.currentEmployeeId);
+
+    //Base64 Validation
+    console.log(createInventoryOuterDto);
+    if (createInventoryOuterDto.createInventoryDto.images.length > 0) {
+      for (const image of createInventoryOuterDto.createInventoryDto.images) {
+        const valid = isBase64Uri(image);
+        if (!valid) throw new BadRequestException('Images must be Base64 URIs');
+      }
+    }
+
+    const currentEmployee = await this.employeeService.findById(createInventoryOuterDto.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('add new inventory item')) {
       let data;
       try {
-        data = await this.inventoryService.create(body.createInventoryDto);
+        data = await this.inventoryService.create(createInventoryOuterDto.createInventoryDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -91,14 +135,6 @@ export class InventoryController {
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
   }
-
-  //********Endpoints for test purposes - Start**********/
-  @Get('/all')
-  async findAll() {
-    const data = await await this.inventoryService.findAll();
-    return { data: data };
-  }
-  //********Endpoints for test purposes - End**********/
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
@@ -123,18 +159,10 @@ export class InventoryController {
     description: `The _id attribute of the Company for which to get all ${className} instances.`,
   })
   @Get('/all/:currentEmployeeId')
-  async findAllInCompany(
-    @Headers() headers: any,
-    @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
-    // @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
-  ) {
-    console.log('In findAllInCompany');
-    if (!currentEmployeeId) {
-      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
-    }
-    validateObjectId(currentEmployeeId, 'currentEmployee');
-    console.log('In findAllInCompany');
-    // console.log('id', id);
+  async findAllInCompany(@Headers() headers: any, @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
+
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     console.log('currentEmployee', currentEmployee);
     if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
@@ -176,10 +204,9 @@ export class InventoryController {
     @Param('id') id: Types.ObjectId,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
-    if (!currentEmployeeId) {
-      throw new HttpException('currentEmployeeId is required', HttpStatus.BAD_REQUEST);
-    }
-    validateObjectId(currentEmployeeId, 'currentEmployee');
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
+
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
       const data = await this.inventoryService.findById(id);
@@ -207,25 +234,25 @@ export class InventoryController {
     name: 'id',
     description: `The _id attribute of the ${className} to be updated.`,
   })
-  @ApiBody({ type: UpdateInventoryDto })
+  @ApiBody({ type: ExternalInventoryUpdateDto })
   @Patch(':id')
   async update(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
     @Body()
-    body: {
-      currentEmployeeId: Types.ObjectId;
-      updateInventoryDto: UpdateInventoryDto;
-    },
+    externalInventoryUpdateDto: ExternalInventoryUpdateDto,
   ) {
-    console.log('In update inventory controller');
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
-    console.log('currnetEmployee: ', currentEmployee);
-    if (currentEmployee.role.permissionSuite.includes('edit all inventory')) {
+    console.log('\n IN THE UPDATE ENDPOINT');
+    console.log('externalInventoryUpdateDto: ', externalInventoryUpdateDto);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, externalInventoryUpdateDto.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(externalInventoryUpdateDto.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('edit inventory')) {
       console.log('in if');
       let data;
       try {
-        data = await this.inventoryService.update(id, body.updateInventoryDto);
+        data = await this.inventoryService.update(id, externalInventoryUpdateDto);
       } catch (e) {
         throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
       }
@@ -241,9 +268,193 @@ export class InventoryController {
     type: HttpException,
     status: HttpStatus.BAD_REQUEST,
   })
+  @ApiOperation({
+    summary: `Record use of inventory in a job`,
+    description: `Send a array of the items used and the amounts used`,
+  })
+  @ApiOkResponse({
+    type: InventoryResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: ListOfUsedInventory })
+  @Post('/recordStockUse')
+  async recordStockUse(
+    @Headers() headers: any,
+    @Body()
+    listOfUsedInventory: ListOfUsedInventory,
+  ) {
+    console.log('In recordStockUse');
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, listOfUsedInventory.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(listOfUsedInventory.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('record inventory use')) {
+      let data;
+      try {
+        data = await this.inventoryService.recordStockUse(listOfUsedInventory);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiInternalServerErrorResponse({
     type: HttpException,
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiOperation({
+    summary: `Update an ${className} stock use recorded`,
+    description: `Send an array of inventory id's and the change in the amount recorded before`,
+  })
+  @ApiOkResponse({
+    type: InventoryResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @ApiBody({ type: ListOfUpdatesForUsedInventory })
+  @Post('/updateStockUse')
+  async updateStockUse(
+    @Headers() headers: any,
+    @Body()
+    listOfUsedInventory: ListOfUpdatesForUsedInventory,
+  ) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, listOfUsedInventory.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(listOfUsedInventory.currentEmployeeId);
+    if (currentEmployee.role.permissionSuite.includes('record inventory use')) {
+      let data;
+      try {
+        data = await this.inventoryService.updateStockUse(listOfUsedInventory);
+      } catch (e) {
+        console.log(e);
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      console.log('Invalid permission');
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiInternalServerErrorResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiOperation({
+    summary: `Find an ${className}`,
+    description: `Returns the Inventory used for a given job.`,
+  })
+  @ApiOkResponse({
+    type: InventoryUsedResponseDto,
+    description: `The mongodb object of the ${className}, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'jobId',
+    description: `The _id attribute of the Job for which to retrieve the inventory used.`,
+  })
+  @Get('stockUsed/:jobId')
+  async getStockUsed(@Headers() headers: any, @Param('jobId') jobId: Types.ObjectId) {
+    console.log('In endpoint');
+    try {
+      const data = await this.inventoryUsedService.findAllForJob(jobId);
+      return { data: data };
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Add new images to an inventory item (the key needed in in your form-data is "files")`,
+    description: `Send the ${className} ObjectId, and the updated object, and then they get updated if the id is valid.`,
+  })
+  @ApiOkResponse({
+    type: InventoryResponseDto,
+    description: `The updated ${className} object`,
+  })
+  @Put('images/')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 20 }]))
+  async addImages(
+    @Headers() headers: any,
+    @Query('inventoryId') id: Types.ObjectId,
+    @Query('empId') currentEmployeeId: Types.ObjectId,
+    @UploadedFiles() files: { files?: Express.Multer.File[] },
+  ) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
+
+    if (id == undefined || currentEmployeeId == null) {
+      throw new BadRequestException('Query parameters are missing');
+    }
+    console.log(files);
+    console.log('In addImages inventory controller');
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    console.log('currentEmployee: ', currentEmployee);
+    if (currentEmployee.role.permissionSuite.includes('edit inventory')) {
+      console.log('in if');
+      let data;
+      try {
+        //TODO: Validation of invId and empId
+        data = await this.inventoryService.addImages(id, files.files);
+      } catch (e) {
+        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+      }
+      return { data: data };
+    } else {
+      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
   })
   @ApiOperation({
     summary: `Delete an ${className}`,
@@ -258,13 +469,17 @@ export class InventoryController {
     name: 'id',
     description: `The _id attribute of the ${className}`,
   })
+  @ApiBody({ type: CurrentEmployeeDto })
   @Delete(':id')
   async remove(
     @Headers() headers: any,
     @Param('id') id: Types.ObjectId,
-    @Body() body: { currentEmployeeId: Types.ObjectId },
+    @Body() currentEmployeeDto: CurrentEmployeeDto,
   ) {
-    const currentEmployee = await this.employeeService.findById(body.currentEmployeeId);
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeDto.currentEmployeeId);
+
+    const currentEmployee = await this.employeeService.findById(currentEmployeeDto.currentEmployeeId);
     if (currentEmployee.role.permissionSuite.includes('delete inventory item')) {
       let data;
       try {

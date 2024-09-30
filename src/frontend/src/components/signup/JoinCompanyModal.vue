@@ -1,16 +1,12 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-width="500"
-    height="500"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-  >
+  <v-dialog v-model="dialog" max-width="500" opacity="0.6" height="500">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
         class="text-none font-weight-regular hello"
         variant="elevated"
-        color="primary"
+        :color="buttonColor ? buttonColor : 'primary'"
+        block
         v-bind="activatorProps"
         >Join Company</v-btn
       >
@@ -57,32 +53,38 @@
               ></v-text-field
             ></v-col>-->
           </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <Toast />
-            <v-btn
-              color="primary"
-              rounded="md"
-              boarder="xl"
-              width="85%"
-              @click="handlesubmission"
-              height="35"
-              variant="elevated"
-              :disabled="req_obj.company_name === '' /* && req_obj.companyID === ''*/"
-              >Join Company</v-btn
+          <v-container>
+            <v-row>
+              <v-col cols="12" lg="6" order="last" order-lg="first">
+                <v-btn
+                  color="secondary"
+                  @click="close"
+                  rounded="md"
+                  boarder="xl"
+                  size="large"
+                  height="35"
+                  block
+                  variant="elevated"
+                  >Back</v-btn
+                >
+              </v-col>
+              <v-col cols="12" lg="6" order="first" order-lg="last">
+                <Toast position="top-center" />
+                <v-btn
+                  color="primary"
+                  rounded="md"
+                  boarder="xl"
+                  size="large"
+                  block
+                  @click="handlesubmission"
+                  height="35"
+                  variant="elevated"
+                  :disabled="req_obj.company_name === '' /* && req_obj.companyID === ''*/"
+                  >Join Company</v-btn
+                >
+              </v-col></v-row
             >
-          </v-col>
-          <v-col cols="8" offset="2" align="center">
-            <v-btn
-              color="secondary"
-              @click="close"
-              rounded="md"
-              boarder="xl"
-              width="85%"
-              height="35"
-              variant="elevated"
-              >Back</v-btn
-            >
-          </v-col>
+          </v-container>
         </v-col>
       </v-form>
     </v-sheet>
@@ -94,15 +96,17 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
 import type { CompanyListItem } from '@/components/signup/types'
+import { API_URL } from '@/main'
 
 export default defineComponent({
   name: 'RegisterCompanyModal',
   components: {
     Toast
   },
+  props: {
+    buttonColor: String
+  },
   data: () => ({
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     dialog: false,
     valid: false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
@@ -111,7 +115,7 @@ export default defineComponent({
     modal_light_theme_color: '#FFFFFF',
     click_create_client: false,
     attribute_is_filled: false,
-    isdarkmode: sessionStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: sessionStorage.getItem('theme') === 'true' ? true : false,
     req_obj: {
       company_name: '',
       companyID: ''
@@ -148,22 +152,9 @@ export default defineComponent({
     close() {
       this.dialog = false
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
     async createJoinCompanyRequest() {
       console.log('Creating request')
       try {
-        const apiURL = await this.getRequestUrl()
         const config = {
           headers: {
             'Content-Type': 'application/json',
@@ -175,7 +166,7 @@ export default defineComponent({
           companyId: this.req_obj.company_name
         }
         console.log(body)
-        const response = await axios.post(`${apiURL}admin/request/create`, body, config)
+        const response = await axios.post(`${API_URL}admin/request/create`, body, config)
         console.log(response.data.data)
         if (response.data.data !== true) {
           console.log('Request unsuccessful')
@@ -195,8 +186,7 @@ export default defineComponent({
       }
 
       try {
-        const apiURL = await this.getRequestUrl()
-        const response = await axios.get(`${apiURL}company/all/names`, config)
+        const response = await axios.get(`${API_URL}company/all/names`, config)
         console.log(response.data.data)
         response.data.data.forEach((e: CompanyListItem) => {
           this.companyNameArr.push(e)

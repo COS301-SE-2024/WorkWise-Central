@@ -23,7 +23,7 @@
     </template>
 
     <template v-slot:default="{ isActive }">
-      <v-card>
+      <v-card class="bg-cardColor">
         <v-card-title> Enter the due date for this job </v-card-title>
 
         <v-card-text>
@@ -71,9 +71,23 @@
           </v-container>
         </v-card-text>
         <v-card-actions class="d-flex flex-column pt-0">
-          <v-btn @click="saveDate" color="success">Save</v-btn>
-          <v-btn @click="removeDates" color="warning">Remove</v-btn>
-          <v-btn @click="isActive.value = false" color="error">Cancel</v-btn>
+          <v-container
+            ><v-row
+              ><v-col cols="12" lg="4" order="first" order-lg="last">
+                <v-btn @click="saveDate" color="success" block
+                  ><v-icon icon="fa: fa-solid fa-floppy-disk" color="success"></v-icon>Save</v-btn
+                ></v-col
+              ><v-col cols="12" lg="4">
+                <v-btn @click="removeDates" color="warning" block
+                  ><v-icon icon="fa: fa-solid fa-trash"></v-icon>Remove</v-btn
+                ></v-col
+              ><v-col cols="12" lg="4" order="last" order-lg="first">
+                <v-btn @click="isActive.value = false" color="error" block
+                  ><v-icon icon="fa: fa-solid fa-cancel"></v-icon>Cancel</v-btn
+                ></v-col
+              ></v-row
+            ></v-container
+          >
         </v-card-actions>
       </v-card>
     </template>

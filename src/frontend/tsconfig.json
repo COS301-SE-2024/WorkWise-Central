@@ -20,12 +20,12 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["vuetify"],
+    "types": ["@types/crypto-js", "vuetify"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
       "@/*": ["src/*"]
     },
     "lib": ["esnext", "dom"]
   },
-
 }
 

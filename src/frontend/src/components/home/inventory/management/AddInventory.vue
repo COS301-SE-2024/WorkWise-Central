@@ -4,21 +4,22 @@
     max-height="800"
     max-width="600"
     scrollable
-    :theme="isdarkmode === true ? 'themes.dark' : 'themes.light'"
-    :opacity="0.1"
+    :opacity="0.6"
+    @click:outside="resetFields"
   >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         class="text-none font-weight-regular hello"
         color="secondary"
         v-bind="activatorProps"
+        block
         variant="elevated"
         ><v-icon icon="fa:fa-solid fa-plus" color="" size="xs" />
         <v-icon icon="fa:fa-solid fa-warehouse" color="" />
         Add Inventory</v-btn
       >
     </template>
-    <v-card :theme="isdarkmode === true ? 'dark' : 'light'">
+    <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon icon="fa: fa-solid fa-warehouse"></v-icon>
         Add Inventory
@@ -28,7 +29,7 @@
         <v-form ref="form" v-model="valid" @submit.prevent="handleSubmission">
           <v-col>
             <v-row>
-              <v-col>
+              <v-col cols="12" lg="6">
                 <h6>Product Name</h6>
                 <v-text-field
                   v-model="name"
@@ -36,47 +37,48 @@
                   :rules="nameRules"
                   required
                   hide-details="auto"
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
-              <v-col>
+              <v-col cols="12" lg="6">
                 <h6>Description</h6>
                 <v-text-field
                   v-model="description"
                   color="secondary"
-                  :rules="descriptionRules"
                   required
                   hide-details="auto"
+                  :disabled="isDeleting"
                 ></v-text-field></v-col
             ></v-row>
 
             <v-row
-              ><v-col col="4">
+              ><v-col cols="12" lg="4">
                 <h6>Cost Price</h6>
                 <v-text-field
                   v-model="costPrice"
                   color="secondary"
-                  :rules="costPriceRules"
                   required
                   hide-details="auto"
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <h6>Current Stock Level</h6>
                 <v-text-field
                   v-model="currentStockLevel"
                   color="secondary"
-                  :rules="currentStockLevelRules"
                   required
                   hide-details="auto"
+                  :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
-              <v-col col="4">
+              <v-col cols="12" lg="4">
                 <h6>Reorder Level</h6>
                 <v-text-field
                   v-model="reorderLevel"
                   color="secondary"
-                  :rules="reorderLevelRules"
                   required
+                  :disabled="isDeleting"
                 ></v-text-field></v-col
             ></v-row>
           </v-col>
@@ -87,20 +89,25 @@
       <v-card-actions
         ><v-container
           ><v-row justify="end"
-            ><v-col cols="12" lg="6">
-              <v-btn @click="close" color="error" block
+            ><v-col cols="12" lg="6" order="last" order-lg="first">
+              <v-btn @click="close(), resetFields()" color="error" block :disabled="isDeleting"
+                ><v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                 >Cancel
-                <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" end></v-icon></v-btn
-            ></v-col>
-            <v-col cols="12" lg="6">
-              <v-btn @click="createInventoryItem" color="success" :disabled="!valid" block
-                >Create<v-icon
-                  icon="fa:fa-solid fa-plus"
-                  color="success"
-                  size="small"
-                  end
-                ></v-icon></v-btn></v-col></v-row
-        ></v-container>
+              </v-btn></v-col
+            >
+            <v-col cols="12" lg="6" order="first" order-lg="last">
+              <v-btn
+                @click="createInventoryItem"
+                color="success"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
+                ><v-icon icon="fa:fa-solid fa-plus" color="success" size="small" start></v-icon
+                >Create</v-btn
+              ></v-col
+            ></v-row
+          ></v-container
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -110,6 +117,8 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'AddInventory',
   components: {
@@ -117,10 +126,11 @@ export default defineComponent({
   },
   data: () => ({
     addDialog: false,
-    isdarkmode: localStorage.getItem('theme') === 'true' ? true : false,
+    isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
     light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
     dark_theme_text_color: 'color: #DCDBDB',
     modal_dark_theme_color: '#2b2b2b',
+    isDeleting: false,
     modal_light_theme_color: '#FFFFFF',
     valid: false,
     name: '',
@@ -128,8 +138,6 @@ export default defineComponent({
     costPrice: '',
     currentStockLevel: '',
     reorderLevel: '',
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
     nameRules: [(v: string) => !!v || 'Name is required'],
     descriptionRules: [(v: string) => !!v || 'Description is required'],
     costPriceRules: [
@@ -160,10 +168,10 @@ export default defineComponent({
       })
     },
     async createInventoryItem() {
+      this.isDeleting = true // Indicate the start of the deletion process
       const config = {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       }
-      const apiURL = await this.getRequestUrl()
 
       const data = {
         createInventoryDto: {
@@ -178,7 +186,7 @@ export default defineComponent({
       }
       try {
         console.log(data)
-        const response = await axios.post(`${apiURL}inventory/create`, data, config)
+        const response = await axios.post(`${API_URL}inventory/create`, data, config)
         console.log(response)
         this.$toast.add({
           severity: 'success',
@@ -186,8 +194,13 @@ export default defineComponent({
           detail: 'Inventory Added',
           life: 3000
         })
-        this.addDialog = false
-        window.location.reload()
+
+        setTimeout(() => {
+          this.addDialog = false
+
+          this.resetFields()
+          this.$emit('inventoryCreated', response.data.data)
+        }, 1500)
       } catch (error) {
         console.error(error)
         this.$toast.add({
@@ -196,6 +209,8 @@ export default defineComponent({
           detail: 'Failed to add inventory',
           life: 3000
         })
+      } finally {
+        this.isDeleting = false
       }
     },
     convertToNumber(value: string) {
@@ -209,17 +224,12 @@ export default defineComponent({
     close() {
       this.addDialog = false
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+    resetFields() {
+      this.name = ''
+      this.description = ''
+      this.costPrice = ''
+      this.currentStockLevel = ''
+      this.reorderLevel = ''
     },
     allRulesPass() {
       if (

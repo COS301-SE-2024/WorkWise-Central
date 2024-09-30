@@ -15,11 +15,14 @@ import { JobModule } from '../job/job.module';
 import { ClientModule } from '../client/client.module';
 import { Team, TeamSchema } from '../team/entities/team.entity';
 import { RoleRepository } from './role.repository';
-import { EmployeeRepository } from '../employee/employee.repository';
-import { TeamRepository } from '../team/team.repository';
 import { FileModule } from '../file/file.module';
 import { InventoryService } from '../inventory/inventory.service';
 import { InventoryModule } from '../inventory/inventory.module';
+import { StockTakeModule } from '../stocktake/stocktake.module';
+import { StockMovementsModule } from '../stockmovements/stockmovements.module';
+import { InventoryUsedModule } from '../inventory-used/inventory-used.module';
+import { EmailModule } from '../email/email.module';
+import { TeamModule } from '../team/team.module';
 
 @Module({
   imports: [
@@ -35,19 +38,14 @@ import { InventoryModule } from '../inventory/inventory.module';
     forwardRef(() => ClientModule),
     forwardRef(() => FileModule),
     forwardRef(() => InventoryModule),
+    forwardRef(() => StockTakeModule),
+    forwardRef(() => StockMovementsModule),
+    forwardRef(() => InventoryUsedModule),
+    forwardRef(() => EmailModule),
+    forwardRef(() => TeamModule),
   ],
   controllers: [RoleController],
-  providers: [
-    RoleService,
-    CompanyService,
-    EmployeeService,
-    EmployeeRepository,
-    JobService,
-    TeamService,
-    TeamRepository,
-    RoleRepository,
-    InventoryService,
-  ],
+  providers: [RoleService, CompanyService, EmployeeService, JobService, TeamService, RoleRepository, InventoryService],
   exports: [RoleService, RoleRepository, MongooseModule],
 })
 export class RoleModule {}

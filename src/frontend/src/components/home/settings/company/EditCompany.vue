@@ -1,19 +1,32 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card class="bg-cardColor">
       <v-card-title class="text-primary font-bold text-center"> Company Details</v-card-title>
       <v-divider></v-divider>
       <v-card-text>
         <v-form ref="form" v-model="valid">
           <v-row>
             <v-col cols="12" lg="5" class="d-flex justify-center">
-              <v-avatar color="grey" size="150">
-                <v-img
-                  size="50"
-                  src="https://cdn.vuetifyjs.com/docs/images/brand-kit/v-logo-circle.png"
-                  cover
-                ></v-img>
-              </v-avatar>
+              <div class="avatar-upload">
+                <v-avatar
+                  color="grey"
+                  rounded="1"
+                  size="150"
+                  @click="triggerFileInput"
+                  class="avatar-wrapper"
+                >
+                  <v-img :src="company.logo" cover></v-img>
+                  <v-icon small class="camera-icon" color="grey" style="opacity: 0.7"
+                    >mdi-camera</v-icon
+                  >
+                </v-avatar>
+                <v-file-input
+                  ref="fileInput"
+                  accept="image/*"
+                  class="hidden bg-transparent"
+                  @change="onFileChange"
+                ></v-file-input>
+              </div>
             </v-col>
             <v-col cols="12" lg="7">
               <v-label> Name</v-label>
@@ -30,6 +43,7 @@
                 label="Type"
                 :items="type"
                 bg-color="background"
+                variant="solo"
                 required
               ></v-select>
               <v-label>Email</v-label>
@@ -68,6 +82,7 @@
                 :items="provinces"
                 v-model="company.address.province"
                 bg-color="background"
+                variant="solo"
                 required
               ></v-select>
               <v-label>City</v-label>
@@ -90,21 +105,25 @@
       <v-card-actions class="bg-cardColor">
         <v-container
           ><v-row justify="end">
-            <v-col align="center" cols="12" lg="6">
-              <Toast position="top-center" />
-              <v-btn color="success" @click="updateCompanyDetails" :disabled="!valid" block>
-                Save
-                <v-icon end color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon> </v-btn
-            ></v-col>
-            <v-col align="center" cols="12" lg="6">
-              <Toast />
+            <v-col align="center" cols="12" lg="6" order="last" order-lg="first">
               <v-btn color="error" @click="cancel" block>
-                Cancel<v-icon
-                  end
-                  color="error"
-                  icon="fa: fa-solid fa-cancel"
-                ></v-icon> </v-btn></v-col></v-row
-        ></v-container>
+                <v-icon start color="error" icon="fa: fa-solid fa-cancel"></v-icon>Cancel
+              </v-btn></v-col
+            >
+            <v-col align="center" cols="12" lg="6" order="first" order-lg="last">
+              <Toast position="top-center" />
+              <v-btn
+                color="success"
+                @click="updateCompanyDetails"
+                :disabled="!valid"
+                block
+                :loading="isDeleting"
+              >
+                <v-icon start color="success" icon="fa: fa-solid fa-floppy-disk"></v-icon>Save
+              </v-btn></v-col
+            >
+          </v-row></v-container
+        >
       </v-card-actions>
       <div class="card flex justify-center"></div>
     </v-card>
@@ -115,6 +134,8 @@
 import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default defineComponent({
   name: 'EditCompany',
 
@@ -122,9 +143,8 @@ export default defineComponent({
     Toast
   },
   data: () => ({
-    isdarkmode: false,
-    localUrl: 'http://localhost:3000/',
-    remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+    isDarkMode: false,
+    isDeleting: false,
     currentCompanyID: localStorage.getItem('currentCompany'),
     valid: false,
     company: {
@@ -144,7 +164,8 @@ export default defineComponent({
         houseNumber: ''
       },
       vatNumber: '',
-      registrationNumber: ''
+      registrationNumber: '',
+      logo: ''
     },
     type: [
       'Agricultural Labor',
@@ -263,7 +284,6 @@ export default defineComponent({
         detail: 'Company update cancelled',
         life: 3000
       })
-      window.location.reload()
     },
     saveChanges() {
       this.$toast.add({
@@ -280,10 +300,9 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      // const apiURL = await this.getRequestUrl()
       const company_id = localStorage.getItem('currentCompany')
       await axios
-        .get(`http://localhost:3000/company/id/${company_id}`, config)
+        .get(`${API_URL}company/id/${company_id}`, config)
         .then((response) => {
           this.company = response.data.data
           console.log(this.company)
@@ -293,21 +312,21 @@ export default defineComponent({
         })
     },
     async updateCompanyDetails() {
+      this.isDeleting = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
       const data = {
         currentEmployeeId: localStorage.getItem('employeeId'),
         updateCompanyDto: this.company
       }
-      const company_id = localStorage.getItem('currentCompany')
+      this.company.logo = ''
+      console.log(JSON.stringify(data))
       await axios
-        .patch(`${apiURL}company/update/${company_id}`, data, config)
+        .patch(`${API_URL}company/update/${localStorage.getItem('currentCompany')}`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({
@@ -316,29 +335,78 @@ export default defineComponent({
             detail: 'Company updated',
             life: 3000
           })
-          window.location.reload()
+          setTimeout(() => {
+            this.isDeleting = false
+            this.getCompanyDetails()
+          }, 3000)
         })
         .catch((error) => {
           console.log(error)
+          this.isDeleting = false
           this.$toast.add({
             severity: 'error',
-            summary: 'Sticky Message',
+            summary: 'Error',
             detail: 'Company update failed',
             life: 3000
           })
         })
     },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
+    onFileChange(event: Event) {
+      const target = event.target as HTMLInputElement
+      const file = target.files ? target.files[0] : null
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = async (e: ProgressEvent<FileReader>) => {
+          if (e.target) {
+            this.company.logo = e.target.result as string
+            await this.updateCompanyLogo(file)
+          }
+        }
+        reader.readAsDataURL(file)
       }
     },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+    triggerFileInput() {
+      const fileInput = this.$refs.fileInput as HTMLInputElement
+      if (fileInput) {
+        fileInput.click()
+      }
+    },
+    async updateCompanyLogo(file: File) {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      const formData = new FormData()
+      formData.append('logo', file)
+      axios
+        .patch(
+          `${API_URL}company/update/${localStorage.getItem('currentCompany')}/logo`,
+          formData,
+          config
+        )
+        .then((response) => {
+          console.log(response)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Company logo updated',
+            life: 3000
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Company logo update failed',
+            life: 3000
+          })
+        })
     },
     toast() {},
     rulesPassed() {
@@ -357,8 +425,35 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.isdarkmode = localStorage.getItem('theme') === 'true' ? true : false
+    this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
     this.getCompanyDetails()
   }
 })
 </script>
+
+<style scoped>
+.avatar-upload {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-wrapper {
+  cursor: pointer;
+  position: relative;
+}
+
+.camera-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.hidden {
+  display: none;
+}
+</style>

@@ -2,93 +2,17 @@
   <v-col :cols="12">
     <v-sheet rounded class="w-lg-screen" elevation="0">
       <div>
+        <v-text-field
+          v-model="searchQuery"
+          placeholder="Search..."
+          prepend-inner-icon="mdi-magnify"
+          clearable
+        />
         <v-expansion-panels class="my-4" variant="accordion">
           <v-expansion-panel
-            :title="tutorialQuestions[0]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper v-model="activeSteps.stepper1" :items="items.items_login" show-actions>
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Splash Page</h3>
-
-                    <br />
-                    <v-img :src="login.splash" />
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Login Modal</h3>
-
-                    <br />
-                    <v-img :src="login.textfields" />
-                  </template>
-                  <template #[`item.3`]>
-                    <h3 class="text-h6">Login Button Click</h3>
-
-                    <br />
-                    <v-img :src="login.button" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel
-            :title="tutorialQuestions[1]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper v-model="activeSteps.stepper2" :items="items.items_signup" show-actions>
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Splash Page Click Signup Button</h3>
-
-                    <br />
-                    <v-img :src="signup.splash" />
-                  </template>
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Input Email & Password</h3>
-
-                    <br />
-                    <v-img :src="signup.email" />
-                  </template>
-
-                  <template #[`item.3`]>
-                    <h3 class="text-h6">Username Modal</h3>
-
-                    <br />
-                    <v-img :src="signup.username" />
-                  </template>
-
-                  <template #[`item.4`]>
-                    <h3 class="text-h6">Personal Details Modal</h3>
-
-                    <br />
-                    <v-img :src="signup.birthdate" />
-                  </template>
-                  <template #[`item.5`]>
-                    <h3 class="text-h6">Address Modal</h3>
-
-                    <br />
-                    <v-img :src="signup.address" /> </template
-                  ><template #[`item.6`]>
-                    <h3 class="text-h6">Register or Join Company buttons</h3>
-
-                    <br />
-                    <v-img :src="signup.registerjoin" /> </template
-                  ><template #[`item.7`]>
-                    <h3 class="text-h6">Register Company Modal</h3>
-
-                    <br />
-                    <v-img :src="signup.company" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[2])"
             :title="tutorialQuestions[2]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -103,72 +27,155 @@
 
                     <br />
                     <v-img :src="calendar.nav" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Dashboard List Option</li>
+                        <li>Click on Calendar List Sub Options that pops up</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.2`]>
                     <h3 class="text-h6">Calendar Event Clicked</h3>
 
                     <br />
                     <v-img :src="calendar.event_click" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You can click on your desired event or date format</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.3`]>
                     <h3 class="text-h6">Calendar Job Card Popup</h3>
 
                     <br />
                     <v-img :src="calendar.job_card" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>The job card options will pop up</li>
+                        <li>You can view more details on the job</li>
+                        <li>
+                          You can upload images and mark the checklist on the job and Log inventory
+                          items
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[3])"
             :title="tutorialQuestions[3]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
               <v-col :cols="12"
                 ><v-stepper v-model="activeSteps.stepper4" :items="items.items_tables" show-actions>
                   <template #[`item.1`]>
-                    <h3 class="text-h6">Splash Page</h3>
+                    <h3 class="text-h6">Employee Table View</h3>
 
                     <br />
                     <v-img :src="table.view" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Employee List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Employee Details table view</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
-                    <h3 class="text-h6">Login Modal</h3>
+                    <h3 class="text-h6">Employee Table View Search Bar</h3>
 
                     <br />
                     <v-img :src="table.search" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>You can filter through the employees using the search bar</li>
+                        <li>
+                          Click on the search bar and type your desired employees, Firstname,
+                          Surname, Phone, Email or Role
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
-                    <h3 class="text-h6">Click Login Button</h3>
+                    <h3 class="text-h6">Search Bar Result</h3>
 
                     <br />
                     <v-img :src="table.search_value" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Resultant search options will pop up</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.4`]>
-                    <h3 class="text-h6">Create button</h3>
+                    <h3 class="text-h6">Sorting Fields</h3>
 
                     <br />
-                    <v-img :src="table.sort" /> </template
-                  ><template #[`item.5`]>
-                    <h3 class="text-h6">Create button</h3>
+                    <v-img :src="table.sort" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Clicking on the arrow on the right of the table name allows you to sort
+                          the results by that value in either descending or ascending order
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.5`]>
+                    <h3 class="text-h6">Table Pagination</h3>
 
                     <br />
-                    <v-img :src="table.pagination" /> </template
+                    <v-img :src="table.pagination" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You can paginate the results so that it shows the vaues you want to see
+                        </li>
+                        <li>
+                          Click on the pagination options at the bottom of the table to navigate
+                          through the results
+                        </li>
+                      </ul>
+                    </div> </template
                   ><template #[`item.6`]>
-                    <h3 class="text-h6">Create button</h3>
+                    <h3 class="text-h6">Pagination options</h3>
 
                     <br />
                     <v-img :src="table.pagination_options" />
-                  </template> </v-stepper
-              ></v-col>
+                    <div>
+                      <ul class="custom-list">
+                        <li>The options to paginate are between 10, 25, 100 & All.</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[5])"
             :title="tutorialQuestions[5]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -183,6 +190,16 @@
 
                     <br />
                     <v-img :src="addNewClient.buttn" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Client List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Client Details table view</li>
+                        <li>Click on the add Client Button</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -190,13 +207,25 @@
 
                     <br />
                     <v-img :src="addNewClient.fields" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Create Client modal will pop up</li>
+                        <li>Fill in the details of the client you'd like to add</li>
+                        <li>
+                          Once you've filled in the details click on the Green Create Client Button
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[6])"
             :title="tutorialQuestions[6]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -211,6 +240,19 @@
 
                     <br />
                     <v-img :src="viewClientDetails.view_client_action" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Client List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Client Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -218,6 +260,17 @@
 
                     <br />
                     <v-img :src="viewClientDetails.view_client" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Youll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "View"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -225,13 +278,22 @@
 
                     <br />
                     <v-img :src="viewClientDetails.client_view" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Youll be met with a modal with the clients information</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[33])"
             :title="tutorialQuestions[33]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -246,6 +308,19 @@
 
                     <br />
                     <v-img :src="deleteClient.client_action_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Client List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Client Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -253,6 +328,17 @@
 
                     <br />
                     <v-img :src="deleteClient.delete_client_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Youll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Delete"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -260,13 +346,22 @@
 
                     <br />
                     <v-img :src="deleteClient.client_delete_modal" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a modal with caution message</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[38])"
             :title="tutorialQuestions[38]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -281,6 +376,19 @@
 
                     <br />
                     <v-img :src="editClient.client_action_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Client List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Client Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -288,6 +396,17 @@
 
                     <br />
                     <v-img :src="editClient.client_edit_menu" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Youll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Edit"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -295,13 +414,28 @@
 
                     <br />
                     <v-img :src="editClient.client_edit" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You'll be met with a modal where you can edit the clients information
+                        </li>
+                        <li>
+                          You can click on the Save button once you have made the changes to desired
+                          fields
+                        </li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[4])"
             :title="tutorialQuestions[4]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -316,27 +450,55 @@
 
                     <br />
                     <v-img :src="addNewEmployees.button" />
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Fill Details Of New Employee</h3>
-
                     <br />
-                    <v-img :src="addNewEmployees.fields" />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Employee List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Employee Details table view</li>
+                        <li>Click on the add Employee Button</li>
+                      </ul>
+                    </div>
                   </template>
-
-                  <template #[`item.3`]>
+                  <template #[`item.2`]>
                     <h3 class="text-h6">Superior Employee Dropdown</h3>
 
                     <br />
                     <v-img :src="addNewEmployees.superior" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with the Add Employee Modal</li>
+                        <li>
+                          You can click on one of the drop downs and select the options depending on
+                          if the dropdown allows multiple selections or one
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.3`]>
+                    <h3 class="text-h6">Fill Details Of New Employee</h3>
+
+                    <br />
+                    <v-img :src="addNewEmployees.fields" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Fill in the desired fields which are not optional</li>
+                        <li>Once you've added the information click on the "Add" button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[7])"
             :title="tutorialQuestions[7]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -351,6 +513,19 @@
 
                     <br />
                     <v-img :src="editEmployee.button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Employee List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Employee Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -358,19 +533,42 @@
 
                     <br />
                     <v-img :src="editEmployee.options" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Edit"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
                     <h3 class="text-h6">Employee Edit Modal</h3>
 
                     <v-img :src="editEmployee.complete" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with the Edit Employee Modal</li>
+                        <li>
+                          You can click on one of the drop downs and select the options depending on
+                          if the dropdown allows multiple selections or one
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[34])"
             :title="tutorialQuestions[34]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -385,6 +583,19 @@
 
                     <br />
                     <v-img :src="deleteEmployee.employee_delete_action" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Employee List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Employee Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -392,6 +603,17 @@
 
                     <br />
                     <v-img :src="deleteEmployee.employee_delete_menu" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Edit"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -399,13 +621,23 @@
 
                     <br />
                     <v-img :src="deleteEmployee.employee_delete_modal" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a modal with caution message</li>
+                        <li>You can delete this employee by clicking the delete button</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[8])"
             :title="tutorialQuestions[8]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -420,6 +652,19 @@
 
                     <br />
                     <v-img :src="viewEmployee.action" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Employee List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Employee Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -427,6 +672,17 @@
 
                     <br />
                     <v-img :src="viewEmployee.button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Edit"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -434,13 +690,22 @@
 
                     <br />
                     <v-img :src="viewEmployee.view" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Youll be met with a modal with the employee information</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[9])"
             :title="tutorialQuestions[9]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -455,6 +720,16 @@
 
                     <br />
                     <v-img :src="addJob.button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Job List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Job Details table view</li>
+                        <li>Click on the addJob Button</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -462,6 +737,14 @@
 
                     <br />
                     <v-img :src="addJob.description" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Enter the name you would like to give to your job</li>
+                        <li>Enter the name of the client you would like to attach to your job</li>
+                        <li>Enter a description for the job</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -469,24 +752,48 @@
 
                     <br />
                     <v-img :src="addJob.startDate" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Select the start date and time that the jobs is meant to commence</li>
+                        <li>Select the end date and time that the jobs is meant to conclude</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.4`]>
                     <h3 class="text-h6">Assign Employees</h3>
 
                     <br />
-                    <v-img :src="addJob.assign" /> </template
+                    <v-img :src="addJob.assign" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Assign company employees to the job using the drop down</li>
+                      </ul>
+                    </div> </template
                   ><template #[`item.5`]>
                     <h3 class="text-h6">Create Job</h3>
 
                     <br />
                     <v-img :src="addJob.final" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Assign company employees to the job using the drop down</li>
+                        <li>Assign a priority level, tags, and an image to job</li>
+                        <li>Fill in the address at which the job will be taking place</li>
+                        <li>Once the information has been provided click on "Create Job"</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[10])"
             :title="tutorialQuestions[10]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -501,6 +808,15 @@
 
                     <br />
                     <v-img :src="editJob.editjob_card" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You can click on any job or event on the calendar or kanban and the job
+                          card will pop up
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -508,6 +824,12 @@
 
                     <br />
                     <v-img :src="editJob.editjob_edit_details_clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>CLick on "Edit Details" button</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -515,24 +837,55 @@
 
                     <br />
                     <v-img :src="editJob.editjob_card_edit_details" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Details text fields about the jobs will pop up</li>
+                        <li>You can edit any of these fields as you would like</li>
+                        <li>Click "Save" once you're done</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.4`]>
                     <h3 class="text-h6">Click 'Change Client'</h3>
 
                     <br />
                     <v-img :src="editJob.editjob_change_client_clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Click on "Edit Details" button</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.5`]>
                     <h3 class="text-h6">Client Change From Current Clients</h3>
 
                     <br />
                     <v-img :src="editJob.editjob_card_client" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Use the dropdown to change the current client of the job</li>
+                        <li>Once you've changed the client click on Save</li>
+                        <li>If you wish to close the modal click "Cancel"</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.6`]>
-                    <h3 class="text-h6">Click Selectd Employees</h3>
+                    <h3 class="text-h6">Click Selected Employees</h3>
 
                     <br />
                     <v-img :src="editJob.editjob_select_employees_clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Click on "Selected employees" button if you wish to change the assigned
+                          employees
+                        </li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.7`]>
                     <h3 class="text-h6">Assigned Employees Change From Current Employees</h3>
@@ -545,30 +898,64 @@
 
                     <br />
                     <v-img :src="editJob.editjob_update_status_clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Click on "Update Status" button</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.9`]>
                     <h3 class="text-h6">Update Status of Job</h3>
 
                     <br />
                     <v-img :src="editJob.editjob_update_status" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Use the radio buttons to change the current status of the job</li>
+                        <li>Once you've changed the status click on Save</li>
+                        <li>If you wish to close the modal click "Cancel"</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.10`]>
                     <h3 class="text-h6">Click Change Due Date</h3>
 
                     <br />
                     <v-img :src="editJob.editjob_change_due_date_clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Click on "Change Due Date" button</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.11`]>
                     <h3 class="text-h6">Due Date Adjustment Options</h3>
 
                     <br />
-                    <v-img :src="editJob.editjob_change_due_date" /> </template></v-stepper
-              ></v-col>
+                    <v-img :src="editJob.editjob_change_due_date" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Use the date picker to change the start and end, time and date of the job
+                        </li>
+                        <li>Once you've changed the status click on "Save"</li>
+                        <li>If you wish to clear the dates you can click on the "Remove" button</li>
+                        <li>If you wish to close the modal click "Cancel"</li>
+                      </ul>
+                    </div></template
+                  ></v-stepper
+                ></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[35])"
             :title="tutorialQuestions[35]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -583,6 +970,19 @@
 
                     <br />
                     <v-img :src="deleteJob.job_delete_action" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Job List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Job Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -590,6 +990,17 @@
 
                     <br />
                     <v-img :src="deleteJob.job_delete_menu" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Delete"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -597,13 +1008,23 @@
 
                     <br />
                     <v-img :src="deleteJob.job_delete_modal" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a modal with caution message</li>
+                        <li>You can delete this Job by clicking the delete button</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[11])"
             :title="tutorialQuestions[11]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -618,6 +1039,19 @@
 
                     <br />
                     <v-img :src="viewJob.action" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Job List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Job Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -625,6 +1059,17 @@
 
                     <br />
                     <v-img :src="viewJob.menu" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "View"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -632,168 +1077,22 @@
 
                     <br />
                     <v-img :src="viewJob.card" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a modal with the job information</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel
-            :title="tutorialQuestions[12]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper
-                  v-model="activeSteps.stepper17"
-                  :items="items.items_useUserSettings"
-                  show-actions
-                >
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Click User Button</h3>
-
-                    <br />
-                    <v-img :src="useUserSettings.button" />
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Click 'Settings' Button</h3>
-
-                    <br />
-                    <v-img :src="useUserSettings.clicked" />
-                  </template>
-
-                  <template #[`item.3`]>
-                    <h3 class="text-h6">Update User Details</h3>
-
-                    <br />
-                    <v-img :src="useUserSettings.profile" />
-                  </template>
-                  <template #[`item.4`]>
-                    <h3 class="text-h6">Edit Notification Preferences And Navigation Menu</h3>
-
-                    <br />
-                    <v-img :src="useUserSettings.notification" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel
-            :title="tutorialQuestions[13]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper
-                  v-model="activeSteps.stepper18"
-                  :items="items.items_useCompanySettings"
-                  show-actions
-                >
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Click More & Company Settings On Nav Bar</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.nav" />
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Can Edit Company Settings Details</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.settings" />
-                  </template>
-
-                  <template #[`item.3`]>
-                    <h3 class="text-h6">Company Role & Permissions</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.roles" />
-                  </template>
-                  <template #[`item.4`]>
-                    <h3 class="text-h6">Company Role & Permissions</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.options" /> </template
-                  ><template #[`item.5`]>
-                    <h3 class="text-h6">Edit Permission Suite of Roles</h3>
-
-                    <br />
-                    <v-img :src="useCompanySettings.complete" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel
-            :title="tutorialQuestions[14]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper
-                  v-model="activeSteps.stepper19"
-                  :items="items.items_changeTheme"
-                  show-actions
-                >
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Click Moon Icon to Switch to Dark Mode</h3>
-
-                    <br />
-                    <v-img :src="themeChange.light" />
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Dark Mode</h3>
-
-                    <br />
-                    <v-img :src="themeChange.dark" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-          <v-expansion-panel
-            :title="tutorialQuestions[15]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
-            style="font-family: Nunito, sans-serif"
-          >
-            <v-expansion-panel-text>
-              <v-col :cols="12"
-                ><v-stepper
-                  v-model="activeSteps.stepper20"
-                  :items="items.items_manageCompanies"
-                  show-actions
-                >
-                  <template #[`item.1`]>
-                    <h3 class="text-h6">Manage Companies Navigation-Bar</h3>
-
-                    <br />
-                    <v-img :src="manageCompanies.navbar" />
-                  </template>
-
-                  <template #[`item.2`]>
-                    <h3 class="text-h6">Manage Companies Navigation-Bar clicked</h3>
-
-                    <br />
-                    <v-img :src="manageCompanies.navbar_click" />
-                  </template>
-
-                  <template #[`item.3`]>
-                    <h3 class="text-h6">Manage Companies Dropdown</h3>
-
-                    <br />
-                    <v-img :src="manageCompanies.dropdown" />
-                  </template>
-                  <template #[`item.4`]>
-                    <h3 class="text-h6">Manage Companies Redirect</h3>
-
-                    <br />
-                    <v-img :src="manageCompanies.redirect" />
-                  </template> </v-stepper
-              ></v-col>
-            </v-expansion-panel-text> </v-expansion-panel
-          ><v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[32])"
             :title="tutorialQuestions[32]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -808,6 +1107,16 @@
 
                     <br />
                     <v-img :src="inventoryAdd.add_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Inventory List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Inventory Details table view</li>
+                        <li>Click on the Add Inventory Button</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -815,6 +1124,19 @@
 
                     <br />
                     <v-img :src="inventoryAdd.add_fields" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Enter the product name you would like to give to your inventory item
+                        </li>
+                        <li>Enter the description of the item you would like to add</li>
+                        <li>Enter a cost price</li>
+                        <li>Enter a stack level</li>
+                        <li>Enter a recorder level</li>
+                        <li>Click "Create"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -826,8 +1148,9 @@
               ></v-col>
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[36])"
             :title="tutorialQuestions[36]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -842,6 +1165,19 @@
 
                     <br />
                     <v-img :src="editInventory.inventory_action_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Inventory List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Inventory Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -849,6 +1185,17 @@
 
                     <br />
                     <v-img :src="editInventory.inventory_edit_menu_clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Edit"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -856,12 +1203,23 @@
 
                     <br />
                     <v-img :src="editInventory.inventory_edit_modal" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with the Edit Employee Modal</li>
+                        <li>
+                          You can edit the text fields as you would like and save those updates
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[37])"
             :title="tutorialQuestions[37]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -876,6 +1234,19 @@
 
                     <br />
                     <v-img :src="viewInventory.inventory_action_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Inventory List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Inventory Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -883,6 +1254,17 @@
 
                     <br />
                     <v-img :src="viewInventory.inventory_view_menu" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "View"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -890,12 +1272,21 @@
 
                     <br />
                     <v-img :src="viewInventory.inventory_view_modal" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Youll be met with a modal with the inventory item information</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[39])"
             :title="tutorialQuestions[39]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -910,6 +1301,19 @@
 
                     <br />
                     <v-img :src="deleteInventory.inventory_action_button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Open the navigation bar</li>
+                        <li>Click on the Inventory List Option</li>
+                        <li>Click on Management List Sub Options that pops up</li>
+                        <li>You'll be met with the Inventory Details table view</li>
+                        <li>
+                          Click on the 3 orange dots on the far right next to client you would like
+                          to view
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -917,6 +1321,17 @@
 
                     <br />
                     <v-img :src="deleteInventory.inventory_delete_menu_clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a small menu</li>
+                        <li>
+                          Depending on your role in the company your options that will be available
+                          are "View", "Edit" or "Delete"
+                        </li>
+                        <li>Click on "Delete"</li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.3`]>
@@ -924,12 +1339,309 @@
 
                     <br />
                     <v-img :src="deleteInventory.inventory_delete_modal" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You'll be met with a modal with caution message</li>
+                        <li>You can delete this Inventory by clicking the delete button</li>
+                        <li>You can close this modal by clicking the close button</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[12])"
+            :title="tutorialQuestions[12]"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
+            style="font-family: Nunito, sans-serif"
+          >
+            <v-expansion-panel-text>
+              <v-col :cols="12"
+                ><v-stepper
+                  v-model="activeSteps.stepper17"
+                  :items="items.items_useUserSettings"
+                  show-actions
+                >
+                  <template #[`item.1`]>
+                    <h3 class="text-h6">Click User Button</h3>
+
+                    <br />
+                    <v-img :src="useUserSettings.button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>This step can be performed on any page with a AppBar/ToolBar</li>
+                        <li>
+                          Click on the users button on the top left with their initials or picture
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.2`]>
+                    <h3 class="text-h6">Click 'Settings' Button</h3>
+
+                    <br />
+                    <v-img :src="useUserSettings.clicked" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You'll be met with a context menu, with the users name and other
+                          directives
+                        </li>
+                        <li>Click on "Settings"</li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.3`]>
+                    <h3 class="text-h6">Update User Details</h3>
+
+                    <br />
+                    <v-img :src="useUserSettings.profile" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You can fill in the desired text fields that you would like to changed
+                        </li>
+                        <li>
+                          Once that is done you can update these changes by clicking the "Update
+                          Profile"
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                  <template #[`item.4`]>
+                    <h3 class="text-h6">Edit Notification Preferences And Navigation Menu</h3>
+
+                    <br />
+                    <v-img :src="useUserSettings.notification" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You can changed the company Notification settings to what you prefer
+                        </li>
+                        <li>
+                          You can toggle the three switches to change to receiving Push, In-App or
+                          Email notifications
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[13])"
+            :title="tutorialQuestions[13]"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
+            style="font-family: Nunito, sans-serif"
+          >
+            <v-expansion-panel-text>
+              <v-col :cols="12"
+                ><v-stepper
+                  v-model="activeSteps.stepper18"
+                  :items="items.items_useCompanySettings"
+                  show-actions
+                >
+                  <template #[`item.1`]>
+                    <h3 class="text-h6">Click More & Company Settings On Nav Bar</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.nav" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Navigate to the Nav bar and click on "More" and the "Company settings"
+                          will pop up
+                        </li>
+                        <li>Click on "Company Settings"</li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.2`]>
+                    <h3 class="text-h6">Can Edit Company Settings Details</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.settings" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>you can change the company settings by changing the fields</li>
+                        <li>Click on "SAVE" to apply the changes</li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.3`]>
+                    <h3 class="text-h6">Company Role & Permissions</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.roles" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          you can change the company roles permissions suite by changing the
+                          selected fields in the drop down
+                        </li>
+                        <li>Click on "SAVE" to apply the changes</li>
+                      </ul>
+                    </div>
+                  </template>
+                  <template #[`item.4`]>
+                    <h3 class="text-h6">Company Role & Permissions</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.options" /> </template
+                  ><template #[`item.5`]>
+                    <h3 class="text-h6">Edit Permission Suite of Roles</h3>
+
+                    <br />
+                    <v-img :src="useCompanySettings.complete" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Click on "SAVE" to apply the changes</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[14])"
+            :title="tutorialQuestions[14]"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
+            style="font-family: Nunito, sans-serif"
+          >
+            <v-expansion-panel-text>
+              <v-col :cols="12"
+                ><v-stepper
+                  v-model="activeSteps.stepper19"
+                  :items="items.items_changeTheme"
+                  show-actions
+                >
+                  <template #[`item.1`]>
+                    <h3 class="text-h6">Click Moon Icon to Switch to Dark Mode</h3>
+
+                    <br />
+                    <v-img :src="themeChange.light" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          On the top right corner there is a moon cresent icon click that to change
+                          to Dark Mode
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.2`]>
+                    <h3 class="text-h6">Dark Mode</h3>
+
+                    <br />
+                    <v-img :src="themeChange.dark" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Once in dark mode this will turn into a Sun icon signifying changing back
+                          to Light Mode
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[15])"
+            :title="tutorialQuestions[15]"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
+            style="font-family: Nunito, sans-serif"
+          >
+            <v-expansion-panel-text>
+              <v-col :cols="12"
+                ><v-stepper
+                  v-model="activeSteps.stepper20"
+                  :items="items.items_manageCompanies"
+                  show-actions
+                >
+                  <template #[`item.1`]>
+                    <h3 class="text-h6">Manage Companies Navigation-Bar</h3>
+
+                    <br />
+                    <v-img :src="manageCompanies.navbar" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          To switch companies click on the companies name on the top left of the
+                          screen
+                        </li>
+                        <li>A menu will appear</li>
+                      </ul>
+                    </div>
+                  </template>
+
+                  <template #[`item.2`]>
+                    <h3 class="text-h6">Manage Companies Navigation-Bar clicked</h3>
+
+                    <br />
+                    <v-img :src="manageCompanies.navbar_click" />
+                  </template>
+
+                  <template #[`item.3`]>
+                    <h3 class="text-h6">Manage Companies Dropdown</h3>
+
+                    <br />
+                    <v-img :src="manageCompanies.dropdown" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Click on the drop down to see the menu of companies you can switch to, or
+                          are registered under
+                        </li>
+                        <li>select the company you would like to switch</li>
+                        <li>Select Save to switch to that company</li>
+                      </ul>
+                    </div>
+                  </template>
+                  <template #[`item.4`]>
+                    <h3 class="text-h6">Manage Companies Redirect</h3>
+
+                    <br />
+                    <v-img :src="manageCompanies.redirect" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          You will be reloaded to the home page of the company you switched to
+                        </li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text> </v-expansion-panel
           ><v-expansion-panel
+            v-if="filteredItems.includes(tutorialQuestions[17])"
             :title="tutorialQuestions[17]"
-            :theme="isdarkmode === true ? 'dark' : 'light'"
+            :theme="isDarkMode === true ? 'dark' : 'light'"
             style="font-family: Nunito, sans-serif"
           >
             <v-expansion-panel-text>
@@ -944,6 +1656,15 @@
 
                     <br />
                     <v-img :src="logout.navbar" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>
+                          Navigate to the Nav bar and click on "More" and the "Company settings" &
+                          "Logout" will pop up
+                        </li>
+                      </ul>
+                    </div>
                   </template>
 
                   <template #[`item.2`]>
@@ -951,14 +1672,27 @@
 
                     <br />
                     <v-img :src="logout.button" />
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>Click on "Logout"</li>
+                      </ul>
+                    </div>
                   </template>
                   <template #[`item.3`]>
                     <h3 class="text-h6">Redirect To Splash Page</h3>
 
                     <br />
                     <v-img :src="logout.splash" />
-                  </template> </v-stepper
-              ></v-col>
+                    <br />
+                    <div>
+                      <ul class="custom-list">
+                        <li>You will be redirected to the splash page</li>
+                      </ul>
+                    </div>
+                  </template>
+                </v-stepper></v-col
+              >
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -1136,7 +1870,7 @@ export default defineComponent({
 
     return {
       activeSteps,
-      isdarkmode: sessionStorage['theme'] === 'true',
+      isDarkMode: sessionStorage['theme'] === 'true',
       tab: null,
       login: {
         splash: splash_login,
@@ -1367,10 +2101,27 @@ export default defineComponent({
         items_deleteJob: ['Step 1', 'Step 2', 'Step 3'],
         items_editClient: ['Step 1', 'Step 2', 'Step 3'],
         items_editInventory: ['Step 1', 'Step 2', 'Step 3']
-      }
+      },
+      searchQuery: ''
+    }
+  },
+  computed: {
+    filteredItems() {
+      return this.tutorialQuestions.filter((question) =>
+        question.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
     }
   }
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.custom-list li {
+  margin-bottom: 8px;
+}
+</style>

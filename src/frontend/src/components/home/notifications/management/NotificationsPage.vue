@@ -1,12 +1,12 @@
 <template>
   <v-container>
-    <Toast position="bottom-center" />
+    <Toast position="top-center" />
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">
         <h2 class="text-xl font-semibold">Notifications</h2>
       </v-col>
     </v-row>
-    <v-card rounded="md" class="bg-cardColor">
+    <v-card rounded="md" class="bg-background" border="md">
       <v-row>
         <v-col cols="12" lg="10">
           <v-row>
@@ -15,27 +15,33 @@
                 ><v-col cols="12"
                   ><v-btn
                     @click="setInbox('All')"
-                    :class="{ 'bg-cardColor': currentInbox === 'All' }"
-                    ><v-icon icon="fa: fa-solid fa-inbox"></v-icon>All</v-btn
+                    :class="{ 'bg-secondary': currentInbox === 'All' }"
+                    color=""
+                    variant="text"
+                    ><v-icon icon="fa: fa-solid fa-inbox" color="primary"></v-icon>All</v-btn
                   ></v-col
                 >
                 <v-col cols="12">
                   <v-btn
-                    @click="setInbox('Unread')"
-                    :class="{ 'bg-cardColor': currentInbox === 'Unread' }"
-                    ><v-icon icon="fa: fa-regular fa-bell"></v-icon>Unread</v-btn
+                    @click="setInbox('Read')"
+                    :class="{ 'bg-secondary': currentInbox === 'Read' }"
+                    color=""
+                    variant="text"
+                    ><v-icon icon="fa: fa-regular fa-bell" color="primary"></v-icon>Read</v-btn
                   ></v-col
                 >
                 <v-col cols="12"
                   ><v-btn
-                    @click="setInbox('Read')"
-                    :class="{ 'bg-cardColor': currentInbox === 'Read' }"
-                    ><v-icon icon="fa: fa-solid fa-bell"></v-icon>Read</v-btn
+                    @click="setInbox('Unread')"
+                    :class="{ 'bg-secondary': currentInbox === 'Unread' }"
+                    color=""
+                    variant="text"
+                    ><v-icon icon="fa: fa-solid fa-bell" color="primary"></v-icon>Unread</v-btn
                   ></v-col
                 >
               </v-row>
             </v-col>
-            <v-col cols="12" lg="8">
+            <v-col cols="12" lg="10">
               <v-text-field
                 v-model="search"
                 label="Search"
@@ -48,55 +54,37 @@
                 @input="searchEmails"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" lg="2">
-              <v-select
-                label="Sort By"
-                :items="groupBy"
-                density="compact"
-                class="pa-0 ma-2"
-                @change="groupBySelection($event)"
-              ></v-select>
-            </v-col>
           </v-row>
           <v-row>
             <v-col cols="12" order="last" justify="center">
-              <v-card class="pa-0 ma-3" elevation="0">
-                <v-card-title class="text-h4">{{ currentInbox }}</v-card-title>
+              <v-card class="pa-0 ma-3 bg-background" elevation="0">
+                <v-card-title class="text-h4 bg-background">{{ currentInbox }}</v-card-title>
                 <v-divider></v-divider>
-                <v-card-text>
-                  <v-list class="bg-cardColor" rounded="md">
+                <v-card-text class="bg-background">
+                  <v-list class="bg-background" rounded="md">
                     <v-list-item
-                      v-for="notification in filteredNotifications"
-                      :key="notification.id"
-                      @click="handleNotificationClick(notification.id)"
-                      :class="{
-                        'bg-background':
-                          clickedNotificationId === notification.id ||
-                          clickedNotfiicationIds.includes(notification.id)
-                      }"
+                      v-for="(notification, i) in notifications"
+                      :key="i"
+                      @click="handleNotificationClick(notification._id)"
                     >
-                      <v-label
-                        class="h5 font-weight-regular d-flex justify-center bg-cardColor text-secondary"
-                      ></v-label>
-                      <Panel style="background-color:">
+                      <Panel class="bg-background">
                         <template #header>
                           <div class="flex items-center gap-2">
-                            <v-icon
-                              :icon="
-                                notification.read === false
-                                  ? 'fa: fa-regular fa-bell'
-                                  : 'fa: fa-solid fa-bell'
-                              "
-                            >
-                            </v-icon>
-                            <span class="font-bold">{{ notification.title }}</span>
+                            <v-badge v-if="!notification.isRead" dot color="green" overlap>
+                              <v-icon icon="fa: fa-regular fa-bell"></v-icon>
+                            </v-badge>
+                            <v-icon icon="fa: fa-regular fa-bell" v-else></v-icon>
+
+                            <span class="font-bold h6 notification-title" style="color: #f0984d">{{
+                              notification.message.title
+                            }}</span>
                           </div>
                         </template>
                         <template #footer>
                           <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-2"></div>
                             <span class="text-surface-500 dark:text-surface-400">
-                              {{ notification.date }}</span
+                              {{ format(new Date(notification.createdAt), 'dd MMMM yyyy') }}</span
                             >
                           </div>
                         </template>
@@ -108,28 +96,16 @@
                               </v-btn>
                             </template>
                             <v-list>
-                              <v-list-item @click="handleAction('add to done', notification.id)">
+                              <v-list-item @click="handleAction('mark as read', notification._id)">
                                 <v-btn color="success" block>
-                                  <v-icon icon="fa:fa-solid fa-check" color="success"></v-icon>
-                                  Done
-                                </v-btn>
-                              </v-list-item>
-                              <v-list-item @click="handleAction('save', notification.id)">
-                                <v-btn color="primary" block>
-                                  <v-icon icon="fa:fa-solid fa-bookmark" color="primary"></v-icon>
-                                  Save
-                                </v-btn>
-                              </v-list-item>
-                              <v-list-item @click="handleAction('mark as read', notification.id)">
-                                <v-btn color="secondary" block>
                                   <v-icon
                                     icon="fa:fa-solid fa-envelope-open"
-                                    color="secondary"
+                                    color="success"
                                   ></v-icon>
                                   Mark as Read
                                 </v-btn>
                               </v-list-item>
-                              <v-list-item @click="handleAction('delete', notification.id)">
+                              <v-list-item @click="handleAction('delete', notification._id)">
                                 <v-btn color="error" block>
                                   <v-icon icon="fa:fa-solid fa-trash" color="error"></v-icon>
                                   Delete
@@ -138,37 +114,20 @@
                             </v-list>
                           </v-menu>
                         </template>
-                        <p class="m-0">
-                          <span>{{ notification.title }}</span>
-                          <br />
-                          {{ notification.message }}
-                          <br />
-                          {{ notification.type }}
-                          <br />
-                          {{ notification.company }}
+                        <p class="m-0" :theme="true">
+                          {{ notification.message.body }}
                         </p>
                       </Panel>
                     </v-list-item>
                   </v-list>
                 </v-card-text>
-                <v-card-actions>
-                  <v-row>
-                    <v-col cols="12" lg="6">
-                      <v-pagination
-                        v-model="currentPage"
-                        :length="pages"
-                        color="primary"
-                      ></v-pagination>
-                    </v-col>
-                  </v-row>
-                </v-card-actions>
               </v-card>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="2">
-          <v-card class="pa-0 ma-2" elevation="0" border="sm">
-            <v-list class="bg-cardColor">
+          <v-card class="pa-0 ma-2 bg-background" elevation="0" border="sm">
+            <v-list class="bg-background">
               <v-list-item
                 v-for="(item, index) in items"
                 :key="index"
@@ -183,20 +142,20 @@
               </v-list-item>
             </v-list>
             <v-divider></v-divider>
-            <v-list class="bg-cardColor">
+            <v-list class="bg-background">
               <v-label>Filters</v-label>
               <v-list-item
                 v-for="(item, index) in filters"
                 :key="index"
                 :value="index"
-                @click="filterOn === true ? filter(item.title, false) : filter(item.title, false)"
+                @click="filterOn ? filter(item.title) : filter(item.title)"
                 :class="{ 'bg-secondary': currentFilter === item.title }"
               >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
             <v-divider></v-divider>
-            <v-list class="bg-cardColor">
+            <v-list class="bg-background">
               <v-label>Companies</v-label>
               <v-list-item
                 v-for="(item, index) in companies"
@@ -217,190 +176,18 @@
 <script lang="ts">
 import Toast from 'primevue/toast'
 import Panel from 'primevue/panel'
-
+import { format } from 'date-fns'
 import axios from 'axios'
+import { API_URL } from '@/main'
+
 export default {
   data() {
     return {
       menu: false,
-      notifications: [
-        {
-          id: 1,
-          title: 'Job Assignment: Tire Replacement at Warehouse',
-          message:
-            'You have been assigned to replace tires on all forklifts at the Wielding Tires warehouse.',
-          action: 'viewJobDetails',
-          actionText: 'View Job Details',
-          type: 'Job Oriented',
-          company: 'Wielding Tires',
-          date: '2021-09-01',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 2,
-          title: 'Admin: System Maintenance Scheduled',
-          message:
-            'Scheduled system maintenance will occur on September 3rd from 2:00 AM to 4:00 AM. Please ensure all critical tasks are completed beforehand.',
-          action: 'reviewSchedule',
-          actionText: 'Review Schedule',
-          type: 'Admin',
-          company: 'Plumbing Bros',
-          date: '2021-09-02',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 3,
-          title: 'Job Assignment: Replace HVAC System',
-          message: 'You have been assigned to replace the HVAC system at Sunrise Apartments.',
-          action: 'viewDetails',
-          actionText: 'View Details',
-          type: 'Job Oriented',
-          company: 'Sunrise Apartments',
-          date: '2021-09-03',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 4,
-          title: 'Admin: Quarterly Report Submission',
-          message: 'Reminder to submit the quarterly financial report by the end of the week.',
-          action: 'submitReport',
-          actionText: 'Submit Report',
-          type: 'Admin',
-          company: 'Urban Developments Inc.',
-          date: '2021-09-04',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 5,
-          title: 'Job Update: Electrical Wiring Inspection',
-          message: 'Electrical wiring inspection has been completed at Midtown Office Complex.',
-          action: 'viewReport',
-          actionText: 'View Report',
-          type: 'Job Oriented',
-          company: 'Midtown Office Complex',
-          date: '2021-09-05',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 6,
-          title: 'Admin: Staff Meeting Reminder',
-          message: 'Staff meeting scheduled for tomorrow at 10:00 AM in Conference Room B.',
-          action: 'addToCalendar',
-          actionText: 'Add to Calendar',
-          type: 'Admin',
-          company: 'Plumbing Bros',
-          date: '2021-09-06',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 7,
-          title: 'Job Assignment: Roof Repair',
-          message: 'Assigned to repair the roof at Grandview Shopping Center.',
-          action: 'viewDetails',
-          actionText: 'View Details',
-          type: 'Job Oriented',
-          company: 'Grandview Shopping Center',
-          date: '2021-09-07',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 8,
-          title: 'Admin: Client Feedback Request',
-          message: 'Request feedback from clients after completion of recent jobs.',
-          action: 'sendRequest',
-          actionText: 'Send Request',
-          type: 'Admin',
-          company: 'Wielding Tires',
-          date: '2021-09-08',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 9,
-          title: 'Job Completion: Plumbing Repair',
-          message: 'Plumbing repair completed at Lakeside Residential.',
-          action: 'viewInvoice',
-          actionText: 'View Invoice',
-          type: 'Job Oriented',
-          company: 'Lakeside Residential',
-          date: '2021-09-09',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 10,
-          title: 'Admin: New Policy Update',
-          message: 'Please review the updated company policies regarding health and safety.',
-          action: 'reviewPolicy',
-          actionText: 'Review Policy',
-          type: 'Admin',
-          company: 'Urban Developments Inc.',
-          date: '2021-09-10',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 11,
-          title: 'Job Assignment: Install Security System',
-          message: 'You have been assigned to install a security system at Riverside Mall.',
-          action: 'viewDetails',
-          actionText: 'View Details',
-          type: 'Job Oriented',
-          company: 'Riverside Mall',
-          date: '2021-09-11',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        },
-        {
-          id: 12,
-          title: 'Admin: Payroll Processing Deadline',
-          message: 'Ensure payroll is processed by Friday to meet the payment schedule.',
-          action: 'processPayroll',
-          actionText: 'Process Payroll',
-          type: 'Admin',
-          company: 'Plumbing Bros',
-          date: '2021-09-12',
-          read: false,
-          done: false,
-          saved: false,
-          trash: false
-        }
-      ],
+      notifications: [] as any[],
+      allNotifications: [] as any[],
       items: [
-        { title: 'Inbox', icon: 'fa: fa-solid fa-inbox' },
-
-        { title: 'Saved', icon: 'fa: fa-solid fa-bookmark' },
-        { title: 'Done', icon: 'fa: fa-solid fa-check' }
-
+        { title: 'Inbox', icon: 'fa: fa-solid fa-inbox' }
         // Add more items here
       ],
       filters: [
@@ -413,78 +200,84 @@ export default {
       pages: 10,
 
       groupBy: ['Date', 'Company', 'Type'],
-      filteredNotificationsArray: [] as number[],
+      filteredNotificationsArray: [] as any[],
       search: '',
-      clickedNotificationId: 0, // Track the clicked notification ID
+      clickedNotificationId: '', // Track the clicked notification ID
       active: true,
-      clickedNotfiicationIds: [] as number[],
+      clickedNotfiicationIds: [] as string[],
       selectAllNotifications: false, // Track the select all checkbox
       showActionButtons: false,
-      read: [] as number[],
+      read: [] as string[],
       joinedCompanies: [] as any[],
       joinedCompaniesNames: [] as any[],
       joinedCompaniesIds: [] as string[],
-      joinedCompaniesEmployeeIds: [] as number[],
+      joinedCompaniesEmployeeIds: [] as string[],
       companyName: '',
-      unread: [] as number[],
-      done: [] as number[],
-      saved: [] as number[],
+      unread: [] as string[],
+      // done: [] as number[],
+      // saved: [] as number[],
       filterOn: false,
       currentInbox: 'Inbox', // Track the current inbox
       currentCompany: '', // Track the current company
       currentFilter: '', // Track the current filter
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/'
+      apply: false
     }
   },
   components: { Toast, Panel },
   computed: {
     filteredNotifications() {
       // Filter notifications based on the current inbox
+      console.log(this.notifications)
+      if (this.notifications == null) {
+        console.log('Notifications are null')
+        return []
+      }
+
       let filtered = this.notifications.filter(
         (notification) =>
-          notification.title.toLowerCase().includes(this.search.toLowerCase()) &&
+          notification.message.title.toLowerCase().includes(this.search.toLowerCase()) &&
           (this.filteredNotificationsArray.length === 0 ||
-            this.filteredNotificationsArray.includes(notification.id))
+            this.filteredNotificationsArray.includes(notification._id))
       )
 
-      if (this.currentInbox === 'Saved') {
-        filtered = filtered.filter((notification) => notification.saved)
-      } else if (this.currentInbox === 'Done') {
-        filtered = filtered.filter((notification) => notification.done)
-      } else if (this.currentInbox === 'Read') {
-        filtered = filtered.filter((notification) => !notification.read)
+      if (this.currentInbox === 'Read') {
+        filtered = filtered.filter((notification) => !notification.isRead)
       } else if (this.currentInbox === 'Unread') {
-        filtered = filtered.filter((notification) => notification.read)
+        filtered = filtered.filter((notification) => notification.isRead)
       } else if (this.currentInbox === 'All' || this.currentInbox === 'Inbox') {
         return filtered
       }
 
       if (this.currentCompany) {
-        filtered = filtered.filter((notification) => notification.company === this.currentCompany)
+        filtered = filtered.filter(
+          (notification) => notification.companyName === this.currentCompany
+        )
       }
 
       return filtered
     }
   },
   mounted() {
-    this.getNotifications()
     this.getCompanies()
     this.populateCompanies()
+    this.getNotifications()
   },
   methods: {
+    format,
     async getCompanies() {
+      console.log('Get Companies')
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       const user_id = localStorage.getItem('id')
       await axios
-        .get(`${apiURL}users/id/${user_id}`, config)
+        .get(`${API_URL}users/id/${user_id}`, config)
         .then((response) => {
+          console.log('Response from fetch', response.data.data.joinedCompanies)
           console.log(response.data.data.joinedCompanies)
           console.log(response.data.data)
           this.joinedCompanies = response.data.data.joinedCompanies
@@ -501,30 +294,26 @@ export default {
             if (this.joinedCompaniesIds[i] == currentCompanyID) {
               this.companyName = this.joinedCompaniesNames[i]
               console.log(this.companyName)
-            } else {
+            } /*else {
               this.companyName = 'No company selected'
               console.log(this.companyName)
-            }
+            }*/
           }
         })
         .catch((error) => {
           console.log(error)
         })
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
+      this.populateCompanies()
     },
     setInbox(inbox: string) {
       this.currentInbox = inbox
+      if (inbox === 'Unread') {
+        this.notifications = this.allNotifications.filter((n) => n.isRead === false)
+      } else if (inbox === 'Read') {
+        this.notifications = this.allNotifications.filter((n) => n.isRead === true)
+      } else {
+        this.notifications = this.allNotifications
+      }
     },
     switchCompany(company: string) {
       console.log('Switch Company:', company)
@@ -535,45 +324,28 @@ export default {
       for (let i = 0; i < this.joinedCompanies.length; i++) {
         this.companies.push({ title: this.joinedCompaniesNames[i] })
       }
-      for (let j = 0; j < this.notifications.length; j++) {
-        if (!this.companies.find((company) => company.title === this.notifications[j].company)) {
-          this.companies.push({ title: this.notifications[j].company })
-        }
-      }
     },
-    handleNotificationClick(id: number) {
-      if (this.clickedNotificationId === id) {
-        this.clickedNotificationId = 0
+    handleNotificationClick(_id: string) {
+      if (this.clickedNotificationId === _id) {
+        //this.clickedNotificationId = 0
         this.showActionButtons = false
         for (let i = 0; i < this.clickedNotfiicationIds.length; i++) {
-          if (this.clickedNotfiicationIds[i] === id) {
+          if (this.clickedNotfiicationIds[i] === _id) {
             this.clickedNotfiicationIds.splice(i, 1)
           }
         }
       } else {
-        this.clickedNotificationId = id
-        this.clickedNotfiicationIds.push(id)
+        this.clickedNotificationId = _id
+        this.clickedNotfiicationIds.push(_id)
         this.showActionButtons = true
       }
     },
-    handleAction(action: string, id: number) {
+    handleAction(action: string, _id: string) {
       console.log(`Action performed: ${action}`)
-      if (action === 'add to done') {
-        if (this.notifications.find((notification) => notification.id === id)?.done === true) {
-          this.removeFromDone(id)
-        } else {
-          this.movetoDone(id)
-        }
-      } else if (action === 'save') {
-        if (this.notifications.find((notification) => notification.id === id)?.saved === true) {
-          this.removeFromSaved(id)
-        } else {
-          this.movetoSaved(id)
-        }
-      } else if (action === 'mark as read') {
-        this.notifications.find((notification) => notification.id === id)?.read === false
-          ? this.markAsRead(id)
-          : this.markAsUnread(id)
+      if (action === 'mark as read') {
+        this.notifications.find((notification) => notification._id === _id)?.isRead === false
+          ? this.markAsRead(_id)
+          : this.markAsUnread(_id)
       } else if (action === 'delete') {
         this.$toast.add({
           severity: 'error',
@@ -581,14 +353,14 @@ export default {
           detail: 'Notification deleted',
           life: 3000
         })
-        this.removeFromInbox(id)
+        this.removeFromInbox(_id)
       }
     },
     selectAll() {
       this.selectAllNotifications = !this.selectAllNotifications
       if (this.selectAllNotifications) {
         for (let i = 0; i < this.notifications.length; i++) {
-          this.clickedNotfiicationIds.push(this.notifications[i].id)
+          this.clickedNotfiicationIds.push(this.notifications[i]._id)
           console.log(this.clickedNotfiicationIds[i])
         }
       } else {
@@ -596,8 +368,8 @@ export default {
       }
       console.log('Select All')
     },
-    removeFromInbox(id: number) {
-      this.notifications = this.notifications.filter((notification) => notification.id !== id)
+    removeFromInbox(_id: string) {
+      this.notifications = this.notifications.filter((notification) => notification._id !== _id)
       console.log('Remove from Inbox')
     },
     deselectAll() {
@@ -608,18 +380,44 @@ export default {
     deleteSelected() {
       for (let i = 0; i < this.clickedNotfiicationIds.length; i++) {
         this.notifications = this.notifications.filter(
-          (notification) => notification.id !== this.clickedNotfiicationIds[i]
+          (notification) => notification._id !== this.clickedNotfiicationIds[i]
         )
       }
-      this.clickedNotificationId = 0
+      //this.clickedNotificationId = 0
       console.log('Delete Selected')
     },
-    markAsRead(id: number) {
+    async markAsRead(_id: string) {
       console.log('Mark as Read')
       for (let i = 0; i < this.notifications.length; i++) {
-        if (this.notifications[i].id === id) {
-          this.read.push(this.notifications[i].id)
-          this.notifications[i].read = true
+        if (this.notifications[i]._id === _id) {
+          this.read.push(this.notifications[i]._id)
+          this.notifications[i].isRead = true
+
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+          }
+
+          try {
+            await axios.patch(`${API_URL}notification/markAsRead/${_id}`, {}, config)
+            for (let i = 0; i < this.notifications.length; i++) {
+              if (this.notifications[i]._id === _id) {
+                this.read.push(this.notifications[i]._id)
+                this.notifications[i].isRead = true
+                this.$toast.add({
+                  severity: 'info',
+                  summary: 'Success',
+                  detail: 'Notification marked as read',
+                  life: 3000
+                })
+              }
+            }
+          } catch (error) {
+            console.error(error)
+          }
+
           this.$toast.add({
             severity: 'info',
             summary: 'Success',
@@ -629,12 +427,37 @@ export default {
         }
       }
     },
-    markAsUnread(id: number) {
+    async markAsUnread(_id: string) {
       console.log('Mark as Unread')
       for (let i = 0; i < this.notifications.length; i++) {
-        if (this.notifications[i].id === id) {
-          this.unread.push(this.notifications[i].id)
-          this.notifications[i].read = false
+        if (this.notifications[i]._id === _id) {
+          this.unread.push(this.notifications[i]._id)
+          this.notifications[i].isRead = false
+
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+          }
+
+          try {
+            await axios.patch(`${API_URL}notification/markAsUnread/${_id}`, {}, config)
+            for (let i = 0; i < this.notifications.length; i++) {
+              if (this.notifications[i]._id === _id) {
+                this.read.push(this.notifications[i]._id)
+                this.notifications[i].isRead = true
+                this.$toast.add({
+                  severity: 'info',
+                  summary: 'Success',
+                  detail: 'Notification marked as read',
+                  life: 3000
+                })
+              }
+            }
+          } catch (error) {
+            console.error(error)
+          }
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
@@ -644,87 +467,22 @@ export default {
         }
       }
     },
-    movetoSaved(id: number) {
-      console.log('Move to Saved')
-      for (let i = 0; i < this.notifications.length; i++) {
-        if (this.notifications[i].id === id) {
-          this.saved.push(this.notifications[i].id)
-          this.notifications[i].saved = true
-          this.$toast.add({
-            severity: 'warn',
-            summary: 'Success',
-            detail: 'Notification saved',
-            life: 3000
-          })
-        }
-      }
-    },
-    movetoDone(id: number) {
-      console.log('Move to Done')
-      for (let i = 0; i < this.notifications.length; i++) {
-        if (this.notifications[i].id === id) {
-          this.done.push(this.notifications[i].id)
-          this.notifications[i].done = true
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Notification marked as done',
-            life: 3000
-          })
-        }
-      }
-    },
-    removeFromDone(id: number) {
-      console.log('Remove from Done')
-      for (let i = 0; i < this.notifications.length; i++) {
-        if (this.notifications[i].id === id) {
-          this.done = this.done.filter((done) => done !== this.notifications[i].id)
-          this.notifications[i].done = false
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Success',
-            detail: 'Notification removed from done',
-            life: 3000
-          })
-        }
-      }
-    },
-    removeFromSaved(id: number) {
-      console.log('Remove from Saved')
-      for (let i = 0; i < this.notifications.length; i++) {
-        if (this.notifications[i].id === id) {
-          this.saved = this.saved.filter((saved) => saved !== this.notifications[i].id)
-          this.notifications[i].saved = false
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Notification removed from saved',
-            life: 3000
-          })
-        }
-      }
-    },
-    filter(filterType: string, apply: boolean) {
+    filter(filterType: string) {
       this.filteredNotificationsArray = []
-      console.log('Filter:', apply)
+      this.apply = !this.apply
+      console.log('Filter:', this.apply)
       this.currentFilter = filterType
+      this.applyFilter(this.apply)
       if (this.filterOn) {
-        this.applyFilter(apply)
-      } else {
-        this.applyFilter(apply)
         if (filterType === 'Job Oriented') {
           for (let i = 0; i < this.notifications.length; i++) {
-            if (this.notifications[i].type === 'Job Oriented') {
-              this.filteredNotificationsArray.push(this.notifications[i].id)
-            }
+            this.notifications = this.allNotifications.filter((n) => n.isJobRelated)
           }
         } else if (filterType === 'Admin') {
-          for (let i = 0; i < this.notifications.length; i++) {
-            if (this.notifications[i].type === 'Admin') {
-              this.filteredNotificationsArray.push(this.notifications[i].id)
-            }
-          }
+          this.notifications = this.allNotifications.filter((n) => !n.isJobRelated)
         }
+      } else {
+        this.notifications = this.allNotifications
       }
     },
     applyFilter(apply: boolean) {
@@ -746,17 +504,24 @@ export default {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        data: {
-          employeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       const user_id = localStorage.getItem('id')
       try {
-        const res = await axios.get(`${apiURL}notification`, config)
-        console.log(res)
-        this.items = res.data.data
+        const res = await axios.get(`${API_URL}notification/user?userId=${user_id}`, config)
+        console.log('User Notifications', res.data.data)
+        //this.items = res.data.data
+        for (const datum of res.data.data) {
+          this.notifications.push(datum)
+          this.allNotifications.push(datum)
+        }
+
+        for (const datum of res.data.data) {
+          axios.patch(`${API_URL}notification/markAsRead/${datum._id}`, {}, config).then(() => {
+            console.log('message marked as red')
+          })
+        }
       } catch (error) {
         console.error(error)
       }
@@ -768,5 +533,9 @@ export default {
 <style scoped>
 .highlight {
   background-color: #9e20c4; /* Change to your desired highlight color */
+}
+
+.notification-title {
+  margin-left: 10px; /* Small space between the icon and the text */
 }
 </style>

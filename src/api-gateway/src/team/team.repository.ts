@@ -33,9 +33,24 @@ export class TeamRepository {
     return result;
   }
 
+  async findAllWithEmployeeId(identifier: Types.ObjectId) {
+    return await this.teamModel
+      .find({
+        $and: [
+          {
+            $or: [{ teamLeaderId: identifier }, { teamMembers: { $in: identifier } }],
+          },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+  }
+
   async findByIdInCompany(identifier: Types.ObjectId, companyIdentification: Types.ObjectId) {
-    const result: FlattenMaps<Team> & { _id: Types.ObjectId } = await this.teamModel
-      .findOne({
+    return await this.teamModel
+      .find({
         $and: [
           { _id: identifier },
           { companyId: companyIdentification },
@@ -44,6 +59,39 @@ export class TeamRepository {
           },
         ],
       })
+      .lean();
+  }
+
+  async findAllInCompany(identifier: Types.ObjectId) {
+    const result: (FlattenMaps<Team> & { _id: Types.ObjectId })[] = await this.teamModel
+      .find({
+        $and: [
+          {
+            companyId: identifier,
+          },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+
+    return result;
+  }
+
+  async detailedFindAllInCompany(identifier: Types.ObjectId, fieldsToPouplate: string[]) {
+    const result: (FlattenMaps<Team> & { _id: Types.ObjectId })[] = await this.teamModel
+      .find({
+        $and: [
+          {
+            companyId: identifier,
+          },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .populate(fieldsToPouplate)
       .lean();
 
     return result;
@@ -61,6 +109,8 @@ export class TeamRepository {
         ],
       })
       .lean();
+
+    console.log('In repository. Result: ', result);
 
     return result;
   }
@@ -90,7 +140,7 @@ export class TeamRepository {
   }
 
   async update(id: Types.ObjectId, updateTeamDto: UpdateTeamDto) {
-    const previousObject: FlattenMaps<Team> & { _id: Types.ObjectId } = await this.teamModel
+    return await this.teamModel
       .findOneAndUpdate(
         {
           $and: [
@@ -103,7 +153,6 @@ export class TeamRepository {
         { $set: { ...updateTeamDto }, updatedAt: new Date() },
       )
       .lean();
-    return previousObject;
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {

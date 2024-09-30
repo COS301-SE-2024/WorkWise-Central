@@ -1,11 +1,5 @@
-<template>
-  <v-dialog
-    :max-height="800"
-    :max-width="900"
-    :theme="isdarkmode === true ? 'dark' : 'light'"
-    v-model="jobDialog"
-    scrollable
-  >
+﻿<template>
+  <v-dialog close-on-back :max-height="800" opacity="0.6" :max-width="900" v-model="jobDialog">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -15,6 +9,7 @@
           text="Add Job"
           prepend-icon="mdi-briefcase-plus"
           variant="elevated"
+          block
           color="secondary"
           v-bind="activatorProps"
         ></v-btn>
@@ -28,9 +23,13 @@
             <v-spacer></v-spacer>
             <v-col>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Job Title*</label>
+                <label style="font-size: 14px; font-weight: lighter"
+                  >Job Title
+                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </label>
 
                 <v-text-field
+                  :disabled="request_load"
                   density="compact"
                   color="grey-lighten-4"
                   placeholder="Enter the title of the job"
@@ -43,9 +42,12 @@
                 ></v-text-field
               ></v-col>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Client</label>
+                <label style="font-size: 14px; font-weight: lighter"
+                  >Client <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </label>
 
                 <v-autocomplete
+                  :disabled="request_load"
                   density="compact"
                   color="grey-lighten-4"
                   label="Choose the employee for whom the job must be complete"
@@ -63,15 +65,36 @@
 
                 <label style="font-size: 14px; font-weight: lighter"
                   >If it is a new client, create the employee first.
-                  <RouterLink to="/client-desk-view" style="color: rgb(0, 149, 246)"
-                    >Add new client</RouterLink
+                  <label
+                    style="color: rgb(0, 149, 246)"
+                    @click="
+                      () => {
+                        clientDialogVisibility = true
+                      }
+                    "
+                    >Add new client</label
                   ></label
                 >
+                <v-dialog
+                  opacity="0.6"
+                  v-model="clientDialogVisibility"
+                  max-height="800"
+                  max-width="600"
+                >
+                  <AddClient
+                    :showDialog="clientDialogVisibility"
+                    @close="clientDialogVisibility = false"
+                  />
+                </v-dialog>
               </v-col>
               <v-col>
-                <label style="font-size: 14px; font-weight: lighter">Job description</label>
+                <label style="font-size: 14px; font-weight: lighter"
+                  >Job description
+                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                </label>
 
                 <v-textarea
+                  :disabled="request_load"
                   placeholder="Enter the details of the job"
                   rounded="md"
                   variant="solo"
@@ -83,9 +106,24 @@
                 </v-textarea>
               </v-col>
 
+              <v-alert
+                density="compact"
+                text="End date cannot be before the start date."
+                title="Date Warning"
+                :model-value="date_error_alert"
+                type="warning"
+              ></v-alert>
+              <v-alert
+                density="compact"
+                text="Dates was not fully set, check date, hours and minutes are set. "
+                title="Date Warning"
+                :model-value="date_validation_error_alert"
+                type="warning"
+              ></v-alert>
               <v-row>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
+                    :disabled="request_load"
                     title="SELECT START DATE"
                     header="Start date of job"
                     border="md"
@@ -94,7 +132,7 @@
                     v-model="startDate"
                     elevation="5"
                     required
-                    @input="updateAllowedTimes"
+                    :rules="startDateRule"
                     @update:modelValue="updateAllowedTimes"
                     data-testid="job-start-date-datepicker"
                     :min="minDate"
@@ -102,6 +140,7 @@
                 </v-col>
                 <v-col cols="12" md="6" align="center">
                   <v-time-picker
+                    :disabled="request_load"
                     format="24hr"
                     :allowed-hours="allowedHours"
                     :allowed-minutes="allowedMinutes"
@@ -111,11 +150,13 @@
                 </v-col>
                 <v-col align="center" cols="12" md="6">
                   <v-date-picker
+                    :disabled="request_load"
                     title="SELECT END DATE"
                     header="End date of job"
                     border="md"
                     width="unset"
                     max-width="350"
+                    :rules="endDateRule"
                     v-model="endDate"
                     elevation="5"
                     required
@@ -126,6 +167,7 @@
                 </v-col>
                 <v-col cols="12" md="6" align="center">
                   <v-time-picker
+                    :disabled="request_load"
                     :allowed-hours="allowedHours2"
                     :allowed-minutes="allowedMinutes2"
                     format="24hr"
@@ -139,6 +181,7 @@
                   <label style="font-size: 14px; font-weight: lighter">Assign Employees</label>
 
                   <v-select
+                    :disabled="request_load"
                     v-model="req_obj.assignedEmployees.employeeIds"
                     :items="employeesArray"
                     item-value="employeeId"
@@ -157,6 +200,7 @@
                   <label style="font-size: 14px; font-weight: lighter">Status</label>
 
                   <v-select
+                    :disabled="request_load"
                     :items="statusOptionsArray"
                     label="Select the status of the job"
                     chips
@@ -168,12 +212,17 @@
                     variant="solo"
                     clearable
                     data-testid="status-select"
-                  ></v-select
+                  >
+                  </v-select
                 ></v-col>
                 <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
-                  <label style="font-size: 14px; font-weight: lighter">Priority</label>
+                  <label style="font-size: 14px; font-weight: lighter"
+                    >Priority
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
 
                   <v-select
+                    :disabled="request_load"
                     :items="priorityOptionsArray"
                     label="Select the priority level of this job"
                     chips
@@ -185,14 +234,22 @@
                     @update:modelValue="updateEmployee"
                     variant="solo"
                     clearable
+                    :rules="priorityRules"
                     data-testid="priority-select"
-                  ></v-select
-                ></v-col>
+                  >
+                    <!--                    <template #chip="{ item, index }">-->
+                    <!--                      <v-chip :key="index" :color="item.colour" text-color="white">{{-->
+                    <!--                        item.title-->
+                    <!--                      }}</v-chip>-->
+                    <!--                    </template>-->
+                  </v-select></v-col
+                >
 
                 <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
                   <label style="font-size: 14px; font-weight: lighter">Tags</label>
 
                   <v-select
+                    :disabled="request_load"
                     :items="tagOptionsArray"
                     item-value="_id"
                     item-title="label"
@@ -206,16 +263,41 @@
                     variant="solo"
                     clearable
                     data-testid="tags-multi-select"
-                  ></v-select
+                  >
+                  </v-select
                 ></v-col>
+                <v-col>
+                  <small class="text-caption">Cover Image</small>
+                  <v-file-input
+                    :disabled="request_load"
+                    variant="solo"
+                    accept="image/*"
+                    width="100%"
+                    placeholder="Cover image for job"
+                    @change="handleImageUpload"
+                    hint="Image size limit of  5MB"
+                    persistent-hint
+                    color="black"
+                    rounded="md"
+                    required
+                    data-testid="company-logo-file-input"
+                  ></v-file-input>
+                </v-col>
               </v-row>
 
-              <label style="font-size: 14px; font-weight: lighter">Job address</label>
+              <label style="font-size: 14px; font-weight: lighter"
+                >Job address
+                <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+              </label>
 
               <v-row>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Street</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >Street
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="Street"
@@ -223,12 +305,17 @@
                     v-model="req_obj.details.address.street"
                     variant="solo"
                     required
+                    :rules="street_rules"
                     data-testid="street-field"
                   ></v-text-field
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Suburb</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >Suburb
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="Suburb"
@@ -236,11 +323,15 @@
                     v-model="req_obj.details.address.suburb"
                     variant="solo"
                     required
+                    :rules="suburb_rules"
                     data-testid="suburb-field"
                   ></v-text-field
                 ></v-col>
                 <v-col sm="6" cols="12">
-                  <label style="font-size: 14px; font-weight: lighter">Province</label>
+                  <label style="font-size: 14px; font-weight: lighter"
+                    >Province
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-autocomplete
                     density="compact"
                     color="primary"
@@ -248,6 +339,7 @@
                     rounded="md"
                     v-model="req_obj.details.address.province"
                     @update:model-value="hello"
+                    :rules="province_rules"
                     type="houseNumber"
                     variant="solo"
                     :items="[
@@ -266,8 +358,12 @@
                   ></v-autocomplete
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">City/Town</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >City/Town
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="City/Town"
@@ -275,12 +371,17 @@
                     v-model="req_obj.details.address.city"
                     variant="solo"
                     required
+                    :rules="city_rules"
                     data-testid="city-town-field"
                   ></v-text-field
                 ></v-col>
                 <v-col cols="12" sm="6">
-                  <label style="font-size: 12px; font-weight: lighter">Postal Code</label>
+                  <label style="font-size: 12px; font-weight: lighter"
+                    >Postal Code
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="Postal Code"
@@ -296,6 +397,7 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Complex/Building</label>
                   <v-text-field
+                    :disabled="request_load"
                     density="compact"
                     color="primary"
                     placeholder="Complex"
@@ -315,28 +417,38 @@
         </v-form>
       </v-card-text>
       <v-card-actions class="d-flex flex-column">
-        <v-btn
-          color="success"
-          rounded="md"
-          @click="validateForm"
-          boarder="md"
-          width="100%"
-          height="35"
-          variant="text"
-          data-testid="create-btn"
-          >Create Job
-        </v-btn>
-        <v-btn
-          color="error"
-          rounded="md"
-          boarder="md"
-          width="100%"
-          height="35"
-          variant="text"
-          @click="close"
-          data-testid="cancel-btn"
-          >Cancel
-        </v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="12" lg="6" order="last" order-lg="first">
+              <v-btn
+                :disabled="request_load"
+                color="error"
+                rounded="md"
+                boarder="md"
+                width="100%"
+                height="35"
+                variant="text"
+                @click="close"
+                data-testid="cancel-btn"
+                ><v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>Cancel
+              </v-btn>
+            </v-col>
+            <v-col cols="12" lg="6" order="first" order-lg="last">
+              <v-btn
+                color="success"
+                rounded="md"
+                @click="validateForm"
+                boarder="md"
+                width="100%"
+                height="35"
+                variant="text"
+                data-testid="create-btn"
+                :loading="request_load"
+                ><v-icon icon="fa: fa-solid fa-plus" color="success" start></v-icon>Create Job
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -353,21 +465,55 @@ import type {
   JobPriorityTag,
   JobStatuses
 } from '../types'
+import AddClient from '@/components/home/clients/management/AddClient.vue'
+import { API_URL } from '@/main'
+
+type JobDetails = {
+  heading: string
+  description: string
+  address: {
+    province: string
+    street: string
+    suburb: string
+    city: string
+    postalCode: string
+    complex: string
+  }
+  startDate: string
+  endDate: string
+}
+
+type Job = {
+  companyId: string
+  clientId: string
+  assignedBy: string
+  assignedEmployees: {
+    employeeIds?: string[]
+  }
+  status?: string
+  details: JobDetails
+  tags?: string[]
+  priorityTag?: string | null
+  coverImage?: string
+}
 
 export default defineComponent({
   name: 'JobDetailsList',
 
+  components: {
+    AddClient
+  },
   data() {
     const now = new Date()
     const currentHour = now.getHours()
     const currentMinute = now.getMinutes()
     return {
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       click_create_employee: false,
       valid: false,
       selectedDate: '',
       selectedTime: '',
+      request_load: false,
+      clientDialogVisibility: false,
       minDate: new Date().toISOString().substr(0, 10),
       currentHour,
       currentMinute,
@@ -375,7 +521,7 @@ export default defineComponent({
       allowedMinutes: ((minute: number) => true) as (minute: number) => boolean,
       allowedHours2: ((hour: number) => true) as (hour: number) => boolean,
       allowedMinutes2: ((minute: number) => true) as (minute: number) => boolean,
-      isdarkmode: localStorage['theme'] !== 'false',
+      isDarkMode: localStorage['theme'] !== 'false',
       light_theme_text_color: 'color: rgb(0, 0, 0); opacity: 65%',
       dark_theme_text_color: 'color: #DCDBDB',
       dark: '#2b2b2b',
@@ -385,20 +531,27 @@ export default defineComponent({
         (v: string) =>
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
+      province_rules: [(v: string) => !!v || 'Province is required'],
+      street_rules: [(v: string) => !!v || 'Street is required'],
+      suburb_rules: [(v: string) => !!v || 'Suburb is required'],
+      city_rules: [(v: string) => !!v || 'City/Town is required'],
       postal_code_rules: [
         (v: string) => !!v || 'Postal code  is required',
         (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
       ],
       employees_rules: [(v: string) => !!v || 'Client is required'],
       description_rules: [(v: string) => !!v || 'Description is required'],
-
+      startDateRule: [(v: string) => !!v || 'Start date is required'],
+      endDateRule: [(v: string) => !!v || 'End date is required'],
+      priorityRules: [(v: string) => !!v || 'Priority tag is required'],
       employeesArray: [] as EmployeeInformation[],
       clientsArray: [] as ClientInformation[],
       time: '',
-      startDate: null,
+      startDate: null as string | null,
       startTime: '',
-      endDate: null,
+      endDate: null as string | null,
       endTime: '',
+      createClientLoadClicked: false,
       priorityOptionsArray: [] as JobPriorityTag[],
       tagOptionsArray: [] as JobTag[],
       statusOptionsArray: [] as JobStatuses[],
@@ -410,7 +563,7 @@ export default defineComponent({
           employeeIds: [] as string[]
         },
         //default job statuses ['Todo','In Progress','Awaiting Review','Done']
-        status: null,
+        status: '',
         details: {
           heading: '',
           description: '',
@@ -426,17 +579,67 @@ export default defineComponent({
           endDate: ''
         },
         tags: [],
-        priorityTag: null
-      },
-      jobDialog: false
+        priorityTag: null,
+        coverImage: ''
+      } as Job,
+      jobDialog: false,
+      date_error_alert: false,
+      date_validation_error_alert: false
     }
   },
   watch: {
-    selectedDate() {
-      this.updateAllowedTimes()
+    startDate() {
+      this.validateDates()
+    },
+    endDate() {
+      this.validateDates()
     }
   },
+  // computed: {
+  //   selectedTags: {
+  //     get(): JobTag[] {
+  //       if (this.req_obj.tags != undefined)
+  //         return this.req_obj.tags.map((value: string) =>
+  //           this.tagOptionsArray.find((item: JobTag) => item._id === value)
+  //         ) as JobTag[]
+  //     },
+  //     set(val: JobTag[]) {
+  //       this.req_obj.tags = val.map((item) => item._id)
+  //     }
+  //   }
+  // },
   methods: {
+    showAddClientModal() {
+      console.log('modal event')
+      this.clientDialogVisibility = true
+    },
+    validateDates() {
+      if (this.startDate && this.endDate) {
+        const start = new Date(this.startDate)
+        const end = new Date(this.endDate)
+
+        if (end < start) {
+          this.endDate = null
+          this.date_error_alert = true
+        } else {
+          this.date_error_alert = false
+        }
+      }
+    },
+    handleImageUpload(event: Event) {
+      const target = event.target as HTMLInputElement
+      if (target.files && target.files[0]) {
+        const file: File = target.files[0]
+        const reader = new FileReader()
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          if (e.target && typeof e.target.result === 'string') {
+            this.req_obj.coverImage = e.target.result
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+    },
     updateAllowedTimes() {
       const isToday = this.startDate === this.minDate
 
@@ -472,22 +675,39 @@ export default defineComponent({
       }
     },
     async validateForm() {
-      if (this.startDate !== null && this.startTime !== '') {
-        this.formatDateAndTime(this.startDate, this.startTime)
+      const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
+      const validate = await (form as any).validate()
+
+      this.req_obj.tags || delete this.req_obj.tags
+      this.req_obj.priorityTag || delete this.req_obj.priorityTag
+      this.req_obj.coverImage || delete this.req_obj.coverImage
+      this.req_obj.assignedEmployees.employeeIds ||
+        delete this.req_obj.assignedEmployees.employeeIds
+      this.req_obj.status || delete this.req_obj.status
+
+      if (validate) {
+        const update = this.updateDates()
+        console.log(this.req_obj)
+        console.log(update)
+        this.date_validation_error_alert = !update
+        if (update) {
+          await this.handleSubmission()
+        }
       }
-      if (this.endDate !== null && this.endTime !== '') {
-        this.formatDateAndTime(this.endDate, this.endTime)
-      }
-      console.log(this.req_obj)
-      this.updateDates()
-      await this.handleSubmission()
     },
-    formatDateAndTime(date: Date, time: string) {
+    formatStartDateAndTime(date: Date, time: string) {
       const [hrs, min] = time.split(':').map(Number)
       date.setHours(hrs)
       date.setMinutes(min)
       console.log(date.toISOString())
       this.req_obj.details.startDate = date.toISOString()
+    },
+    formatEndDateAndTime(date: Date, time: string) {
+      const [hrs, min] = time.split(':').map(Number)
+      date.setHours(hrs)
+      date.setMinutes(min)
+      console.log(date.toISOString())
+      this.req_obj.details.endDate = date.toISOString()
     },
     formatDate(d: Date) {
       const year = d.getFullYear()
@@ -496,48 +716,89 @@ export default defineComponent({
       return `${year}-${month}-${day}`
     },
     async handleSubmission() {
+      this.request_load = true
+
       console.log(this.req_obj)
-      const apiURL = await this.getRequestUrl()
+
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      console.log('before the request')
       axios
-        .post(apiURL + 'job/create', this.req_obj, config)
+        .post(API_URL + 'job/create', this.req_obj, config)
         .then((res) => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Job Added Successfully'
-          })
-          window.location.reload()
+          console.log('request has gone through')
+          if (this.req_obj.assignedEmployees.employeeIds === undefined) {
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Job Added Successfully'
+            })
+          }
+          axios
+            .put(
+              API_URL + 'job/employees',
+              {
+                employeeId: localStorage['employeeId'],
+                employeesToAssignIds: this.req_obj.assignedEmployees.employeeIds,
+                jobId: res.data.data._id
+              },
+              config
+            )
+            .then((res1) => {
+              console.log(res1)
+              console.log('The employees were assigned successfully')
+              this.$toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Job Added Successfully'
+              })
+              this.request_load = false
+              window.location.reload()
+            })
+            .catch((error) => {
+              console.log(error)
+            })
         })
-        .catch((res) => {
+        .catch((error) => {
           this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
-          console.log(res)
+          console.log(error)
         })
+      this.request_load = false
     },
     updateDates() {
-      if (this.endDate && this.startDate) {
-        this.req_obj.details.startDate = convertToISOStr(this.startDate)
-        this.req_obj.details.endDate = convertToISOStr(this.endDate)
-
+      if (this.endDate && this.startDate && this.startTime && this.endTime) {
+        this.formatStartDateAndTime(new Date(this.startDate), this.startTime)
+        this.formatEndDateAndTime(new Date(this.endDate), this.endTime)
         console.log(this.req_obj.details.startDate)
         console.log(this.req_obj.details.endDate)
+        return true
       }
+      console.log('Dates were not set properly')
+      return false
     },
     hello() {
       console.log(this.req_obj.details.address.province)
     },
     async loadClients() {
-      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
-      const apiURL = await this.getRequestUrl()
-      console.log(apiURL)
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: {
+          currentEmployeeId: localStorage['employeeId']
+        }
+      }
+
+      console.log(API_URL)
       axios
-        .get(apiURL + `client/all`, config)
+        .get(API_URL + `client/all/${localStorage['currentCompany']}`, config)
         .then((res) => {
           console.log(res)
 
           console.log(res.data.data)
           for (let i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].details.firstName === undefined) continue
+            if (
+              res.data.data[i].details.firstName === undefined ||
+              res.data.data[i].details.lastName === undefined
+            )
+              continue
 
             this.clientsArray.push({
               name: res.data.data[i].details.firstName + ' ' + res.data.data[i].details.lastName,
@@ -560,10 +821,10 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const employee_response = await axios.get(
-          apiURL + `employee/detailed/all/${localStorage['employeeId']}`,
+          API_URL + `employee/detailed/all/${localStorage['employeeId']}`,
           config
         )
 
@@ -612,10 +873,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_priorities_response = await axios.get(
-          apiURL + `job/tags/p/${localStorage['currentCompany']}`,
+          API_URL + `job/tags/p/${localStorage['currentCompany']}`,
           config
         )
         this.priorityOptionsArray = loaded_priorities_response.data.data
@@ -630,10 +891,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const loaded_tags_response = await axios.get(
-          apiURL + `job/tags/${localStorage['currentCompany']}`,
+          API_URL + `job/tags/${localStorage['currentCompany']}`,
           config
         )
         this.tagOptionsArray = loaded_tags_response.data.data
@@ -648,10 +909,10 @@ export default defineComponent({
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-      const apiURL = await this.getRequestUrl()
+
       try {
         const statuses_response = await axios.get(
-          apiURL + `company/status/all/${localStorage['currentCompany']}`,
+          API_URL + `company/status/all/${localStorage['currentCompany']}`,
           config
         )
         this.statusOptionsArray = statuses_response.data.data.jobStatuses
@@ -659,18 +920,6 @@ export default defineComponent({
       } catch (error) {
         console.log('Error fetching data:', error)
       }
-    },
-    async isLocalAvailable(localUrl: string) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
     },
     updateClient() {
       console.log(this.req_obj.clientId)

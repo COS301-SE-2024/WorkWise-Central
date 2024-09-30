@@ -9,12 +9,12 @@ export class UpdateTagDto {
   @IsMongoId()
   companyId: Types.ObjectId;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsMongoId()
   tagId: Types.ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @CapitalizeWords()
   label?: string;
@@ -32,12 +32,12 @@ export class UpdatePriorityTagDto {
   @IsMongoId()
   companyId: Types.ObjectId;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsMongoId()
   priorityTagId: Types.ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @CapitalizeWords()
   label?: string;
@@ -48,14 +48,13 @@ export class UpdatePriorityTagDto {
   @AddHashtag()
   colour?: string;
 
-  @IsNotEmpty()
   @IsOptional()
   @IsNumber()
   priorityLevel?: number;
 }
 
 export class DeleteTagDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsMongoId()
   tagId: Types.ObjectId;

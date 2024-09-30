@@ -10,7 +10,7 @@
                 class="pa-11 ma-10 h-lg-screen w-lg-screen"
                 rounded="xl"
                 elevation-2
-                :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
                 border="sm"
                 ><v-col cols="12" offset="1">
                   <v-card-title class="d-flex align-center pe-2">
@@ -58,7 +58,7 @@
                         hide-details
                         width="50%"
                         single-line
-                        :bg-color="isdarkmode ? modal_dark_theme_color : modal_light_theme_color"
+                        :bg-color="isDarkMode ? modal_dark_theme_color : modal_light_theme_color"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -69,7 +69,7 @@
                     width="85%"
                     class="mb-5"
                     rounded="xl"
-                    :color="isdarkmode === true ? modal_dark_theme_color : modal_light_theme_color"
+                    :color="isDarkMode === true ? modal_dark_theme_color : modal_light_theme_color"
                   >
                     <v-row>
                       <v-col
@@ -89,12 +89,12 @@
                         <v-card-actions>
                           <v-col :cols="6" align="end"
                             ><ClientDetails
-                              :isDarkMode="isdarkmode"
+                              :isDarkMode="isDarkMode"
                               :colors="colors"
                               :ClientDetails="client"
                           /></v-col>
                           <v-col :cols="6" align="end">
-                            <ClientJobs :isdarkmode="isdarkmode" :colors="colors"></ClientJobs
+                            <ClientJobs :isDarkMode="isDarkMode" :colors="colors"></ClientJobs
                           ></v-col> </v-card-actions></v-col
                     ></v-row> </v-card
                 ></v-col>
@@ -114,9 +114,7 @@ import ClientDetails from './home/clients/management/ClientDetails.vue'
 import ClientJobs from './ClientJobs.vue'
 export default {
   name: 'ClientEmployeeView',
-  props: {
-    isDarkMode: Boolean
-  },
+
   components: {
     ClientDetails,
     ClientJobs
@@ -142,7 +140,7 @@ export default {
     }
   },
   data: () => ({
-    isdarkmode: false,
+    isDarkMode: false,
     numCards: 5,
 
     colors: {
@@ -167,7 +165,7 @@ export default {
         }
       }
       axios
-        .get('http://localhost:3000/client/all', config)
+        .get('${API_URL}client/all', config)
         .then((response) => {
           console.log(response.data)
           this.clients = response.data.data

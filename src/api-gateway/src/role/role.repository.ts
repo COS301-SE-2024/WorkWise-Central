@@ -4,6 +4,7 @@ import { Document, FlattenMaps, Model, Types } from 'mongoose';
 import { Role } from './entity/role.entity';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { User } from '../users/entities/user.entity';
+import { isNotDeleted } from '../shared/soft-delete';
 @Injectable()
 export class RoleRepository {
   constructor(@InjectModel(Role.name) private readonly roleModel: Model<Role>) {}
@@ -17,9 +18,18 @@ export class RoleRepository {
     return await newCompanyModel.save();
   }
 
-  async findAllInCompany(companyId: Types.ObjectId) {
-    const filter = companyId ? { companyId: companyId } : {};
-    return await this.roleModel.find(filter).find().lean().exec();
+  async findAllInCompany(identifier: Types.ObjectId) {
+    const result: (FlattenMaps<Role> & { _id: Types.ObjectId })[] = await this.roleModel
+      .find({
+        $and: [
+          { companyId: identifier },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .lean();
+    return result;
   }
 
   async findById(identifier: string | Types.ObjectId) {
@@ -120,5 +130,14 @@ export class RoleRepository {
       return false;
     }
     return true;
+  }
+
+  deleteAllInCompany(companyId: Types.ObjectId) {
+    this.roleModel.updateMany(
+      {
+        $and: [{ companyId: companyId }, isNotDeleted],
+      },
+      { $set: { deletedAt: new Date() } },
+    );
   }
 }

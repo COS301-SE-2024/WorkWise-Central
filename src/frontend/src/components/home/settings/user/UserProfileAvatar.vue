@@ -15,31 +15,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-// import { onUpdated } from 'vue'
 import axios from 'axios'
 import avatarImage from '@/assets/images/profile/avatar.jpg'
+import { API_URL } from '@/main'
 
 const avatarSrc = ref(avatarImage)
 const displayName = ref('')
-
-// API URLs
-const localUrl: string = 'http://localhost:3000/'
-const remoteUrl: string = 'https://tuksapi.sharpsoftwaresolutions.net/'
-
-// Utility functions
-const isLocalAvailable = async (url: string): Promise<boolean> => {
-  try {
-    const res = await axios.get(url)
-    return res.status < 300 && res.status > 199
-  } catch (error) {
-    return false
-  }
-}
-
-const getRequestUrl = async (): Promise<string> => {
-  const localAvailable = await isLocalAvailable(localUrl)
-  return localAvailable ? localUrl : remoteUrl
-}
 
 const getProfileImage = async () => {
   const config = {
@@ -48,11 +29,10 @@ const getProfileImage = async () => {
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
   const userId = localStorage.getItem('id')
 
   try {
-    const response = await axios.get(`${apiUrl}users/id/${userId}`, config)
+    const response = await axios.get(`${API_URL}users/id/${userId}`, config)
     const data = response.data.data
 
     displayName.value = data.profile.displayName || ''
@@ -75,34 +55,29 @@ const onFileChange = (event: Event) => {
   const file = target.files ? target.files[0] : null
   if (file) {
     const reader = new FileReader()
-    reader.onload = (e: ProgressEvent<FileReader>) => {
+    reader.onload = async (e: ProgressEvent<FileReader>) => {
       if (e.target) {
         avatarSrc.value = e.target.result as string
+        await updateProfileImage(file) // Call updateProfileImage with the file
       }
     }
     reader.readAsDataURL(file)
   }
 }
 
-const updateProfileImage = async () => {
+const updateProfileImage = async (file: File) => {
   const config = {
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${localStorage.getItem('access_token')}`
     }
   }
-  const apiUrl = await getRequestUrl()
-  const userId = localStorage.getItem('id')
-
-  const updatedUserData = {
-    profile: {
-      displayName: displayName.value,
-      displayImage: avatarSrc.value
-    }
-  }
-
+  const formData = new FormData()
+  formData.append('profilePicture', file) // Append the file directly
+  console.log('File', file)
   try {
-    await axios.patch(`${apiUrl}users/update`, updatedUserData, config)
+    const response = await axios.patch(`${API_URL}users/update/profilePic`, formData, config)
+    console.log('Image upload', response)
   } catch (error) {
     console.log('Failed to upload image: ', error)
   }
@@ -111,10 +86,6 @@ const updateProfileImage = async () => {
 onMounted(() => {
   getProfileImage()
 })
-
-// onUpdated(() => {
-//   window.addEventListener('UploadImage', updateProfileImage)
-// })
 </script>
 
 <style scoped>
