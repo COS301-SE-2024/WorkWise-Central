@@ -152,7 +152,7 @@
             <Column header="Image">
               <!--TODO: Add Image Column Properly-->
               <template #body="slotProps">
-                <Image
+                <ImageC
                   :src="slotProps.data.images[0]"
                   :alt="slotProps.data.images[0]"
                   width="96"
@@ -167,7 +167,7 @@
             </Column>
             <Column field="availability.status" header="Status" style="width: 15%">
               <template #editor="{ data }">
-                <Select
+                <SelectC
                   v-model="data.availability.status"
                   :options="availabilityStatuses"
                   optionLabel="label"
@@ -181,7 +181,7 @@
                       :severity="getStatusSeverity(slotProps.option.value)"
                     />
                   </template>
-                </Select>
+                </SelectC>
               </template>
               <template #body="slotProps">
                 <Tag
@@ -197,7 +197,7 @@
             </Column>
             <Column field="fuelType" header="Fuel Type" style="width: 15%">
               <template #editor="{ data, field }">
-                <Select
+                <SelectC
                   v-model="data[field]"
                   :options="fuelTypes"
                   optionLabel="label"
@@ -285,9 +285,9 @@ import Message from 'primevue/message'
 // import Image from 'primevue/image'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
-import Select from 'primevue/select'
+import SelectC from 'primevue/select'
 import Tag from 'primevue/tag'
-import Image from 'primevue/image'
+import ImageC from 'primevue/image'
 import Listbox from 'primevue/listbox'
 import { VehicleAvailabilityEnum, FuelType } from './models/vehicles'
 
@@ -296,7 +296,6 @@ export default {
   components: {
     GoogleMap,
     // eslint-disable-next-line vue/no-reserved-component-names
-    Marker,
     CustomMarker,
     InfoWindow,
     // eslint-disable-next-line vue/no-reserved-component-names
@@ -313,11 +312,10 @@ export default {
     Card,
     Panel,
     DataView,
-    Message,
-    Image,
+    ImageC,
     InputNumber,
     InputText,
-    Select,
+    SelectC,
     Tag,
     Listbox
   },
