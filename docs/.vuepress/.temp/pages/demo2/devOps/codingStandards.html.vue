@@ -77,7 +77,7 @@
 </li>
 <li><strong>Prettier</strong>: Code formatting.
 <ul>
-<li>Configuration: <code v-pre>.prettierrc</code><div class="language-json line-numbers-mode" data-highlighter="prismjs" data-ext="json" data-title="json"><pre v-pre class="language-json"><code><span class="line"><span class="token punctuation">{</span></span>
+<li>Configuration: <code v-pre>.prettierrc</code><div class="language-json line-numbers-mode" data-highlighter="prismjs" data-ext="json" data-title="json"><pre v-pre><code><span class="line"><span class="token punctuation">{</span></span>
 <span class="line">  <span class="token property">"semi"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span></span>
 <span class="line">  <span class="token property">"singleQuote"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span></span>
 <span class="line">  <span class="token property">"printWidth"</span><span class="token operator">:</span> <span class="token number">80</span><span class="token punctuation">,</span></span>
@@ -97,7 +97,7 @@
 </li>
 <li><strong>Prettier</strong>: Code formatting.
 <ul>
-<li>Configuration: <code v-pre>.prettierrc</code><div class="language-json line-numbers-mode" data-highlighter="prismjs" data-ext="json" data-title="json"><pre v-pre class="language-json"><code><span class="line"><span class="token punctuation">{</span></span>
+<li>Configuration: <code v-pre>.prettierrc</code><div class="language-json line-numbers-mode" data-highlighter="prismjs" data-ext="json" data-title="json"><pre v-pre><code><span class="line"><span class="token punctuation">{</span></span>
 <span class="line">  <span class="token property">"semi"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span></span>
 <span class="line">  <span class="token property">"singleQuote"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span></span>
 <span class="line">  <span class="token property">"printWidth"</span><span class="token operator">:</span> <span class="token number">80</span><span class="token punctuation">,</span></span>
