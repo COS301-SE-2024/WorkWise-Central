@@ -8,8 +8,7 @@ services:
     ports:
       - '8080:80'
     environment:
-      ENVIRONMENT:
-        prod
+      VITE_FRONTEND_ENVIRONMENT: prod
 
   nginx:
     image: nginx:alpine
@@ -26,48 +25,37 @@ services:
     container_name: "workwise_app"
     build:
       context: ./api-gateway
-    networks:
-      - webnet
     ports:
       - '3000:3000'
-#    depends_on:
-#      - mongo_db
     environment:
-      SERVER_LOGIN:
-        mongodb+srv://${APP_USER}:${APP_PASS}@cluster1ww.wzjkgf8.mongodb.net/WorkwiseCentral?retryWrites=true&w=majority&appName=Cluster1ww
-      UPLOAD_PATH:
-        /app/uploads
-      ENVIRONMENT:
-        prod
-    volumes:
-      - ./uploads:/app/uploads
+      NEST_BACKEND_ENVIRONMENT: prod
 
-  mongo_db:
-    restart: unless-stopped
-    container_name: "mongo_container"
-    image: mongo
-    command: [--replSet, rs0, --bind_ip_all, --port, "27017"]
-    healthcheck:
-      test: test $$(mongosh --port 27017 --quiet --eval "try {rs.initiate({_id:'rs0',members:[{_id:0,host:\"0.0.0.0:27017\"}]})} catch(e) {rs.status().ok}") -eq 1
-      interval: 10s
-      start_period: 30s
-    environment:
-      MONGO_INIT_ROOT_DATABASE: ${MONGO_INIT_ROOT_DATABASE}
-    ports:
-      - "27019:27017"
-    expose:
-      - "27017"
-    volumes:
-      - workwise_prod_volume:/data/db
-      - mongo_db_config:/data/configdb
-    networks:
-      - webnet
-
-volumes:
-  workwise_prod_volume:
-  mongo_db_config:
-  uploads:
-
-networks:
-  webnet:
-    driver: bridge
+#  mongo_db:
+#    restart: unless-stopped
+#    container_name: "mongo_container"
+#    image: mongo
+#    command: [--replSet, rs0, --bind_ip_all, --port, "27017"]
+#    healthcheck:
+#      test: test $$(mongosh --port 27017 --quiet --eval "try {rs.initiate({_id:'rs0',members:[{_id:0,host:\"0.0.0.0:27017\"}]})} catch(e) {rs.status().ok}") -eq 1
+#      interval: 10s
+#      start_period: 30s
+#    environment:
+#      MONGO_INIT_ROOT_DATABASE: ${MONGO_INIT_ROOT_DATABASE}
+#    ports:
+#      - "27019:27017"
+#    expose:
+#      - "27017"
+#    volumes:
+#      - workwise_prod_volume:/data/db
+#      - mongo_db_config:/data/configdb
+#    networks:
+#      - webnet
+#
+#volumes:
+#  workwise_prod_volume:
+#  mongo_db_config:
+#  uploads:
+#
+#networks:
+#  webnet:
+#    driver: bridge
