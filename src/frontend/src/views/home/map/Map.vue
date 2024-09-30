@@ -222,7 +222,8 @@
     <SplitterPanel class="flex items-center justify-center" :size="75">
       <GoogleMap :api-key="apiKey" style="width: 100%; height: 100%" :center="mapCenter" :zoom="12">
         <!-- Company Marker -->
-        <Marker v-if="company" :options="{ position: companyLocation }">
+        <CustomMarker v-if="company" :options="{ position: companyLocation , anchorPoint: 'BOTTOM_CENTER' }">
+          <img src="@/assets/images/markers/BuildingMarker.png" width="50" height="50" style="margin-top: 8px" />
           <InfoWindow>
             <div id="companyContent">
               <img class="centered" v-if="company.logo" :src="company.logo" alt="Company Logo" />
@@ -232,23 +233,25 @@
               </div>
             </div>
           </InfoWindow>
-        </Marker>
+        </CustomMarker>
 
         <!-- Current Location Marker -->
-        <Marker :options="{ position: currentLocation }">
+        <CustomMarker :options="{ position: currentLocation, anchorPoint: 'BOTTOM_CENTER' }">
+          <img src="@/assets/images/markers/PersonMarker.png" width="50" height="50" style="margin-top: 8px" />
           <InfoWindow>
             <div id="content">
               <h1 id="firstHeading" style="color: black">You Are Here</h1>
             </div>
           </InfoWindow>
-        </Marker>
+        </CustomMarker>
 
         <!-- Vehicle Markers -->
-        <Marker
+        <CustomMarker
           v-for="vehicle in vehicles"
           :key="vehicle.id"
-          :options="{ position: vehicle.location, label: vehicle.driver }"
+          :options="{ position: vehicle.location, label: vehicle.driver, anchorPoint: 'BOTTOM_CENTER' }"
         >
+          <img src="@/assets/images/markers/CarMarker.png" width="50" height="50" style="margin-top: 8px" />
           <InfoWindow>
             <div style="color: black">
               <h4>{{ vehicle.name.make }} {{ vehicle.name.model }}</h4>
@@ -257,7 +260,7 @@
               <p>Mileage: {{ vehicle.mileage }} km</p>
             </div>
           </InfoWindow>
-        </Marker>
+        </CustomMarker>
 
         <Polyline v-if="routePolyline" :options="routePolyline" />
       </GoogleMap>
@@ -266,7 +269,7 @@
 </template>
 
 <script>
-import { GoogleMap, InfoWindow, Marker, Polyline } from 'vue3-google-map'
+import { GoogleMap, InfoWindow, Marker, CustomMarker, Polyline } from 'vue3-google-map'
 import axios from 'axios'
 import { API_URL, GOOGLE_MAPS_API_KEY } from '@/main'
 import Splitter from 'primevue/splitter'
@@ -294,6 +297,7 @@ export default {
     GoogleMap,
     // eslint-disable-next-line vue/no-reserved-component-names
     Marker,
+    CustomMarker,
     InfoWindow,
     // eslint-disable-next-line vue/no-reserved-component-names
     Polyline,
