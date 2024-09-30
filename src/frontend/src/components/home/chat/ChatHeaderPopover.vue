@@ -361,14 +361,14 @@ const handleFileChange = async (event) => {
     try {
       const response = await axios.put(url, formData, config)
       if (response.status === 200) {
-        //console.log(response)
+        console.log(response)
         toast.add({
           severity: 'success',
           summary: 'Success',
           detail: 'Files uploaded successfully',
           life: 3000
         })
-        //console.log(response)
+        console.log(response)
         editedChat.image = response.data.data[0]
 
         //return response.data.data
@@ -381,7 +381,7 @@ const handleFileChange = async (event) => {
         detail: 'Failed to upload File(s)',
         life: 3000
       })
-      //console.log(url)
+      console.log(url)
     }
   }
 }
@@ -422,12 +422,12 @@ const removeParticipant = (participant) => {
 const saveChanges = () => {
   // Emit updated chat data to parent component
   emit('update-chat-popover', editedChat)
-  //console.log('delete-chat-popover', editedChat)
+  console.log('delete-chat-popover', editedChat)
 }
 
 const deleteChat = () => {
   emit('delete-chat-popover', editedChat)
-  //console.log('Delete-chat', editedChat)
+  console.log('Delete-chat', editedChat)
 }
 
 const selectedParticipants = ref([])

@@ -86,7 +86,7 @@ describe('UserController (e2e)', () => {
   it('should create a user', async () => {
     const userDto: any = createUserDtoExample;
     const response = await request(app.getHttpServer()).post('/users/create').send(userDto).expect(409);
-    //console.log(response.body);
+    console.log(response.body);
     expect(response.body.name).toBeDefined();
     expect(response.body.message).toBeDefined();
   });
@@ -113,7 +113,7 @@ describe('UserController (e2e)', () => {
     const response = await request(app.getHttpServer()).patch(`/users/${userId}`).send(updateUserDto).expect(404);
 
     if (response.status == 404) {
-      //console.log(response.body);
+      console.log(response.body);
     } else {
       expect(response.body).toBeDefined();
       expect(response.body.id).toBe(userId);
@@ -135,7 +135,7 @@ describe('UserController (e2e)', () => {
       expect(response.body).toBeDefined();
       expect(response.body.message).toBe('User deleted successfully');
     } else {
-      //console.log(response.body);
+      console.log(response.body);
       await request(app.getHttpServer()).delete(`/users/${userId}`).expect(404);
     }
   });

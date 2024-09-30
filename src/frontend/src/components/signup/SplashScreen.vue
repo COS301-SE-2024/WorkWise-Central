@@ -1415,7 +1415,7 @@ export default defineComponent({
         const response = await axios.post('${API_URL}admin/invite/accept', {
           inviteId: this.inviteId
         })
-        //console.log('Invite accepted:', response.data)
+        console.log('Invite accepted:', response.data)
         // Handle successful response here
       } catch (error) {
         //console.error('Error accepting invite:', error)
