@@ -446,7 +446,10 @@ export default {
           axios.get(`${this.apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`, this.getAuthConfig())
         ]);
 
-        const employeesMap = new Map(employeesResponse.data.data.map(employee => [employee._id, employee]));
+        const employeesMap = {};
+        employeesResponse.data.data.forEach(employee => {
+          employeesMap[employee._id] = employee;
+        });
 
         this.vehicles = vehiclesResponse.data.data.map(vehicle => ({
           ...vehicle,
