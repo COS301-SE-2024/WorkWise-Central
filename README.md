@@ -48,7 +48,7 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 ## Documentation 
 
-[Read the full documentation for this project](https://work-wise-central-1.vercel.app/)
+[Read the full documentation for this project]([https://work-wise-central-1.vercel.app/](https://work-wise-central-2-d2hpre8of-jessbloems-projects.vercel.app/)
 
 ## GitHub Project Board
 
