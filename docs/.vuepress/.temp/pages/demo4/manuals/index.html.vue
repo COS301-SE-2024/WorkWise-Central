@@ -1,0 +1,6 @@
+<template><div><h1 id="introduction" tabindex="-1"><a class="header-anchor" href="#introduction"><span>Introduction</span></a></h1>
+<p>This section serves as the comprehensive user manual for WorkWise. It is designed to cater to two key audiences: end users and developers. For regular users, the manual provides a step-by-step guide on how to utilize the system's full range of features, ensuring smooth navigation and task completion. Whether you're managing projects, tracking statistics, or collaborating with your team, this guide will help you make the most of what WorkWise has to offer.</p>
+<p>For developers, the manual includes detailed instructions on how to clone, configure, and run the system in a development environment. It covers key aspects such as setting up dependencies, configuring environments, and deploying the system. With this guide, developers will be able to seamlessly contribute to the project, customize the system for different use cases, and ensure smooth operations across various environments.</p>
+</div></template>
+
+
