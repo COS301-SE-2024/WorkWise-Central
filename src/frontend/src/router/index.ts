@@ -428,8 +428,7 @@ router.beforeEach((to, from, next) => {
   if (
     to.name !== 'splash' &&
     !accessToken &&
-    to.name !== 'new-password' &&
-    to.name !== 'no-access'
+    to.name !== 'new-password' 
   ) {
     return next({ name: 'splash' }) // Redirect to splash page if no access_token
   }
@@ -440,18 +439,18 @@ router.beforeEach((to, from, next) => {
   }
 
   // Allow navigation to 'splash' from 'no-access'
-  if (to.name === 'splash' && from.name === 'no-access') {
-    return next() // Allow access to splash from no-access page
-  }
+  // if (to.name === 'splash' && from.name === 'no-access') {
+  //   return next() // Allow access to splash from no-access page
+  // }
 
   // Check if the employeeId is missing and prevent access to restricted routes, except for 'no-access'
-  if (
-    to.name !== 'no-access' &&
-    to.name !== '' &&
-    (currentEmployeeId === null || currentEmployeeId === undefined)
-  ) {
-    return next({ name: 'no-access' }) // Redirect to no-access if no employeeId
-  }
+  // if (
+  //   to.name !== 'no-access' &&
+  //   to.name !== '' &&
+  //   (currentEmployeeId === null || currentEmployeeId === undefined)
+  // ) {
+  //   return next({ name: 'no-access' }) // Redirect to no-access if no employeeId
+  // }
 
   // Proceed to the intended route
   next()

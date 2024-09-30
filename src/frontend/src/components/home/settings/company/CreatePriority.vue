@@ -165,8 +165,14 @@ export default defineComponent({
         }
       }
       console.log(this.priority)
+      const data = {
+        label: this.priority.label,
+        colour: this.priority.colour,
+        priorityLevel: parseFloat(this.priority.priorityLevel),
+        companyId: this.priority.companyId
+      }
       axios
-        .post(`${API_URL}job/tags/p`, this.priority, config)
+        .post(`${API_URL}job/tags/p`, data, config)
         .then((res) => {
           console.log(res)
           this.$toast.add({

@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <Toast position="top-center" />
     <v-card class="bg-cardColor">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
@@ -57,11 +58,11 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="selectItem(item)">
+                <!-- <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item>
+                </v-list-item> -->
                 <v-list-item @click="selectItem(item)">
                   <DeleteRole :roleId="item._id" @DeletedRole="getRoles" />
                 </v-list-item>
@@ -71,7 +72,7 @@
         </v-data-table>
       </v-card-text>
       <v-divider></v-divider>
-      <v-card-actions class="bg-cardColor">
+      <!-- <v-card-actions class="bg-cardColor">
         <v-container
           ><v-row justify="end">
             <Toast position="top-center" />
@@ -89,7 +90,7 @@
             ></v-row
           ></v-container
         >
-      </v-card-actions>
+      </v-card-actions> -->
     </v-card>
     <v-dialog v-model="dialog" persistent max-width="500px">
       <v-card class="bg-cardColor">

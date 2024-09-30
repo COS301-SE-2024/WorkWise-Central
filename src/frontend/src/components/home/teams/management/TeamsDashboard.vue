@@ -252,29 +252,6 @@ export default defineComponent({
     addTeam(newTeam: Team) {
       this.teamItems.push(newTeam)
     },
-    async getEmployees() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-      try {
-        const response = await axios.get(
-          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
-          config
-        )
-        console.log(response.data.data)
-        for (const employee of response.data.data) {
-          this.teamMemberNames.push(employee.userInfo.displayName)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    },
     async getTeamLeaderName() {
       const config = {
         headers: {

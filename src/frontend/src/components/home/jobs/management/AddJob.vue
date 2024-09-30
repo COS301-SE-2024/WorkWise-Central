@@ -440,6 +440,7 @@
                 @click="validateForm"
                 boarder="md"
                 width="100%"
+                :disabled="!valid || request_load"
                 height="35"
                 variant="text"
                 data-testid="create-btn"

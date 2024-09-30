@@ -165,6 +165,11 @@ export default defineComponent({
           setTimeout(() => {
             this.isDeleting = false
             this.dialog = false
+            this.tag = {
+              label: '',
+              colour: '',
+              companyId: localStorage.getItem('currentCompany')
+            }
             this.$emit('CreatedTag', response.data.data)
           }, 3000)
         })

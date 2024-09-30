@@ -2,8 +2,8 @@
   <Toast position="top-center" />
   <v-dialog v-model="editDialog" max-height="800" max-width="800" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular" color="warning" v-bind="activatorProps">
-        <v-icon start color="warning" size="small">mdi-pencil</v-icon>
+      <v-btn class="text-none font-weight-regular" color="secondary" v-bind="activatorProps">
+        <v-icon start color="secondary" size="small">mdi-pencil</v-icon>
         Edit
       </v-btn>
     </template>
@@ -40,14 +40,19 @@
             <!-- Inventory Items -->
             <v-col>
               <small class="text-caption">Inventory Items</small>
-              <v-row v-for="(item, index) in localEditedInvoice.inventoryItems" :key="index" class="d-flex align-center">
+              <v-row
+                v-for="(item, index) in localEditedInvoice.inventoryItems"
+                :key="index"
+                class="d-flex align-center"
+              >
                 <v-col cols="5">
-                  <v-text-field
-                    v-model="item.description"
+                  <v-select
+                    v-model="item.name"
                     label="Item Name"
+                    :items="InventoryItemsNames"
                     :disabled="isDeleting"
                     required
-                  ></v-text-field>
+                  ></v-select>
                 </v-col>
                 <v-col cols="5">
                   <v-text-field
@@ -71,7 +76,11 @@
             <!-- Labor Items -->
             <v-col>
               <small class="text-caption">Labor Items</small>
-              <v-row v-for="(item, index) in localEditedInvoice.laborItems" :key="index" class="d-flex align-center">
+              <v-row
+                v-for="(item, index) in localEditedInvoice.laborItems"
+                :key="index"
+                class="d-flex align-center"
+              >
                 <v-col cols="5">
                   <v-text-field
                     v-model="item.description"
@@ -141,8 +150,11 @@ interface Invoice {
   paymentDate: Date
   total: number
   paid: boolean
-  inventoryItems: { description: string, quantity: number }[]
-  laborItems: { description: string, hours: number }[]
+  inventoryItems: { name: string; quantity: number }[]
+  InventoryItems: []
+  InventoryItemsNames: []
+  InventoryItemsIds: []
+  laborItems: { description: string; hours: number }[]
 }
 
 export default {
@@ -173,7 +185,32 @@ export default {
     this.localEditedInvoice = this.deepCopy(this.editedInvoice)
     console.log(this.localEditedInvoice)
   },
+
   methods: {
+    async getInventoryItems() {
+      // Fetch inventory items from the backend
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployee: localStorage.getItem('employeeId')
+        }
+      }
+      try {
+        const response = await axios.get(
+          `${API_URL}inventory/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(response.data.data)
+        this.InventoryItems = response.data.data
+        this.InventoryItemsNames = response.data.data.map((item: any) => item.name)
+        this.InventoryItemsIds = response.data.data.map((item: any) => item._id)
+      } catch (error) {
+        console.error(error)
+      }
+    },
     updateInvoice() {
       if (!this.localEditedInvoice) {
         this.$toast.add({
@@ -184,7 +221,7 @@ export default {
         })
         return
       }
-
+      console.log(JSON.stringify(this.localEditedInvoice))
       this.isDeleting = true
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` }
@@ -223,7 +260,7 @@ export default {
       this.editDialog = false
     },
     addInventoryItem() {
-      this.localEditedInvoice.inventoryItems.push({ description: '', quantity: 0 })
+      this.localEditedInvoice.inventoryItems.push({ name: '', quantity: 0 })
     },
     removeInventoryItem(index: number) {
       this.localEditedInvoice.inventoryItems.splice(index, 1)
@@ -237,6 +274,9 @@ export default {
     deepCopy(obj: any) {
       return JSON.parse(JSON.stringify(obj))
     }
+  },
+  mounted() {
+    this.getInventoryItems()
   }
 }
 </script>

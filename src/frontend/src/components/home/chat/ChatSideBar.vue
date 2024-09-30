@@ -99,7 +99,7 @@
             class="p-button-text"
             style="background-color: red; outline-color: red; color: white; margin-right: 5px"
           />
-          <Button label="Create" icon="fa: fa-solid fa-check" class="custom-button" />
+          <Button label="Create" @click="createNewChat" icon="fa: fa-solid fa-check" class="custom-button" />
         </div>
       </template>
     </Dialog>

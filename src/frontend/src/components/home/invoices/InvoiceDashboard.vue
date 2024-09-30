@@ -1,5 +1,6 @@
 <template>
   <v-container fluid fill-height>
+    <Toast position="top-center" />
     <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
@@ -95,14 +96,15 @@
                   <SendInvoice
                     :invoice_id="selectedItem._id"
                     :client-name="selectedItem.clientName"
+                    @sent="getRequests"
                   />
                 </v-list-item>
                 <v-list-item>
                   <ViewInvoice :invoice="selectedItem" />
                 </v-list-item>
-                <!-- <v-list-item>
+                <v-list-item>
                   <EditInvoice :editedInvoice="selectedItem" :invoice_id="selectedItem._id" />
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item>
                   <DeleteInvoice :invoice_id="selectedItem._id" @InvoiceDeleted="getRequests" />
                 </v-list-item>
@@ -126,12 +128,12 @@
             persistent-hint
             :items="jobs"
             item-value="_id"
+            :rules="[(v) => !!v || 'Please select a job to generate an invoice.']"
             item-title="name"
             v-model="selectedJob"
             bg-color="background"
             variant="solo"
           ></v-select>
-          <p v-if="!selectedJob">Please select a job to generate an invoice.</p>
         </v-card-text>
         <v-card-actions>
           <v-container>
@@ -144,6 +146,7 @@
                   height="35"
                   variant="text"
                   type="submit"
+                  :loading="isDeleting"
                   block
                   @click="generateInvoice"
                   :disabled="!selectedJob"
@@ -167,7 +170,6 @@
                   block
                   @click="close"
                 >
-                  <Toast position="top-center" />
                   <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
                   >Cancel
                 </v-btn>
@@ -236,6 +238,7 @@ export default defineComponent({
         { title: '', value: 'actions', key: 'actions', sortable: false, class: 'my-header-style' }
       ],
       invoiceItems: [],
+      isDeleting: false,
       search: '',
       selectedItem: {},
       companyId: '',
@@ -246,7 +249,7 @@ export default defineComponent({
       employeePermissions: []
     }
   },
-  components: { DeleteInvoice, ViewInvoice, Toast, SendInvoice },
+  components: { DeleteInvoice, ViewInvoice, Toast, SendInvoice, EditInvoice },
   methods: {
     formatDate(dateString) {
       if (!dateString) return ''
@@ -274,7 +277,10 @@ export default defineComponent({
       axios
         .get(`${API_URL}employee/id/${localStorage.getItem('employeeId')}`, config1)
         .then((response) => {
-          console.log('response.data.data.role.permissionSuite: ', response.data.data.role.permissionSuite)
+          console.log(
+            'response.data.data.role.permissionSuite: ',
+            response.data.data.role.permissionSuite
+          )
           this.employeePermissions = response.data.data.role.permissionSuite
         })
         .catch((error) => {
@@ -298,6 +304,7 @@ export default defineComponent({
         .get(`${API_URL}invoice/all/detailed/${this.currentEmployee}`, config)
         .then((response) => {
           console.log('response: ', response)
+          this.clearInvoiceItems()
           for (const invoice of response.data.data) {
             this.invoiceItems.push({
               _id: invoice._id,
@@ -389,6 +396,7 @@ export default defineComponent({
       return this.employeePermissions.includes(permission)
     },
     async generateInvoice() {
+      this.isDeleting = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -402,15 +410,18 @@ export default defineComponent({
         )
         .then((response) => {
           console.log('response: ', response)
-          this.invoiceItems = []
-          this.getRequests()
+
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
             detail: 'Employee Edited Successfully',
             life: 3000
           })
-          this.close()
+          setTimeout(() => {
+            this.getRequests()
+            this.isDeleting = false
+            this.close()
+          })
         })
         .catch((error) => {
           console.error(error)
@@ -418,6 +429,9 @@ export default defineComponent({
     },
     showGenerateInvoice() {
       this.isModalVisible = true
+    },
+    clearInvoiceItems() {
+      this.invoiceItems = []
     },
     close() {
       this.isModalVisible = false
