@@ -1,0 +1,37 @@
+name: Run SpeedCurve Tests
+on:
+  push:
+    branches: [ main, develop , test ]
+
+  pull_request:
+    branches: [ main, develop , test ]
+
+jobs:
+  create-deployment:
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: preview
+          ref: ${{ github.head_ref }}
+
+      - name: Update deployment status
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          env: ${{ steps.deployment.outputs.env }}
+          env_url: ${{ secrets.TEST_DEPLOYMENT_URL }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+          
+          

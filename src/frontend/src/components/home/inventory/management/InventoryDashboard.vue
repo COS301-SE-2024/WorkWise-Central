@@ -155,7 +155,7 @@ export default defineComponent({
       selectedItemName: '',
       selectedItemID: '',
       actionsMenu: false,
-      employeePermissions: [] as string[],
+      employeePermissions: [] as string[]
     }
   },
   methods: {

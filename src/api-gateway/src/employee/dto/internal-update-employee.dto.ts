@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IsArray, IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { roleObject, UserInfo } from '../entities/employee.entity';
 
@@ -53,6 +53,11 @@ export class InternalUpdateEmployeeDto {
   @ApiProperty()
   @IsMongoId()
   userInfo?: UserInfo;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  hourlyRate?: number;
 
   @IsOptional()
   @IsMongoId()

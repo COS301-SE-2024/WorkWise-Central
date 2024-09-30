@@ -1,20 +1,20 @@
 <template>
   <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0.1">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn class="text-none font-weight-regular hello" color="error" v-bind="activatorProps"
-        ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete</v-btn
+      <v-btn class="text-none font-weight-regular hello" color="primary" v-bind="activatorProps"
+        ><v-icon icon="fa:fa-solid fa-paper-plane" start color="primary" size="small"></v-icon>Send</v-btn
       >
     </template>
     <v-card class="bg-cardColor">
       <v-card-title>
-        <v-icon>mdi-delete</v-icon>
-        <span>Delete Invoice</span>
+        <v-icon icon="fa:fa-solid fa-paper-plane" start color="white" size="small"></v-icon>
+        <span>Send Invoice</span>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
             <p class="font-weight-regular">
-              Are you sure you want to delete the invoice for <strong>{{ clientName }}</strong
+              Are you sure you want to send the invoice to <strong>{{ clientName }}</strong
               >? This action cannot be reversed.
             </p>
           </v-row>
@@ -26,14 +26,14 @@
         <v-container>
           <v-row justify="end">
             <v-col cols="12" lg="6" order="last" order-lg="first">
-              <v-btn label="Cancel" color="secondary" @click="close" block :disabled="isDeleting"
+              <v-btn label="Cancel" color="secondary" @click="close" block :disabled="isSending"
                 ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" size="small"></v-icon>Cancel
               </v-btn>
             </v-col>
             <v-col cols="12" lg="6" order="first" order-lg="last">
-              <v-btn label="Delete" color="error" :loading="isDeleting" block @click="deleteInvoice"
-                ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon
-                >Delete
+              <v-btn label="Delete" color="primary" :loading="isSending" block @click="sendInvoice"
+                ><v-icon icon="fa:fa-solid fa-paper-plane" start color="primary" size="small"></v-icon
+                >Send
               </v-btn>
             </v-col>
           </v-row>
@@ -50,7 +50,7 @@ import axios from 'axios'
 import { API_URL } from '@/main'
 
 export default defineComponent({
-  name: 'DeleteInvoice',
+  name: 'sendInvoice',
   props: {
     invoice_id: String,
     clientName: String
@@ -60,11 +60,11 @@ export default defineComponent({
   },
   data: () => ({
     deleteDialog: false,
-    isDeleting: false
+    isSending: false,
   }),
   methods: {
-    async deleteInvoice() {
-      this.isDeleting = true // Indicate the start of the deletion process
+    async sendInvoice() {
+      this.isSending = true // Indicate the start of the deletion process
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -75,11 +75,11 @@ export default defineComponent({
         }
       }
       try {
-        await axios.delete(`${API_URL}invoice/${this.invoice_id}`, config).then((response) => {
+        await axios.get(`${API_URL}invoice/send/${this.invoice_id}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config).then((response) => {
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Invoice deleted successfully',
+            detail: 'Invoice successfully sent',
             life: 3000
           })
           setTimeout(() => {
@@ -96,11 +96,11 @@ export default defineComponent({
           life: 3000
         })
       }
-      this.isDeleting = false
+      this.isSending = false
     },
     close() {
       this.deleteDialog = false
-    }
+    },
   }
 })
 </script>

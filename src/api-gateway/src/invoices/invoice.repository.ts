@@ -82,6 +82,9 @@ export class InvoiceRepository {
           clientId: identifier,
         },
         {
+          sent: true,
+        },
+        {
           $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
         },
       ],

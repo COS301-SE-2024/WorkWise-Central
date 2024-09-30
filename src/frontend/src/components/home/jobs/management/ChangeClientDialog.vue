@@ -107,7 +107,6 @@ const config = {
   }
 }
 
-
 const showClientChangeSuccess = () => {
   toast.add({
     severity: 'success',

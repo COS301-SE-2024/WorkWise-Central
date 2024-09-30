@@ -128,8 +128,7 @@ export default {
       } finally {
         this.isDeleting = false // Reset the deletion indicator
       }
-    },
-    
+    }
   }
 }
 </script>

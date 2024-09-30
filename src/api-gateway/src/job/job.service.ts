@@ -81,22 +81,22 @@ export class JobService {
       throw new ConflictException(inputValidated.message);
     }
 
-    /*    if (createJobDto.coverImage) {
+    if (createJobDto.coverImage) {
       const uploadApiResponse = await this.fileService.uploadBase64Image(createJobDto.coverImage);
       if (uploadApiResponse.secure_url) {
-        console.log('Upload successful');
+        //console.log('Upload successful');
         createJobDto.coverImage = uploadApiResponse.secure_url;
       } else {
         console.log('Failed to upload image.', 'Keep it pushing');
         //return null;
       }
-    }*/
-    if (createJobDto.coverImage) {
+    }
+    /*    if (createJobDto.coverImage) {
       const result = await this.fileService.saveBase64File(createJobDto.coverImage);
       console.log(result);
       if (result.success == true) createJobDto.coverImage = result.url;
       else throw new InternalServerErrorException('Failed to save CoverImage file upload');
-    }
+    }*/
 
     const user = await this.usersService.getUserById(userId);
 
@@ -183,7 +183,7 @@ export class JobService {
     }
 
     try {
-      /*      if (updateJobDto.coverImage) {
+      if (updateJobDto.coverImage) {
         const uploadApiResponse = await this.fileService.uploadBase64Image(updateJobDto.coverImage);
         if (uploadApiResponse.secure_url) {
           console.log('Upload successful');
@@ -192,13 +192,13 @@ export class JobService {
           console.log('Failed to upload image.', 'Keep it pushing');
           //return null;
         }
-      }*/
-      if (updateJobDto.coverImage) {
+      }
+      /*      if (updateJobDto.coverImage) {
         const result = await this.fileService.saveBase64File(updateJobDto.coverImage);
         console.log(result);
         if (result.success == true) updateJobDto.coverImage = result.url;
         else throw new InternalServerErrorException('Failed to save CoverImage file upload');
-      }
+      }*/
 
       const updated = await this.jobRepository.update(id, updateJobDto);
       if (updateJobDto.clientId) {

@@ -51,6 +51,7 @@ import SetupPaymentGateway from '@/components/home/settings/company/SetupPayment
 import SuccessfulPayment from '@/components/home/clients/client_portal/SuccessfulPayment.vue'
 import VideoMeetings from '@/views/notfications/VideoMeetings.vue'
 import GoogleMapsView from '@/views/home/map/GoogleMapsView.vue'
+import NoAccess from '@/components/misc/NoAccess.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -410,19 +411,50 @@ const router = createRouter({
       path: '/chatHome',
       name: 'chatHome',
       component: () => import('@/views/home/chat/ChatHome.vue')
+    },
+    {
+      path: '/no-access',
+      name: 'no-access',
+      component: NoAccess
     }
   ]
 })
-
 router.beforeEach((to, from, next) => {
   const accessToken = localStorage.getItem('access_token')
+  const currentEmployeeId = localStorage.getItem('employeeId')
+  const currentCompanyId = localStorage.getItem('currentCompany')
 
-  if (to.name !== 'splash' && !accessToken && to.name !== 'new-password') {
-    next({ name: 'splash' }) // Redirect to splash page if no access_token and trying to access a protected route
-  } else if (to.name === 'splash' && accessToken) {
-    next({ name: 'dashboard' }) // Optional: Redirect to a protected route if already logged in and trying to access splash page
-  } else {
-    next() // Proceed to the route
+  // Check if access token is available and if trying to access a protected route
+  if (
+    to.name !== 'splash' &&
+    !accessToken &&
+    to.name !== 'new-password' &&
+    to.name !== 'no-access'
+  ) {
+    return next({ name: 'splash' }) // Redirect to splash page if no access_token
   }
+
+  // If user is already logged in, prevent access to splash page
+  if (to.name === 'splash' && accessToken && currentCompanyId && currentEmployeeId) {
+    return next({ name: 'dashboard' }) // Redirect to dashboard if trying to access splash when logged in
+  }
+
+  // Allow navigation to 'splash' from 'no-access'
+  if (to.name === 'splash' && from.name === 'no-access') {
+    return next() // Allow access to splash from no-access page
+  }
+
+  // Check if the employeeId is missing and prevent access to restricted routes, except for 'no-access'
+  if (
+    to.name !== 'no-access' &&
+    to.name !== '' &&
+    (currentEmployeeId === null || currentEmployeeId === undefined)
+  ) {
+    return next({ name: 'no-access' }) // Redirect to no-access if no employeeId
+  }
+
+  // Proceed to the intended route
+  next()
 })
+
 export default router

@@ -1021,7 +1021,8 @@ export default {
 
       try {
         const employee_jobs = await axios(
-          API_URL + `job/all/company/detailed/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+          API_URL +
+            `job/all/company/detailed/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
           config
         )
 
