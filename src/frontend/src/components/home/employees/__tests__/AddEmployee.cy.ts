@@ -82,4 +82,7 @@ it('check typing the Username textfield', () => {
 
   cy.get('[data-testid=username-textfield]').type('Hashhers89')
   cy.focused().clear()
+
+  cy.get('[data-testid=role-select]').select()
+  cy.focused().clear()
 })
