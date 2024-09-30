@@ -22,10 +22,13 @@
           </div>
 
           <Panel header="Current Drivers">
-            <DataView :value="currentDrivers">
+            <DataView :value="assignedDrivers">
               <template #list="slotProps">
-                <div class="driver-item">
-                  {{ slotProps?.data?.profile?.displayName }}
+                <div class="driver-list">
+                  <div v-for="(item, index) in slotProps.items" :key="index" class="driver-item">
+                    <img :src="item?.userInfo?.displayImage" :alt="`${item?.userInfo?.displayName}'s photo`" class="driver-image" />
+                    <span class="driver-name">{{ item?.userInfo?.displayName }}</span>
+                  </div>
                 </div>
               </template>
             </DataView>
@@ -40,19 +43,8 @@
                 <div class="p-col-4">
                   <strong>Average Fuel Consumption:</strong> {{ averageFuelConsumption }} L/100km
                 </div>
-                <div class="p-col-4">
-                  <strong>Vehicles Due for Service:</strong> {{ vehiclesDueForService }}
-                </div>
               </div>
             </div>
-          </Panel>
-
-          <Panel header="Alerts">
-            <DataView :value="recentAlerts">
-              <template #list="slotProps">
-                <Message :severity="slotProps.data.severity" :text="slotProps.data.message" />
-              </template>
-            </DataView>
           </Panel>
         </div>
       </div>
@@ -370,6 +362,7 @@ export default {
         value: value
       })),
       fuelTypes: Object.entries(FuelType).map(([key, value]) => ({ label: value, value: value })),
+      assignedDrivers: [],
       currentDrivers: [],
       recentAlerts: [],
       employees: [],
@@ -443,19 +436,25 @@ export default {
     },
     async getVehiclesData() {
       try {
-        const response = await axios.get(
-          `${this.apiUrl}fleet/all?companyId=${localStorage.getItem('currentCompany')}&employeeId=${localStorage.getItem('employeeId')}`,
-          this.getAuthConfig()
-        )
-        this.vehicles = await Promise.all(
-          response.data.data.map(async (vehicle) => ({
-            ...vehicle,
-            location: vehicle?.location
-          }))
-        )
-        console.log('Vehicles:', this.vehicles)
+        const [vehiclesResponse, employeesResponse] = await Promise.all([
+          axios.get(
+              `${this.apiUrl}fleet/all?companyId=${localStorage.getItem('currentCompany')}&employeeId=${localStorage.getItem('employeeId')}`,
+              this.getAuthConfig()
+          ),
+          axios.get(`${this.apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`, this.getAuthConfig())
+        ]);
+
+        const employeesMap = new Map(employeesResponse.data.data.map(employee => [employee._id, employee]));
+
+        this.vehicles = vehiclesResponse.data.data.map(vehicle => ({
+          ...vehicle,
+          location: vehicle?.location,
+          assignedDriver: employeesMap.get(vehicle.availability.assignedTo) || null
+        }));
+
+        console.log('Vehicles:', this.vehicles);
       } catch (error) {
-        console.error('Error fetching vehicles data:', error)
+        console.error('Error fetching vehicles data:', error);
       }
     },
     async getGeocode(address) {
@@ -505,20 +504,13 @@ export default {
     },
     async loadFleetData() {
       try {
-        // const data = await VehicleService.getFleetData()
-        // this.vehicles = data.vehicles
-        for (const v of this.vehicles) {
-          if (v.availability.assignedTo != null) {
-            this.currentDrivers.push(v.availability.assignedTo)
+        for (const vehicle of this.vehicles) {
+          if (vehicle.assignedDriver) {
+            this.assignedDrivers.push(vehicle.assignedDriver);
           }
         }
-        //this.currentDrivers = data.currentDrivers
-        //this.recentAlerts = data.recentAlerts //TODO: remove
-        //this.totalDistanceToday = data.totalDistanceToday
-        //this.averageFuelConsumption = data.averageFuelConsumption
-        //this.vehiclesDueForService = data.vehiclesDueForService
-        //this.updateMapCenter()
-        // Calculate total distance today and average fuel consumption
+        console.log('Assigned Drivers:', this.assignedDrivers)
+
         const totalDistance = this.vehicles.reduce((sum, vehicle) => sum + (vehicle.statistics?.totalDistance || 0), 0);
         const totalFuelConsumption = this.vehicles.reduce((sum, vehicle) => sum + (vehicle.statistics?.averageFuelConsumption || 0), 0);
         const vehicleCount = this.vehicles.length;
@@ -526,7 +518,7 @@ export default {
         this.totalDistanceToday = totalDistance;
         this.averageFuelConsumption = vehicleCount ? totalFuelConsumption / vehicleCount : 0;
       } catch (error) {
-        console.error('Error loading fleet data:', error)
+        console.error('Error loading fleet data:', error);
       }
     },
     getVehicleIcon(status) {
@@ -592,7 +584,7 @@ export default {
           this.assignDialogVisible = false
           this.selectedVehicle = null
           this.selectedEmployee = null
-          this.getVehiclesData()
+          await this.getVehiclesData()
         } catch (error) {
           console.error('Error assigning vehicle:', error)
         }
@@ -662,5 +654,32 @@ export default {
 
 .panel-header-center .p-panel-header {
   text-align: center;
+}
+
+.driver-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.driver-item {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 0.5rem;
+  width: calc(50% - 0.5rem); /* Adjust based on your layout needs */
+}
+
+.driver-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.driver-name {
+  font-weight: bold;
 }
 </style>
