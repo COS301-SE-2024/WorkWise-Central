@@ -84,7 +84,7 @@ export class JobService {
     if (createJobDto.coverImage) {
       const uploadApiResponse = await this.fileService.uploadBase64Image(createJobDto.coverImage);
       if (uploadApiResponse.secure_url) {
-        //console.log('Upload successful');
+        console.log('Upload successful');
         createJobDto.coverImage = uploadApiResponse.secure_url;
       } else {
         console.log('Failed to upload image.', 'Keep it pushing');
@@ -103,7 +103,7 @@ export class JobService {
     //Save files In Bucket, and store URLs (if provided)
     //
     if (createJobDto.status == null) {
-      //console.log(await this.jobTagRepository.findAllStatusesInCompany(createJobDto.companyId));
+      console.log(await this.jobTagRepository.findAllStatusesInCompany(createJobDto.companyId));
       createJobDto.status = (await this.jobTagRepository.findStatusByLabel(createJobDto.companyId, 'No Status'))._id;
     }
 
@@ -112,7 +112,7 @@ export class JobService {
     const event = `${user.personalInfo.firstName} ${user.personalInfo.surname} created this job: ${createdJob.details.heading}`;
     createdJob.history.push(new History(event));
 
-    //console.log('createdJob', createdJob);
+    console.log('createdJob', createdJob);
     const result = await this.jobRepository.save(createdJob);
     this.assignEmployeesWithoutValidation(result._id, createJobDto.assignedEmployees.employeeIds);
     if (result.clientId) {
@@ -531,7 +531,7 @@ export class JobService {
 
     if (!job) throw new NotFoundException('Job not found');
 
-    //console.log(job);
+    console.log(job);
 
     if (
       job.assignedEmployees.employeeIds.some(

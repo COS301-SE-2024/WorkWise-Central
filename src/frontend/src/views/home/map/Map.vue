@@ -26,7 +26,11 @@
               <template #list="slotProps">
                 <div class="driver-list">
                   <div v-for="(item, index) in slotProps.items" :key="index" class="driver-item">
-                    <img :src="item?.userInfo?.displayImage" :alt="`${item?.userInfo?.displayName}'s photo`" class="driver-image" />
+                    <img
+                      :src="item?.userInfo?.displayImage"
+                      :alt="`${item?.userInfo?.displayName}'s photo`"
+                      class="driver-image"
+                    />
                     <span class="driver-name">{{ item?.userInfo?.displayName }}</span>
                   </div>
                 </div>
@@ -52,63 +56,87 @@
         <v-row>
           <v-col cols="12" class="text-center pt-10">
             <Button
-                label="Show All Vehicle Data"
-                icon="fa: fa-solid fa-external-link"
-                @click="dialogVisible = true"
-                class="custom-button"
+              label="Show All Vehicle Data"
+              icon="fa: fa-solid fa-external-link"
+              @click="dialogVisible = true"
+              class="custom-button"
             />
           </v-col>
           <v-col cols="12" class="text-center">
             <Button
-                label="Find Vehicle"
-                icon="fa: fa-solid fa-search"
-                @click="toggleVehicleList"
-                class="custom-button"
+              label="Find Vehicle"
+              icon="fa: fa-solid fa-search"
+              @click="toggleVehicleList"
+              class="custom-button"
             />
           </v-col>
           <v-col cols="12" class="text-center">
             <Button
-                label="Assign Vehicle"
-                icon="fa: fa-solid fa-user-plus"
-                @click="assignDialogVisible = true"
-                class="custom-button"
+              label="Assign Vehicle"
+              icon="fa: fa-solid fa-user-plus"
+              @click="assignDialogVisible = true"
+              class="custom-button"
             />
           </v-col>
         </v-row>
-        <Dialog v-model:visible="assignDialogVisible" header="Assign Vehicle" :style="{ width: '50vw' }" modal>
+        <Dialog
+          v-model:visible="assignDialogVisible"
+          header="Assign Vehicle"
+          :style="{ width: '50vw' }"
+          modal
+        >
           <div>
             <Listbox
-                v-model="selectedVehicle"
-                :options="vehicles"
-                optionLabel="licensePlate"
-                class="w-full md:w-56 mt-2"
-                @change="fetchEmployees"
-                filter
-            />
-            <Listbox
-                v-model="selectedEmployee"
-                :options="employees"
-                optionLabel="userInfo.displayName"
-                class="w-full md:w-56 mt-2"
-                filter
-            />
-          </div>
-          <template #footer>
-            <Button label="Assign" class="p-button-success" icon="fa: fa-solid fa-check" @click="assignVehicle" />
-            <Button label="Cancel" class="p-button-danger" icon="fa: fa-solid fa-times" @click="assignDialogVisible = false" />
-          </template>
-        </Dialog>
-        <Dialog v-model:visible="showVehicleList" header="Select Vehicle" :style="{ width: '50vw', margin: 'auto' }">
-          <Listbox
               v-model="selectedVehicle"
               :options="vehicles"
               optionLabel="licensePlate"
               class="w-full md:w-56 mt-2"
-              @change="searchVehicle"
+              @change="fetchEmployees"
               filter
+            />
+            <Listbox
+              v-model="selectedEmployee"
+              :options="employees"
+              optionLabel="userInfo.displayName"
+              class="w-full md:w-56 mt-2"
+              filter
+            />
+          </div>
+          <template #footer>
+            <Button
+              label="Assign"
+              class="p-button-success"
+              icon="fa: fa-solid fa-check"
+              @click="assignVehicle"
+            />
+            <Button
+              label="Cancel"
+              class="p-button-danger"
+              icon="fa: fa-solid fa-times"
+              @click="assignDialogVisible = false"
+            />
+          </template>
+        </Dialog>
+        <Dialog
+          v-model:visible="showVehicleList"
+          header="Select Vehicle"
+          :style="{ width: '50vw', margin: 'auto' }"
+        >
+          <Listbox
+            v-model="selectedVehicle"
+            :options="vehicles"
+            optionLabel="licensePlate"
+            class="w-full md:w-56 mt-2"
+            @change="searchVehicle"
+            filter
           />
           <template #footer>
-            <Button label="Close and Redirect" class="p-button-success" icon="fa: fa-solid fa-check" @click="closeAndRedirect" />
+            <Button
+              label="Close and Redirect"
+              class="p-button-success"
+              icon="fa: fa-solid fa-check"
+              @click="closeAndRedirect"
+            />
           </template>
         </Dialog>
         <Dialog
@@ -214,7 +242,12 @@
             ></Column>
           </DataTable>
           <template #footer>
-            <Button label="Close" class="p-button-danger" icon="fa: fa-solid fa-check" @click="dialogVisible = false" />
+            <Button
+              label="Close"
+              class="p-button-danger"
+              icon="fa: fa-solid fa-check"
+              @click="dialogVisible = false"
+            />
           </template>
         </Dialog>
       </div>
@@ -222,8 +255,16 @@
     <SplitterPanel class="flex items-center justify-center" :size="75">
       <GoogleMap :api-key="apiKey" style="width: 100%; height: 100%" :center="mapCenter" :zoom="12">
         <!-- Company Marker -->
-        <CustomMarker v-if="company" :options="{ position: companyLocation , anchorPoint: 'BOTTOM_CENTER' }">
-          <img src="@/assets/images/markers/BuildingMarker.png" width="50" height="50" style="margin-top: 8px" />
+        <CustomMarker
+          v-if="company"
+          :options="{ position: companyLocation, anchorPoint: 'BOTTOM_CENTER' }"
+        >
+          <img
+            src="@/assets/images/markers/BuildingMarker.png"
+            width="50"
+            height="50"
+            style="margin-top: 8px"
+          />
           <InfoWindow>
             <div id="companyContent">
               <img class="centered" v-if="company.logo" :src="company.logo" alt="Company Logo" />
@@ -237,7 +278,12 @@
 
         <!-- Current Location Marker -->
         <CustomMarker :options="{ position: currentLocation, anchorPoint: 'BOTTOM_CENTER' }">
-          <img src="@/assets/images/markers/PersonMarker.png" width="50" height="50" style="margin-top: 8px" />
+          <img
+            src="@/assets/images/markers/PersonMarker.png"
+            width="50"
+            height="50"
+            style="margin-top: 8px"
+          />
           <InfoWindow>
             <div id="content">
               <h1 id="firstHeading" style="color: black">You Are Here</h1>
@@ -249,9 +295,18 @@
         <CustomMarker
           v-for="vehicle in vehicles"
           :key="vehicle.id"
-          :options="{ position: vehicle.location, label: vehicle.driver, anchorPoint: 'BOTTOM_CENTER' }"
+          :options="{
+            position: vehicle.location,
+            label: vehicle.driver,
+            anchorPoint: 'BOTTOM_CENTER'
+          }"
         >
-          <img src="@/assets/images/markers/CarMarker.png" width="50" height="50" style="margin-top: 8px" />
+          <img
+            src="@/assets/images/markers/CarMarker.png"
+            width="50"
+            height="50"
+            style="margin-top: 8px"
+          />
           <InfoWindow>
             <div style="color: black">
               <h4>{{ vehicle.name.make }} {{ vehicle.name.model }}</h4>
@@ -278,9 +333,9 @@ import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import Card from 'primevue/card';
-import Panel from 'primevue/panel';
-import DataView from 'primevue/dataview';
+import Card from 'primevue/card'
+import Panel from 'primevue/panel'
+import DataView from 'primevue/dataview'
 import Message from 'primevue/message'
 // import Image from 'primevue/image'
 import InputText from 'primevue/inputtext'
@@ -328,7 +383,7 @@ export default {
           fillOpacity: 1,
           strokeWeight: 1,
           strokeColor: '#ffffff',
-          scale: 0.06,
+          scale: 0.06
         },
         person: {
           path: '@public/PersonMarker.png',
@@ -336,7 +391,7 @@ export default {
           fillOpacity: 1,
           strokeWeight: 1,
           strokeColor: '#ffffff',
-          scale: 0.06,
+          scale: 0.06
         },
         building: {
           path: '@public/BuildingMarker.png',
@@ -344,8 +399,8 @@ export default {
           fillOpacity: 1,
           strokeWeight: 1,
           strokeColor: '#ffffff',
-          scale: 0.06,
-        },
+          scale: 0.06
+        }
       },
       showVehicleList: false,
       selectedVehicle: null,
@@ -393,25 +448,28 @@ export default {
   methods: {
     closeAndRedirect() {
       if (this.selectedVehicle) {
-        this.redirectMap(this.selectedVehicle.location.latitude, this.selectedVehicle.location.longitude);
+        this.redirectMap(
+          this.selectedVehicle.location.latitude,
+          this.selectedVehicle.location.longitude
+        )
       }
-      this.showVehicleList = false;
+      this.showVehicleList = false
     },
     toggleVehicleList() {
       this.showVehicleList = !this.showVehicleList
     },
     searchVehicle() {
       if (this.selectedVehicle) {
-        console.log("Searching for vehicle", this.selectedVehicle)
+        console.log('Searching for vehicle', this.selectedVehicle)
       }
     },
     redirectMap(latitude, longitude) {
-      const newCenter = { lat: latitude, lng: longitude };
-      this.mapCenter = newCenter;
+      const newCenter = { lat: latitude, lng: longitude }
+      this.mapCenter = newCenter
 
       // If you want to smoothly pan to the new location:
       if (this.$refs.mapRef) {
-        this.$refs.mapRef.panTo(newCenter);
+        this.$refs.mapRef.panTo(newCenter)
       }
     },
     async getCurrentLocation() {
@@ -431,7 +489,7 @@ export default {
         )
         this.company = response.data.data
         this.companyLocation = await this.getGeocode(this.company.address)
-        //console.log('Company', this.company)
+        console.log('Company', this.company)
       } catch (error) {
         console.error('Error fetching company data:', error)
       }
@@ -440,23 +498,28 @@ export default {
       try {
         const [vehiclesResponse, employeesResponse] = await Promise.all([
           axios.get(
-              `${this.apiUrl}fleet/all?companyId=${localStorage.getItem('currentCompany')}&employeeId=${localStorage.getItem('employeeId')}`,
-              this.getAuthConfig()
+            `${this.apiUrl}fleet/all?companyId=${localStorage.getItem('currentCompany')}&employeeId=${localStorage.getItem('employeeId')}`,
+            this.getAuthConfig()
           ),
-          axios.get(`${this.apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`, this.getAuthConfig())
-        ]);
+          axios.get(
+            `${this.apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`,
+            this.getAuthConfig()
+          )
+        ])
 
-        const employeesMap = new Map(employeesResponse.data.data.map(employee => [employee._id, employee]));
+        const employeesMap = new Map(
+          employeesResponse.data.data.map((employee) => [employee._id, employee])
+        )
 
-        this.vehicles = vehiclesResponse.data.data.map(vehicle => ({
+        this.vehicles = vehiclesResponse.data.data.map((vehicle) => ({
           ...vehicle,
           location: vehicle?.location,
           assignedDriver: employeesMap.get(vehicle.availability.assignedTo) || null
-        }));
+        }))
 
-        console.log('Vehicles:', this.vehicles);
+        console.log('Vehicles:', this.vehicles)
       } catch (error) {
-        console.error('Error fetching vehicles data:', error);
+        console.error('Error fetching vehicles data:', error)
       }
     },
     async getGeocode(address) {
@@ -508,19 +571,25 @@ export default {
       try {
         for (const vehicle of this.vehicles) {
           if (vehicle.assignedDriver) {
-            this.assignedDrivers.push(vehicle.assignedDriver);
+            this.assignedDrivers.push(vehicle.assignedDriver)
           }
         }
         console.log('Assigned Drivers:', this.assignedDrivers)
 
-        const totalDistance = this.vehicles.reduce((sum, vehicle) => sum + (vehicle.statistics?.totalDistance || 0), 0);
-        const totalFuelConsumption = this.vehicles.reduce((sum, vehicle) => sum + (vehicle.statistics?.averageFuelConsumption || 0), 0);
-        const vehicleCount = this.vehicles.length;
+        const totalDistance = this.vehicles.reduce(
+          (sum, vehicle) => sum + (vehicle.statistics?.totalDistance || 0),
+          0
+        )
+        const totalFuelConsumption = this.vehicles.reduce(
+          (sum, vehicle) => sum + (vehicle.statistics?.averageFuelConsumption || 0),
+          0
+        )
+        const vehicleCount = this.vehicles.length
 
-        this.totalDistanceToday = totalDistance;
-        this.averageFuelConsumption = vehicleCount ? totalFuelConsumption / vehicleCount : 0;
+        this.totalDistanceToday = totalDistance
+        this.averageFuelConsumption = vehicleCount ? totalFuelConsumption / vehicleCount : 0
       } catch (error) {
-        console.error('Error loading fleet data:', error);
+        console.error('Error loading fleet data:', error)
       }
     },
     getVehicleIcon(status) {
@@ -553,7 +622,10 @@ export default {
     },
     async getEmployees() {
       try {
-        const response = await axios.get(`${this.apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`, this.getAuthConfig())
+        const response = await axios.get(
+          `${this.apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`,
+          this.getAuthConfig()
+        )
         this.employees = response.data.data
         console.log('Employees:', this.employees)
       } catch (error) {
@@ -570,17 +642,17 @@ export default {
       if (this.selectedVehicle && this.selectedEmployee) {
         try {
           const response = await axios.patch(
-              `${this.apiUrl}fleet/update`,
-              {
-                ...this.selectedVehicle,
-                availability: {
-                  status: 'In Use',
-                  assignedTo: this.selectedEmployee._id
-                },
-                vehicleId: this.selectedVehicle._id,
-                currentEmployeeId: localStorage.getItem('employeeId')
+            `${this.apiUrl}fleet/update`,
+            {
+              ...this.selectedVehicle,
+              availability: {
+                status: 'In Use',
+                assignedTo: this.selectedEmployee._id
               },
-              this.getAuthConfig()
+              vehicleId: this.selectedVehicle._id,
+              currentEmployeeId: localStorage.getItem('employeeId')
+            },
+            this.getAuthConfig()
           )
           console.log('Assigned To:', response.data.data)
           this.assignDialogVisible = false
@@ -597,16 +669,15 @@ export default {
 </script>
 
 <style scoped>
-
 .custom-button {
-  background-color: #4C9FC3;
-  outline-color: #4C9FC3;
+  background-color: #4c9fc3;
+  outline-color: #4c9fc3;
   border: none; /* Add this line to remove the green outline */
   width: 80%;
 }
 
 .custom-button:hover {
-  background-color: #4C9FC3 !important; /* Ensure hover color matches */
+  background-color: #4c9fc3 !important; /* Ensure hover color matches */
   border: none !important; /* Add this line to remove the green outline */
 }
 

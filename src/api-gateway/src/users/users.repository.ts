@@ -121,7 +121,7 @@ export class UsersRepository {
         ],
       })
       .lean();
-    //console.log('userIdExists -> ', result);
+    console.log('userIdExists -> ', result);
     return result != null;
   }
 

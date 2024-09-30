@@ -55,18 +55,18 @@ const emit = defineEmits(['update-chat', 'delete-chat'])
 
 const passOnChatUpdate = (editedChat) => {
   emit('update-chat', editedChat)
-  //console.log('header', editedChat)
+  console.log('header', editedChat)
 }
 
 const passOnChatDelete = (editedChat) => {
   emit('delete-chat', editedChat)
-  //console.log('header', editedChat)
+  console.log('header', editedChat)
 }
 
 const childComponentRef = ref()
 
 const togglePopover = (event) => {
-  //console.log(childComponentRef)
+  console.log(childComponentRef)
   childComponentRef.value.toggle(event)
 }
 
