@@ -174,7 +174,7 @@ export class CompanyRepository {
     }
     if (updateCompanyDto.address) {
       const updatedAddress: Address = { ...company.address, ...updateCompanyDto.address };
-      //console.log(updatedAddress);
+      console.log(updatedAddress);
       company.address = updatedAddress;
       company.markModified('address');
     }

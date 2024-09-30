@@ -699,7 +699,7 @@ export default defineComponent({
       axios
         .delete(`${API_URL}videoCalls/${id}`, config)
         .then((response) => {
-          //console.log(response)
+          console.log(response)
         })
         .catch((error) => {
           console.error(error)

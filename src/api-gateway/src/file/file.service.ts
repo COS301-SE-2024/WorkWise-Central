@@ -109,7 +109,7 @@ export class FileService {
 
   /*  async saveAttachments(files: Express.Multer.File[]): Promise<string[]> {
     if (!fs.existsSync(this.uploadPath)) {
-      //console.log('FAILED TO FIND FILE');
+      console.log('FAILED TO FIND FILE');
       fs.mkdirSync(this.uploadPath, { recursive: true });
     }
 

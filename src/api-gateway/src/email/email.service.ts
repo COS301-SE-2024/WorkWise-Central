@@ -19,7 +19,7 @@ export class EmailService {
   ) {}
 
   async sendUserConfirmation(userConfirmation: UserConfirmation) {
-    //console.log('sendUserConfirmation', userConfirmation);
+    console.log('sendUserConfirmation', userConfirmation);
     const url = `${this.globalConfig.serverUrl}auth/verify?email=${encodeURIComponent(userConfirmation.email)}&token=${userConfirmation.key}`;
 
     await this.mailerService.sendMail({
@@ -51,7 +51,7 @@ export class EmailService {
       });
     }*/
 
-    /*const result =*/ await this.mailerService.sendMail({
+    const result = await this.mailerService.sendMail({
       to: details.email,
       from: '"Support Team" <support@workwise.com>',
       subject: 'Welcome to WorkWise Central!',
@@ -63,14 +63,14 @@ export class EmailService {
       },
     });
     console.log('sendEmailConfirmation');
-    //console.log(result);
+    console.log(result);
   }
 
   async sendGoodbye(details: EmailInfoDto, token?: string) {
     //?const url = `example.com/auth/confirm?token=${token}`; //TODO:confirm
     console.log(token);
     const ourEmail = '<support@workwise.com>';
-    /*const result =*/ await this.mailerService.sendMail({
+    const result = await this.mailerService.sendMail({
       to: details.emailAddress,
       from: `"Support Team" ${ourEmail}`,
       subject: 'Farewell from WorkWise',
@@ -80,15 +80,15 @@ export class EmailService {
         ourEmail: ourEmail,
       },
     });
-    //console.log(result);
+    console.log(result);
   }
 
   async sendResetPasswordRequest(resetDto: PasswordResetDto, token: string) {
     //const serverUrl = `http://localhost:5173`;
     const url = `${this.globalConfig.frontendUrl}new-password?uId=${encodeURIComponent(resetDto.userId.toString())}&tok=${encodeURIComponent(token)}`;
-    //console.log(token);
+    console.log(token);
     const ourEmail = '<support@workwise.com>';
-    /*const result = */ await this.mailerService.sendMail({
+    const result = await this.mailerService.sendMail({
       to: resetDto.emailAddress,
       from: `"Support Team" ${ourEmail}`,
       subject: 'Password Reset',
@@ -99,7 +99,7 @@ export class EmailService {
         resetUrl: url,
       },
     });
-    //console.log(result);
+    console.log(result);
   }
 
   async sendInvite(inviteDto: InviteToJoin, inviteId: Types.ObjectId, hasAccount: boolean, userId?: Types.ObjectId) {
@@ -121,7 +121,7 @@ export class EmailService {
         });
       }
 
-      /*const result = */ await this.mailerService.sendMail({
+      const result = await this.mailerService.sendMail({
         to: inviteDto.emailBeingInvited,
         from: '"Support Team" <support@workwise.com>',
         subject: subject,
@@ -134,9 +134,9 @@ export class EmailService {
           url: existingUserLink,
         },
       });
-      //console.log(result);
+      console.log(result);
     } else {
-      /*const result =*/ await this.mailerService.sendMail({
+      const result = await this.mailerService.sendMail({
         to: inviteDto.emailBeingInvited,
         from: '"Support Team" <support@workwise.com>',
         subject: subject,
@@ -149,7 +149,7 @@ export class EmailService {
           newUserLink: newUserLink,
         },
       });
-      //console.log(result);
+      console.log(result);
     }
   }
 
@@ -164,7 +164,7 @@ export class EmailService {
     const url = `${this.globalConfig.frontendUrl}client-portal?cId=${encodeURIComponent(clientId.toString())}`;
     const ourEmail = '<support@workwise.com>';
 
-    /*const result = */ await this.mailerService.sendMail({
+    const result = await this.mailerService.sendMail({
       to: clientEmail,
       from: `"Support Team" ${ourEmail}`,
       subject: 'New Job Alert',
@@ -177,7 +177,7 @@ export class EmailService {
         link: url,
       },
     });
-    //console.log(result);
+    console.log(result);
   }
 
   async sendInvoiceClientPortalLink(
