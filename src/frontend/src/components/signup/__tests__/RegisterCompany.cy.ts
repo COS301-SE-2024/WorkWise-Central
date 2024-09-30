@@ -9,22 +9,72 @@ it('shows the register company modal', () => {
       plugins: [vuetify]
     }
   })
+  cy.get('button').click()
   cy.contains('Register your company')
-  cy.contains('Company name')
-  cy.contains('Type of business')
-  cy.contains('Company email address')
-  cy.contains('Company phone number')
-  cy.contains('Company registration number')
-  cy.contains('Company VAT number')
-  cy.contains('Company address')
 })
 
-it('click register company', () => {
+it('shows company name test input', () => {
   const vuetify = createVuetify()
   mount(RegisterCompany, {
     global: {
       plugins: [vuetify]
     }
   })
-  cy.contains('CONTINUE').click()
+  cy.get('button').click()
+  cy.contains('Company Name')
+})
+
+it('shows type of business name  test input', () => {
+  const vuetify = createVuetify()
+  mount(RegisterCompany, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.get('button').click()
+  cy.contains('Type of business*')
+})
+
+it('shows company email address and test input', () => {
+  const vuetify = createVuetify()
+  mount(RegisterCompany, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.get('button').click()
+  cy.contains('Company email address')
+})
+
+it('shows company phone number and test input', () => {
+  const vuetify = createVuetify()
+  mount(RegisterCompany, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.get('button').click()
+  cy.contains('Company phone number*')
+})
+
+it('shows the company registration and test input', () => {
+  const vuetify = createVuetify()
+  mount(RegisterCompany, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.get('button').click()
+  cy.contains('Company registration number*')
+})
+
+it('shows the VAT number and test input', () => {
+  const vuetify = createVuetify()
+  mount(RegisterCompany, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.get('button').click()
+  cy.contains('Company VAT number*')
 })
