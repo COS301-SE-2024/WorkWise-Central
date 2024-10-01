@@ -391,7 +391,7 @@ export default {
     },
     handleDeleteChat(data) {
       console.log('Delete chat received', data)
-      const index = this.chats.findIndex((c) => c._id === data.chatId)
+      const index = this.chats.findIndex((c) => c._id === data._id)
       if (index !== -1) {
         this.chats.splice(index, 1)
       }
