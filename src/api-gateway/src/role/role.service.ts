@@ -51,6 +51,7 @@ export class RoleService {
     this.permissionsArray.push('company settings');
     this.permissionsArray.push('company requests');
     this.permissionsArray.push('view teams');
+    this.permissionsArray.push('view my teams');
     this.permissionsArray.push('add new teams');
     this.permissionsArray.push('edit teams');
     this.permissionsArray.push('delete teams');
@@ -66,7 +67,7 @@ export class RoleService {
     //Check if the permissions are valid
     for (const permission of role.permissionSuite) {
       if (!this.permissionsArray.includes(permission.toString())) {
-        return new ValidationResult(false, `Invalid permission`);
+        return new ValidationResult(false, `Invalid permission string`);
       }
     }
 
@@ -93,6 +94,7 @@ export class RoleService {
     if (updateRoleDto.permissionSuite) {
       for (const permission of updateRoleDto.permissionSuite) {
         if (!this.permissionsArray.some((item) => item.replace(/\s+/g, '') === permission.replace(/\s+/g, ''))) {
+          console.log('permission: ', permission);
           return new ValidationResult(false, `Invalid permission`);
         }
       }
@@ -188,6 +190,7 @@ export class RoleService {
 
   async update(roleId: Types.ObjectId, updateRoleDto: UpdateRoleDto) {
     const validation = await this.validateUpdateRole(roleId, updateRoleDto);
+    console.log('validation: ', validation);
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
@@ -328,7 +331,7 @@ export class RoleService {
     teamRoleDto.permissionSuite.push('record job details');
     teamRoleDto.permissionSuite.push('view clients under me');
     teamRoleDto.permissionSuite.push('view customer feedback');
-    teamRoleDto.permissionSuite.push('view teams');
+    teamRoleDto.permissionSuite.push('view my teams');
     teamRoleDto.permissionSuite.push('view fleet');
     await this.internalCreate(teamRoleDto);
 
@@ -356,7 +359,7 @@ export class RoleService {
     workerRoleDto.permissionSuite.push('record job details');
     workerRoleDto.permissionSuite.push('view clients that are assigned to me');
     workerRoleDto.permissionSuite.push('view customer feedback');
-    workerRoleDto.permissionSuite.push('view teams');
+    workerRoleDto.permissionSuite.push('view my teams');
     workerRoleDto.permissionSuite.push('view fleet');
 
     await this.internalCreate(workerRoleDto);
