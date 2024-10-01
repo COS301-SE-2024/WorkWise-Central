@@ -38,6 +38,8 @@
                 v-model="selectedTeamMembers"
                 :items="teamMemberNames"
                 :rules="teamMembersRules"
+                item-title="name"
+                item-value="id"
                 multiple
                 chips
                 required
@@ -52,6 +54,8 @@
                 v-model="localEditedItem.teamLeaderId.userInfo.displayName"
                 :items="teamMemberNames"
                 :rules="teamLeaderIdRules"
+                item-title="name"
+                item-value="id"
                 required
                 variant="solo"
                 color="primary"
@@ -187,11 +191,14 @@ export default {
       return name === this.selectedTeamLeader // Disable if the name is the team leader
     },
     populateTeamLeaderName() {
-      const teamLeader = this.localEditedItem.teamMembers.find(
-        (member) => member === this.localEditedItem.teamLeaderId
-      )
-      this.selectedTeamLeader =
-        this.teamMemberNames[this.localEditedItem.teamMembers.indexOf(teamLeader)]
+      // const teamLeader = this.localEditedItem.teamMembers.find(
+      //   (member) => member === this.localEditedItem.teamLeaderId
+      // )
+      // this.selectedTeamLeader =
+      //   this.teamMemberNames[this.localEditedItem.teamMembers.indexOf(teamLeader)]
+
+      // localEditedItem.teamLeaderId.userInfo.displayName = this.localEditedItem.teamMembers.indexOf(teamLeader)
+      console.log('localEditedItem: ', this.localEditedItem)
     },
     async updateTeam() {
       this.isDeleting = true
@@ -212,13 +219,14 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
+      let data;
 
       //updating the all the team info except the teamMember info
       if (
         this.localEditedItem.teamName !== this.initalTeamName ||
         this.getEmployeeIdByName(this.selectedTeamLeader !== this.intialTeamLeader)
       ) {
-        const data = {
+        data = {
             teamName: this.localEditedItem.teamName,
             teamMembers: this.selectedTeamMembers.map((name) => this.getEmployeeIdByName(name)),
             teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader),
@@ -226,7 +234,7 @@ export default {
           },
           currentEmployeeId = localStorage.getItem('employeeId')
       }
-      console.log(data)
+      // console.log(data)
 
       // Unassign if the job has been removed
 
@@ -298,7 +306,8 @@ export default {
     },
     populateCurrentTeamMembers() {
       for (let i = 0; i < this.localEditedItem.teamMembers.length; i++) {
-        this.selectedTeamMembers.push(this.editedItem.teamMembers[i].userInfo.displayName)
+        this.selectedTeamMembers.push(this.editedItem.teamMembers[i]._id)
+        // this.
       }
     },
     async getCurrentJobAssignments() {
@@ -331,7 +340,9 @@ export default {
       }
       try {
         const response = await axios.get(
-          `${API_URL}job/all/company/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/all/company/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem(
+            'employeeId'
+          )}`,
           config
         )
         response.data.data.forEach((job) => {
@@ -357,8 +368,8 @@ export default {
           config
         )
         response.data.data.forEach((employee) => {
-          this.teamMemberNames.push(employee.userInfo.displayName)
-          this.teamMemberIds.push(employee._id)
+          this.teamMemberNames.push({ name: employee.userInfo.displayName, id: employee._id })
+          // this.teamMemberIds.push(employee._id)
         })
         this.populateCurrentTeamMembers()
         this.populateTeamLeaderName()
