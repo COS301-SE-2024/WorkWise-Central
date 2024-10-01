@@ -1,4 +1,13 @@
-import { Controller, Get, Param, HttpException, HttpStatus, UseGuards, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+  Headers,
+  BadRequestException,
+} from '@nestjs/common';
 import { StatsService } from './stats.service';
 import {
   ApiBadRequestResponse,
@@ -98,6 +107,7 @@ export class StatsController {
   @Get('clientStats/:clientId')
   async clientStats(@Headers() headers: any, @Param('clientId') clientId: Types.ObjectId) {
     console.log('clientStats', clientId);
+    if (clientId == null) throw new BadRequestException('clientId not defined');
     const data = await this.statsService.clientStats(clientId);
     return { data: data };
   }
