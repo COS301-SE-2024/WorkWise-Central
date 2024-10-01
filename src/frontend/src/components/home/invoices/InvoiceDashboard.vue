@@ -274,7 +274,10 @@ export default defineComponent({
       axios
         .get(`${API_URL}employee/id/${localStorage.getItem('employeeId')}`, config1)
         .then((response) => {
-          console.log('response.data.data.role.permissionSuite: ', response.data.data.role.permissionSuite)
+          console.log(
+            'response.data.data.role.permissionSuite: ',
+            response.data.data.role.permissionSuite
+          )
           this.employeePermissions = response.data.data.role.permissionSuite
         })
         .catch((error) => {

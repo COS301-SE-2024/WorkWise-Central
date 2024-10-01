@@ -31,10 +31,9 @@ export default defineComponent({
   },
   methods: {
     goToDashboard() {
-  // This assumes you have a route named 'dashboard' in your Vue Router
-  this.$router.push({ name: 'splash' })
-}
-
+      // This assumes you have a route named 'dashboard' in your Vue Router
+      this.$router.push({ name: 'splash' })
+    }
   }
 })
 </script>

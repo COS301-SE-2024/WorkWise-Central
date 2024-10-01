@@ -269,7 +269,15 @@ export default defineComponent({
         </v-list-group>
       </v-list>
 
-      <v-list v-model:open="open">
+      <v-list
+        v-model:open="open"
+        v-show="
+          checkPermission('view all employees') ||
+          checkPermission('view employees under me') ||
+          checkPermission('view teams') ||
+          checkPermission('view my teams')
+        "
+      >
         <v-list-group fluid value="Employees">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -295,7 +303,7 @@ export default defineComponent({
             value="Teams"
             title="Teams"
             prepend-icon="fa: fa-solid fa-people-group"
-            v-show="checkPermission('view teams')"
+            v-show="checkPermission('view teams') || checkPermission('view my teams')"
           ></v-list-item>
         </v-list-group>
       </v-list>
@@ -351,7 +359,14 @@ export default defineComponent({
         </v-list-group>
       </v-list>
 
-      <v-list v-model:open="open">
+      <v-list
+        v-model:open="open"
+        v-show="
+          checkPermission('view all inventory') ||
+          checkPermission('record stock take') ||
+          checkPermission('view movements')
+        "
+      >
         <v-list-group fluid value="Inventory">
           <template v-slot:activator="{ props }">
             <v-list-item

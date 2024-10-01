@@ -114,6 +114,7 @@ export class StatsService {
     console.log('checkpoint4');
 
     for (const invoice of invoices) {
+      console.log('invoice: ', invoice);
       if (invoice.paid) {
         console.log('job: ', jobs);
         console.log('invoice.jobId: ', invoice.jobId);
@@ -128,7 +129,7 @@ export class StatsService {
           total: invoice.total,
           job: {
             jobId: invoice.jobId,
-            jobTitle: jobs.find((job) => job._id.toString() === invoice.jobId.toString()).details.heading,
+            jobTitle: jobs.find((job) => job._id.toString() === invoice.jobId._id.toString()).details.heading,
           },
         });
       } else {
@@ -138,8 +139,8 @@ export class StatsService {
           invoiceNumber: invoice.invoiceNumber.toString(),
           total: invoice.total,
           job: {
-            jobId: invoice.jobId,
-            jobTitle: jobs.find((job) => job._id.toString() === invoice.jobId._id.toString()).details.heading,
+            jobId: invoice.jobId._id,
+            jobTitle: (invoice.jobId as any).details.heading,
           },
         });
       }

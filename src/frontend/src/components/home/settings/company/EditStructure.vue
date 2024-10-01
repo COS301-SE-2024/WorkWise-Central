@@ -705,11 +705,7 @@ export default defineComponent({
 
       if (add_sub_array?.length !== 0)
         axios
-          .patch(
-            API_URL + `employee/addSubordinate/${this.selectedItem.id}`,
-            add_object,
-            config
-          )
+          .patch(API_URL + `employee/addSubordinate/${this.selectedItem.id}`, add_object, config)
           .then((res) => {
             change_occured = true
           })

@@ -7,11 +7,7 @@ export class CreateRoleDto {
   @IsNotEmpty()
   @ApiProperty()
   @IsString({ each: true })
-  permissionSuite: string[] = [
-    'view all jobs assigned to me',
-    'view all clients that are assigned to me',
-    'record inventory use',
-  ];
+  permissionSuite: string[] = [];
 
   @IsNotEmpty()
   @ApiProperty()

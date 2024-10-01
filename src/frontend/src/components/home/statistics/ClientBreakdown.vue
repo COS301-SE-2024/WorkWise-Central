@@ -476,7 +476,7 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-  
+
       axios
         .get(`${API_URL}stats/numClients/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
@@ -500,8 +500,6 @@ export default {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       }
-
-
 
       axios
         .get(`${API_URL}stats/clientStats/${id}`, config)

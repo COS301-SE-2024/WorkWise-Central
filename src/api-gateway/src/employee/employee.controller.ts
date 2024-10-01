@@ -179,6 +179,75 @@ export class EmployeeController {
     @Headers() headers: any,
     @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
+    console.log('In employee findAllInCompany');
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
+    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // console.log('currentEmployee', currentEmployee);
+    // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+    let data;
+    try {
+      // console.log('In try block');
+      data = await this.employeeService.detailedFindAllInCompany(currentEmployee.companyId);
+      // console.log('data', data);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
+    // } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
+    //   let data;
+    //   try {
+    //     data = await this.employeeService.detailedFindBelowMeInCompany(currentEmployeeId);
+    //   } catch (e) {
+    //     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    //   }
+    //   return { data: data };
+    // } else {
+    //   throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    // }
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Get a detailed list of all ${className}s in a given company.`,
+    description: `Returns all ${className}s in for a given Company. The user information is also added to the response. userId returns an object with the user information.`,
+  })
+  @ApiOkResponse({
+    type: joinedEmployeeListResponseDto,
+    description: `An array of mongodb objects of the ${className} class for a given Company, joined with the User and Role tables.`,
+  })
+  @ApiParam({
+    name: 'currentEmployeeId',
+    description: `This is the _id of the ${className} making the request.`,
+    type: String,
+  })
+  @Get('/detailed/table/all/:currentEmployeeId')
+  async findAllInCompanyDetailedTable(
+    @Headers() headers: any,
+    @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+  ) {
+    console.log('In employee findAllInCompanyDetailedTable');
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
@@ -243,29 +312,30 @@ export class EmployeeController {
   })
   @Get('/all/:currentEmployeeId')
   async findAllInCompany(@Headers() headers: any, @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId) {
+    console.log('In employee findAllInCompany');
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      let data;
-      try {
-        data = await this.employeeService.findAllInCompany(currentEmployee.companyId);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
-      return { data: data };
-    } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
-      let data;
-      try {
-        data = await this.employeeService.findBelowMeInCompany(currentEmployeeId);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
-      return { data: data };
-    } else {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+    let data;
+    try {
+      data = await this.employeeService.findAllInCompany(currentEmployee.companyId);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
+    return { data: data };
+    // } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
+    //   let data;
+    //   try {
+    //     data = await this.employeeService.findBelowMeInCompany(currentEmployeeId);
+    //   } catch (e) {
+    //     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    //   }
+    //   return { data: data };
+    // } else {
+    //   throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    // }
   }
 
   //Check
@@ -316,27 +386,28 @@ export class EmployeeController {
     @Param('employeeId') employeeId: Types.ObjectId,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
+    console.log('In employee findByIdDetailed');
     console.log('employeeId: ', employeeId);
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
-    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     // console.log('currentEmployee', currentEmployee);
-    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      console.log('In if');
-      const data = await this.employeeService.detailedFindById(employeeId);
-      return { data: data };
-    } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
-      let data;
-      try {
-        data = await this.employeeService.detailedFindByIdUnderMe(employeeId, currentEmployeeId);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
-      return { data: data };
-    } else {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    }
+    // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+    console.log('In if');
+    const data = await this.employeeService.detailedFindById(employeeId);
+    return { data: data };
+    // } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
+    //   let data;
+    //   try {
+    //     data = await this.employeeService.detailedFindByIdUnderMe(employeeId, currentEmployeeId);
+    //   } catch (e) {
+    //     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    //   }
+    //   return { data: data };
+    // } else {
+    //   throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    // }
   }
 
   @UseGuards(AuthGuard)
@@ -385,25 +456,26 @@ export class EmployeeController {
     @Param('employeeId') employeeId: Types.ObjectId,
     @Query('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
+    console.log('In employee findById');
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
-    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     // console.log('currentEmployee', currentEmployee);
-    if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      const data = await this.employeeService.findById(employeeId);
-      return { data: data };
-    } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
-      let data;
-      try {
-        data = await this.employeeService.findByIdUnderMe(employeeId, currentEmployeeId);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
-      return { data: data };
-    } else {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    }
+    // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
+    const data = await this.employeeService.findById(employeeId);
+    return { data: data };
+    // } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
+    //   let data;
+    //   try {
+    //     data = await this.employeeService.findByIdUnderMe(employeeId, currentEmployeeId);
+    //   } catch (e) {
+    //     throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    //   }
+    //   return { data: data };
+    // } else {
+    //   throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    // }
   }
 
   @UseGuards(AuthGuard)

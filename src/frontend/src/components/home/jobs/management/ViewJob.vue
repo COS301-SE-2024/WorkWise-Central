@@ -503,7 +503,10 @@ const changeImage = async (event: Event) => {
 
 const checkPermission = (permission: any) => {
   console.log('Employee permissions:', employeePermissions.value)
-  console.log(' employeePermissions.value.includes(permission): ', employeePermissions.value.includes(permission))
+  console.log(
+    ' employeePermissions.value.includes(permission): ',
+    employeePermissions.value.includes(permission)
+  )
   return employeePermissions.value.includes(permission)
 }
 
