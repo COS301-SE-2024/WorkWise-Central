@@ -111,8 +111,8 @@ export default defineComponent({
       merchant_id: '',
       merchant_key: '',
       passPhrase: '',
-      return_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal/successful-payment',
-      cancel_url: 'https://tuksapi.sharpsoftwaresolutions.net/client-portal',
+      return_url: 'https://tuksui.sharpsoftwaresolutions.net/client-portal?cId=',
+      cancel_url: 'https://tuksui.sharpsoftwaresolutions.net/client-portal?cId=',
       notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
       testingMode: true,
       pfHost: 'sandbox.payfast.co.za',
@@ -330,7 +330,15 @@ export default defineComponent({
     async getRequests() {
       if (localStorage.getItem('clientId') !== null) {
         this.clientId = localStorage.getItem('clientId')
+
       }
+
+      this.return_url = this.return_url + this.clientId
+      this.cancel_url = this.cancel_url + this.clientId
+
+
+      console.log('this.return_url: ', this.return_url)
+      console.log('this.cancel_url: ', this.cancel_url)
 
       // Getting the client info
       const config = {
