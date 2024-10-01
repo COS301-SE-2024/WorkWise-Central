@@ -299,13 +299,13 @@ export class AdminController {
     description: `An array of mongodb objects in the Invites Collection`,
   })
   @Get('/invite/all/e/:eid')
-  async getAllInvitesInCompany(@Headers() headers: any, @Param('eid') empId: string) {
+  async getAllInvitesForEmployee(@Headers() headers: any, @Param('eid') empId: string) {
     try {
       const userId = extractUserId(this.jwtService, headers);
       validateObjectId(empId);
       const employeeId = new Types.ObjectId(empId);
       return {
-        data: await this.adminService.getAllInvitesInCompany(userId, employeeId),
+        data: await this.adminService.getAllInvitesForEmployee(userId, employeeId),
       };
     } catch (e) {
       throw e;
@@ -342,7 +342,7 @@ export class AdminController {
     type: BooleanResponseDto,
     description: `A joinedCompany instance belonging to the user that has been added`,
   })
-  @Post('/invite/accept')
+  @Post('/invite/reject')
   async rejectInviteFromCompany(@Headers() headers: any, @Body() rejectDto: RejectInviteDto) {
     try {
       const userId = extractUserId(this.jwtService, headers);
