@@ -58,7 +58,7 @@ export class Notification {
   @Prop({ type: Boolean, required: true, default: false })
   isJobRelated: boolean = false;
 
-  @Prop({ type: String, required: true, default: null })
+  @Prop({ type: String, required: false, default: null })
   companyName: string = null;
 
   @Prop({ type: String, default: 'ACTIVE' })

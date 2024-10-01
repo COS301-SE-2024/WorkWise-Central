@@ -248,8 +248,19 @@ export default defineComponent({
         }
       }
 
+      let body: any = {
+        employeeId: this.req_obj.employeeId,
+        emailToInvite: this.req_obj.emailToInvite
+      }
+      if (this.req_obj.roleId !== '') {
+        body.roleId = this.req_obj.roleId
+      }
+      if (this.req_obj.superiorId !== '') {
+        body.superiorId = this.req_obj.superiorId
+      }
+
       axios
-        .post(API_URL + 'admin/invite/create', this.req_obj, config)
+        .post(API_URL + 'admin/invite/create', body, config)
         .then((response) => {
           this.request_load = false
           console.log(response)
