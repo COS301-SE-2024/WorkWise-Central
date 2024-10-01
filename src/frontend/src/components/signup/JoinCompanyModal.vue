@@ -137,7 +137,7 @@ export default defineComponent({
         this.$toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'You have successfully joined the company',
+          detail: 'You have successfully requested to join the company',
           life: 3000
         })
       } else {
