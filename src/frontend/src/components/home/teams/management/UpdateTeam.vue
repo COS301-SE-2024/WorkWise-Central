@@ -232,7 +232,7 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      let data;
+      let data
 
       const remove_emp_subarray = this.currentlyselectedDBTeamMemebers.filter(
           (item) => !this.selectedTeamMembers.includes(item)

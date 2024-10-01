@@ -248,7 +248,7 @@ export default defineComponent({
       }
       console.log(JSON.stringify(data))
       await axios
-        .patch(`${API_URL}role/${this.selectedItem._id}`, data , config)
+        .patch(`${API_URL}role/${this.selectedItem._id}`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

@@ -386,7 +386,7 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-  
+
       try {
         const response = await axios.get(`${API_URL}stats/employeeStats/${employee._id}`, config)
         const data = response.data.data
