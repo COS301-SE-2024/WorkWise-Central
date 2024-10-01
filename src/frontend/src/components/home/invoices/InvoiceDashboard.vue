@@ -102,9 +102,9 @@
                 <v-list-item>
                   <ViewInvoice :invoice="selectedItem" />
                 </v-list-item>
-                <v-list-item>
+                <!-- <v-list-item>
                   <EditInvoice :editedInvoice="selectedItem" :invoice_id="selectedItem._id" />
-                </v-list-item>
+                </v-list-item> -->
                 <v-list-item>
                   <DeleteInvoice :invoice_id="selectedItem._id" @InvoiceDeleted="getRequests" />
                 </v-list-item>
@@ -186,7 +186,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import DeleteInvoice from './DeleteInvoice.vue'
-import EditInvoice from './EditInvoice.vue'
+// import EditInvoice from './EditInvoice.vue'
 import ViewInvoice from './ViewInvoices.vue'
 import { API_URL } from '@/main'
 import Toast from 'primevue/toast'
@@ -249,7 +249,7 @@ export default defineComponent({
       employeePermissions: []
     }
   },
-  components: { DeleteInvoice, ViewInvoice, Toast, SendInvoice, EditInvoice },
+  components: { DeleteInvoice, ViewInvoice, Toast, SendInvoice },
   methods: {
     formatDate(dateString) {
       if (!dateString) return ''
