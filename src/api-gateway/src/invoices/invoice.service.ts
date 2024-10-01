@@ -300,6 +300,10 @@ export class InvoiceService {
     dto.subTotal = totalTemp - dto.taxAmount;
     }
 
+    if(updateInvoiceDto.sent){
+      dto.sent = updateInvoiceDto.sent;
+      dto.sentDate = updateInvoiceDto.sentDate;
+    }
     return await this.invoiceRepository.update(id, dto);
   }
 
