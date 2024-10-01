@@ -97,6 +97,29 @@ export class TeamRepository {
     return result;
   }
 
+  async detailedFindAllInCompanyForEmployee(
+    identifier: Types.ObjectId,
+    fieldsToPouplate: string[],
+    employeeId: Types.ObjectId,
+  ) {
+    const result: (FlattenMaps<Team> & { _id: Types.ObjectId })[] = await this.teamModel
+      .find({
+        $and: [
+          {
+            companyId: identifier,
+          },
+          { teamMembers: { $in: employeeId } },
+          {
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      })
+      .populate(fieldsToPouplate)
+      .lean();
+
+    return result;
+  }
+
   async findByNameInCompany(name: string, companyIdentification: Types.ObjectId) {
     const result: FlattenMaps<Team> & { _id: Types.ObjectId } = await this.teamModel
       .findOne({
