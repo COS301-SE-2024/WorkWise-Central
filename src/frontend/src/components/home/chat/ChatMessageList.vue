@@ -273,11 +273,17 @@ const downloadAttachment = (url) => {
   left: 0;
   background-color: rgba(104, 122, 141, 0.8);
   z-index: 1;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .message-list > * {
   position: relative;
   z-index: 2;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .message {
@@ -375,4 +381,5 @@ const downloadAttachment = (url) => {
 :deep(.p-carousel .p-carousel-indicators) {
   display: none;
 }
+
 </style>
