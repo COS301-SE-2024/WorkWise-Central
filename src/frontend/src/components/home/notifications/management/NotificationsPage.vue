@@ -418,12 +418,12 @@ export default {
             console.error(error)
           }
 
-          this.$toast.add({
+          /*          this.$toast.add({
             severity: 'info',
             summary: 'Success',
             detail: 'Notification marked as read',
             life: 3000
-          })
+          })*/
         }
       }
     },
@@ -450,7 +450,7 @@ export default {
                 this.$toast.add({
                   severity: 'info',
                   summary: 'Success',
-                  detail: 'Notification marked as read',
+                  detail: 'Notification marked as unread',
                   life: 3000
                 })
               }
