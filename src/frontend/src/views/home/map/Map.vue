@@ -93,20 +93,39 @@
             :style="{ width: '50vw' }"
             modal
         >
-          <div>
-            <InputText v-model="newVehicle.vin" placeholder="VIN" class="w-full md:w-56 mt-2" />
-            <InputText v-model="newVehicle.name.make" placeholder="Make" class="w-full md:w-56 mt-2" />
-            <InputText v-model="newVehicle.name.model" placeholder="Model" class="w-full md:w-56 mt-2" />
-            <InputNumber v-model="newVehicle.modelYear" placeholder="Model Year" :useGrouping="false"  class="w-full md:w-56 mt-2" />
-            <InputText v-model="newVehicle.licensePlate" placeholder="License Plate" class="w-full md:w-56 mt-2" />
-            <InputNumber v-model="newVehicle.mileage" placeholder="Mileage" class="w-full md:w-56 mt-2" />
-            <InputNumber v-model="newVehicle.location.latitude" placeholder="Latitude" class="w-full md:w-56 mt-2" />
-            <InputNumber v-model="newVehicle.location.longitude" placeholder="Longitude" class="w-full md:w-56 mt-2" />
-            <InputNumber v-model="newVehicle.statistics.totalTrips" placeholder="Total Trips" class="w-full md:w-56 mt-2" />
-            <InputNumber v-model="newVehicle.statistics.totalDistance" placeholder="Total Distance In KM" class="w-full md:w-56 mt-2" />
-            <InputNumber v-model="newVehicle.statistics.averageFuelConsumption" placeholder="Average Fuel Consumption In Litres" class="w-full md:w-56 mt-2" mode="decimal" />
-            <SelectC v-model="newVehicle.fuelType" :options="fuelTypes" optionLabel="label" optionValue="value" placeholder="Select Fuel Type" class="w-full md:w-56 mt-2" />
-            <FileUpload v-model="newVehicle.images" name="image" accept="image/*" customUpload auto chooseLabel="Choose Image" class="w-full md:w-56 mt-2" />
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <InputText v-model="newVehicle.vin" placeholder="VIN" class="w-full" />
+            <InputText v-model="newVehicle.name.make" placeholder="Make" class="w-full" />
+            <InputText v-model="newVehicle.name.model" placeholder="Model" class="w-full" />
+            <InputNumber v-model="newVehicle.modelYear" placeholder="Model Year" :useGrouping="false" class="w-full" />
+            <InputText v-model="newVehicle.licensePlate" placeholder="License Plate" class="w-full" />
+            <InputNumber v-model="newVehicle.mileage" placeholder="Mileage" class="w-full" />
+            <InputNumber v-model="newVehicle.location.latitude" placeholder="Latitude" class="w-full" />
+            <InputNumber v-model="newVehicle.location.longitude" placeholder="Longitude" class="w-full" />
+            <InputNumber v-model="newVehicle.statistics.totalTrips" placeholder="Total Trips" class="w-full" />
+            <InputNumber v-model="newVehicle.statistics.totalDistance" placeholder="Total Distance In KM" class="w-full" />
+            <InputNumber
+                v-model="newVehicle.statistics.averageFuelConsumption"
+                placeholder="Average Fuel Consumption In Litres"
+                mode="decimal"
+                class="w-full"
+            />
+            <SelectC
+                v-model="newVehicle.fuelType"
+                :options="fuelTypes"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Fuel Type"
+                class="w-full"
+            />
+            <FileUpload
+                v-model="newVehicle.images"
+                name="image"
+                accept="image/*"
+                chooseLabel="Choose Image"
+                class="w-full"
+                mode="basic"
+            />
           </div>
           <template #footer>
             <Button
@@ -512,8 +531,14 @@ export default {
   methods: {
     async addNewVehicle() {
       try {
+        // const res = await axios.post(`${API_URL}file/upload`, this.newVehicle, {headers: {
+        //     'Content-Type': 'multipart/form-data',
+        //     Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        //   }})
+        // this.newVehicle.images = res.data.data (I'm assuming urls')
+        // console.log('Response:', res.data.data)
         const data = {
-          data: this.newVehicle,
+          ...this.newVehicle,
           employeeId: localStorage.getItem('employeeId'),
           companyId: localStorage.getItem('currentCompany')
         }
