@@ -440,6 +440,7 @@
                 @click="validateForm"
                 boarder="md"
                 width="100%"
+                :disabled="!valid || request_load"
                 height="35"
                 variant="text"
                 data-testid="create-btn"
@@ -751,8 +752,11 @@ export default defineComponent({
                 summary: 'Success',
                 detail: 'Job Added Successfully'
               })
-              this.request_load = false
-              window.location.reload()
+              this.jobDialog = false
+              setTimeout(() => {
+                this.request_load = false
+                window.location.reload()
+              }, 1500)
             })
             .catch((error) => {
               console.log(error)

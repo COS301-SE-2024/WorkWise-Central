@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UseGuards,
   Headers,
+  Query,
 } from '@nestjs/common';
 import { CreateTeamDto, createTeamResponseDto } from './dto/create-team.dto';
 import { AddTeamMembersDto, RemoveTeamMembersDto, UpdateTeamDto } from './dto/update-team.dto';
@@ -34,6 +35,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { extractUserId } from '../utils/Utils';
+import { EmployeeService } from '../employee/employee.service';
 
 const className = 'Team';
 
@@ -44,6 +46,7 @@ export class TeamController {
     private readonly teamService: TeamService,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly employeeService: EmployeeService,
   ) {}
 
   async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
@@ -211,6 +214,64 @@ export class TeamController {
     await this.validateRequestWithCompanyId(userId, companyId);
 
     const data = await this.teamService.detailedFindAllInCompany(companyId);
+    return { data: data };
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiNoContentResponse({
+    type: HttpException,
+    status: HttpStatus.NO_CONTENT,
+    description: `There was no data returned for the request. Please check the request and try again.`,
+  })
+  @ApiBadRequestResponse({
+    type: HttpException,
+    status: HttpStatus.BAD_REQUEST,
+    description: `There is something wrong with the request. Please check the request and try again.`,
+  })
+  @ApiUnauthorizedResponse({
+    type: HttpException,
+    status: HttpStatus.UNAUTHORIZED,
+    description: `The user making the request and jwt mismatch.`,
+  })
+  @ApiForbiddenResponse({
+    type: HttpException,
+    status: HttpStatus.FORBIDDEN,
+    description: `The user making the request is not authorized to view the data.`,
+  })
+  @ApiOperation({
+    summary: `Find an ${className}`,
+    description: `Returns the ${className} instance with the given id and Company id.`,
+  })
+  @ApiOkResponse({
+    type: teamResponseDto,
+    description: `Array of detailed mongodb ${className} objects, in a particular Company, with an _id attribute`,
+  })
+  @ApiParam({
+    name: 'companyId',
+    description: `The _id of the Company fo which the teams must be returned.`,
+    type: String,
+  })
+  @Get('detailed/table/all/:companyId')
+  async detailedFindAllInCompanyTable(
+    @Headers() headers: any,
+    @Param('companyId') companyId: Types.ObjectId,
+    @Query('employeeId') employeeId: Types.ObjectId,
+  ) {
+    const userId = await extractUserId(this.jwtService, headers);
+    await this.validateRequestWithCompanyId(userId, companyId);
+    const employee = await this.employeeService.findById(employeeId);
+    console.log('employee: ', employee);
+    let data;
+
+    if (employee.role.permissionSuite.includes('view teams')) {
+      console.log('In all teams');
+      data = await this.teamService.detailedFindAllInCompany(companyId);
+    } else if (employee.role.permissionSuite.includes('view my teams')) {
+      console.log('In my teams');
+      data = await this.teamService.detailedFindAllInCompanyForEmployee(companyId, employeeId);
+    }
+
     return { data: data };
   }
 

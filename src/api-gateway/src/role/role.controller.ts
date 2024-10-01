@@ -50,7 +50,11 @@ export class RoleController {
   ) {}
 
   async validateRequestWithEmployeeId(userId: Types.ObjectId, currentEmployeeId: Types.ObjectId) {
+    console.log('In validateRequestWithEmployeeId');
+    console.log('userId: ', userId);
+    console.log('currentEmployeeId: ', currentEmployeeId);
     const user = await this.userService.getUserById(userId);
+    console.log('User: ', user);
     if (!user.joinedCompanies.find((joined) => joined.employeeId.toString() === currentEmployeeId.toString())) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -384,7 +388,10 @@ export class RoleController {
     @Body() externalCreateRoleDto: ExternalUpdateRoleDto,
   ) {
     console.log('In update');
+    console.log('roleId: ', roleId);
+    console.log('externalCreateRoleDto: ', externalCreateRoleDto);
     const userId = await extractUserId(this.jwtService, headers);
+    console.log('userId: ', userId);
     await this.validateRequestWithEmployeeId(userId, externalCreateRoleDto.currentEmployeeId);
 
     const currentEmployee = await this.employeeService.findById(externalCreateRoleDto.currentEmployeeId);
@@ -399,6 +406,7 @@ export class RoleController {
       }
       return { data: data };
     } else {
+      console.log('Invalid permission');
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
   }

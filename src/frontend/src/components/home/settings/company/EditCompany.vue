@@ -277,7 +277,8 @@ export default defineComponent({
     ]
   }),
   methods: {
-    cancel() {
+    async cancel() {
+      await this.getCompanyDetails()
       this.$toast.add({
         severity: 'info',
         summary: 'Info',

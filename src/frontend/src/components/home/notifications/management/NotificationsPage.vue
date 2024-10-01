@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid fill-height>
     <Toast position="top-center" />
     <v-row class="justify-center align-center">
       <v-col cols="12" class="text-center">

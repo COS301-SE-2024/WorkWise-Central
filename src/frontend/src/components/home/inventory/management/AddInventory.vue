@@ -30,7 +30,11 @@
           <v-col>
             <v-row>
               <v-col cols="12" lg="6">
-                <h6>Product Name</h6>
+                <h6>
+                  Product Name<label style="font-size: 14px; font-weight: lighter; color: red"
+                    >*</label
+                  >
+                </h6>
                 <v-text-field
                   v-model="name"
                   color="secondary"
@@ -45,7 +49,6 @@
                 <v-text-field
                   v-model="description"
                   color="secondary"
-                  required
                   hide-details="auto"
                   :disabled="isDeleting"
                 ></v-text-field></v-col
@@ -57,7 +60,7 @@
                 <v-text-field
                   v-model="costPrice"
                   color="secondary"
-                  required
+                  :rules="costPriceRules"
                   hide-details="auto"
                   :disabled="isDeleting"
                 ></v-text-field
@@ -67,7 +70,7 @@
                 <v-text-field
                   v-model="currentStockLevel"
                   color="secondary"
-                  required
+                  :rules="currentStockLevelRules"
                   hide-details="auto"
                   :disabled="isDeleting"
                 ></v-text-field
@@ -77,7 +80,7 @@
                 <v-text-field
                   v-model="reorderLevel"
                   color="secondary"
-                  required
+                  :rules="reorderLevelRules"
                   :disabled="isDeleting"
                 ></v-text-field></v-col
             ></v-row>

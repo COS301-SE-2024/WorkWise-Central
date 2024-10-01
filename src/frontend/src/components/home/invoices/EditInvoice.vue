@@ -40,7 +40,11 @@
             <!-- Inventory Items -->
             <v-col>
               <small class="text-caption">Inventory Items</small>
-              <v-row v-for="(item, index) in localEditedInvoice.inventoryItems" :key="index" class="d-flex align-center">
+              <v-row
+                v-for="(item, index) in localEditedInvoice.inventoryItems"
+                :key="index"
+                class="d-flex align-center"
+              >
                 <v-col cols="5">
                   <v-text-field
                     v-model="item.description"
@@ -71,7 +75,11 @@
             <!-- Labor Items -->
             <v-col>
               <small class="text-caption">Labor Items</small>
-              <v-row v-for="(item, index) in localEditedInvoice.laborItems" :key="index" class="d-flex align-center">
+              <v-row
+                v-for="(item, index) in localEditedInvoice.laborItems"
+                :key="index"
+                class="d-flex align-center"
+              >
                 <v-col cols="5">
                   <v-text-field
                     v-model="item.description"
@@ -141,8 +149,8 @@ interface Invoice {
   paymentDate: Date
   total: number
   paid: boolean
-  inventoryItems: { description: string, quantity: number }[]
-  laborItems: { description: string, hours: number }[]
+  inventoryItems: { description: string; quantity: number }[]
+  laborItems: { description: string; hours: number }[]
 }
 
 export default {

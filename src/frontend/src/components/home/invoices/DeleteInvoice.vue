@@ -84,7 +84,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.deleteDialog = false
-            this.$emit('InvoiceDeleted', response.data.data)
+            this.$emit('InvoiceDeleted')
           }, 3000)
         })
       } catch (error) {

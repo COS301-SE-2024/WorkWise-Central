@@ -449,7 +449,9 @@ export class EmployeeService {
     }
 
     const newRole = new roleObject();
-    newRole.roleId = new Types.ObjectId(roleId);
+    if (roleId) {
+      newRole.roleId = new Types.ObjectId(roleId);
+    }
     if (updateRoleDto.permissionSuite) {
       newRole.permissionSuite = updateRoleDto.permissionSuite;
     } else {

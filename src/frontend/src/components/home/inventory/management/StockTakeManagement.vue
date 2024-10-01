@@ -1,5 +1,6 @@
 <template>
   <v-app :style="isDarkMode === true ? 'dark' : 'light'">
+    <Toast position="top-center" />
     <v-container fluid fill-height>
       <v-card height="auto" class="pa-11 ma-0 bg-cardColor" rounded="md" border="md">
         <!-- Title and search area -->
@@ -61,6 +62,11 @@
             :row-props="getRowProps"
             :header-props="{ class: 'bg-secondRowColor h6' }"
           >
+            <template v-slot:[`item.currentStockLevel`]="{ item }">
+              <v-chip :color="item.currentStockLevel < 10 ? 'error' : 'success'">{{
+                item.currentStockLevel
+              }}</v-chip>
+            </template>
             <template v-slot:[`item.reorderLevel`]="{ item }">
               <v-text-field type="number" v-model="item.newReorderLevel"> </v-text-field>
             </template>
@@ -200,7 +206,9 @@
           <v-card>
             <v-card-title class="headline">Update Inventory</v-card-title>
             <v-card-text>
-              <p class="pt-5 pb-5">Do you want to update the inventory table based on this stock take?</p>
+              <p class="pt-5 pb-5">
+                Do you want to update the inventory table based on this stock take?
+              </p>
               <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="400px"></iframe>
             </v-card-text>
             <v-card-actions>
@@ -212,7 +220,12 @@
                     >
                   </v-col>
                   <v-col cols="12" lg="6" order="first" order-lg="last">
-                    <v-btn @click="confirmUpdate(true)" block color="green darken-1" text
+                    <v-btn
+                      @click="confirmUpdate(true)"
+                      block
+                      color="green darken-1"
+                      text
+                      :loading="isUpdating"
                       ><v-icon icon="fa: fa-solid fa-check" color="green darken-1"></v-icon
                       >Yes</v-btn
                     >
@@ -232,6 +245,7 @@ import axios from 'axios'
 import Chart from 'primevue/chart'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import Toast from 'primevue/toast'
 import { API_URL } from '@/main'
 
 export default {
@@ -299,7 +313,8 @@ export default {
     }
   },
   components: {
-    Chart
+    Chart,
+    Toast
   },
   computed: {
     filteredInventoryItems() {
@@ -426,7 +441,8 @@ export default {
     },
     async confirmUpdate(update) {
       this.updateInventory = update
-      this.confirmDialog = false
+      this.isUpdating = true
+
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -451,8 +467,28 @@ export default {
       try {
         const response = await axios.post(`${API_URL}stocktake/create`, data, config)
         console.log('Response:', response)
-        console.log('Hello world!')
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Stock take saved successfully'
+        })
+        setTimeout(() => {
+          this.confirmDialog = false
+          this.isUpdating = false
+          this.getInventoryItems()
+        }, 3000)
       } catch (error) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to save stock take'
+        })
+        setTimeout(() => {
+          this.resetForm
+          this.confirmDialog = false
+          this.isUpdating = false
+          this.getInventoryItems()
+        }, 3000)
         console.log('Failure to update stock take', error)
       }
     },

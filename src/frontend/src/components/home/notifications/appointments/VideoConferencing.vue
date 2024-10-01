@@ -337,6 +337,31 @@ export default defineComponent({
 
           updateTrackForAllPeers(cameraTrack) // Notify other peers about the new track
         }
+        try {
+          // const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true })
+          // const screenTrack = screenStream.getVideoTracks()[0]
+
+          if (localStream) {
+            const videoTrack = localStream.getVideoTracks()[0]
+            if (videoTrack) {
+              localStream.removeTrack(videoTrack) // Remove the current camera track
+            }
+
+            // localStream.addTrack(screenTrack) // Add the screen track
+
+            // Update the local video element's stream
+            if (localVideoElement) {
+              if (localVideoElement) {
+                ;(localVideoElement as HTMLVideoElement).srcObject = null // Reset the stream first
+              } // Reset the stream first
+              ;(localVideoElement as HTMLVideoElement).srcObject = localStream // Re-assign the updated stream
+            }
+
+            // updateTrackForAllPeers(screenTrack) // Notify other peers about the screen track
+          }
+        } catch (error) {
+          console.error('Failed to share screen:', error)
+        }
       } else {
         // Start screen sharing
         try {

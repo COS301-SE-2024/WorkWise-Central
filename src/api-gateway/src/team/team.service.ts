@@ -94,7 +94,9 @@ export class TeamService {
     newRole.companyId = createTeamDto.companyId;
     newRole.teamLeaderId = createTeamDto.teamLeaderId;
     newRole.teamMembers = createTeamDto.teamMembers;
-    newRole.teamMembers.push(newRole.teamLeaderId);
+    if (!newRole.teamMembers.includes(newRole.teamLeaderId)) {
+      newRole.teamMembers.push(newRole.teamLeaderId);
+    }
 
     return await this.teamRepository.save(newRole);
   }
@@ -113,6 +115,14 @@ export class TeamService {
   }
   async detailedFindAllInCompany(companyId: Types.ObjectId) {
     return this.teamRepository.detailedFindAllInCompany(companyId, ['teamMembers', 'teamLeaderId']);
+  }
+
+  async detailedFindAllInCompanyForEmployee(companyId: Types.ObjectId, employeeId: Types.ObjectId) {
+    return this.teamRepository.detailedFindAllInCompanyForEmployee(
+      companyId,
+      ['teamMembers', 'teamLeaderId'],
+      employeeId,
+    );
   }
 
   async findByNameInCompany(name: string, companyId: Types.ObjectId) {
@@ -141,13 +151,20 @@ export class TeamService {
 
   async update(id: Types.ObjectId, updateTeamDto: InternalUpdateTeamDto) {
     const validation = await this.validateUpdateTeam(id, updateTeamDto);
+    const team = await this.findById(id);
 
     if (!validation.isValid) {
       throw new Error(validation.message);
     }
     const updateDto = new InternalUpdateTeamDto();
     updateDto.teamName = updateTeamDto.teamName;
-    updateDto.teamLeaderId = updateTeamDto.teamLeaderId;
+    if (updateTeamDto.teamLeaderId) {
+      updateDto.teamLeaderId = updateTeamDto.teamLeaderId;
+      //removing the current team leader from the team members list
+      updateDto.teamMembers = team.teamMembers.filter((x) => x.toString() != updateTeamDto.teamLeaderId.toString());
+      //adding the new team leader to the team members list
+      updateDto.teamMembers.push(updateTeamDto.teamLeaderId);
+    }
     updateDto.currentJobAssignments = updateTeamDto.currentJobAssignments;
     return this.teamRepository.update(id, updateDto);
   }

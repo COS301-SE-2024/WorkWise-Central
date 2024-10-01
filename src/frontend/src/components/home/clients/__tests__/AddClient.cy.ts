@@ -2,7 +2,7 @@ import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import AddClient from '../management/AddClient.vue'
 
-it('renders add client form on a laptop viewport',  () => {
+it('renders add client form on a laptop viewport', () => {
   const vuetify = createVuetify()
   mount(AddClient, {
     global: {
