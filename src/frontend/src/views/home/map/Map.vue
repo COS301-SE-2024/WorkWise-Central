@@ -56,6 +56,14 @@
         <v-row>
           <v-col cols="12" class="text-center pt-10">
             <Button
+                label="Add New Vehicle"
+                icon="fa: fa-solid fa-plus"
+                @click="newVehicleDialogVisible = true"
+                class="custom-button"
+            />
+          </v-col>
+          <v-col cols="12" class="text-center">
+            <Button
               label="Show All Vehicle Data"
               icon="fa: fa-solid fa-external-link"
               @click="dialogVisible = true"
@@ -79,6 +87,42 @@
             />
           </v-col>
         </v-row>
+        <Dialog
+            v-model:visible="newVehicleDialogVisible"
+            header="Add New Vehicle"
+            :style="{ width: '50vw' }"
+            modal
+        >
+          <div>
+            <InputText v-model="newVehicle.vin" placeholder="VIN" class="w-full md:w-56 mt-2" />
+            <InputText v-model="newVehicle.name.make" placeholder="Make" class="w-full md:w-56 mt-2" />
+            <InputText v-model="newVehicle.name.model" placeholder="Model" class="w-full md:w-56 mt-2" />
+            <InputNumber v-model="newVehicle.modelYear" placeholder="Model Year" :useGrouping="false"  class="w-full md:w-56 mt-2" />
+            <InputText v-model="newVehicle.licensePlate" placeholder="License Plate" class="w-full md:w-56 mt-2" />
+            <InputNumber v-model="newVehicle.mileage" placeholder="Mileage" class="w-full md:w-56 mt-2" />
+            <InputNumber v-model="newVehicle.location.latitude" placeholder="Latitude" class="w-full md:w-56 mt-2" />
+            <InputNumber v-model="newVehicle.location.longitude" placeholder="Longitude" class="w-full md:w-56 mt-2" />
+            <InputNumber v-model="newVehicle.statistics.totalTrips" placeholder="Total Trips" class="w-full md:w-56 mt-2" />
+            <InputNumber v-model="newVehicle.statistics.totalDistance" placeholder="Total Distance In KM" class="w-full md:w-56 mt-2" />
+            <InputNumber v-model="newVehicle.statistics.averageFuelConsumption" placeholder="Average Fuel Consumption In Litres" class="w-full md:w-56 mt-2" mode="decimal" />
+            <SelectC v-model="newVehicle.fuelType" :options="fuelTypes" optionLabel="label" optionValue="value" placeholder="Select Fuel Type" class="w-full md:w-56 mt-2" />
+            <FileUpload v-model="newVehicle.images" name="image" accept="image/*" customUpload auto chooseLabel="Choose Image" class="w-full md:w-56 mt-2" />
+          </div>
+          <template #footer>
+            <Button
+                label="Add"
+                class="p-button-success"
+                icon="fa: fa-solid fa-check"
+                @click="addNewVehicle"
+            />
+            <Button
+                label="Cancel"
+                class="p-button-danger"
+                icon="fa: fa-solid fa-times"
+                @click="newVehicleDialogVisible = false"
+            />
+          </template>
+        </Dialog>
         <Dialog
           v-model:visible="assignDialogVisible"
           header="Assign Vehicle"
@@ -256,16 +300,17 @@
       <GoogleMap :api-key="apiKey" style="width: 100%; height: 100%" :center="mapCenter" :zoom="12">
         <!-- Company Marker -->
         <CustomMarker
-          v-if="company"
-          :options="{ position: companyLocation, anchorPoint: 'BOTTOM_CENTER' }"
+            v-if="company"
+            :options="{ position: companyLocation, anchorPoint: 'BOTTOM_CENTER' }"
+            @click="companyInfoWindowVisible = !companyInfoWindowVisible"
         >
           <img
-            src="@/assets/images/markers/BuildingMarker.png"
-            width="50"
-            height="50"
-            style="margin-top: 8px"
+              src="@/assets/images/markers/BuildingMarker.png"
+              width="50"
+              height="50"
+              style="margin-top: 8px"
           />
-          <InfoWindow>
+          <InfoWindow v-if="companyInfoWindowVisible">
             <div id="companyContent">
               <img class="centered" v-if="company.logo" :src="company.logo" alt="Company Logo" />
               <h6 style="color: black">{{ company.name }}</h6>
@@ -277,14 +322,14 @@
         </CustomMarker>
 
         <!-- Current Location Marker -->
-        <CustomMarker :options="{ position: currentLocation, anchorPoint: 'BOTTOM_CENTER' }">
+        <CustomMarker :options="{ position: currentLocation, anchorPoint: 'BOTTOM_CENTER' }" @click="locationInfoWindowVisible = !locationInfoWindowVisible" >
           <img
             src="@/assets/images/markers/PersonMarker.png"
             width="50"
             height="50"
             style="margin-top: 8px"
           />
-          <InfoWindow>
+          <InfoWindow v-if="locationInfoWindowVisible">
             <div id="content">
               <h1 id="firstHeading" style="color: black">You Are Here</h1>
             </div>
@@ -300,6 +345,7 @@
             label: vehicle.driver,
             anchorPoint: 'BOTTOM_CENTER'
           }"
+          @click="vehicleInfoWindowVisible = !vehicleInfoWindowVisible"
         >
           <img
             src="@/assets/images/markers/CarMarker.png"
@@ -307,7 +353,7 @@
             height="50"
             style="margin-top: 8px"
           />
-          <InfoWindow>
+          <InfoWindow v-if="vehicleInfoWindowVisible">
             <div style="color: black">
               <h4>{{ vehicle.name.make }} {{ vehicle.name.model }}</h4>
               <p><strong>Driver:</strong> {{ vehicle.employeeId }}</p>
@@ -344,12 +390,14 @@ import SelectC from 'primevue/select'
 import Tag from 'primevue/tag'
 import ImageC from 'primevue/image'
 import Listbox from 'primevue/listbox'
+import FileUpload from 'primevue/fileupload'
 import { VehicleAvailabilityEnum, FuelType } from './models/vehicles'
 
 export default {
   name: 'SystemMap',
   components: {
     GoogleMap,
+    FileUpload,
     // eslint-disable-next-line vue/no-reserved-component-names
     CustomMarker,
     InfoWindow,
@@ -402,6 +450,7 @@ export default {
           scale: 0.06
         }
       },
+      newVehicleDialogVisible: false,
       showVehicleList: false,
       selectedVehicle: null,
       apiKey: GOOGLE_MAPS_API_KEY,
@@ -427,7 +476,22 @@ export default {
       selectedEmployee: null,
       totalDistanceToday: 0,
       averageFuelConsumption: 0,
-      vehiclesDueForService: 0
+      vehiclesDueForService: 0,
+      companyInfoWindowVisible: false,
+      locationInfoWindowVisible: false,
+      vehicleInfoWindowVisible: false,
+      newVehicle: {
+        vin: '',
+        name: { make: '', model: '' },
+        images: [''],
+        modelYear: null,
+        licensePlate: '',
+        availability: { status: 'Available', assignedTo: null },
+        mileage: null,
+        fuelType: '',
+        location: { latitude: null, longitude: null },
+        statistics: { totalTrips: null, totalDistance: null, averageFuelConsumption: null }
+      }
     }
   },
   mounted() {
@@ -446,6 +510,36 @@ export default {
     }
   },
   methods: {
+    async addNewVehicle() {
+      try {
+        const data = {
+          data: this.newVehicle,
+          employeeId: localStorage.getItem('employeeId'),
+          companyId: localStorage.getItem('currentCompany')
+        }
+        const response = await axios.post(
+            `${this.apiUrl}fleet/create`, data,
+            this.getAuthConfig()
+        )
+        console.log('New Vehicle Added:', response.data.data)
+        this.newVehicleDialogVisible = false
+        this.newVehicle = {
+          vin: '',
+          name: { make: '', model: '' },
+          images: [''],
+          modelYear: null,
+          licensePlate: '',
+          availability: { status: 'Available', assignedTo: null },
+          mileage: null,
+          fuelType: '',
+          location: { latitude: null, longitude: null },
+          statistics: { totalTrips: null, totalDistance: null, averageFuelConsumption: null }
+        }
+        await this.getVehiclesData()
+      } catch (error) {
+        console.error('Error adding new vehicle:', error)
+      }
+    },
     closeAndRedirect() {
       if (this.selectedVehicle) {
         this.redirectMap(
@@ -507,9 +601,9 @@ export default {
           )
         ])
 
-        const employeesMap = {}
+        const employeesMap = new Map()
         employeesResponse.data.data.forEach((employee) => {
-          employeesMap[employee._id] = employee
+          employeesMap.set(employee._id, employee)
         })
 
         this.vehicles = vehiclesResponse.data.data.map((vehicle) => ({
