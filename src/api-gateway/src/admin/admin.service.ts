@@ -27,6 +27,7 @@ import { NotificationService } from '../notification/notification.service';
 import { Role } from '../role/entity/role.entity';
 import { InviteToJoin } from './entities/invite-to-join.entity';
 import { EmailService } from '../email/email.service';
+import { Message } from '../notification/entities/notification.entity';
 
 @Injectable()
 export class AdminService {
@@ -315,6 +316,11 @@ export class AdminService {
     //TODO: Permissions of user to add person
     ///
 
+    const personAlreadyThere = await this.usersService.userIsInCompany(requestingUser._id, acceptRequestDto.companyId);
+    if (personAlreadyThere) {
+      throw new ConflictException('User is already in the company');
+    }
+
     if (acceptRequestDto.accept) {
       const username: string = (await this.usersService.getUserById(acceptRequestDto.userToJoinId)).systemDetails
         .username;
@@ -348,16 +354,18 @@ export class AdminService {
       const lName = requestingUser.personalInfo.surname;
       const companyName = company.name;
       const roleName = userRole.roleName;
-      await this.notificationService.createNotificationsFromUser({
-        //THIS IS A MOCK
-        message: {
-          title: 'Congrats',
-          body: `Congratulations, ${fName} ${lName}! You have been accepted into ${companyName} in the role: ${roleName}`,
-        },
+
+      const message = new Message(
+        'Welcome to the team',
+        `Congratulations, ${fName} ${lName}! You have been accepted into ${companyName} in the role: ${roleName}`,
+      );
+      this.notificationService.create({
         recipientIds: [acceptRequestDto.userToJoinId],
         isJobRelated: false,
         companyName: company.name,
+        message: message,
       });
+
       //remove request
       await this.adminRepository.acceptRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
 
@@ -367,15 +375,15 @@ export class AdminService {
       const lName = requestingUser.personalInfo.surname;
       const companyName = company.name;
       //Reject and delete request
-      await this.notificationService.createNotificationsFromUser({
-        //THIS IS A MOCK
-        message: {
-          title: 'Rejection',
-          body: `Good day, ${fName} ${lName}. You have unfortunately been rejected from ${companyName}.`,
-        },
+      const message = new Message(
+        'Rejection from company',
+        `Good day, ${fName} ${lName}. You have unfortunately been rejected from ${companyName}.`,
+      );
+      this.notificationService.create({
         recipientIds: [acceptRequestDto.userToJoinId],
         isJobRelated: false,
         companyName: company.name,
+        message: message,
       });
       await this.adminRepository.rejectRequest(acceptRequestDto.userToJoinId, acceptRequestDto.companyId);
       return true;
@@ -444,5 +452,16 @@ export class AdminService {
 
     await this.adminRepository.rejectInvite(invite.emailBeingInvited, invite.companyId);
     return true;
+  }
+
+  async getAllInvitesForEmployee(userId: Types.ObjectId, employeeId: Types.ObjectId) {
+    const user = await this.usersService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException('userId Invalid');
+    }
+    const employee = await this.employeeService.findById(employeeId);
+    if (!employee) throw new NotFoundException('Employee Not Found');
+
+    return this.adminRepository.findInvitesForUser(user?.personalInfo?.contactInfo?.email);
   }
 }

@@ -3,7 +3,7 @@
   <v-app :theme="isDarkMode ? 'dark' : 'light'">
     <v-app-bar class="bg-background">
       <v-toolbar-title
-        ><v-label :class="'h4 text-primary'">Rest</v-label>
+        ><v-label :class="'h4 text-primary'">Reset</v-label>
         <v-label :class="'h4 text-secondary'">Password</v-label></v-toolbar-title
       >
       <v-btn @click="toggleDarkMode" base-color="background"

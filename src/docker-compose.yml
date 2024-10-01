@@ -29,6 +29,7 @@ services:
       - '3000:3000'
     environment:
       NEST_BACKEND_ENVIRONMENT: prod
+      SERVER_LOGIN: ${SERVER_LOGIN}
 
 #  mongo_db:
 #    restart: unless-stopped
