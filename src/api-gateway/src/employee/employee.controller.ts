@@ -185,15 +185,15 @@ export class EmployeeController {
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     // console.log('currentEmployee', currentEmployee);
     // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      let data;
-      try {
-        // console.log('In try block');
-        data = await this.employeeService.detailedFindAllInCompany(currentEmployee.companyId);
-        // console.log('data', data);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
-      return { data: data };
+    let data;
+    try {
+      // console.log('In try block');
+      data = await this.employeeService.detailedFindAllInCompany(currentEmployee.companyId);
+      // console.log('data', data);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
     // } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
     //   let data;
     //   try {
@@ -244,8 +244,8 @@ export class EmployeeController {
   })
   @Get('/detailed/table/all/:currentEmployeeId')
   async findAllInCompanyDetailedTable(
-      @Headers() headers: any,
-      @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
+    @Headers() headers: any,
+    @Param('currentEmployeeId') currentEmployeeId: Types.ObjectId,
   ) {
     console.log('In employee findAllInCompanyDetailedTable');
     const userId = await extractUserId(this.jwtService, headers);
@@ -318,13 +318,13 @@ export class EmployeeController {
 
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      let data;
-      try {
-        data = await this.employeeService.findAllInCompany(currentEmployee.companyId);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
-      return { data: data };
+    let data;
+    try {
+      data = await this.employeeService.findAllInCompany(currentEmployee.companyId);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+    return { data: data };
     // } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
     //   let data;
     //   try {
@@ -391,12 +391,12 @@ export class EmployeeController {
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
-    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     // console.log('currentEmployee', currentEmployee);
     // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      console.log('In if');
-      const data = await this.employeeService.detailedFindById(employeeId);
-      return { data: data };
+    console.log('In if');
+    const data = await this.employeeService.detailedFindById(employeeId);
+    return { data: data };
     // } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
     //   let data;
     //   try {
@@ -460,11 +460,11 @@ export class EmployeeController {
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
-    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
+    // const currentEmployee = await this.employeeService.findById(currentEmployeeId);
     // console.log('currentEmployee', currentEmployee);
     // if (currentEmployee.role.permissionSuite.includes('view all employees')) {
-      const data = await this.employeeService.findById(employeeId);
-      return { data: data };
+    const data = await this.employeeService.findById(employeeId);
+    return { data: data };
     // } else if (currentEmployee.role.permissionSuite.includes('view employees under me')) {
     //   let data;
     //   try {
