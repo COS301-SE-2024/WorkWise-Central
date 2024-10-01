@@ -188,7 +188,7 @@
                     <v-col cols="12" lg="6" order="last" order-lg="first">
                       <v-btn
                         text
-                        @click="(signupDialog = true)((loginDialog = false))(resetFields)"
+                        @click="(signupDialog = true), (loginDialog = false), resetFields"
                         rounded="md"
                         color="secondary"
                         size="large"
@@ -859,7 +859,7 @@
                 <v-col
                   ><v-col>
                     <h4 class="text-center" style="font-size: 20px; font-weight: lighter">
-                      Please select of the following details
+                      Please select one of the following options
                     </h4></v-col
                   >
 
@@ -1387,7 +1387,7 @@ export default defineComponent({
           localStorage.setItem('id', response.data.data.id)
           localStorage.setItem('email', this.email)
           localStorage.setItem('username', this.username)
-          this.getInviteIdAndAccept()
+          this.getInviteIdAndAccept(response.data.data.access_token, response.data.data.id)
         })
         .catch((error) => {
           console.log(error)
@@ -1395,14 +1395,14 @@ export default defineComponent({
           this.alertSignUpFailure = true
         })
     },
-    getInviteIdAndAccept() {
+    getInviteIdAndAccept(jwt, id) {
       // Get the inviteId from the URL
       try {
         const urlParams = new URLSearchParams(window.location.search)
         this.inviteId = urlParams.get('inviteId')
 
         if (this.inviteId) {
-          this.acceptInvite()
+          this.acceptInvite(jwt, id)
         } else {
           console.log('No inviteId found in URL')
         }
@@ -1410,11 +1410,22 @@ export default defineComponent({
         console.log(e)
       }
     },
-    async acceptInvite() {
+    async acceptInvite(jwt, id) {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`
+        }
+      }
       try {
-        const response = await axios.post('${API_URL}admin/invite/accept', {
-          inviteId: this.inviteId
-        })
+        const response = await axios.post(
+          `${API_URL}admin/invite/accept`,
+          {
+            inviteId: this.inviteId,
+            userId: id
+          },
+          config
+        )
         console.log('Invite accepted:', response.data)
         // Handle successful response here
       } catch (error) {
