@@ -30,7 +30,7 @@
                 block
                 :disabled="isDeleting"
               >
-                ><v-icon icon="fa:fa-solid fa-cancel" color="secondary" start size="small"></v-icon
+                <v-icon icon="fa:fa-solid fa-cancel" color="secondary" start size="small"></v-icon
                 >Cancel
               </v-btn></v-col
             ><v-col cols="12" lg="6" order="first" order-lg="last">

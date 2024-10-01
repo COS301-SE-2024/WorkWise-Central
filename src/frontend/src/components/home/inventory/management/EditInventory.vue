@@ -39,7 +39,6 @@
               ><v-text-field
                 v-model="localEditedItem.description"
                 color="secondary"
-                required
                 :disabled="isDeleting"
               ></v-text-field
             ></v-col>
@@ -49,7 +48,7 @@
                 ><v-text-field
                   v-model="localEditedItem.costPrice"
                   color="secondary"
-                  required
+                  :rules="costPriceRules"
                   :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
@@ -58,7 +57,7 @@
                 ><v-text-field
                   v-model="localEditedItem.currentStockLevel"
                   color="secondary"
-                  required
+                  :rules="currentStockLevelRules"
                   :disabled="isDeleting"
                 ></v-text-field
               ></v-col>
@@ -67,7 +66,7 @@
                 ><v-text-field
                   v-model="localEditedItem.reorderLevel"
                   color="secondary"
-                  required
+                  :rules="reorderLevelRules"
                   :disabled="isDeleting"
                 ></v-text-field></v-col
             ></v-row>

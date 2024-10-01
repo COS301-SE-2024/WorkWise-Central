@@ -46,7 +46,7 @@
                 bg-color="background"
                 variant="solo"
                 :loading="loading"
-                :disabled="isDeleting"
+                :disabled="isDeleting || localEditedItem.roleName === 'Owner'"
               ></v-select>
             </v-col>
             <v-col :cols="12">
@@ -78,7 +78,7 @@
                 item-title="name"
                 bg-color="background"
                 variant="solo"
-                :disabled="isDeleting"
+                :disabled="isDeleting || localEditedItem.roleName === 'Owner'"
               ></v-select> </v-col
           ></v-row>
         </v-card-item>

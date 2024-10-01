@@ -50,6 +50,14 @@
             class="bg-cardColor"
             :row-props="getRowProps"
           >
+            <template v-slot:[`item.costPrice`]="{ item }">
+              <span>R{{ item.costPrice }}</span>
+            </template>
+            <template v-slot:[`item.currentStockLevel`]="{ item }">
+              <v-chip :color="item.currentStockLevel < 10 ? 'error' : 'success'">{{
+                item.currentStockLevel
+              }}</v-chip>
+            </template>
             <template v-slot:[`item.actions`]="{ item }">
               <v-menu max-width="500px">
                 <template v-slot:activator="{ props }">

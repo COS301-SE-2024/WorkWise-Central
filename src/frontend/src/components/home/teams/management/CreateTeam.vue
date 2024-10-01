@@ -23,7 +23,11 @@
           <v-col>
             <v-row>
               <v-col>
-                <h6>Team Name</h6>
+                <h6>
+                  Team Name<label style="font-size: 14px; font-weight: lighter; color: red"
+                    >*</label
+                  >
+                </h6>
                 <v-text-field
                   v-model="teamName"
                   color="secondary"
@@ -36,7 +40,11 @@
 
             <v-row>
               <v-col>
-                <h6>Team Leader</h6>
+                <h6>
+                  Team Leader<label style="font-size: 14px; font-weight: lighter; color: red"
+                    >*</label
+                  >
+                </h6>
                 <v-select
                   v-model="teamLeaderName"
                   color="secondary"
@@ -53,7 +61,11 @@
 
             <v-row>
               <v-col>
-                <h6>Team Members</h6>
+                <h6>
+                  Team Members<label style="font-size: 14px; font-weight: lighter; color: red"
+                    >*</label
+                  >
+                </h6>
                 <v-select
                   color="secondary"
                   :items="employees"
