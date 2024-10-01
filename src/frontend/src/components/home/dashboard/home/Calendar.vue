@@ -1017,13 +1017,14 @@ export default {
       }
     },
     async loadJobs() {
-      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` }, params:{
+        currentEmployeeId:localStorage['employeeId']
+        } }
 
       try {
-        const employee_jobs = await axios(
-          API_URL +
-            `job/all/company/detailed/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
-          config
+        const employee_jobs = await axios.get(
+            API_URL + `job/all/employee/${localStorage['employeeId']}`,
+            config
         )
 
         let jobs: Job[] = employee_jobs.data.data

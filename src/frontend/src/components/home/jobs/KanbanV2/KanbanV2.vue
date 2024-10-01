@@ -860,18 +860,14 @@ export default {
     },
     async loadJobs() {
       console.log('load jobs request')
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      }
+      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` }, params:{
+          currentEmployeeId:localStorage['employeeId']
+        } }
 
       try {
         const loaded_tags_response = await axios.get(
-          API_URL +
-            `job/all/company/detailed/${localStorage['currentCompany']}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
-          config
+            API_URL + `job/all/employee/${localStorage['employeeId']}`,
+            config
         )
         console.log(loaded_tags_response)
         let loaded_tags_res = loaded_tags_response.data.data
