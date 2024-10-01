@@ -102,8 +102,10 @@ export class RoleService {
 
     //Check if the role already exists
     try {
-      if (await this.findOneInCompany(updateRoleDto.roleName, roleToBeUpdate.companyId)) {
-        return new ValidationResult(false, `Role already exists`);
+      if (roleToBeUpdate.roleName !== updateRoleDto.roleName) {
+        if (await this.findOneInCompany(updateRoleDto.roleName, roleToBeUpdate.companyId)) {
+          return new ValidationResult(false, `Role already exists`);
+        }
       }
     } catch (error) {}
     //Checking that the role is not Worker or owner
