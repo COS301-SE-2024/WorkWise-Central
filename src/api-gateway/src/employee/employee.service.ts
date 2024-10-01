@@ -807,7 +807,11 @@ export class EmployeeService {
     //Adding the owner to the nodes
     const nodeLabel = 'node' + currentCount.toString();
     // console.log('nodeLabel: ', nodeLabel);
-    nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName, id: currentEmployee._id };
+    nodes[nodeLabel] = {
+      name: currentEmployee.userInfo.displayName,
+      id: currentEmployee._id,
+      face: currentEmployee.userInfo.displayImage,
+    };
     //Adding the owner to the edges
     currentEmployee.subordinates.forEach(() => {
       const edgeLabel = 'edge' + edgeCount.toString();
@@ -830,7 +834,11 @@ export class EmployeeService {
       //Adding the currentEmployee to the nodes
       const nodeLabel = 'node' + currentCount.toString();
       // console.log('nodeLabel: ', nodeLabel);
-      nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName, id: currentEmployee._id };
+      nodes[nodeLabel] = {
+        name: currentEmployee.userInfo.displayName,
+        id: currentEmployee._id,
+        face: currentEmployee.userInfo.displayImage,
+      };
       //Adding the currentEmployee to the edges
       currentEmployee.subordinates.forEach(() => {
         const edgeLabel = 'edge' + edgeCount.toString();
