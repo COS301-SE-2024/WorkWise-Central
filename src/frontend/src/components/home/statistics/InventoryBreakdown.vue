@@ -206,13 +206,11 @@ export default {
   computed: {
     hasHighestUsageData() {
       return this.itemUsage.length > 0 && this.itemUsage.some((item) => item.quantity > 0)
-      
     },
     hasLossOfStockData() {
       return (
         this.stockLost.length > 0 && this.stockLost.some((item) => item.inventoryItem.quantity > 0)
       )
-      
     }
   },
   methods: {

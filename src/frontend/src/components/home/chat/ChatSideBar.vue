@@ -5,11 +5,13 @@
       <i class="fa: fa-solid fa-search" />
       <InputText v-model="searchQuery" placeholder="Search chats" class="w-full" />
     </span>
+
     <Button
-      label="New Chat"
+      label="Create New Chat"
       icon="fa: fa-solid fa-plus"
       @click="showNewChatDialog"
       class="custom-button"
+      style="padding-right: 27.8%"
     />
 
     <ul class="chat-list">
@@ -57,7 +59,7 @@
       <div class="p-fluid pt-5 pb-5">
         <v-row>
           <v-col>
-            <label for="chatName">Chat Name</label>
+            <label for="chatName">Chat Name<span style="color: red">*</span></label>
           </v-col>
           <v-col>
             <InputText id="chatName" v-model="newChatName" />
@@ -66,7 +68,7 @@
 
         <v-row>
           <v-col>
-            <label for="participants">Participants</label>
+            <label for="participants">Participants<span style="color: red">*</span></label>
           </v-col>
           <v-col>
             <MultiSelect
@@ -84,10 +86,31 @@
             <label for="participants">Chat Image</label>
           </v-col>
           <v-col>
-            <input type="file" accept="image/*" @change="handleFileChange" ref="fileInput" />
+            <input
+              type="file"
+              accept="image/*"
+              @change="handleFileChange"
+              ref="fileInput"
+              style="margin-left: 13%"
+            />
           </v-col>
         </v-row>
         <!-- File input for images -->
+
+        <v-row>
+          <v-col>
+            <label for="chatDescription">Chat Description</label>
+          </v-col>
+          <v-col>
+            <Textarea
+              id="chatDescription"
+              v-model="newChatDescription"
+              autoResize
+              rows="5"
+              cols="50"
+            />
+          </v-col>
+        </v-row>
       </div>
 
       <template #footer>
@@ -99,7 +122,12 @@
             class="p-button-text"
             style="background-color: red; outline-color: red; color: white; margin-right: 5px"
           />
-          <Button label="Create" icon="fa: fa-solid fa-check" class="custom-button" />
+          <Button
+            label="Create"
+            icon="fa: fa-solid fa-check"
+            class="custom-button"
+            @click="createNewChat"
+          />
         </div>
       </template>
     </Dialog>
@@ -115,6 +143,7 @@ import Dialog from 'primevue/dialog'
 import MultiSelect from 'primevue/multiselect'
 //import FileUpload from 'primevue/fileupload'
 import OverlayBadge from 'primevue/overlaybadge'
+import Textarea from 'primevue/textarea'
 
 const props = defineProps(['chats', 'selectedChat', 'users', 'typingUsers'])
 const emit = defineEmits(['select-chat', 'create-chat'])
@@ -122,6 +151,7 @@ const emit = defineEmits(['select-chat', 'create-chat'])
 const searchQuery = ref('')
 const newChatDialogVisible = ref(false)
 const newChatName = ref('')
+const newChatDescription = ref('')
 const selectedParticipants = ref([])
 const currentUserId = localStorage['id']
 
@@ -185,7 +215,7 @@ const createNewChat = () => {
       participants.push(vElement._id)
     }
     if (chatName.length === 0) {
-      //console.log('No empty chat names allowed')
+      console.log('No empty chat names allowed')
       //TOOO: Error toast
       return
     }
@@ -193,7 +223,8 @@ const createNewChat = () => {
     emit('create-chat', {
       name: newChatName.value,
       participants: participants,
-      chatImage: base64Image
+      chatImage: base64Image,
+      chatDescription: newChatDescription
     })
     closeNewChatDialog()
   }
@@ -201,12 +232,12 @@ const createNewChat = () => {
 
 watch(props.typingUsers, () => updateTypingUsers())
 const updateTypingUsers = () => {
-  //console.log('Typing users', props.typingUsers)
+  console.log('Typing users', props.typingUsers)
 
   const len = props.typingUsers.length - 1
   if (len > 0) {
     currentlyTyping.value = props.typingUsers[len]
-    //console.log(currentlyTyping.value)
+    console.log(currentlyTyping.value)
     setTimeout(() => {
       currentlyTyping.value = {}
     }, 7000)

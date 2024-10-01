@@ -1,20 +1,7 @@
 <template>
-  <NavigationBar :component="Map" />
+  <NavigationBar :component="MapComponent" />
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
 import NavigationBar from '@/components/home/NavigationBar.vue'
-import Map from '@/views/home/map/Map.vue'
-
-export default defineComponent({
-  name: 'MapView',
-  computed: {
-    Map() {
-      return Map
-    }
-  },
-  components: {
-    NavigationBar
-  }
-})
+import MapComponent from '@/views/home/map/Map.vue'
 </script>

@@ -221,7 +221,7 @@ export class EmployeeService {
   }
 
   async detailedFindById(id: Types.ObjectId) {
-    //console.log('In detailedFindById, id: ', id);
+    console.log('In detailedFindById, id: ', id);
     const employee: any = await this.employeeRepository.DetailedFindById(id, ['userId']);
     console.log('employee: ', employee);
     return employee;
@@ -449,7 +449,9 @@ export class EmployeeService {
     }
 
     const newRole = new roleObject();
-    newRole.roleId = new Types.ObjectId(roleId);
+    if (roleId) {
+      newRole.roleId = new Types.ObjectId(roleId);
+    }
     if (updateRoleDto.permissionSuite) {
       newRole.permissionSuite = updateRoleDto.permissionSuite;
     } else {
@@ -805,7 +807,11 @@ export class EmployeeService {
     //Adding the owner to the nodes
     const nodeLabel = 'node' + currentCount.toString();
     // console.log('nodeLabel: ', nodeLabel);
-    nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName, id: currentEmployee._id };
+    nodes[nodeLabel] = {
+      name: currentEmployee.userInfo.displayName,
+      id: currentEmployee._id,
+      face: currentEmployee.userInfo.displayImage,
+    };
     //Adding the owner to the edges
     currentEmployee.subordinates.forEach(() => {
       const edgeLabel = 'edge' + edgeCount.toString();
@@ -828,7 +834,11 @@ export class EmployeeService {
       //Adding the currentEmployee to the nodes
       const nodeLabel = 'node' + currentCount.toString();
       // console.log('nodeLabel: ', nodeLabel);
-      nodes[nodeLabel] = { name: currentEmployee.userInfo.displayName, id: currentEmployee._id };
+      nodes[nodeLabel] = {
+        name: currentEmployee.userInfo.displayName,
+        id: currentEmployee._id,
+        face: currentEmployee.userInfo.displayImage,
+      };
       //Adding the currentEmployee to the edges
       currentEmployee.subordinates.forEach(() => {
         const edgeLabel = 'edge' + edgeCount.toString();

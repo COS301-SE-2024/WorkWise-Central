@@ -20,7 +20,8 @@ async function bootstrap() {
   const options = {
     customCss: theme.getBuffer(SwaggerThemeNameEnum.ONE_DARK),
   };
-  if (process.env.NEST_ENVIRONMENT == 'dev') SwaggerModule.setup('documentation', app, document, options);
+  /* if (process.env.NEST_BACKEND_ENVIRONMENT == 'dev')*/
+  SwaggerModule.setup('documentation', app, document, options);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

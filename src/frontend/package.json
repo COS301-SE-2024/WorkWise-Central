@@ -19,7 +19,9 @@
   "dependencies": {
     "@cypress/vue": "^6.0.1",
     "@cypress/webpack-dev-server": "^3.10.0",
-    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/vue-fontawesome": "^3.0.8",
     "@googlemaps/js-api-loader": "^1.16.8",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",

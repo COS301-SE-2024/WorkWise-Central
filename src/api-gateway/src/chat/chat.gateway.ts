@@ -61,7 +61,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async initChat(@ConnectedSocket() client: Socket, @MessageBody() payload: GetUserIdDto) {
     const decodedJwtAccessToken = this.jwtService.decode(payload.jwt);
     const allChatsWithUser = await this.chatService.getUserChats(decodedJwtAccessToken.sub);
-    //console.log('All Chats with User', allChatsWithUser);
+    console.log('All Chats with User', allChatsWithUser);
     const chatIds = [];
     for (const chat of allChatsWithUser) {
       chatIds.push(chat._id.toString());
@@ -81,13 +81,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   })*/
   @SubscribeMessage('new-message')
   async handleNewMessage(@ConnectedSocket() client: Socket, @MessageBody(new ValidationPipe()) payload: AddMessageDto) {
-    //console.log(payload);
+    console.log(payload);
     const userId = this.jwtService.decode(payload.jwt).sub;
     this.logger.log(`Message received: ${userId} - ${payload.textContent}\n${payload.attachments}`);
     const chat = await this.chatService.getChat(payload.chatId);
     if (!chat) {
       client.emit('new-message', { Error: 'Chat not found' });
-      //console.log('Error');
+      console.log('Error');
       return;
     }
     const result = await this.chatService.sendMessage(userId, payload);
@@ -138,7 +138,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const chat = await this.chatService.getChat(payload.chatId);
     if (!chat) {
       client.emit('delete-chat', { Error: 'Chat not found' });
-      //console.log('Error');
+      console.log('Error');
       return;
     }
     const result = await this.chatService.deleteChat(userId, payload);
@@ -163,7 +163,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const chat = await this.chatService.getChat(payload.chatId);
     if (!chat) {
       client.emit('update-message', { Error: 'Chat not found' });
-      //console.log('Error');
+      console.log('Error');
       return;
     }
     const result = await this.chatService.updateMessage(userId, payload);
@@ -179,7 +179,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const chat = await this.chatService.getChat(payload.chatId);
     if (!chat) {
       client.emit('update-chat', { Error: 'Chat not found' });
-      //console.log('Error');
+      console.log('Error');
       return;
     }
     const result = await this.chatService.updateChat(userId, payload);

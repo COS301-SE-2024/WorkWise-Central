@@ -161,7 +161,7 @@ const getTotalTimeSpent = async () => {
 
     if (response.status === 200) {
       console.log('Total time spent:', response.data.data)
-      elapsedTime.value = response.data.data.timeWorked
+      elapsedTime.value = response.data.data.timeWorked * 60
     } else {
       console.error('Failed to get total time spent:', response.status)
     }

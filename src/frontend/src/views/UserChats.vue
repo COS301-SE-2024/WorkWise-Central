@@ -55,7 +55,7 @@ export default {
       socket.connect()
 
       socket.on('connect', () => {
-        //console.log('Socket connected')
+        console.log('Socket connected')
       })
 
       socket.on('disconnect', () => {

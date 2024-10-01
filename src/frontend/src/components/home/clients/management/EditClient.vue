@@ -273,7 +273,7 @@ export default {
             preferred_Language: this.localEditedItem.preferred_Language,
             contactInfo: {
               phoneNumber: this.localEditedItem.contactInfo.phoneNumber,
-              email: this.editedItem.contactInfo.email
+              email: this.localEditedItem.contactInfo.email
             },
             address: {
               street: this.localEditedItem.address.street,

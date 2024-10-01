@@ -23,7 +23,11 @@
           <v-col>
             <v-row>
               <v-col>
-                <h6>Team Name</h6>
+                <h6>
+                  Team Name<label style="font-size: 14px; font-weight: lighter; color: red"
+                    >*</label
+                  >
+                </h6>
                 <v-text-field
                   v-model="teamName"
                   color="secondary"
@@ -36,30 +40,44 @@
 
             <v-row>
               <v-col>
-                <h6>Team Leader</h6>
+                <h6>
+                  Team Leader<label style="font-size: 14px; font-weight: lighter; color: red"
+                    >*</label
+                  >
+                </h6>
                 <v-select
                   v-model="teamLeaderName"
                   color="secondary"
                   :rules="teamLeaderIdRules"
-                  :items="teamMemberNames"
+                  :items="employees"
+                  item-value="id"
+                  item-title="name"
                   required
                   hide-details="auto"
+                  @update:model-value="console.log(teamLeaderName)"
                 ></v-select>
               </v-col>
             </v-row>
 
             <v-row>
               <v-col>
-                <h6>Team Members</h6>
+                <h6>
+                  Team Members<label style="font-size: 14px; font-weight: lighter; color: red"
+                    >*</label
+                  >
+                </h6>
                 <v-select
                   color="secondary"
-                  :items="teamMemberNames"
+                  :items="employees"
+                  item-value="id"
+                  item-title="name"
                   :rules="teamMembersRules"
                   required
                   v-model="selectedTeamMembers"
                   multiple
                   chips
                   hide-details="auto"
+                  @update:model-value="console.log(selectedTeamMembers)"
                 ></v-select>
               </v-col>
             </v-row>
@@ -129,7 +147,8 @@ export default defineComponent({
     teamLeaderName: '',
     teamNameRules: [(v: string) => !!v || 'Team Name is required'],
     teamMembersRules: [(v: string) => !!v || 'Team Members are required'],
-    teamLeaderIdRules: [(v: string) => !!v || 'Team Leader ID is required']
+    teamLeaderIdRules: [(v: string) => !!v || 'Team Leader ID is required'],
+    employees: [] as any[]
   }),
   methods: {
     async createTeam() {
@@ -140,8 +159,8 @@ export default defineComponent({
       }
       const data = {
         teamName: this.teamName,
-        teamMembers: await this.selectTeamMembers(),
-        teamLeaderId: await this.selectTeamLeader(),
+        teamMembers: this.selectedTeamMembers,
+        teamLeaderId: this.teamLeaderName,
         companyId: localStorage.getItem('currentCompany')
       }
       console.log(JSON.stringify(data))
@@ -187,9 +206,14 @@ export default defineComponent({
         )
         console.log(response.data.data)
         for (const employee of response.data.data) {
-          this.teamMemberNames.push(employee.userInfo.displayName)
-          this.teamLeaderIds.push(employee._id)
+          // this.teamMemberNames.push(employee.userInfo.displayName)
+          // this.teamLeaderIds.push(employee._id)
+          this.employees.push({
+            id: employee._id,
+            name: employee.userInfo.displayName
+          })
         }
+        console.log(this.employees)
       } catch (error) {
         console.error(error)
       }
@@ -199,18 +223,18 @@ export default defineComponent({
         this.createTeam()
       }
     },
-    async selectTeamLeader() {
-      console.log(this.teamLeaderIds[this.teamMemberNames.indexOf(this.teamLeaderName)])
-      return this.teamLeaderIds[this.teamMemberNames.indexOf(this.teamLeaderName)]
-    },
-    async selectTeamMembers() {
-      for (const member of this.selectedTeamMembers) {
-        console.log(member)
-        this.teamMemberIds.push(this.teamLeaderIds[this.selectedTeamMembers.indexOf(member)])
-      }
-      console.log(this.teamMemberIds)
-      return this.teamMemberIds
-    },
+    // async selectTeamLeader() {
+    //   console.log(this.teamLeaderIds[this.teamMemberNames.indexOf(this.teamLeaderName)])
+    //   return this.teamLeaderIds[this.teamMemberNames.indexOf(this.teamLeaderName)]
+    // },
+    // async selectTeamMembers() {
+    //   for (const member of this.selectedTeamMembers) {
+    //     console.log(member)
+    //     // this.teamMemberIds.push(this.teamLeaderIds[this.selectedTeamMembers.indexOf(member)])
+    //   }
+    //   console.log(this.teamMemberIds)
+    //   return this.teamMemberIds
+    // },
     resetFields() {
       this.teamName = ''
       this.teamLeaderName = ''

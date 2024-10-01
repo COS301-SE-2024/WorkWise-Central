@@ -59,7 +59,7 @@ export default {
       this.generatePdf(this.LocalInvoice)
     },
     generatePdf(payload) {
-      console.log("payload", payload)
+      console.log('payload', payload)
       try {
         if (payload.laborItems.length != 0) {
           payload.inventoryItems.push(['', '', '', '', ''])
@@ -182,9 +182,7 @@ export default {
     },
     close() {
       //wiping add the data
-      this.dialog = false,
-      this.pdfSrc = '',
-      this.LocalInvoice = {}
+      ;(this.dialog = false), (this.pdfSrc = ''), (this.LocalInvoice = {})
     },
     downloadPdf() {
       const props = {

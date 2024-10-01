@@ -177,7 +177,7 @@ export default defineComponent({
           `${API_URL}admin/request/decide`,
           {
             companyId: request.companyId,
-            userToJoin: request.userToJoin,
+            userToJoinId: request.userToJoin._id,
             superiorId: localStorage.getItem('employeeId'),
             accept: false
           },

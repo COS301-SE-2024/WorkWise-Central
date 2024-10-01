@@ -32,8 +32,8 @@ export class VehicleAvailability {
   @Prop({ type: String, enum: VehicleAvailabilityEnum, required: true, default: VehicleAvailabilityEnum.AVAILABLE })
   status: VehicleAvailabilityEnum = VehicleAvailabilityEnum.AVAILABLE;
 
-  @Prop({ type: SchemaTypes.ObjectId, required: false, ref: Employee.name, default: null })
-  assignedTo?: Types.ObjectId = null;
+  @Prop({ type: SchemaTypes.ObjectId, required: true, ref: Employee.name, default: null })
+  assignedTo: Types.ObjectId = null;
 
   @Prop({ type: Date, required: false })
   updatedAt?: Date;
@@ -140,12 +140,12 @@ export class Vehicle {
 
 export const VehicleSchema = SchemaFactory.createForClass(Vehicle);
 
-const autoPopulatedFields = function (next: any) {
-  if (this.availability.assignedTo != null) this.populate('availability.assignedTo');
-  next();
-};
+// const autoPopulatedFields = function (next: any) {
+//   if (this.availability.assignedTo != null) this.populate('availability.assignedTo');
+//   next();
+// };
 
-VehicleSchema.pre('findOne', autoPopulatedFields)
-  .pre('find', autoPopulatedFields)
-  .pre('save', autoPopulatedFields)
-  .pre('findOneAndUpdate', autoPopulatedFields);
+// VehicleSchema.pre('findOne', autoPopulatedFields)
+//   .pre('find', autoPopulatedFields)
+//   .pre('save', autoPopulatedFields)
+//   .pre('findOneAndUpdate', autoPopulatedFields);

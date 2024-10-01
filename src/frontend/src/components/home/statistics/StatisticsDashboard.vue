@@ -5,7 +5,9 @@
         <h4>Statistics</h4>
       </v-col>
     </v-row>
+
     <v-row justify="center" class="fill-height">
+      <v-divider></v-divider>
       <v-col>
         <v-card
           height="100%"

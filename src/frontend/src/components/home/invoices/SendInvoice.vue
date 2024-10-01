@@ -2,7 +2,8 @@
   <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0.1">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="primary" v-bind="activatorProps"
-        ><v-icon icon="fa:fa-solid fa-paper-plane" start color="primary" size="small"></v-icon>Send</v-btn
+        ><v-icon icon="fa:fa-solid fa-paper-plane" start color="primary" size="small"></v-icon
+        >Send</v-btn
       >
     </template>
     <v-card class="bg-cardColor">
@@ -32,7 +33,12 @@
             </v-col>
             <v-col cols="12" lg="6" order="first" order-lg="last">
               <v-btn label="Delete" color="primary" :loading="isSending" block @click="sendInvoice"
-                ><v-icon icon="fa:fa-solid fa-paper-plane" start color="primary" size="small"></v-icon
+                ><v-icon
+                  icon="fa:fa-solid fa-paper-plane"
+                  start
+                  color="primary"
+                  size="small"
+                ></v-icon
                 >Send
               </v-btn>
             </v-col>
@@ -60,7 +66,7 @@ export default defineComponent({
   },
   data: () => ({
     deleteDialog: false,
-    isSending: false,
+    isSending: false
   }),
   methods: {
     async sendInvoice() {
@@ -75,18 +81,23 @@ export default defineComponent({
         }
       }
       try {
-        await axios.get(`${API_URL}invoice/send/${this.invoice_id}?currentEmployeeId=${localStorage.getItem('employeeId')}`, config).then((response) => {
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Invoice successfully sent',
-            life: 3000
+        await axios
+          .get(
+            `${API_URL}invoice/send/${this.invoice_id}?currentEmployeeId=${localStorage.getItem('employeeId')}`,
+            config
+          )
+          .then((response) => {
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Invoice successfully sent',
+              life: 3000
+            })
+            setTimeout(() => {
+              this.deleteDialog = false
+              this.$emit('sent', response.data.data)
+            }, 3000)
           })
-          setTimeout(() => {
-            this.deleteDialog = false
-            this.$emit('InvoiceDeleted', response.data.data)
-          }, 3000)
-        })
       } catch (error) {
         console.error(error)
         this.$toast.add({
@@ -100,7 +111,7 @@ export default defineComponent({
     },
     close() {
       this.deleteDialog = false
-    },
+    }
   }
 })
 </script>

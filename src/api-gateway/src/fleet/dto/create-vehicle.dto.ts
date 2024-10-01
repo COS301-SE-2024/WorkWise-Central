@@ -25,7 +25,7 @@ export class VehicleAvailability {
 
   @IsOptional()
   @IsMongoId()
-  assignedTo?: Types.ObjectId = null;
+  assignedTo: Types.ObjectId = null;
 }
 
 export class ServiceDetails {

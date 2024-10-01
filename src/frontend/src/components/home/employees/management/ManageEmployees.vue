@@ -100,7 +100,7 @@ c
                           </v-chip>
                         </template>
                         <template v-slot:[`item.actions`]="{ item }">
-                          <v-menu max-width="500px" v-if="item.roleName != 'Owner'">
+                          <v-menu max-width="500px">
                             <template v-slot:activator="{ props }"
                               ><v-btn
                                 rounded="xl"
@@ -135,7 +135,11 @@ c
                                   :Disabled="false"
                               /></v-list-item>
 
-                              <v-list-item v-if="permissions.includes('delete employees')"
+                              <v-list-item
+                                v-if="
+                                  permissions.includes('delete employees') &&
+                                  item.roleName !== 'Owner'
+                                "
                                 ><DeleteEmployee
                                   :details="selectedItem"
                                   @employeeDeleted="getEmployees"
@@ -329,7 +333,7 @@ export default {
 
       try {
         const employee_response = await axios.get(
-          `${API_URL}employee/detailed/all/${localStorage['employeeId']}`,
+          `${API_URL}employee/detailed/table/all/${localStorage['employeeId']}`,
           config
         )
 

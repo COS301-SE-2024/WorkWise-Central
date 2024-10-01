@@ -18,7 +18,7 @@ e
               color="primary"
               block
               @click="getEmployeeDetails"
-              :disabled="!selectedItem || selectedNode === 'node1'"
+              :disabled="!selectedItem"
               :loading="isLoading"
             >
               <v-icon icon="fa: fa-solid fa-pencil" color="primary"></v-icon>Edit</v-btn
@@ -64,7 +64,7 @@ e
         </v-network-graph>
       </v-card-text>
 
-      <v-card-actions class="bg-cardColor">
+      <!-- <v-card-actions class="bg-cardColor">
         <v-container>
           <v-row justify="end">
             <v-col align="center" cols="12" lg="6" order="last" order-lg="first">
@@ -79,7 +79,7 @@ e
             </v-col>
           </v-row>
         </v-container>
-      </v-card-actions>
+      </v-card-actions> -->
     </v-card>
 
     <v-dialog v-model="employeeDialog" max-width="500" height="500">
@@ -124,7 +124,7 @@ e
                   bg-color="background"
                   variant="solo"
                   :loading="loading"
-                  :disabled="isDeleting"
+                  :disabled="isDeleting || selectedEmployee?.role.roleName === 'Owner'"
                 ></v-select>
               </v-col>
               <v-col :cols="12">
@@ -156,7 +156,7 @@ e
                   item-title="name"
                   bg-color="background"
                   variant="solo"
-                  :disabled="isDeleting"
+                  :disabled="isDeleting || selectedEmployee?.role.roleName === 'Owner'"
                 ></v-select> </v-col
             ></v-row>
           </v-card-item>
@@ -439,6 +439,7 @@ export default defineComponent({
     },
     async getEmployeeDetails() {
       this.isLoading = true
+      this.loading = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -465,7 +466,7 @@ export default defineComponent({
         setTimeout(() => {
           this.employeeDialog = true
           this.isLoading = false
-        }, 1000)
+        }, 5000)
       } catch (error) {
         console.error(error)
       }
@@ -492,9 +493,11 @@ export default defineComponent({
       this.req_obj.updateEmployeeDto.superiorId || delete this.req_obj.updateEmployeeDto.superiorId
       this.req_obj.updateEmployeeDto.roleId || delete this.req_obj.updateEmployeeDto.roleId
 
-      if (validate) await this.savechanges()
+      if (validate) await this.savechanges().then(() => this.close())
+      await this.getGraphView()
     },
     async loadSubordinates() {
+      this.loading=true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -545,6 +548,7 @@ export default defineComponent({
       }
     },
     async loadSuperiors() {
+      this.loading = true
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
         params: { currentEmployeeId: localStorage['employeeId'] }
@@ -633,7 +637,16 @@ export default defineComponent({
       }
     },
     close() {
-      this.employeeDialog = false
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Employee Edited Successfully',
+        life: 3000
+      })
+      setTimeout(() => {
+        this.employeeDialog = false
+        this.getGraphView()
+      }, 1500)
     },
     strHasNumberInIt(str) {
       return /\d/.test(str)
@@ -705,11 +718,7 @@ export default defineComponent({
 
       if (add_sub_array?.length !== 0)
         axios
-          .patch(
-            API_URL + `employee/addSubordinate/${this.selectedItem.id}`,
-            add_object,
-            config
-          )
+          .patch(API_URL + `employee/addSubordinate/${this.selectedItem.id}`, add_object, config)
           .then((res) => {
             change_occured = true
           })
@@ -795,6 +804,7 @@ export default defineComponent({
           this.employeeDialog = false
           this.$emit('update')
         }, 1500)
+        this.employeeDialog = false
       }
     },
     updateLayout(direction) {

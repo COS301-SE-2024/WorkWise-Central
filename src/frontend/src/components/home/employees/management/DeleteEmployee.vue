@@ -114,8 +114,8 @@ export default {
           })
 
           setTimeout(() => {
-           this.$emit('employeeDeleted')
-           this.clientDialog = false
+            this.$emit('employeeDeleted')
+            this.clientDialog = false
           }, 3000)
         })
         .catch((error) => {

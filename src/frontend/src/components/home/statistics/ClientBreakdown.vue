@@ -476,7 +476,7 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-  
+
       axios
         .get(`${API_URL}stats/numClients/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
@@ -501,50 +501,50 @@ export default {
         }
       }
 
+      if (id != null) {
+        axios
+          .get(`${API_URL}stats/clientStats/${id}`, config)
+          .then((response) => {
+            this.clientStats = response.data.data
 
+            // Update the jobsData chart
+            this.jobsData = {
+              labels: ['Active Jobs', 'Completed Jobs'],
+              datasets: [
+                {
+                  label: 'Job Breakdown',
+                  backgroundColor: ['#42A5F5', '#66BB6A'],
+                  data: [this.clientStats.numActiveJobs, this.clientStats.numCompletedJobs]
+                }
+              ]
+            }
 
-      axios
-        .get(`${API_URL}stats/clientStats/${id}`, config)
-        .then((response) => {
-          this.clientStats = response.data.data
+            // Update the invoiceData chart
+            this.invoiceData = {
+              labels: ['Paid On Time', 'Unpaid Invoices'],
+              datasets: [
+                {
+                  label: 'Invoices',
+                  backgroundColor: ['#66BB6A', '#FF7043'],
+                  data: [this.clientStats.numInvoicesPaid, this.clientStats.numInvoicesUnpaid]
+                }
+              ]
+            }
 
-          // Update the jobsData chart
-          this.jobsData = {
-            labels: ['Active Jobs', 'Completed Jobs'],
-            datasets: [
-              {
-                label: 'Job Breakdown',
-                backgroundColor: ['#42A5F5', '#66BB6A'],
-                data: [this.clientStats.numActiveJobs, this.clientStats.numCompletedJobs]
-              }
-            ]
-          }
+            // Update the customer service rating data
+            this.overallCustomerRating = this.clientStats.customerServiceRatingAverage || 0
+            this.totalRatings = this.clientStats.customerServiceRating.length || 0
+            this.overallRating = this.clientStats.workPerformanceRatingAverage || 0
+            // Update the rating counts (for 5-star, 4-star, etc.)
+            this.ratingCounts = this.calculateRatingCounts(this.clientStats.customerServiceRating)
 
-          // Update the invoiceData chart
-          this.invoiceData = {
-            labels: ['Paid On Time', 'Unpaid Invoices'],
-            datasets: [
-              {
-                label: 'Invoices',
-                backgroundColor: ['#66BB6A', '#FF7043'],
-                data: [this.clientStats.numInvoicesPaid, this.clientStats.numInvoicesUnpaid]
-              }
-            ]
-          }
-
-          // Update the customer service rating data
-          this.overallCustomerRating = this.clientStats.customerServiceRatingAverage || 0
-          this.totalRatings = this.clientStats.customerServiceRating.length || 0
-          this.overallRating = this.clientStats.workPerformanceRatingAverage || 0
-          // Update the rating counts (for 5-star, 4-star, etc.)
-          this.ratingCounts = this.calculateRatingCounts(this.clientStats.customerServiceRating)
-
-          // Similar updates can be done for the job performance rating if needed
-          this.showStats = true
-        })
-        .catch((error) => {
-          console.error('Failed to fetch clients:', error)
-        })
+            // Similar updates can be done for the job performance rating if needed
+            this.showStats = true
+          })
+          .catch((error) => {
+            console.error('Failed to fetch clients:', error)
+          })
+      }
     },
     async getClients() {
       const config = {

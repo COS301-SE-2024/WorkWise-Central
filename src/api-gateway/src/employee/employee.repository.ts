@@ -315,7 +315,9 @@ export class EmployeeRepository {
         },
         {
           $set: {
-            role: newRole,
+            'role.roleId': new Types.ObjectId(newRole.roleId),
+            'role.roleName': newRole.roleName,
+            'role.permissionSuite': newRole.permissionSuite,
             updatedAt: new Date(),
           },
         },

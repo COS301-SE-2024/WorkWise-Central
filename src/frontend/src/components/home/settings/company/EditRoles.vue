@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <Toast position="top-center" />
     <v-card class="bg-cardColor">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
@@ -38,7 +39,7 @@
               :items="permissions"
               label="Permissions"
               chips
-              :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
+              :disabled="true"
               multiple
               variant="default"
             ></v-select>
@@ -71,7 +72,7 @@
         </v-data-table>
       </v-card-text>
       <v-divider></v-divider>
-      <v-card-actions class="bg-cardColor">
+      <!-- <v-card-actions class="bg-cardColor">
         <v-container
           ><v-row justify="end">
             <Toast position="top-center" />
@@ -89,7 +90,7 @@
             ></v-row
           ></v-container
         >
-      </v-card-actions>
+      </v-card-actions> -->
     </v-card>
     <v-dialog v-model="dialog" persistent max-width="500px">
       <v-card class="bg-cardColor">
@@ -248,7 +249,7 @@ export default defineComponent({
       }
       console.log(JSON.stringify(data))
       await axios
-        .patch(`${API_URL}role/${this.selectedItem._id}`, config, data)
+        .patch(`${API_URL}role/${this.selectedItem._id}`, data, config)
         .then((response) => {
           console.log(response)
           this.$toast.add({

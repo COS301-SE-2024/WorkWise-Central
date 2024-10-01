@@ -22,10 +22,17 @@
           </div>
 
           <Panel header="Current Drivers">
-            <DataView :value="currentDrivers">
+            <DataView :value="assignedDrivers">
               <template #list="slotProps">
-                <div class="driver-item">
-                  {{ slotProps.data.profile.displayName }}
+                <div class="driver-list">
+                  <div v-for="(item, index) in slotProps.items" :key="index" class="driver-item">
+                    <img
+                      :src="item?.userInfo?.displayImage"
+                      :alt="`${item?.userInfo?.displayName}'s photo`"
+                      class="driver-image"
+                    />
+                    <span class="driver-name">{{ item?.userInfo?.displayName }}</span>
+                  </div>
                 </div>
               </template>
             </DataView>
@@ -40,31 +47,98 @@
                 <div class="p-col-4">
                   <strong>Average Fuel Consumption:</strong> {{ averageFuelConsumption }} L/100km
                 </div>
-                <div class="p-col-4">
-                  <strong>Vehicles Due for Service:</strong> {{ vehiclesDueForService }}
-                </div>
               </div>
             </div>
-          </Panel>
-
-          <Panel header="Alerts">
-            <DataView :value="recentAlerts">
-              <template #list="slotProps">
-                <Message :severity="slotProps.data.severity" :text="slotProps.data.message" />
-              </template>
-            </DataView>
           </Panel>
         </div>
       </div>
       <div class="card">
-        <div class="text-center pt-10">
-          <Button
-            label="Show All Vehicle Data"
-            icon="fa: fa-solid fa-external-link"
-            @click="dialogVisible = true"
-            class="custom-button"
+        <v-row>
+          <v-col cols="12" class="text-center pt-10">
+            <Button
+              label="Show All Vehicle Data"
+              icon="fa: fa-solid fa-external-link"
+              @click="dialogVisible = true"
+              class="custom-button"
+            />
+          </v-col>
+          <v-col cols="12" class="text-center">
+            <Button
+              label="Find Vehicle"
+              icon="fa: fa-solid fa-search"
+              @click="toggleVehicleList"
+              class="custom-button"
+            />
+          </v-col>
+          <v-col cols="12" class="text-center">
+            <Button
+              label="Assign Vehicle"
+              icon="fa: fa-solid fa-user-plus"
+              @click="assignDialogVisible = true"
+              class="custom-button"
+            />
+          </v-col>
+        </v-row>
+        <Dialog
+          v-model:visible="assignDialogVisible"
+          header="Assign Vehicle"
+          :style="{ width: '50vw' }"
+          modal
+        >
+          <div>
+            <Listbox
+              v-model="selectedVehicle"
+              :options="vehicles"
+              optionLabel="licensePlate"
+              class="w-full md:w-56 mt-2"
+              @change="fetchEmployees"
+              filter
+            />
+            <Listbox
+              v-model="selectedEmployee"
+              :options="employees"
+              optionLabel="userInfo.displayName"
+              class="w-full md:w-56 mt-2"
+              filter
+            />
+          </div>
+          <template #footer>
+            <Button
+              label="Assign"
+              class="p-button-success"
+              icon="fa: fa-solid fa-check"
+              @click="assignVehicle"
+            />
+            <Button
+              label="Cancel"
+              class="p-button-danger"
+              icon="fa: fa-solid fa-times"
+              @click="assignDialogVisible = false"
+            />
+          </template>
+        </Dialog>
+        <Dialog
+          v-model:visible="showVehicleList"
+          header="Select Vehicle"
+          :style="{ width: '50vw', margin: 'auto' }"
+        >
+          <Listbox
+            v-model="selectedVehicle"
+            :options="vehicles"
+            optionLabel="licensePlate"
+            class="w-full md:w-56 mt-2"
+            @change="searchVehicle"
+            filter
           />
-        </div>
+          <template #footer>
+            <Button
+              label="Close and Redirect"
+              class="p-button-success"
+              icon="fa: fa-solid fa-check"
+              @click="closeAndRedirect"
+            />
+          </template>
+        </Dialog>
         <Dialog
           v-model:visible="dialogVisible"
           header="Flex Scroll"
@@ -106,10 +180,11 @@
             <Column header="Image">
               <!--TODO: Add Image Column Properly-->
               <template #body="slotProps">
-                <img
-                  :src="`https://primefaces.org/cdn/primevue/images/product/${slotProps.data.image}`"
-                  :alt="slotProps.data.image"
-                  class="w-24 rounded"
+                <ImageC
+                  :src="slotProps.data.images[0]"
+                  :alt="slotProps.data.images[0]"
+                  width="96"
+                  preview
                 />
               </template>
             </Column>
@@ -120,7 +195,7 @@
             </Column>
             <Column field="availability.status" header="Status" style="width: 15%">
               <template #editor="{ data }">
-                <Select
+                <SelectC
                   v-model="data.availability.status"
                   :options="availabilityStatuses"
                   optionLabel="label"
@@ -134,7 +209,7 @@
                       :severity="getStatusSeverity(slotProps.option.value)"
                     />
                   </template>
-                </Select>
+                </SelectC>
               </template>
               <template #body="slotProps">
                 <Tag
@@ -150,7 +225,7 @@
             </Column>
             <Column field="fuelType" header="Fuel Type" style="width: 15%">
               <template #editor="{ data, field }">
-                <Select
+                <SelectC
                   v-model="data[field]"
                   :options="fuelTypes"
                   optionLabel="label"
@@ -180,7 +255,16 @@
     <SplitterPanel class="flex items-center justify-center" :size="75">
       <GoogleMap :api-key="apiKey" style="width: 100%; height: 100%" :center="mapCenter" :zoom="12">
         <!-- Company Marker -->
-        <Marker v-if="company" :options="{ position: companyLocation }">
+        <CustomMarker
+          v-if="company"
+          :options="{ position: companyLocation, anchorPoint: 'BOTTOM_CENTER' }"
+        >
+          <img
+            src="@/assets/images/markers/BuildingMarker.png"
+            width="50"
+            height="50"
+            style="margin-top: 8px"
+          />
           <InfoWindow>
             <div id="companyContent">
               <img class="centered" v-if="company.logo" :src="company.logo" alt="Company Logo" />
@@ -190,23 +274,39 @@
               </div>
             </div>
           </InfoWindow>
-        </Marker>
+        </CustomMarker>
 
         <!-- Current Location Marker -->
-        <Marker :options="{ position: currentLocation }">
+        <CustomMarker :options="{ position: currentLocation, anchorPoint: 'BOTTOM_CENTER' }">
+          <img
+            src="@/assets/images/markers/PersonMarker.png"
+            width="50"
+            height="50"
+            style="margin-top: 8px"
+          />
           <InfoWindow>
             <div id="content">
               <h1 id="firstHeading" style="color: black">You Are Here</h1>
             </div>
           </InfoWindow>
-        </Marker>
+        </CustomMarker>
 
         <!-- Vehicle Markers -->
-        <Marker
+        <CustomMarker
           v-for="vehicle in vehicles"
           :key="vehicle.id"
-          :options="{ position: vehicle.location, label: vehicle.driver }"
+          :options="{
+            position: vehicle.location,
+            label: vehicle.driver,
+            anchorPoint: 'BOTTOM_CENTER'
+          }"
         >
+          <img
+            src="@/assets/images/markers/CarMarker.png"
+            width="50"
+            height="50"
+            style="margin-top: 8px"
+          />
           <InfoWindow>
             <div style="color: black">
               <h4>{{ vehicle.name.make }} {{ vehicle.name.model }}</h4>
@@ -215,7 +315,7 @@
               <p>Mileage: {{ vehicle.mileage }} km</p>
             </div>
           </InfoWindow>
-        </Marker>
+        </CustomMarker>
 
         <Polyline v-if="routePolyline" :options="routePolyline" />
       </GoogleMap>
@@ -224,7 +324,7 @@
 </template>
 
 <script>
-import { GoogleMap, InfoWindow, Marker, Polyline } from 'vue3-google-map'
+import { GoogleMap, InfoWindow, Marker, CustomMarker, Polyline } from 'vue3-google-map'
 import axios from 'axios'
 import { API_URL, GOOGLE_MAPS_API_KEY } from '@/main'
 import Splitter from 'primevue/splitter'
@@ -238,6 +338,12 @@ import Panel from 'primevue/panel'
 import DataView from 'primevue/dataview'
 import Message from 'primevue/message'
 // import Image from 'primevue/image'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import SelectC from 'primevue/select'
+import Tag from 'primevue/tag'
+import ImageC from 'primevue/image'
+import Listbox from 'primevue/listbox'
 import { VehicleAvailabilityEnum, FuelType } from './models/vehicles'
 
 export default {
@@ -245,7 +351,7 @@ export default {
   components: {
     GoogleMap,
     // eslint-disable-next-line vue/no-reserved-component-names
-    Marker,
+    CustomMarker,
     InfoWindow,
     // eslint-disable-next-line vue/no-reserved-component-names
     Polyline,
@@ -261,10 +367,43 @@ export default {
     Card,
     Panel,
     DataView,
-    Message
+    ImageC,
+    InputNumber,
+    InputText,
+    SelectC,
+    Tag,
+    Listbox
   },
   data() {
     return {
+      markerIcons: {
+        vehicle: {
+          path: '@public/CarMarker.png',
+          fillColor: '#4CAF50',
+          fillOpacity: 1,
+          strokeWeight: 1,
+          strokeColor: '#ffffff',
+          scale: 0.06
+        },
+        person: {
+          path: '@public/PersonMarker.png',
+          fillColor: '#2196F3',
+          fillOpacity: 1,
+          strokeWeight: 1,
+          strokeColor: '#ffffff',
+          scale: 0.06
+        },
+        building: {
+          path: '@public/BuildingMarker.png',
+          fillColor: '#FFC107',
+          fillOpacity: 1,
+          strokeWeight: 1,
+          strokeColor: '#ffffff',
+          scale: 0.06
+        }
+      },
+      showVehicleList: false,
+      selectedVehicle: null,
       apiKey: GOOGLE_MAPS_API_KEY,
       apiUrl: API_URL,
       company: null,
@@ -280,21 +419,22 @@ export default {
         value: value
       })),
       fuelTypes: Object.entries(FuelType).map(([key, value]) => ({ label: value, value: value })),
+      assignedDrivers: [],
       currentDrivers: [],
       recentAlerts: [],
+      employees: [],
+      assignDialogVisible: false,
+      selectedEmployee: null,
       totalDistanceToday: 0,
       averageFuelConsumption: 0,
       vehiclesDueForService: 0
     }
   },
-  created() {
+  mounted() {
     this.getCurrentLocation()
     this.getCompanyData()
     this.getVehiclesData().then(() => this.loadFleetData())
     //this.loadFleetData()
-  },
-  mounted() {
-    //VehicleService.getVehicles().then((data) => (this.vehicles = data))
   },
   computed: {
     activeVehicles() {
@@ -306,6 +446,32 @@ export default {
     }
   },
   methods: {
+    closeAndRedirect() {
+      if (this.selectedVehicle) {
+        this.redirectMap(
+          this.selectedVehicle.location.latitude,
+          this.selectedVehicle.location.longitude
+        )
+      }
+      this.showVehicleList = false
+    },
+    toggleVehicleList() {
+      this.showVehicleList = !this.showVehicleList
+    },
+    searchVehicle() {
+      if (this.selectedVehicle) {
+        console.log('Searching for vehicle', this.selectedVehicle)
+      }
+    },
+    redirectMap(latitude, longitude) {
+      const newCenter = { lat: latitude, lng: longitude }
+      this.mapCenter = newCenter
+
+      // If you want to smoothly pan to the new location:
+      if (this.$refs.mapRef) {
+        this.$refs.mapRef.panTo(newCenter)
+      }
+    },
     async getCurrentLocation() {
       try {
         const coordinates = await this.$getLocation()
@@ -330,17 +496,29 @@ export default {
     },
     async getVehiclesData() {
       try {
-        const response = await axios.get(
-          `${this.apiUrl}fleet/all/${localStorage['currentCompany']}`,
-          this.getAuthConfig()
-        )
-        this.vehicles = await Promise.all(
-          response.data.data.map(async (vehicle) => ({
-            ...vehicle,
-            location: vehicle?.location
-          }))
-        )
-        console.log(vehicles)
+        const [vehiclesResponse, employeesResponse] = await Promise.all([
+          axios.get(
+            `${this.apiUrl}fleet/all?companyId=${localStorage.getItem('currentCompany')}&employeeId=${localStorage.getItem('employeeId')}`,
+            this.getAuthConfig()
+          ),
+          axios.get(
+            `${this.apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`,
+            this.getAuthConfig()
+          )
+        ])
+
+        const employeesMap = {}
+        employeesResponse.data.data.forEach((employee) => {
+          employeesMap[employee._id] = employee
+        })
+
+        this.vehicles = vehiclesResponse.data.data.map((vehicle) => ({
+          ...vehicle,
+          location: vehicle?.location,
+          assignedDriver: employeesMap.get(vehicle.availability.assignedTo) || null
+        }))
+
+        console.log('Vehicles:', this.vehicles)
       } catch (error) {
         console.error('Error fetching vehicles data:', error)
       }
@@ -392,17 +570,25 @@ export default {
     },
     async loadFleetData() {
       try {
-        // const data = await VehicleService.getFleetData()
-        // this.vehicles = data.vehicles
-        for (const v of this.vehicles) {
-          this.currentDrivers.push(v.availability.assignedTo)
+        for (const vehicle of this.vehicles) {
+          if (vehicle.assignedDriver) {
+            this.assignedDrivers.push(vehicle.assignedDriver)
+          }
         }
-        //this.currentDrivers = data.currentDrivers
-        //this.recentAlerts = data.recentAlerts //TODO: remove
-        //this.totalDistanceToday = data.totalDistanceToday
-        //this.averageFuelConsumption = data.averageFuelConsumption
-        //this.vehiclesDueForService = data.vehiclesDueForService
-        //this.updateMapCenter()
+        console.log('Assigned Drivers:', this.assignedDrivers)
+
+        const totalDistance = this.vehicles.reduce(
+          (sum, vehicle) => sum + (vehicle.statistics?.totalDistance || 0),
+          0
+        )
+        const totalFuelConsumption = this.vehicles.reduce(
+          (sum, vehicle) => sum + (vehicle.statistics?.averageFuelConsumption || 0),
+          0
+        )
+        const vehicleCount = this.vehicles.length
+
+        this.totalDistanceToday = totalDistance
+        this.averageFuelConsumption = vehicleCount ? totalFuelConsumption / vehicleCount : 0
       } catch (error) {
         console.error('Error loading fleet data:', error)
       }
@@ -420,16 +606,64 @@ export default {
       }
     },
     async updateVehicle(vehicle) {
-      vehicle['currentEmployeeId'] = localStorage['currentCompany']
+      vehicle['currentEmployeeId'] = localStorage['employeeId']
       vehicle['vehicleId'] = vehicle._id
       axios
-        .post(`${this.apiUrl}fleet/update`, vehicle, this.getAuthConfig())
+        .patch(
+          `${this.apiUrl}fleet/update?companyId=${localStorage.getItem('currentCompany')}&employeeId=${localStorage.getItem('employeeId')}`,
+          vehicle,
+          this.getAuthConfig()
+        )
         .then((res) => {
           console.log(res.data.data)
         })
         .catch((error) => {
           console.error('Error updating vehicle:', error)
         })
+    },
+    async getEmployees() {
+      try {
+        const response = await axios.get(
+          `${this.apiUrl}employee/detailed/all/${localStorage.getItem('employeeId')}`,
+          this.getAuthConfig()
+        )
+        this.employees = response.data.data
+        console.log('Employees:', this.employees)
+      } catch (error) {
+        console.error('Error fetching employees:', error)
+        this.employees = []
+      }
+    },
+    async fetchEmployees() {
+      if (this.selectedVehicle) {
+        await this.getEmployees()
+      }
+    },
+    async assignVehicle() {
+      if (this.selectedVehicle && this.selectedEmployee) {
+        try {
+          const response = await axios.patch(
+            `${this.apiUrl}fleet/update`,
+            {
+              ...this.selectedVehicle,
+              availability: {
+                status: 'In Use',
+                assignedTo: this.selectedEmployee._id
+              },
+              vehicleId: this.selectedVehicle._id,
+              currentEmployeeId: localStorage.getItem('employeeId')
+            },
+            this.getAuthConfig()
+          )
+          console.log('Assigned To:', response.data.data)
+          this.assignDialogVisible = false
+          this.selectedVehicle = null
+          this.selectedEmployee = null
+          await this.getVehiclesData()
+        } catch (error) {
+          console.error('Error assigning vehicle:', error)
+        }
+      }
     }
   }
 }
@@ -440,6 +674,7 @@ export default {
   background-color: #4c9fc3;
   outline-color: #4c9fc3;
   border: none; /* Add this line to remove the green outline */
+  width: 80%;
 }
 
 .custom-button:hover {
@@ -493,5 +728,32 @@ export default {
 
 .panel-header-center .p-panel-header {
   text-align: center;
+}
+
+.driver-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.driver-item {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 0.5rem;
+  width: calc(50% - 0.5rem); /* Adjust based on your layout needs */
+}
+
+.driver-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.driver-name {
+  font-weight: bold;
 }
 </style>

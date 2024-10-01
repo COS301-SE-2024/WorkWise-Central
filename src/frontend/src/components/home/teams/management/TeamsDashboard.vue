@@ -72,6 +72,7 @@
                     @click="selectItem(item)"
                     v-show="
                       checkPermission('view teams') ||
+                      checkPermission('view my teams') ||
                       checkPermission('edit teams') ||
                       checkPermission('delete teams')
                     "
@@ -80,7 +81,9 @@
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item v-show="checkPermission('view teams')">
+                  <v-list-item
+                    v-show="checkPermission('view teams') || checkPermission('view my teams')"
+                  >
                     <ViewTeam :team="selectedItem" />
                   </v-list-item>
                   <v-list-item v-show="checkPermission('edit teams')">
@@ -238,7 +241,7 @@ export default defineComponent({
       }
       try {
         const response = await axios.get(
-          `${API_URL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}team/detailed/table/all/${localStorage.getItem('currentCompany')}?employeeId=${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -251,29 +254,6 @@ export default defineComponent({
     },
     addTeam(newTeam: Team) {
       this.teamItems.push(newTeam)
-    },
-    async getEmployees() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        params: {
-          currentEmployeeId: localStorage.getItem('employeeId')
-        }
-      }
-      try {
-        const response = await axios.get(
-          `${API_URL}employee/all/${localStorage.getItem('employeeId')}`,
-          config
-        )
-        console.log(response.data.data)
-        for (const employee of response.data.data) {
-          this.teamMemberNames.push(employee.userInfo.displayName)
-        }
-      } catch (error) {
-        console.error(error)
-      }
     },
     async getTeamLeaderName() {
       const config = {
@@ -299,7 +279,7 @@ export default defineComponent({
   mounted() {
     this.getTeams()
     this.populateTeamTable()
-    this.getTeamLeaderName()
+    // this.getTeamLeaderName()
     this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
     this.getEmployeePermissions()
   }
