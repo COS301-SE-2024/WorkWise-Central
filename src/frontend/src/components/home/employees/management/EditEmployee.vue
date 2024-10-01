@@ -269,7 +269,8 @@ export default {
       this.req_obj.updateEmployeeDto.superiorId || delete this.req_obj.updateEmployeeDto.superiorId
       this.req_obj.updateEmployeeDto.roleId || delete this.req_obj.updateEmployeeDto.roleId
 
-      if (validate || this.currentSubordinates.length != 0) await this.savechanges()
+      if (validate || this.currentSubordinates.length != 0)
+        await this.savechanges().then(() => this.close())
     },
     async loadSubordinates() {
       const config = {
@@ -391,7 +392,16 @@ export default {
       }
     },
     close() {
-      this.employeeDialog = false
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Employee Edited Successfully',
+        life: 3000
+      })
+      setTimeout(() => {
+        this.employeeDialog = false
+        this.$emit('update')
+      }, 1500)
     },
     async savechanges() {
       this.isDeleting = true // Indicate the start of the deletion process

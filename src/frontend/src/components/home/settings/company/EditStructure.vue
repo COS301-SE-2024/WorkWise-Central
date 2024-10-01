@@ -439,6 +439,7 @@ export default defineComponent({
     },
     async getEmployeeDetails() {
       this.isLoading = true
+      this.loading = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -465,7 +466,7 @@ export default defineComponent({
         setTimeout(() => {
           this.employeeDialog = true
           this.isLoading = false
-        }, 1000)
+        }, 5000)
       } catch (error) {
         console.error(error)
       }
@@ -492,10 +493,11 @@ export default defineComponent({
       this.req_obj.updateEmployeeDto.superiorId || delete this.req_obj.updateEmployeeDto.superiorId
       this.req_obj.updateEmployeeDto.roleId || delete this.req_obj.updateEmployeeDto.roleId
 
-      if (validate) await this.savechanges()
+      if (validate) await this.savechanges().then(() => this.close())
       await this.getGraphView()
     },
     async loadSubordinates() {
+      this.loading=true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -546,6 +548,7 @@ export default defineComponent({
       }
     },
     async loadSuperiors() {
+      this.loading = true
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` },
         params: { currentEmployeeId: localStorage['employeeId'] }
@@ -634,7 +637,16 @@ export default defineComponent({
       }
     },
     close() {
-      this.employeeDialog = false
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Employee Edited Successfully',
+        life: 3000
+      })
+      setTimeout(() => {
+        this.employeeDialog = false
+        this.getGraphView()
+      }, 1500)
     },
     strHasNumberInIt(str) {
       return /\d/.test(str)
