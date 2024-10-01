@@ -306,9 +306,8 @@ export default {
           console.log(error)
         })
       }
-      if(change)
-      {
-            this.$toast.add({
+
+      this.$toast.add({
               severity: 'success',
               summary: 'Success',
               detail: 'Team updated successfully',
@@ -316,16 +315,7 @@ export default {
             })
         this.editDialog = false
         window.location.reload()
-      }else
-      {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'An error occurred while updating the team',
-              life: 3000
-            })
-      }
-      this.isDeleting = false
+
 
     },
     getEmployeeIdByName(name) {
