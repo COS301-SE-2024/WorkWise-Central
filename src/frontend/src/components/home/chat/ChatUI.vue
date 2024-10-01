@@ -175,9 +175,14 @@ export default {
       socket.emit('reading-chat', { jwt: localStorage['access_token'], chatId: chat._id })
     },
     createChat(newChat) {
-      this.createNewChatHelper(newChat.name, newChat.participants, newChat.chatImage)
+      this.createNewChatHelper(
+        newChat.name,
+        newChat.participants,
+        newChat.chatImage,
+        newChat.chatDescription
+      )
     },
-    async createNewChatHelper(chatName, userIdsForChat, chatImage) {
+    async createNewChatHelper(chatName, userIdsForChat, chatImage, chatDescription) {
       console.log(chatImage)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       userIdsForChat.push(localStorage['id'])
@@ -189,6 +194,10 @@ export default {
       if (chatImage != null) {
         spreadElements.chatImage = chatImage.value
       }
+      if (chatDescription != null) {
+        spreadElements.description = chatDescription.value
+      }
+
       const result = await axios.post(
         `${this.server_url}chat/create`,
         { ...spreadElements },
