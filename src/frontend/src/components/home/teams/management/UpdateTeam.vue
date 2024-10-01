@@ -38,6 +38,8 @@
                 v-model="selectedTeamMembers"
                 :items="teamMemberNames"
                 :rules="teamMembersRules"
+                item-title="name"
+                item-value="id"
                 multiple
                 chips
                 required
@@ -52,6 +54,8 @@
                 v-model="localEditedItem.teamLeaderId.userInfo.displayName"
                 :items="teamMemberNames"
                 :rules="teamLeaderIdRules"
+                item-title="name"
+                item-value="id"
                 required
                 variant="solo"
                 color="primary"
@@ -64,8 +68,8 @@
                 v-model="selectedJobs"
                 :items="jobList"
                 multiple
-                item-title="details.heading"
-                item-value="_id"
+                item-title="name"
+                item-value="id"
                 required
                 variant="solo"
                 color="primary"
@@ -144,9 +148,15 @@ export default {
       valid: false,
       isDeleting: false,
       teamMemberNames: [],
+      allTeamMembers:[],
+      currentTeamLeader:'',
+      allAssignableJob:[],
+      currentlyselectedDBAssignableJob:[],
       selectedTeamMembers: [],
+      currentlyselectedDBTeamMemebers:[],
       initialTeamMembers: [],
       selectedTeamLeader: '',
+      currentlyselectedDBTeamLeader:'',
       teamMemberIds: [],
       teamNameRules: [(v) => !!v || 'Team Name is required'],
       teamMembersRules: [(v) => (Array.isArray(v) && v.length > 0) || 'Team Members are required'],
@@ -170,15 +180,16 @@ export default {
   },
   methods: {
     compareTeamMembers() {
-      const addedMembers = this.selectedTeamMembers.filter(
+      let addedMembers = this.selectedTeamMembers.filter(
         (member) =>
           !this.initialTeamMembers.some(
-            (initialMember) => initialMember.userInfo.displayName === member
+            (initialMember) => initialMember.userInfo.displayName === member || initialMember.userInfo.displayName ===''
           )
       )
 
+
       const removedMembers = this.initialTeamMembers.filter(
-        (initialMember) => !this.selectedTeamMembers.includes(initialMember.userInfo.displayName)
+        (initialMember) => !this.selectedTeamMembers.includes(initialMember.userInfo.displayName) || initialMember.userInfo.displayName ===''
       )
 
       return { addedMembers, removedMembers }
@@ -187,15 +198,24 @@ export default {
       return name === this.selectedTeamLeader // Disable if the name is the team leader
     },
     populateTeamLeaderName() {
-      const teamLeader = this.localEditedItem.teamMembers.find(
-        (member) => member === this.localEditedItem.teamLeaderId
-      )
-      this.selectedTeamLeader =
-        this.teamMemberNames[this.localEditedItem.teamMembers.indexOf(teamLeader)]
+
+      this.localEditedItem.teamLeaderId.userInfo.displayName = this.editedItem.teamLeaderId._id
+      this.currentlyselectedDBTeamLeader=this.editedItem.teamLeaderId._id
+      console.log('localEditedItem: ', this.editedItem)
     },
-    async updateTeam() {
+    arraysHaveSameValues(arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
+  const sortedArr1 = arr1.slice().sort();
+  const sortedArr2 = arr2.slice().sort();
+
+  return sortedArr1.every((value, index) => value === sortedArr2[index]);
+},
+    updateTeam() {
       this.isDeleting = true
 
+      console.log(this.localEditedItem.teamLeaderId.userInfo.displayName)
+
+      let change = false
       if (!this.localEditedItem) {
         this.$toast.add({
           severity: 'error',
@@ -212,85 +232,91 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
+      let data
 
-      //updating the all the team info except the teamMember info
+      const remove_emp_subarray = this.currentlyselectedDBTeamMemebers.filter(
+          (item) => !this.selectedTeamMembers.includes(item)
+      ).filter(item=> item !=='')
+
+      let add_emp_subarray = this.selectedTeamMembers.filter(
+          (item) => !this.currentlyselectedDBTeamMemebers.includes(item)
+      ).filter(item=> item !=='')
+
       if (
-        this.localEditedItem.teamName !== this.initalTeamName ||
-        this.getEmployeeIdByName(this.selectedTeamLeader !== this.intialTeamLeader)
+        this.localEditedItem.teamName !== this.initalTeamName
       ) {
-        const data = {
+        data = {
             teamName: this.localEditedItem.teamName,
-            teamMembers: this.selectedTeamMembers.map((name) => this.getEmployeeIdByName(name)),
-            teamLeaderId: this.getEmployeeIdByName(this.selectedTeamLeader),
-            companyId: localStorage.getItem('currentCompany')
-          },
-          currentEmployeeId = localStorage.getItem('employeeId')
-      }
-      console.log(data)
-
-      // Unassign if the job has been removed
-
-      for (const job of this.assignedJobs) {
-        if (!this.selectedJobs.includes(job)) {
-          console.log('Removing job... :', job)
-          await axios.patch(
-            `${API_URL}job/team`,
-            {
-              employeeId: localStorage.getItem('employeeId'),
-              teamId: this.teamId,
-              jobId: job
-            },
-            config
-          )
-        }
-      }
-
-      // Assign new jobs to the team
-      for (const job of this.selectedJobs) {
-        if (!this.assignedJobs.includes(job)) {
-          await axios.put(
-            `${API_URL}job/team`,
-            {
-              employeeId: localStorage.getItem('employeeId'),
-              teamId: this.teamId,
-              jobId: job
-            },
-            config
-          )
-        }
-      }
-
-      await this.getCurrentJobAssignments()
-
-      axios
-        .patch(`${API_URL}team/${this.teamId}`, data, config)
-        .then((response) => {
-          console.log(response)
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Team updated successfully',
-            life: 3000
-          })
-          setTimeout(() => {
-            this.isDeleting = false
-            this.editDialog = false
-            // Emit the event to the parent component with the updated team data
-            this.$emit('teamUpdated', response.data.data)
-          }, 1500)
+          }
+        axios
+            .patch(`${API_URL}team/${this.teamId}`, data, config)
+            .then((response) => {
+              console.log(response)
+              change = true}).catch((error) => {
+          console.log(error)
         })
-        .catch((error) => {
-          console.error(error)
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An error occurred while updating the team',
-            life: 3000
-          })
-          setTimeout(() => {
-            this.isDeleting = false
-          }, 1500)
+
+      }
+      if(this.currentlyselectedDBTeamLeader !== this.localEditedItem.teamLeaderId.userInfo.displayName)
+      {
+        data = {
+          teamLeaderId: this.localEditedItem.teamLeaderId.userInfo.displayName,
+        }
+        axios
+            .patch(`${API_URL}team/${this.teamId}`, data, config)
+            .then((response) => {
+              console.log(response)
+              change = true}).catch((error) => {
+          console.log(error)
         })
+      }
+      if(this.arraysHaveSameValues(this.currentlyselectedDBAssignableJob, this.selectedJobs) === false)
+      {
+        data = {
+          currentJobAssignments: this.selectedJobs
+        }
+        axios
+            .patch(`${API_URL}team/${this.teamId}`, data, config)
+            .then((response) => {
+              console.log(response)
+              change = true}).catch((error) => {
+                console.log(error)
+        })
+      }
+      console.log('remove_emp_subarray', remove_emp_subarray)
+      if(remove_emp_subarray.length !== 0)
+      {
+        axios
+            .patch(`${API_URL}team/remove/${this.teamId}`, { teamMembersToBeRemoved:remove_emp_subarray}, config)
+            .then((response) => {
+              console.log(response)
+              change = true}).catch((error) => {
+          console.log(error)
+        })
+      }
+
+      console.log('add_emp_subarray', add_emp_subarray)
+      if(add_emp_subarray.length !== 0)
+      {
+        axios
+            .patch(`${API_URL}team/add/${this.teamId}`, {newTeamMembers:add_emp_subarray}, config)
+            .then((response) => {
+              console.log(response)
+              change = true}).catch((error) => {
+          console.log(error)
+        })
+      }
+
+      this.$toast.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Team updated successfully',
+              life: 3000
+            })
+        this.editDialog = false
+        window.location.reload()
+
+
     },
     getEmployeeIdByName(name) {
       const index = this.teamMemberNames.indexOf(name)
@@ -298,7 +324,8 @@ export default {
     },
     populateCurrentTeamMembers() {
       for (let i = 0; i < this.localEditedItem.teamMembers.length; i++) {
-        this.selectedTeamMembers.push(this.editedItem.teamMembers[i].userInfo.displayName)
+        this.selectedTeamMembers.push(this.editedItem.teamMembers[i]._id)
+        this.currentlyselectedDBTeamMemebers.push(this.editedItem.teamMembers[i]._id)
       }
     },
     async getCurrentJobAssignments() {
@@ -313,11 +340,10 @@ export default {
         for (const job of response.data.data.currentJobAssignments) {
           this.assignedJobs.push(job)
         }
-        for (const job of this.jobList) {
-          if (this.assignedJobs.some((assignedJob) => assignedJob === job._id)) {
-            this.selectedJobs.push(job._id)
-          }
-        }
+
+            this.selectedJobs = this.assignedJobs
+
+
       } catch (error) {
         console.error('Failed to fetch current job assignments:', error)
       }
@@ -331,11 +357,14 @@ export default {
       }
       try {
         const response = await axios.get(
-          `${API_URL}job/all/company/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}job/all/company/${localStorage.getItem('currentCompany')}?currentEmployeeId=${localStorage.getItem(
+            'employeeId'
+          )}`,
           config
         )
+        console.log(response.data.data)
         response.data.data.forEach((job) => {
-          this.jobList.push(job)
+          this.jobList.push({id: job._id, name: job.details.heading})
         })
       } catch (error) {
         console.error(error)
@@ -357,8 +386,8 @@ export default {
           config
         )
         response.data.data.forEach((employee) => {
-          this.teamMemberNames.push(employee.userInfo.displayName)
-          this.teamMemberIds.push(employee._id)
+          this.teamMemberNames.push({ name: employee.userInfo.displayName, id: employee._id })
+          this.allTeamMembers.push(employee._id)
         })
         this.populateCurrentTeamMembers()
         this.populateTeamLeaderName()

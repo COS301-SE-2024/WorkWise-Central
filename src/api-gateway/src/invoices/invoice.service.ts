@@ -239,13 +239,57 @@ export class InvoiceService {
   }
 
   async update(id: Types.ObjectId, updateInvoiceDto: UpdateInvoiceDto) {
-    if (updateInvoiceDto.sent && !updateInvoiceDto.sentDate) {
-      updateInvoiceDto.sentDate = new Date();
+    // if (updateInvoiceDto.sent && !updateInvoiceDto.sentDate) {
+    //   updateInvoiceDto.sentDate = new Date();
+    // }
+    // if (updateInvoiceDto.paid && !updateInvoiceDto.receiptOfPaymentDate) {
+    //   updateInvoiceDto.receiptOfPaymentDate = new Date();
+    // }
+    // return await this.invoiceRepository.update(id, updateInvoiceDto);
+
+    //Using the updated labor and inventory items to update the invoice
+    const invoice = await this.findById(id);
+    const dto = new UpdateInvoiceDto();
+    dto.inventoryItems = [];
+    for (const item of updateInvoiceDto.inventoryItems) {
+      dto.inventoryItems.push({
+        description: item.description ? item.description : '',
+        quantity: item.quantity ? item.quantity : 0,
+        unitPrice: item.unitPrice ? item.unitPrice : 0,
+        discount: item.discount ? item.discount : 0,
+        total: item.total ? item.total : 0,
+      });
     }
-    if (updateInvoiceDto.paid && !updateInvoiceDto.receiptOfPaymentDate) {
-      updateInvoiceDto.receiptOfPaymentDate = new Date();
+    dto.laborItems = [];
+    for (const item of updateInvoiceDto.laborItems) {
+      dto.laborItems.push({
+        description: item.description ? item.description : '',
+        quantity: item.quantity ? item.quantity : 0,
+        unitPrice: item.unitPrice ? item.unitPrice : 0,
+        discount: item.discount ? item.discount : 0,
+        total: item.total ? item.total : 0,
+      });
     }
-    return await this.invoiceRepository.update(id, updateInvoiceDto);
+    if (updateInvoiceDto.invoiceNumber) {
+      dto.invoiceNumber = updateInvoiceDto.invoiceNumber;
+    }
+    //setting all the other fields directly from the invoice
+    dto.invoiceDate = invoice.invoiceDate;
+    dto.paid = invoice.paid;
+    dto.taxPercentage = invoice.taxPercentage;
+    //Calculating the subtotal
+    let totalTemp = 0;
+    for (const item of dto.inventoryItems) {
+      totalTemp = totalTemp + item.total;
+    }
+    for (const item of dto.laborItems) {
+      totalTemp = totalTemp + item.total;
+    }
+    dto.total = totalTemp;
+    dto.taxAmount = totalTemp * (15 / 115);
+    dto.subTotal = totalTemp - dto.taxAmount;
+
+    return await this.invoiceRepository.update(id, dto);
   }
 
   async remove(id: Types.ObjectId): Promise<boolean> {

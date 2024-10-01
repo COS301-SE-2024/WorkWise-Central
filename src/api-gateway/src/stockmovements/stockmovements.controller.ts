@@ -76,7 +76,7 @@ export class StockMovementsController {
     validateObjectId(currentEmployeeId, 'currentEmployee');
 
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('view all stock movements')) {
+    if (currentEmployee.role.permissionSuite.includes('view movements')) {
       let data;
       try {
         data = await this.stockMovementsService.findAllInCompany(currentEmployee.companyId);

@@ -72,6 +72,7 @@
                     @click="selectItem(item)"
                     v-show="
                       checkPermission('view teams') ||
+                      checkPermission('view my teams') ||
                       checkPermission('edit teams') ||
                       checkPermission('delete teams')
                     "
@@ -80,7 +81,9 @@
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item v-show="checkPermission('view teams')">
+                  <v-list-item
+                    v-show="checkPermission('view teams') || checkPermission('view my teams')"
+                  >
                     <ViewTeam :team="selectedItem" />
                   </v-list-item>
                   <v-list-item v-show="checkPermission('edit teams')">
@@ -238,7 +241,7 @@ export default defineComponent({
       }
       try {
         const response = await axios.get(
-          `${API_URL}team/detailed/all/${localStorage.getItem('currentCompany')}`,
+          `${API_URL}team/detailed/table/all/${localStorage.getItem('currentCompany')}?employeeId=${localStorage.getItem('employeeId')}`,
           config
         )
         console.log(response.data.data)
@@ -276,7 +279,7 @@ export default defineComponent({
   mounted() {
     this.getTeams()
     this.populateTeamTable()
-    this.getTeamLeaderName()
+    // this.getTeamLeaderName()
     this.isDarkMode = localStorage.getItem('theme') === 'true' ? true : false
     this.getEmployeePermissions()
   }

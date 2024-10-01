@@ -19,7 +19,7 @@ export class Role {
   @Prop({
     type: [String],
     required: true,
-    default: ['view all jobs assigned to me', 'view all clients that are assigned to me', 'record inventory use'],
+    default: [],
   })
   permissionSuite: string[];
 
@@ -57,7 +57,7 @@ export class RoleApiObject {
   @Prop({
     type: [String],
     required: true,
-    default: ['view all jobs assigned to me', 'view all clients that are assigned to me', 'record inventory use'],
+    default: [],
   })
   permissionSuite: string[];
 

@@ -333,7 +333,7 @@ export default {
 
       try {
         const employee_response = await axios.get(
-          `${API_URL}employee/detailed/all/${localStorage['employeeId']}`,
+          `${API_URL}employee/detailed/table/all/${localStorage['employeeId']}`,
           config
         )
 
