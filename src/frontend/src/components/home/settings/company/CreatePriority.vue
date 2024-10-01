@@ -97,7 +97,7 @@ export default defineComponent({
       priority: {
         label: '',
         colour: '',
-        priorityLevel: 0 as number,
+        priorityLevel: '',
         companyId: localStorage.getItem('currentCompany')
       },
       formIsValid: false,

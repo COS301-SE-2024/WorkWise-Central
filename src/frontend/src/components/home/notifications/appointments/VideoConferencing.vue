@@ -57,7 +57,7 @@
                 >{{ isVideoEnabled ? 'Stop Video' : 'Start Video' }}
               </v-btn>
             </v-col>
-            <!-- <v-col cols="12" lg="3">
+            <v-col cols="12" lg="3">
               <v-btn
                 @click="toggleScreenShare"
                 :color="isScreenSharing ? 'error' : 'success'"
@@ -69,7 +69,7 @@
                 ></v-icon
                 >{{ isScreenSharing ? 'Stop Sharing' : 'Share Screen' }}
               </v-btn>
-            </v-col> -->
+            </v-col>
             <v-col cols="12" lg="3">
               <v-btn @click="endCall" color="error" block
                 ><v-icon icon="fa: fa-solid fa-door-open" color="error"></v-icon> End Call

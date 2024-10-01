@@ -135,7 +135,11 @@ c
                                   :Disabled="false"
                               /></v-list-item>
 
-                              <v-list-item v-if="permissions.includes('delete employees') && item.roleName !== 'Owner'"
+                              <v-list-item
+                                v-if="
+                                  permissions.includes('delete employees') &&
+                                  item.roleName !== 'Owner'
+                                "
                                 ><DeleteEmployee
                                   :details="selectedItem"
                                   @employeeDeleted="getEmployees"

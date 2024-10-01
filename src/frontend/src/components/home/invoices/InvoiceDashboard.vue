@@ -186,7 +186,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import DeleteInvoice from './DeleteInvoice.vue'
-// import EditInvoice from './EditInvoice.vue'
+import EditInvoice from './EditInvoice.vue'
 import ViewInvoice from './ViewInvoices.vue'
 import { API_URL } from '@/main'
 import Toast from 'primevue/toast'
@@ -348,18 +348,18 @@ export default defineComponent({
                 obj.quantity,
                 obj.unitPrice,
                 obj.discount,
-                Number(obj.total.toFixed(2))
+                Number(obj.total?.toFixed(2))
               ]),
               laborItems: invoice.laborItems.map((obj) => [
                 obj.description,
-                Number(obj.quantity.toFixed(2)),
+                Number(obj.quantity?.toFixed(2)),
                 obj.unitPrice,
                 obj.discount,
-                Number(obj.total.toFixed(2))
+                Number(obj.total?.toFixed(2))
               ]),
               taxPercentage: invoice.taxPercentage ? invoice.taxPercentage : null,
               taxAmount: invoice.taxAmount ? invoice.taxAmount : null,
-              subTotal: invoice.subTotal ? Number(invoice.subTotal.toFixed(2)) : null
+              subTotal: invoice.subTotal ? Number(invoice.subTotal?.toFixed(2)) : null
             })
           }
           console.log('this.invoiceItems: ', this.invoiceItems)
@@ -414,10 +414,11 @@ export default defineComponent({
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Employee Edited Successfully',
+            detail: 'invoice Created Successfully',
             life: 3000
           })
           setTimeout(() => {
+            this.invoiceItems = []
             this.getRequests()
             this.isDeleting = false
             this.close()

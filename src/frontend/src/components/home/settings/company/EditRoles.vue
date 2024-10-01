@@ -39,7 +39,7 @@
               :items="permissions"
               label="Permissions"
               chips
-              :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
+              :disabled="true"
               multiple
               variant="default"
             ></v-select>
@@ -58,11 +58,11 @@
                 </v-btn>
               </template>
               <v-list>
-                <!-- <v-list-item @click="selectItem(item)">
+                <v-list-item @click="selectItem(item)">
                   <v-btn color="success" block @click="dialog = true"
                     ><v-icon icon="fa:fa-solid fa-pencil" color="success"></v-icon>Edit</v-btn
                   >
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item @click="selectItem(item)">
                   <DeleteRole :roleId="item._id" @DeletedRole="getRoles" />
                 </v-list-item>

@@ -3,13 +3,13 @@ import { mount } from 'cypress/vue'
 import AddEmployee from '../management/AddEmployee.vue'
 
 it('renders add employee', () => {
-    const vuetify = createVuetify()
-    mount(AddEmployee, {
-        global: {
-            plugins: [vuetify]
-        }
-    })
-    cy.contains('Add Employee')
+  const vuetify = createVuetify()
+  mount(AddEmployee, {
+    global: {
+      plugins: [vuetify]
+    }
+  })
+  cy.contains('Add Employee')
 })
 
 // it('click add employee button', () => {

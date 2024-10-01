@@ -425,11 +425,7 @@ router.beforeEach((to, from, next) => {
   const currentCompanyId = localStorage.getItem('currentCompany')
 
   // Check if access token is available and if trying to access a protected route
-  if (
-    to.name !== 'splash' &&
-    !accessToken &&
-    to.name !== 'new-password' 
-  ) {
+  if (to.name !== 'splash' && !accessToken && to.name !== 'new-password') {
     return next({ name: 'splash' }) // Redirect to splash page if no access_token
   }
 

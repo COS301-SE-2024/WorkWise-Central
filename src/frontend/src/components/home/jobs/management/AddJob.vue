@@ -752,8 +752,11 @@ export default defineComponent({
                 summary: 'Success',
                 detail: 'Job Added Successfully'
               })
-              this.request_load = false
-              window.location.reload()
+              this.jobDialog = false
+              setTimeout(() => {
+                this.request_load = false
+                window.location.reload()
+              }, 1500)
             })
             .catch((error) => {
               console.log(error)
