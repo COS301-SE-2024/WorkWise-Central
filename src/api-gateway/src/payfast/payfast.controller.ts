@@ -1,7 +1,7 @@
 import { Controller, Post, Req, Res } from '@nestjs/common';
 import { PayfastService } from './payfast.service';
 import { ApiTags } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+// import { Types } from 'mongoose';
 
 // const className = 'Payfast';
 

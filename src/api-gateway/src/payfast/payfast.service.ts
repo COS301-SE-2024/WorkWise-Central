@@ -28,6 +28,7 @@ export class PayfastService {
 
   async handNotification(pfData: any, req: any, res: any) {
     //Setting the data
+    console.log(res)
     await this.setData(new Types.ObjectId(pfData.m_payment_id));
     console.log('Data set');
 
