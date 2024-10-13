@@ -104,15 +104,15 @@ export class UsersController {
   @ApiConsumes('application/json')
   @Post('/create')
   async create(@Body() createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
-    console.log('createUserController', createUserDto);
+    //console.log('createUserController', createUserDto);
     try {
       const profilePicture = createUserDto.profilePicture;
       console.log(profilePicture);
-      if (profilePicture) {
-        if (!isBase64Uri(profilePicture)) {
-          throw new BadRequestException('Profile picture is invalid, it must be base64 encoded');
-        }
-      }
+      // if (profilePicture) {
+      //   if (!isBase64Uri(profilePicture)) {
+      //     throw new BadRequestException('Profile picture is invalid, it must be base64 encoded');
+      //   }
+      // }
       return await this.usersService.create(createUserDto);
     } catch (Error) {
       throw new HttpException(Error, HttpStatus.CONFLICT);
@@ -376,12 +376,13 @@ export class UsersController {
   })
   @Delete('/delete/:id')
   remove(@Headers() headers: any, @Param('id') id: string) {
+    //console.log('Hello');
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
     try {
       const userId = this.extractUserId(headers);
-      if (userId.equals(new Types.ObjectId(id))) return this.usersService.softDelete(userId);
+      if (userId.toString() === new Types.ObjectId(id).toString()) return this.usersService.softDelete(userId);
       else return new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
     } catch (e) {
       throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
