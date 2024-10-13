@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -38,7 +37,7 @@ import { BooleanResponseDto } from '../shared/dtos/api-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserAllResponseDetailedDto } from './dto/user-response.dto';
 //import { GetImageValidator } from '../utils/Custom Validators/GetImageValidator';
-import { isBase64Uri, extractUserId } from '../utils/Utils';
+import { extractUserId } from '../utils/Utils';
 import { RequestResetDto, UserResetPasswordDto } from './dto/user-reset-password.dto';
 
 // import { diskStorage } from 'multer';
