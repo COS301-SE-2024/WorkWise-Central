@@ -9,6 +9,7 @@ import toStream = require('buffer-to-stream');
 //import { SaveBase64Response } from './dto/SaveBase64Response.dto';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 //const uploadPath = join(__dirname, '..', '../../../uploads');
 
 @Global()
@@ -24,6 +25,7 @@ export class FileService {
   }
   ///
   AWS_S3_BUCKET = 'wwcentral-rsa';
+  other_AWS_S3_BUCKET = 'work-wise-central';
   s3 = new AWS.S3({
     accessKeyId: this.globalConfig.aws_key,
     secretAccessKey: this.globalConfig.aws_secret,
@@ -33,13 +35,23 @@ export class FileService {
     console.log(file);
     const { originalname } = file;
 
-    return await this.s3_upload(file.buffer, this.AWS_S3_BUCKET, originalname, file.mimetype);
+    return await this.s3_upload(
+      file.buffer,
+      this.other_AWS_S3_BUCKET,
+      originalname + '-' + randomStringGenerator(),
+      file.mimetype,
+    );
   }
 
   async uploadFilesAWS(files: Express.Multer.File[]) {
     const uploadPromises = files.map((file) => {
       const { originalname } = file;
-      return this.s3_upload(file.buffer, this.AWS_S3_BUCKET, originalname, file.mimetype);
+      return this.s3_upload(
+        file.buffer,
+        this.other_AWS_S3_BUCKET,
+        originalname + '-' + randomStringGenerator(),
+        file.mimetype,
+      );
     });
 
     return await Promise.all(uploadPromises);
@@ -66,6 +78,43 @@ export class FileService {
       console.log(e);
     }
   }
+
+  /*
+  async uploadBase64ImageAWS(base64Image: string) {
+    const base64Data = Buffer.from(base64Image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+
+    const type = base64Image.split(';')[0].split('/')[1];
+    const name = 'profileimage-' + randomStringGenerator();
+    return await this.s3_upload(base64Data, this.other_AWS_S3_BUCKET, name, type)[0];
+
+    /!*    const params = {
+      Bucket: this.AWS_S3_BUCKET,
+      Key: randomStringGenerator(),
+      Body: base64Data,
+      ACL: 'public-read',
+      ContentEncoding: 'base64',
+      ContentType: `image/${type}`,
+      ContentDisposition: 'inline',
+      CreateBucketConfiguration: {
+        LocationConstraint: 'ap-south-1',
+      },
+    };
+
+    let location = '';
+    const key = '';
+    try {
+      const s3Response = await this.s3.upload(params).promise();
+      location = s3Response.Location;
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log(location, key);
+
+    return location;*!/
+  }
+*/
+
   ///
   async uploadBase64Image(base64Image: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
