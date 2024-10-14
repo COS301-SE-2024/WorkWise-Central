@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
+      <v-col>
       <VueDraggable
         ref="el"
         v-model="columns"
@@ -323,28 +324,30 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="auto">
-          <v-dialog :opacity="0.6" max-height="600" max-width="500" v-model="add_column_dialog">
-            <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" size="small"
-                ><v-icon size="x-large" icon="fa: fa-solid fa-plus"></v-icon
-              ></v-btn>
-            </template>
-            <v-card elevation="14" rounded="md" max-height="700" max-width="900">
-              <v-card-title class="text-center">New Column</v-card-title>
-              <v-card-text>
-                <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
+      </VueDraggable>
+      </v-col>
+      <v-col cols="auto">
+        <v-dialog :opacity="0.6" max-height="600" max-width="500" v-model="add_column_dialog">
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" size="small"
+            ><v-icon size="x-large" icon="fa: fa-solid fa-plus"></v-icon
+            ></v-btn>
+          </template>
+          <v-card elevation="14" rounded="md" max-height="700" max-width="900">
+            <v-card-title class="text-center">New Column</v-card-title>
+            <v-card-text>
+              <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
+              <v-col>
+                <v-spacer></v-spacer>
                 <v-col>
-                  <v-spacer></v-spacer>
+                  <v-col align="center">
+                    <v-icon :color="column_color" :size="40">
+                      {{ 'fa: fa-solid fa-cube' }}
+                    </v-icon>
+                  </v-col>
                   <v-col>
-                    <v-col align="center">
-                      <v-icon :color="column_color" :size="40">
-                        {{ 'fa: fa-solid fa-cube' }}
-                      </v-icon>
-                    </v-col>
-                    <v-col>
-                      <label style="font-size: 14px; font-weight: lighter">Column Name</label>
-                      <v-text-field
+                    <label style="font-size: 14px; font-weight: lighter">Column Name</label>
+                    <v-text-field
                         density="compact"
                         color="grey-lighten-4"
                         placeholder="Enter the name of the new column"
@@ -354,26 +357,26 @@
                         :rules="column_name_rule"
                         required
                         data-testid="job-title-field"
-                      ></v-text-field
+                    ></v-text-field
                     ></v-col>
-                    <v-col align="center">
-                      <label style="font-size: 14px; font-weight: lighter">Color</label>
-                      <v-color-picker
+                  <v-col align="center">
+                    <label style="font-size: 14px; font-weight: lighter">Color</label>
+                    <v-color-picker
                         v-model="column_color"
                         :hide-sliders="true"
                         :hide-canvas="true"
                         hide-inputs
                         show-swatches
                         @update:modelValue="addColorPickerUpdate"
-                      ></v-color-picker>
-                    </v-col>
+                    ></v-color-picker>
                   </v-col>
                 </v-col>
-                <v-col align="center">
-                  <label style="{color:red;}">{{ error_message }}</label>
-                </v-col>
-                <v-col cols="8" offset="2" align="center">
-                  <v-btn
+              </v-col>
+              <v-col align="center">
+                <label style="{color:red;}">{{ error_message }}</label>
+              </v-col>
+              <v-col cols="8" offset="2" align="center">
+                <v-btn
                     color="success"
                     rounded="md"
                     type="submit"
@@ -383,9 +386,9 @@
                     variant="text"
                     @click="addColumnButtonClickedSave"
                     data-testid="create-btn"
-                    >Save
-                  </v-btn>
-                  <v-btn
+                >Save
+                </v-btn>
+                <v-btn
                     color="error"
                     rounded="md"
                     boarder="md"
@@ -394,14 +397,13 @@
                     variant="text"
                     @click="add_column_dialog = false"
                     data-testid="cancel-btn"
-                    >Cancel
-                  </v-btn>
-                </v-col>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
-        </v-col>
-      </VueDraggable>
+                >Cancel
+                </v-btn>
+              </v-col>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+      </v-col>
     </v-row>
   </v-container>
   <v-dialog :opacity="0.6" v-model="JobCardVisibility" max-width="1000px">
