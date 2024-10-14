@@ -1374,13 +1374,28 @@ export default defineComponent({
         currentCompany: this.company
       }
       if (this.profilePicture !== '') {
-        jsonData.profilePicture = await this.convertImageToBase64(this.profilePicture)
+        //jsonData.profilePicture = await this.convertImageToBase64(this.profilePicture)
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+
+        const formData = new FormData()
+        formData.append('file', this.profilePicture)
+
+        await axios.post(API_URL + 'file/upload', formData, config).then((response) => {
+          console.log('file upload', response)
+          jsonData.profilePicture = response.data
+        })
+        //jsonData.profilePicture = this.profilePicture
       }
 
       await axios
         .post(API_URL + 'users/create', jsonData)
         .then((response) => {
-          console.log(response)
+          console.log('Response from create', response)
           this.alertSignUpFailure = false
           this.alertSignUp = true
           localStorage.setItem('access_token', response.data.data.access_token)

@@ -12,5 +12,6 @@ export class FileController {
     console.log(file);
     const response = await this.fileService.uploadFileAWS(file);
     console.log('response', response);
+    return response;
   }
 }

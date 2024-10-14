@@ -60,17 +60,27 @@ export class UsersService {
     if (!inputValidated.isValid) throw new ConflictException(inputValidated.message);
 
     //Save files In Bucket, and store URLs (if provided)
-    let secureUrl: string = '';
+    /*    let secureUrl: string = '';
     if (createUserDto.profilePicture) {
       console.log('Uploading image');
       const picture = await this.fileService.uploadBase64Image(createUserDto.profilePicture);
       if (picture.secure_url != null) {
         secureUrl = picture.secure_url;
       } else throw new InternalServerErrorException('file upload failed');
-    }
+    }*/
+    /*    if (createUserDto.profilePicture) {
+      console.log('Uploading image');
+      try {
+        const picture = await this.fileService.uploadBase64ImageAWS(createUserDto.profilePicture);
+        console.log('picture is', picture);
+        if (picture) secureUrl = picture;
+        else throw new InternalServerErrorException('file upload failed');
+      } catch (e) {}
+    }*/
     // Create the user
+    //if (secureUrl !== '') newUserObj.profile.displayImage = secureUrl;
     const newUserObj = new User(createUserDto);
-    if (secureUrl !== '') newUserObj.profile.displayImage = secureUrl;
+    if (createUserDto.profilePicture) newUserObj.profile.displayImage = createUserDto.profilePicture;
     const result = await this.userRepository.save(newUserObj);
     await this.createUserConfirmation(newUserObj); //sends email
 
