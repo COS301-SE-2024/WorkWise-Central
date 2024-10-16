@@ -83,7 +83,7 @@
 
           <template v-slot:[`item.sent`]="{ item }">
             <v-chip :color="item.sent ? 'secondary' : 'primary'" dark small outlined>
-              {{ item.paid ? 'Sent' : 'Unsent' }}
+              {{ item.sent ? 'Sent' : 'Unsent' }}
             </v-chip>
           </template>
 

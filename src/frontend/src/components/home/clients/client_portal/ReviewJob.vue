@@ -1,7 +1,17 @@
 <template>
-  <v-container>
+  <v-container fluid fill-height>
     <v-card class="bg-cardColor">
-      <v-card-title class="text-h5">Review Completed Jobs</v-card-title>
+      <v-card-title class="text-h6">
+          <v-col cols="12" lg="4" class="d-flex align-center">
+            <v-icon icon="fa: fa-solid fa-star-half-stroke"></v-icon>
+            <v-label
+              class="ms-2 h4 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Review Completed Jobs </v-label
+            >
+          </v-col>
+      </v-card-title>
       <v-divider></v-divider>
       <v-list>
         <v-list-item v-for="job in completedJobs" :key="job._id">
@@ -12,7 +22,19 @@
             <v-list-item-subtitle>End date: {{ job.details.endDate }}</v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
-            <v-btn color="primary" @click="openReviewDialog(job)">Review</v-btn>
+            <!-- <v-btn color="primary">Review</v-btn> -->
+            <v-col cols="12" md="4" class="d-flex align-center justify-end">
+              <v-btn
+                class="text-none font-weight-regular hello"
+                color="primary"
+                block
+                variant="elevated"
+                style="color: white !important"
+                @click="openReviewDialog(job)"
+              >
+                Review
+              </v-btn>
+            </v-col>
           </v-list-item-action>
         </v-list-item>
       </v-list>
@@ -63,6 +85,31 @@
 import axios from 'axios'
 import { API_URL } from '@/main'
 
+//creating an interface for completed jobs
+interface CompletedJob {
+  _id: string
+  details: {
+    heading: string
+    description: string
+    address: {
+      street: string
+      province: string
+      suburb: string
+      city: string
+      postalCode: string
+      complex: string
+      houseNumber: string
+    }
+    startDate: string
+    endDate: string
+  }
+  clientFeedback: {
+    jobRating: number
+    customerServiceRating: number
+    comments: string
+  }
+}
+
 export default {
   data() {
     return {
@@ -91,31 +138,7 @@ export default {
           type: ''
         }
       },
-      completedJobs: [
-        {
-          _id: '',
-          details: {
-            heading: '',
-            description: '',
-            address: {
-              street: '',
-              province: '',
-              suburb: '',
-              city: '',
-              postalCode: '',
-              complex: '',
-              houseNumber: ''
-            },
-            startDate: '',
-            endDate: ''
-          },
-          clientFeedback: {
-            jobRating: 10,
-            customerServiceRating: 10,
-            comments: ''
-          }
-        }
-      ],
+      completedJobs: [] as CompletedJob[],
       reviewDialog: false,
       currentJobId: '',
       jobRating: 0,
@@ -155,6 +178,10 @@ export default {
             job.details.startDate = this.formatDate(job.details.startDate)
             job.details.endDate = this.formatDate(job.details.endDate)
           }
+          //removing the jobs that already have a rating (has an empty array or undefined)
+          this.completedJobs = this.completedJobs.filter((job) => {
+            return job.clientFeedback === undefined || job.clientFeedback === null
+          })
         })
         .catch((error) => {
           console.error(error)
@@ -188,6 +215,10 @@ export default {
           summary: 'Success',
           detail: 'Review Submitted'
         })
+      })
+      //removing that job from the list
+      this.completedJobs = this.completedJobs.filter((job) => {
+        return job._id !== this.currentJobId
       })
     },
     formatDate(date: string) {

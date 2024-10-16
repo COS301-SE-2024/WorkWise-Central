@@ -1,7 +1,17 @@
 <template>
-  <v-container>
+  <v-container fluid fill-height>
     <v-card class="bg-cardColor">
-      <v-card-title class="text-h5">Current Jobs</v-card-title>
+      <v-card-title class="text-h6">
+        <v-col cols="12" lg="4" class="d-flex align-center">
+            <v-icon icon="fa: fa-solid fa-list check"></v-icon>
+            <v-label
+              class="ms-2 h4 font-family-Nunito text-headingTextColor"
+              height="auto"
+              width="auto"
+              >Current Jobs</v-label
+            >
+          </v-col>
+        </v-card-title>
       <v-divider></v-divider>
       <v-list>
         <v-list-item v-for="job in jobs" :key="job._id">
@@ -14,9 +24,21 @@
               >Expected Completion: {{ job.details.endDate }}</v-list-item-subtitle
             >
           </v-list-item-content>
-          <v-btn color="success" @click="openProgressModal(job)">
+          <v-col cols="12" md="4" class="d-flex align-center justify-end">
+              <v-btn
+                class="text-none font-weight-regular hello"
+                color="primary"
+                block
+                variant="elevated"
+                style="color: white !important"
+                @click="openProgressModal(job)"
+              >
+                View progress
+              </v-btn>
+            </v-col>
+          <!-- <v-btn color="success" @click="openProgressModal(job)">
             <v-icon icon="fa: fa-solid fa-file" color="success"></v-icon>View progress
-          </v-btn>
+          </v-btn> -->
         </v-list-item>
       </v-list>
     </v-card>
