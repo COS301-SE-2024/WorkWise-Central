@@ -133,8 +133,8 @@ export default {
     return {
       currentTab: 'Invoice Breakdown',
       dialog: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      // localUrl: 'http://localhost:3000/',
+      // remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       invoiceStats: {
         totalNumInvoices: 0,
         numPaid: 0,
@@ -162,18 +162,18 @@ export default {
     this.getInvoiceStats()
   },
   methods: {
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
+    // async isLocalAvailable(localUrl) {
+    //   try {
+    //     const res = await axios.get(localUrl)
+    //     return res.status < 300 && res.status > 199
+    //   } catch (error) {
+    //     return false
+    //   }
+    // },
+    // async getRequestUrl() {
+    //   const localAvailable = await this.isLocalAvailable(this.localUrl)
+    //   return localAvailable ? this.localUrl : this.remoteUrl
+    // },
     fetchRevenueForMonth(month) {
       const monthlyRevenue = this.invoiceStats.revenue
 
@@ -205,7 +205,7 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+      // const apiURL = await this.getRequestUrl()
       axios
         .get(`${API_URL}stats/invoiceStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {

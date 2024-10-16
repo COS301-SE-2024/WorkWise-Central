@@ -405,14 +405,45 @@ export default defineComponent({
 
     const endCall = () => {
       socket.emit('leave-room', 'room-id') // Replace with actual room ID
+
+      // Close all peer connections
       peers.value.forEach((peer) => peer.connection.close())
       peers.value = []
+
+      // Stop the local media stream
       if (localStream) {
-        localStream.getTracks().forEach((track) => track.stop())
+        // Stop each track of the local stream
+        localStream.getTracks().forEach((track) => {
+          track.stop() // Stop the individual track
+        })
+
+        // Optionally set localStream to null to prevent further access
+        localStream = null
       }
+
+      // Update call state and navigate
       inCall.value = false
       emit('return')
       router.push('/appointments')
+
+      // Assuming you have a video element for the local stream
+      const localVideoElement = document.getElementById('localVideo') // Replace with your actual video element ID
+      if (localVideoElement) {
+        ;(localVideoElement as HTMLVideoElement).srcObject = null // Remove the stream from the video element
+      }
+
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((devices) => {
+          devices.forEach((device) => {
+            if (device.kind === 'videoinput') {
+              console.log(`Device: ${device.label}, State: ${device.deviceId}`)
+            }
+          })
+        })
+        .catch((error) => {
+          console.error('Error enumerating devices:', error)
+        })
     }
 
     return {

@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import * as crypto from 'crypto';
+import * as crypto from 'crypto-js';
 import axios from 'axios';
 import { resolve4 } from 'dns';
 import { FlattenMaps, Types } from 'mongoose';
@@ -28,7 +28,7 @@ export class PayfastService {
 
   async handNotification(pfData: any, req: any, res: any) {
     //Setting the data
-    console.log(res)
+    console.log(res);
     await this.setData(new Types.ObjectId(pfData.m_payment_id));
     console.log('Data set');
 
@@ -103,21 +103,21 @@ export class PayfastService {
     }
     console.log('Invoice found:', invoice);
     this.invoice = invoice;
-    console.log('Checkpoint 1')
+    console.log('Checkpoint 1');
 
     const company = await this.companyService.getCompanyById(invoice.companyId);
-    console.log('Checkpoint 2')
+    console.log('Checkpoint 2');
     if (company._id.toString() !== '66cdad718554b49834a56eed') {
       this.sandboxMode = false;
       this.pfHost = this.sandboxMode ? 'sandbox.payfast.co.za' : 'www.payfast.co.za';
     }
-    console.log('Checkpoint 3')
+    console.log('Checkpoint 3');
     if (company.accountDetails.passPhrase) {
       this.payfastPassphrase = company.accountDetails.passPhrase;
     } else {
       this.payfastPassphrase = '';
     }
-    console.log('Checkpoint 4')
+    console.log('Checkpoint 4');
   }
 
   // Step 4: Verify the signature
@@ -126,7 +126,7 @@ export class PayfastService {
     if (this.payfastPassphrase) {
       signatureString += `&passphrase=${encodeURIComponent(this.payfastPassphrase)}`;
     }
-    const expectedSignature = crypto.createHash('md5').update(signatureString).digest('hex');
+    const expectedSignature = crypto.MD5(signatureString).toString(crypto.enc.Hex);
     return pfData.signature === expectedSignature;
   }
 
