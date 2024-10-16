@@ -45,7 +45,7 @@
               @click="showGenerateInvoice"
             >
               <v-icon icon="fa: fa-solid fa-plus" color="white"></v-icon>
-              generate invoice
+              Generate Invoice
             </v-btn>
           </v-col>
         </v-row>
@@ -75,9 +75,19 @@
 
           <template v-slot:[`item.paidDate`]="{ item }">{{ formatDate(item.paidDate) }}</template>
 
-          <template v-slot:[`item.paid`]="{ item }">{{ formatStatus(item.paid) }}</template>
+          <template v-slot:[`item.paid`]="{ item }">
+            <v-chip :color="item.paid ? 'green' : 'red'" dark small outlined>
+              {{ item.paid ? 'Paid' : 'Unpaid' }}
+            </v-chip>
+          </template>
 
-          <template v-slot:[`item.sent`]="{ item }">{{ formatSend(item.sent) }}</template>
+          <template v-slot:[`item.sent`]="{ item }">
+            <v-chip :color="item.sent ? 'secondary' : 'primary'" dark small outlined>
+              {{ item.paid ? 'Sent' : 'Unsent' }}
+            </v-chip>
+          </template>
+
+          <!-- <template v-slot:[`item.sent`]="{ item }">{{ formatSend(item.sent) }}</template> -->
 
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu max-width="500px">
@@ -157,7 +167,7 @@
                     color="success"
                     size="small"
                   ></v-icon>
-                  generate invoice
+                  Generate Invoice
                 </v-btn>
               </v-col>
               <v-col cols="12" lg="6" order="last" order-lg="first">
