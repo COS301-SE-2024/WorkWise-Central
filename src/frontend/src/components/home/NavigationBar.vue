@@ -337,7 +337,7 @@ export default defineComponent({
         </v-list-group>
       </v-list>
 
-      <v-list v-model:open="open" v-show="checkPermission('view invoices')">
+      <!-- <v-list v-model:open="open" v-show="checkPermission('view invoices')">
         <v-list-group fluid value="Invoices">
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -357,6 +357,16 @@ export default defineComponent({
             @click="setInbox(item.title)"
           ></v-list-item>
         </v-list-group>
+      </v-list> -->
+
+      <v-list v-model:open="open" v-show="checkPermission('view invoices')">
+        <v-list-item
+          :to="{ name: invoicesSubItems[0].routeName }"
+          prepend-icon="fa: fa-solid fa-file"
+          title="Invoices"
+          class="list-item-large"
+          @click="setInbox(invoicesSubItems[0].title)"
+        ></v-list-item>
       </v-list>
 
       <v-list
