@@ -22,26 +22,33 @@
       @input="validateForm"
     ></v-text-field>
 
+    <v-progress-circular
+        v-if="isLoading"
+        indeterminate
+        color="primary"
+        class="mb-3"
+    ></v-progress-circular>
+
     <Button
       type="submit"
-      :disabled="!formValid"
+      :disabled="!formValid || isLoading"
       label="Add Inventory"
       icon="fa: fa-solid fa-plus"
       class="mb-3 p-button-success"
-      v-if="!isEditing"
+      v-if="!isEditing && !isLoading"
     />
 
     <Button
       type="submit"
-      :disabled="!formValid"
+      :disabled="!formValid || isLoading"
       label="Update Inventory"
       icon="fa: fa-solid fa-plus"
       class="mb-3 p-button-success"
-      v-if="isEditing"
+      v-if="isEditing && !isLoading"
     />
 
     <Button
-      v-if="isEditing"
+      v-if="isEditing && !isLoading"
       label="Cancel"
       icon="fa: fa-solid fa-times"
       class="mb-3 ml-2 p-button-danger"
@@ -127,6 +134,7 @@ const formValid = ref(false)
 const itemsPerPage = ref(5)
 const page = ref(1)
 const isEditing = ref(false)
+const isLoading = ref(false)
 const editingIndex = ref(-1)
 
 const paginatedInventory = computed(() => {
@@ -187,6 +195,7 @@ function handleInventorySelection(value: string) {
 }
 
 async function saveInventory() {
+  isLoading.value = true
   try {
     if (isEditing.value) {
       const itemToEdit = inventoryList.value[editingIndex.value]
@@ -225,6 +234,8 @@ async function saveInventory() {
     resetForm()
   } catch (error) {
     console.error('Error saving inventory:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 
