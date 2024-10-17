@@ -46,12 +46,13 @@
                 class="d-flex align-center"
               >
                 <v-col cols="5">
-                  <v-text-field
+                  <v-select
                     v-model="item.description"
                     label="Item Name"
+                    :items="inventoryItemNames"
                     :disabled="isDeleting"
                     required
-                  ></v-text-field>
+                  ></v-select>
                 </v-col>
                 <v-col cols="5">
                   <v-text-field
@@ -173,13 +174,16 @@ export default {
       } as Invoice,
       editDialog: false,
       valid: false,
-      invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required']
+      invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
+      inventoryItems: [] as any,
+      inventoryItemNames: [] as any
     }
   },
   created() {
     // Create a deep copy of editedInvoice
     this.localEditedInvoice = this.deepCopy(this.editedInvoice)
     console.log(this.localEditedInvoice)
+    this.getInventoryItems()
   },
   methods: {
     updateInvoice() {
@@ -225,6 +229,32 @@ export default {
     handleSubmission() {
       if (this.valid) {
         this.updateInvoice()
+      }
+    },
+    async getInventoryItems() {
+      // Fetch inventory items from the backend
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployee: localStorage.getItem('employeeId')
+        }
+      }
+      try {
+        const response = await axios.get(
+          `${API_URL}inventory/all/${localStorage.getItem('employeeId')}`,
+          config
+        )
+        console.log(response.data.data)
+        console.log(response.data.data)
+        this.inventoryItems = response.data.data
+        for (let i = 0; i < this.inventoryItems.length; i++) {
+          this.inventoryItemNames.push(this.inventoryItems[i].name)
+        }
+      } catch (error) {
+        console.error(error)
       }
     },
     close() {

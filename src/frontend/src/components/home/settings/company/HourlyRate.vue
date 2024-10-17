@@ -155,14 +155,8 @@ export default {
         { title: 'Hourly Rate', value: 'hourlyRate' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
-      employees: [
-        { id: 1, firstName: 'John', lastName: 'Doe', hourlyRate: 30 },
-        { id: 2, firstName: 'Jane', lastName: 'Smith', hourlyRate: 25 }
-      ],
-      roles: [
-        { id: 1, roleName: 'Developer', hourlyRate: 50 },
-        { id: 2, roleName: 'Designer', hourlyRate: 40 }
-      ],
+      employees: [],
+      roles: [],
       employeeDialog: false,
       roleDialog: false,
       currentEmployee: {} as any,
