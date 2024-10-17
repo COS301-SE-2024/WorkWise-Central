@@ -155,7 +155,7 @@ export default {
         { title: 'Hourly Rate', value: 'hourlyRate' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
-      employees: [],
+      employees: [] as any,
       roles: [],
       employeeDialog: false,
       roleDialog: false,
