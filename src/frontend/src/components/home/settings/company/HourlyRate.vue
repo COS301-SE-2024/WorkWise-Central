@@ -260,7 +260,7 @@ export default {
           config
         )
         console.log(response.data.data)
-        this.employees = []
+
         this.getEmployees()
         this.employeeDialog = false
         this.isEditing = false
