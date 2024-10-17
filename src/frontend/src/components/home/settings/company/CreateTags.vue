@@ -79,7 +79,8 @@ import { API_URL } from '@/main'
 
 interface Tag {
   label: string
-  colour: string
+  colour: stringe
+  companyId: string
 }
 export default defineComponent({
   data() {
@@ -168,7 +169,7 @@ export default defineComponent({
             this.tag = {
               label: '',
               colour: '',
-              // companyId: localStorage.getItem('currentCompany')
+              companyId: localStorage.getItem('currentCompany')
             }
             this.$emit('CreatedTag', response.data.data)
           }, 3000)

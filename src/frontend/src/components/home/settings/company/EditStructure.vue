@@ -224,6 +224,7 @@ export default defineComponent({
     return {
       color: 'primary',
       isLoading: false,
+      isDeleting: false,
       selectedItem: '',
       employeeDialog: false,
       data: {
@@ -472,6 +473,7 @@ export default defineComponent({
       }
     },
     async validateEdits() {
+      this.isDeleting = true
       if (
         this.req_obj.updateEmployeeDto.roleId === '' &&
         this.req_obj.updateEmployeeDto.subordinates?.length === 0 &&
@@ -497,7 +499,7 @@ export default defineComponent({
       await this.getGraphView()
     },
     async loadSubordinates() {
-      this.loading=true
+      this.loading = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -637,6 +639,7 @@ export default defineComponent({
       }
     },
     close() {
+      this.isDeleting = false
       this.$toast.add({
         severity: 'success',
         summary: 'Success',
