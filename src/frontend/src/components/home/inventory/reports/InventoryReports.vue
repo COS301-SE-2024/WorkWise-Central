@@ -7,7 +7,7 @@
         width="100%"
       >
         <v-row align="center" justify="space-between">
-          <v-col cols="12" lg="4" class="d-flex align-center">
+          <v-col cols="12" lg="6" class="d-flex align-center">
             <v-icon icon="fa: fa-solid fa-boxes"></v-icon>
             <v-label
               class="ms-2 h2 font-family-Nunito text-headingTextColor"
@@ -18,22 +18,7 @@
             </v-label>
           </v-col>
 
-          <!-- <v-col cols="12" lg="4" class="d-flex align-center">
-            <v-text-field
-              v-model="search"
-              density="compact"
-              label="Search"
-              prepend-inner-icon="mdi-magnify"
-              variant="outlined"
-              flat
-              color="primary"
-              width="100%"
-              hide-details="auto"
-              single-line
-            ></v-text-field>
-          </v-col> -->
-
-          <v-col cols="12" lg="4" class="d-flex align-center">
+          <v-col cols="12" lg="6" class="d-flex align-center">
             <v-btn
               variant="elevated"
               color="secondary"
