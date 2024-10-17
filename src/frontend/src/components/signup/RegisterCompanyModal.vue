@@ -507,7 +507,7 @@ export default {
         .post(API_URL + 'company/create', this.req_obj, config)
         .then((res) => {
           console.log(res)
-          localStorage['currentCompany'] = res.data.userId
+
           localStorage['currentCompanyName'] = res.data.data.name
           localStorage['employeeId'] = res.data.ownerId
           this.register_request_loading = false

@@ -187,9 +187,14 @@ export default defineComponent({
           })
           const currentCompanyID = localStorage.getItem('currentCompany')
           for (let i = 0; i < this.joinedCompanies.length; i++) {
-            if (this.joinedCompaniesIds[i] === currentCompanyID) {
+            if (
+              this.joinedCompaniesIds[i] === currentCompanyID ||
+              this.joinedCompaniesNames[i] === localStorage.getItem('currentCompanyName')
+            ) {
               this.companyName = this.joinedCompaniesNames[i]
               localStorage.setItem('currentCompanyName', this.joinedCompaniesNames[i])
+              localStorage.setItem('currentCompany', this.joinedCompaniesIds[i])
+              localStorage.setItem('employeeId', this.joinedCompaniesEmployeeIds[i])
               break
             } else {
               this.companyName = 'No company selected'
