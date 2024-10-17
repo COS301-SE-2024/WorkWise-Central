@@ -74,21 +74,15 @@
                 >Complex/Building:
                 {{ clientDetails.address.complex ? clientDetails.address.complex : '' }}</small
               >
-              <br /><small class="text-caption">
-                House Number:
-                {{
-                  clientDetails.address.houseNumber ? clientDetails.address.houseNumber : ''
-                }}</small
-              ></v-col
-            >
+            </v-col>
           </v-row>
           <v-divider></v-divider>
           <v-col
             ><label class="font-weight-light" style="font-size: 20px"> Preferred Languages</label
             ><v-spacer></v-spacer>
-            <v-chip :color="clientDetails.preferred_Language ? 'success' : 'error'"
+            <v-chip :color="clientDetails.preferredLanguage ? 'success' : 'error'"
               ><small class="text-caption">{{
-                clientDetails.preferred_Language ? clientDetails.preferred_Language : 'None'
+                clientDetails.preferredLanguagea ? clientDetails.preferredLanguage : 'None'
               }}</small></v-chip
             ></v-col
           >
@@ -133,6 +127,9 @@ export default defineComponent({
     deepCopy(obj) {
       return JSON.parse(JSON.stringify(obj))
     }
+  },
+  mounted(){
+    console.log(this.localClientDetails)
   }
 })
 </script>

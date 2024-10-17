@@ -91,8 +91,8 @@
           ></v-row>
 
           <v-row
-            ><v-col cols="6">
-              <small class="text-caption font-weight-bold"> Complex </small>
+            ><v-col cols="12">
+              <small class="text-caption font-weight-bold"> Complex/Buildinga </small>
               <v-text-field
                 theme="cardColor"
                 v-model="localEditedItem.address.complex"
@@ -100,20 +100,13 @@
                 :disabled="isDeleting"
               ></v-text-field
             ></v-col>
-            <v-col cols="6">
-              <small class="text-caption font-weight-bold"> House Number </small>
-              <v-text-field
-                v-model="localEditedItem.address.houseNumber"
-                hide-details="auto"
-                :disabled="isDeleting"
-              ></v-text-field></v-col
-          ></v-row>
+          </v-row>
           <v-row>
             <v-col cols="12">
               <small class="text-caption font-weight-bold">Preferred Language</small>
               <v-select
                 :items="languages"
-                v-model="localEditedItem.preferred_Language"
+                v-model="localEditedItem.preferredLanguage"
                 variant="solo"
                 hide-details="auto"
                 :disabled="isDeleting"
