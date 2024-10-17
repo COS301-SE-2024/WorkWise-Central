@@ -77,22 +77,13 @@
             />
 
             <v-label>Tag Color</v-label>
-            <v-row>
-              <v-col
-                v-for="color in colorOptions"
-                :key="color"
-                cols="2"
-                class="d-flex justify-center"
-              >
-                <v-btn
-                  :style="{ backgroundColor: color }"
-                  class="ma-1"
-                  @click="selectedItem.colour = color"
-                  :outlined="selectedItem.colour !== color"
-                  style="width: 40px; height: 40px; border-radius: 4px"
-                ></v-btn>
-              </v-col>
-            </v-row>
+            <v-color-picker
+            v-model="selectedItem.colour"
+            :hide-sliders="true"
+            :hide-canvas="true"
+            hide-inputs
+            show-swatches
+          ></v-color-picker>
             <span
               >Hex Code:
               <v-chip :color="selectedItem.colour">{{ selectedItem.colour }}</v-chip></span

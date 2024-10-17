@@ -72,7 +72,7 @@
               >
               <br /><small class="text-caption"
                 >Complex/Building:
-                {{ clientDetails.address.complex ? clientDetails.address.complex : '' }}</small
+                {{ clientDetails.address.complex ? clientDetails.address.complexOrBuilding : '' }}</small
               >
             </v-col>
           </v-row>

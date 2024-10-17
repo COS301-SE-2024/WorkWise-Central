@@ -92,10 +92,10 @@
 
           <v-row
             ><v-col cols="12">
-              <small class="text-caption font-weight-bold"> Complex/Buildinga </small>
+              <small class="text-caption font-weight-bold"> Complex/Building </small>
               <v-text-field
                 theme="cardColor"
-                v-model="localEditedItem.address.complex"
+                v-model="localEditedItem.address.complexOrBuilding"
                 hide-details="auto"
                 :disabled="isDeleting"
               ></v-text-field
