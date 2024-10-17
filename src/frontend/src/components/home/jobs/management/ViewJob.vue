@@ -47,6 +47,35 @@
           </v-col>
 
           <v-divider>
+            <h5 ref="assignedEmployeesSection">Assigned Employees</h5>
+          </v-divider>
+
+          <v-row v-if="props.passedInJob?.assignedEmployees?.employeeIds.length">
+            <v-col v-for="employee in props.passedInJob?.assignedEmployees?.employeeIds" :key="employee._id" cols="12">
+              <v-row>
+                <v-col>
+                  <v-avatar :src="employee.userInfo.displayImage"></v-avatar>
+                  <span>{{ employee.userInfo.displayName }}</span>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+
+          <v-divider>
+            <h5 ref="assignedTeamsSection">Assigned Teams</h5>
+          </v-divider>
+
+          <v-row v-if="selectedTeams.length">
+            <v-col v-for="team in selectedTeams" :key="team._id" cols="12">
+              <v-row>
+                <v-col>
+                  <span>{{ team.teamName }}</span>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+
+          <v-divider>
             <h5 ref="clientDetailsSection">Client Details</h5>
           </v-divider>
 
@@ -580,7 +609,29 @@ onMounted(() => {
     .catch((error) => {
       console.error('Failed to fetch employees:', error)
     })
+  getAssignedTeams()
 })
+
+
+const selectedTeams = ref<[]>([])
+const getAssignedTeams = async () => {
+  try {
+    const response = await axios.get(`${API_URL}team/all/${localStorage.getItem('currentCompany')}`, config)
+    if (response.status > 199 && response.status < 300) {
+      const allTeams = response.data.data;
+      const assignedTeamIds = props.passedInJob?.assignedEmployees?.teamIds || [];
+
+      // Filter and map the assigned teams
+      selectedTeams.value = allTeams.filter((team: any) => assignedTeamIds.includes(team._id));
+      console.log('All Teams', allTeams)
+      console.log('Assigned Teams', selectedTeams.value);
+    } else {
+      console.log('failed');
+    }
+  } catch (error) {
+    console.error('Error fetching teams:', error);
+  }
+}
 </script>
 
 <style scoped>
