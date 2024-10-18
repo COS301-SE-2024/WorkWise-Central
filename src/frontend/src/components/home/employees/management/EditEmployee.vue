@@ -8,6 +8,7 @@
         variant="text"
         v-bind="activatorProps"
         :disabled="Disabled"
+        :loading="loadDataBoolean"
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon
         >Edit</v-btn
       >
@@ -162,6 +163,7 @@ export default {
   },
   data() {
     return {
+      loadDataBoolean: false,
       currentRoleId: null,
       currentSuperior: null,
       selectedRole: '',
@@ -564,10 +566,14 @@ export default {
     }
   },
   mounted() {
+    this.loadDataBoolean = true
     this.showlocalvalues()
-    this.loadRoles()
-    this.loadSubordinates().then(() =>
-      this.loadSuperiors().then(() => this.setCurrentSubsAndSuperiors())
+    this.loadRoles().then(() =>
+      this.loadSubordinates().then(() =>
+        this.loadSuperiors()
+          .then(() => this.setCurrentSubsAndSuperiors())
+          .then(() => (this.loadDataBoolean = false))
+      )
     )
   }
 }
