@@ -88,7 +88,8 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-card border="md" rounded="md" height="auto">
+  <LoadingScreen :Loading="!statsShown" />
+  <v-card border="md" rounded="md" height="auto" v-if="statsShown">
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-file-invoice-dollar mr-2"></v-icon>
       {{ currentTab }}
@@ -126,12 +127,14 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 import { API_URL } from '@/main'
 export default {
-  components: { Chart },
+  components: { Chart,LoadingScreen },
   data() {
     return {
       currentTab: 'Invoice Breakdown',
+      statsShown: false,
       dialog: false,
       localUrl: 'http://localhost:3000/',
       remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
@@ -224,6 +227,9 @@ export default {
 
           // Fetch revenue data for all months (replace with actual logic if needed)
           this.fetchRevenueForMonth('January')
+          setTimeout(() => {
+            this.statsShown = true
+          }, 4000)
         })
         .catch((error) => {
           console.error('Failed to fetch invoice stats:', error)

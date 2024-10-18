@@ -107,7 +107,8 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-card border="md" rounded="md" height="auto">
+  <LoadingScreen :Loading="!statsShown" />
+  <v-card border="md" rounded="md" height="auto" v-if="statsShown">
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-users mr-2"></v-icon>
       {{ currentTab }}
@@ -235,15 +236,17 @@
 import Chart from 'primevue/chart'
 import axios from 'axios'
 import { API_URL } from '@/main'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 
 export default {
-  components: { Chart },
+  components: { Chart, LoadingScreen },
   data() {
     return {
       currentTab: 'Team Breakdown',
       teamStats: {
         totalNumTeams: 0,
         averageNumMembers: 0,
+        statsShown: false,
         averageNumJobsForTeam: 0,
         ratingPerTeam: []
       },
@@ -323,6 +326,9 @@ export default {
         if (this.teamStats.averageNumJobsForTeam > 0) {
           this.averageJobsPerTeamChartData.datasets[0].data = [this.teamStats.averageNumJobsForTeam]
         }
+        setTimeout(() => {
+          this.statsShown = true
+        }, 4000)
       } catch (error) {
         console.error('Failed to fetch team stats:', error)
       }

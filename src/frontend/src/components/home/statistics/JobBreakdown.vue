@@ -89,7 +89,9 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-card border="md" rounded="md" height="auto">
+
+  <LoadingScreen :Loading="!statsShown" />
+  <v-card border="md" rounded="md" height="auto" v-if="statsShown">
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-clock mr-2"></v-icon>
       {{ currentTab }}
@@ -247,16 +249,18 @@
 
 <script>
 import Chart from 'primevue/chart'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 import axios from 'axios'
 import { API_URL } from '@/main'
 export default {
-  components: { Chart },
+  components: { Chart, LoadingScreen },
   data() {
     return {
       currentTab: 'Job Breakdown',
       statsShown: false,
       jobStats: {
         totalNumJobs: 0,
+        loadingData: true,
         numActiveJobs: 0,
         activeJobs: [],
         numCompletedJobs: 0,
@@ -329,11 +333,13 @@ export default {
           this.customerServiceRatingCounts = this.calculateRatingCounts(
             this.jobStats.customerServiceRating
           )
+          setTimeout(() => {
+            this.statsShown = true
+          }, 4000)
         })
         .catch((error) => {
           console.error('Failed to fetch job stats:', error)
         })
-      this.statsShown = true
     },
     calculateRatingCounts(ratings) {
       const counts = [0, 0, 0, 0, 0] // Array to hold counts for ratings 1 to 5
