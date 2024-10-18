@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <Toast position="top-center" />
-    <v-card class="bg-cardColor">
+    <LoadingScreen :Loading="!statsShown" />
+    <v-card class="bg-cardColor" v-if="statsShown">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -115,6 +116,7 @@ import DeleteTags from './DeleteTags.vue'
 import CreateTags from './CreateTags.vue'
 import Toast from 'primevue/toast'
 import { API_URL } from '@/main'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 
 export default defineComponent({
   data: () => ({
@@ -193,11 +195,12 @@ export default defineComponent({
       '#66BB6A',
       '#9CCC65',
       '#FFEE58'
-    ] as string[]
+    ] as string[],
+    statsShown: false
   }),
   components: {
     DeleteTags,
-
+    LoadingScreen,
     Toast,
     CreateTags
   },
@@ -229,6 +232,9 @@ export default defineComponent({
         )
         console.log(res)
         this.items = res.data.data
+        setTimeout(() => {
+          this.statsShown = true
+        }, 1000)
       } catch (error) {
         console.error(error)
       }

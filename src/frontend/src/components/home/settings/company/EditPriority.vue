@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <Toast position="top-center" />
-    <v-card class="bg-cardColor">
+    <LoadingScreen :Loading="!statsShown" />
+    <v-card class="bg-cardColor" v-if="statsShown">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -78,12 +79,12 @@
 
             <v-label>Tag Color</v-label>
             <v-color-picker
-            v-model="selectedItem.colour"
-            :hide-sliders="true"
-            :hide-canvas="true"
-            hide-inputs
-            show-swatches
-          ></v-color-picker>
+              v-model="selectedItem.colour"
+              :hide-sliders="true"
+              :hide-canvas="true"
+              hide-inputs
+              show-swatches
+            ></v-color-picker>
             <span
               >Hex Code:
               <v-chip :color="selectedItem.colour">{{ selectedItem.colour }}</v-chip></span
@@ -127,6 +128,7 @@ import CreatePriority from './CreatePriority.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { API_URL } from '@/main'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 
 export default defineComponent({
   data: () => ({
@@ -149,6 +151,7 @@ export default defineComponent({
       }
     ],
     items: [] as any[],
+    statsShown: false,
     isDeleting: false,
     dialog: false,
     isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
@@ -213,6 +216,7 @@ export default defineComponent({
   }),
   components: {
     DeletePriority,
+    LoadingScreen,
     Toast,
     CreatePriority
   },
@@ -239,6 +243,9 @@ export default defineComponent({
         console.log(res)
         this.items = res.data.data
         console.log(this.items)
+        setTimeout(() => {
+          this.statsShown = true
+        }, 1000)
       } catch (error) {
         console.error(error)
       }

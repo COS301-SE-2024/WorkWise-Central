@@ -26,7 +26,9 @@ e
           </v-col>
         </v-row>
       </v-container>
+
       <v-card-text>
+        <LoadingScreen :Loading="!statsShown" />
         <Toast position="top-center" />
         <v-network-graph
           v-model="graph"
@@ -38,6 +40,7 @@ e
           :layouts="data.layouts"
           :configs="configs"
           :event-handlers="configs.eventsHandlers"
+          v-if="statsShown"
         >
           <template
             #override-node-label="{ scale, text, x, y, config, textAnchor, dominantBaseline }"
@@ -216,7 +219,7 @@ import dagre from 'dagre/dist/dagre.min.js'
 import axios from 'axios'
 import { API_URL } from '@/main'
 import Toast from 'primevue/toast'
-
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 const nodeSize = 40
 
 export default defineComponent({
@@ -227,6 +230,7 @@ export default defineComponent({
       isDeleting: false,
       selectedItem: '',
       employeeDialog: false,
+      statsShown: false,
       data: {
         nodes: {},
         edges: {},
@@ -334,6 +338,7 @@ export default defineComponent({
     }
   },
   components: {
+    LoadingScreen,
     Toast
   },
   methods: {
@@ -434,6 +439,9 @@ export default defineComponent({
         console.log(response)
         this.data.nodes = response.data.data.nodes
         this.data.edges = response.data.data.edges
+        setTimeout(() => {
+          this.statsShown = true
+        }, 4000)
       } catch (error) {
         console.error(error)
       }
