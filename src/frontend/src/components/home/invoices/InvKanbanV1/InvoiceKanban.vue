@@ -60,7 +60,7 @@
                   role="option"
                   class="my-5"
                 >
-                  <v-dialog v-model="dialog" max-width="700">
+                 <v-dialog persistent v-model="dialog" max-width="700">
                     <v-card class="bg-cardColor">
                       <v-card-title>
                         <v-icon>mdi-file-document-outline</v-icon>
@@ -127,7 +127,7 @@
       </VueDraggable>
     </v-row>
   </v-container>
-  <!--  <v-dialog v-model="dialog" max-width="400" persistent>-->
+  <!-- <v-dialog persistent v-model="dialog" max-width="400" persistent>-->
   <!--    <v-card title="Use Google's location service?">-->
   <!--      <iframe v-if="pdfSrc" :src="pdfSrc" style="width: 100%; height: 500px"></iframe>-->
   <!--      <v-btn @click="dialog = false"> Disagree </v-btn>-->

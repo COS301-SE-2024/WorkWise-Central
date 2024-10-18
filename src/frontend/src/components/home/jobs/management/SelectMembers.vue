@@ -1,6 +1,5 @@
 <template>
-  <v-dialog
-    v-model="membersDialog"
+ <v-dialog persistent     v-model="membersDialog"
     max-width="400px"
     location="bottom"
     location-strategy="connected"

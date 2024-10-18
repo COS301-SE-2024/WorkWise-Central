@@ -85,7 +85,7 @@ e
       </v-card-actions> -->
     </v-card>
 
-    <v-dialog v-model="employeeDialog" max-width="500" height="500">
+   <v-dialog persistent v-model="employeeDialog" max-width="500" height="500">
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
           rounded="md"

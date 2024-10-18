@@ -1,5 +1,5 @@
 ﻿<template>
-  <v-dialog close-on-back :max-height="800" opacity="0.6" :max-width="900" v-model="jobDialog">
+ <v-dialog persistent close-on-back :max-height="800" opacity="0.6" :max-width="900" v-model="jobDialog">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -75,8 +75,7 @@
                     >Add new client</label
                   ></label
                 >
-                <v-dialog
-                  opacity="0.6"
+               <v-dialog persistent                   opacity="0.6"
                   v-model="clientDialogVisibility"
                   max-height="800"
                   max-width="600"

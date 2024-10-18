@@ -1,7 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog
-    v-model="addDialog"
+ <v-dialog persistent     v-model="addDialog"
     max-height="800"
     max-width="600"
     scrollable

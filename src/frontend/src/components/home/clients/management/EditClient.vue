@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog v-model="clientDialog" max-width="600" :opacity="0">
+ <v-dialog persistent v-model="clientDialog" max-width="600" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon>Edit

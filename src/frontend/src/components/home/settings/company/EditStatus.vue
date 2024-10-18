@@ -74,7 +74,7 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-    <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
+   <v-dialog persistent v-model="dialog" max-height="800" max-width="600" >
       <v-card class="bg-cardColor">
         <v-card-title> Edit Statuses</v-card-title>
         <v-card-text>

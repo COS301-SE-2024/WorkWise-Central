@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog v-model="editDialog" max-height="800" max-width="800" scrollable>
+ <v-dialog persistent v-model="editDialog" max-height="800" max-width="800" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular" color="warning" v-bind="activatorProps">
         <v-icon start color="warning" size="small">mdi-pencil</v-icon>

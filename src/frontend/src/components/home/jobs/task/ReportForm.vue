@@ -1,7 +1,6 @@
 <template>
   <v-container>
-    <v-dialog
-      v-model="dialog"
+   <v-dialog persistent       v-model="dialog"
       max-height="800"
       max-width="600"
       :theme="isDarkMode ? 'dark' : 'light'"

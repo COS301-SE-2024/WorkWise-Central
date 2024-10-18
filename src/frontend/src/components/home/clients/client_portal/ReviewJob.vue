@@ -18,7 +18,7 @@
       </v-list>
     </v-card>
 
-    <v-dialog v-model="reviewDialog" max-width="500px">
+   <v-dialog persistent v-model="reviewDialog" max-width="500px">
       <v-card class="bg-cardColor">
         <v-card-title class="text-h5">Review Job</v-card-title>
         <v-card-text>

@@ -93,7 +93,7 @@
         >
       </v-card-actions> -->
     </v-card>
-    <v-dialog v-model="dialog" persistent max-width="500px">
+   <v-dialog persistent v-model="dialog"  max-width="500px">
       <v-card class="bg-cardColor">
         <v-card-title class="text-h5"> Edit Role </v-card-title>
 

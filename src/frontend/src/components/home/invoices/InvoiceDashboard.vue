@@ -116,7 +116,7 @@
     </v-card>
 
     <!-- Modal for Generate Invoice -->
-    <v-dialog v-model="isModalVisible" max-width="500px">
+   <v-dialog persistent v-model="isModalVisible" max-width="500px">
       <v-card>
         <v-card-title class="text-h5">Generate Invoice</v-card-title>
         <v-card-text>

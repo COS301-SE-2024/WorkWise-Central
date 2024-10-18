@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
+ <v-dialog persistent v-model="dialog" max-height="800" max-width="600" >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
