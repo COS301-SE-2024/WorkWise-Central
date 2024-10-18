@@ -271,8 +271,10 @@ export default {
       this.req_obj.updateEmployeeDto.superiorId || delete this.req_obj.updateEmployeeDto.superiorId
       this.req_obj.updateEmployeeDto.roleId || delete this.req_obj.updateEmployeeDto.roleId
 
-      if (validate || this.currentSubordinates.length != 0)
+      if (validate || this.currentSubordinates.length != 0) {
+        this.isDeleting = true // Indicate the start of the deletion process
         await this.savechanges().then(() => this.close())
+      }
     },
     async loadSubordinates() {
       const config = {
@@ -406,7 +408,6 @@ export default {
       }, 1500)
     },
     async savechanges() {
-      this.isDeleting = true // Indicate the start of the deletion process
       let change_occured = false
       console.log(this.req_obj)
       let config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
