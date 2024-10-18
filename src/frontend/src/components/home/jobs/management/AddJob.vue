@@ -289,7 +289,11 @@
                 >Job address
                 <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
               </label>
-
+              <v-checkbox
+                v-model="clientAddress"
+                label="Use client address"
+                @update:focused="updateClientAddressValues"
+              ></v-checkbox>
               <v-row>
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter"
@@ -297,7 +301,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Street"
@@ -315,7 +319,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Suburb"
@@ -333,6 +337,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-autocomplete
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Province"
@@ -363,7 +368,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="City/Town"
@@ -381,7 +386,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Postal Code"
@@ -397,7 +402,7 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Complex/Building</label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Complex"
@@ -509,6 +514,7 @@ export default defineComponent({
     const currentHour = now.getHours()
     const currentMinute = now.getMinutes()
     return {
+      clientAddress: false,
       click_create_employee: false,
       valid: false,
       selectedDate: '',
@@ -532,13 +538,14 @@ export default defineComponent({
         (v: string) =>
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
-      province_rules: [(v: string) => !!v || 'Province is required'],
-      street_rules: [(v: string) => !!v || 'Street is required'],
-      suburb_rules: [(v: string) => !!v || 'Suburb is required'],
-      city_rules: [(v: string) => !!v || 'City/Town is required'],
+      province_rules: [(v: string) => this.clientAddress || !!v || 'Province is required'],
+      street_rules: [(v: string) => this.clientAddress || !!v || 'Street is required'],
+      suburb_rules: [(v: string) => this.clientAddress || !!v || 'Suburb is required'],
+      city_rules: [(v: string) => this.clientAddress || !!v || 'City/Town is required'],
       postal_code_rules: [
-        (v: string) => !!v || 'Postal code  is required',
-        (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
+        (v: string) => this.clientAddress || !!v || 'Postal code  is required',
+        (value: string) =>
+          this.clientAddress || /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
       ],
       employees_rules: [(v: string) => !!v || 'Client is required'],
       description_rules: [(v: string) => !!v || 'Description is required'],
@@ -556,6 +563,14 @@ export default defineComponent({
       priorityOptionsArray: [] as JobPriorityTag[],
       tagOptionsArray: [] as JobTag[],
       statusOptionsArray: [] as JobStatuses[],
+      clientAddressobj: {
+        province: '',
+        street: '',
+        suburb: '',
+        city: '',
+        postalCode: '',
+        complex: ''
+      },
       req_obj: {
         companyId: localStorage['currentCompany'],
         clientId: '',
@@ -610,6 +625,25 @@ export default defineComponent({
   //   }
   // },
   methods: {
+    updateClientAddressValues() {
+      if (this.clientAddress) {
+        this.req_obj.details.address.province = this.clientAddressobj.province
+        this.req_obj.details.address.street = this.clientAddressobj.street
+        this.req_obj.details.address.suburb = this.clientAddressobj.suburb
+        this.req_obj.details.address.city = this.clientAddressobj.city
+        this.req_obj.details.address.postalCode = this.clientAddressobj.postalCode
+      } else
+        this.req_obj.details.address = {
+          province: '',
+          street: '',
+          suburb: '',
+          city: '',
+          postalCode: '',
+          complex: ''
+        }
+      console.log(this.req_obj)
+    },
+
     showAddClientModal() {
       console.log('modal event')
       this.clientDialogVisibility = true
@@ -925,8 +959,28 @@ export default defineComponent({
         console.log('Error fetching data:', error)
       }
     },
-    updateClient() {
+    async updateClient() {
       console.log(this.req_obj.clientId)
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage['employeeId']
+        }
+      }
+
+      try {
+        const statuses_response = await axios.get(
+          API_URL + `client/id/${this.req_obj.clientId}`,
+          config
+        )
+        console.log(statuses_response.data.data)
+        this.clientAddressobj = statuses_response.data.data.details.address
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
     },
     updateEmployee() {
       console.log(this.req_obj.priorityTag)
