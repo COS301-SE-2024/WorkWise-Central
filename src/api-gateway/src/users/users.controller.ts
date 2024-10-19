@@ -374,15 +374,16 @@ export class UsersController {
     description: `The _id attribute of the ${className}`,
   })
   @Delete('/delete/:id')
-  remove(@Headers() headers: any, @Param('id') id: string) {
+  async remove(@Headers() headers: any, @Param('id') id: string) {
     //console.log('Hello');
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
     try {
       const userId = this.extractUserId(headers);
-      if (userId.toString() === new Types.ObjectId(id).toString()) return this.usersService.softDelete(userId);
-      else return new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
+      if (userId.toString() === new Types.ObjectId(id).toString()) {
+        return { success: await this.usersService.softDelete(userId) };
+      } else return new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
     } catch (e) {
       throw new HttpException('Internal Server Error', HttpStatus.SERVICE_UNAVAILABLE);
     }
