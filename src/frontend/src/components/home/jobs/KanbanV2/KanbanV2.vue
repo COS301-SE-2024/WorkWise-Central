@@ -329,9 +329,13 @@
       <v-col cols="auto">
         <v-dialog :opacity="0.6" max-height="600" max-width="500" v-model="add_column_dialog">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" size="small"
-            ><v-icon size="x-large" icon="fa: fa-solid fa-plus"></v-icon
-            ></v-btn>
+            <v-btn
+                v-if="checkPermission('company settings')" 
+                v-bind="props"
+                size="small"
+              >
+                <v-icon size="x-large" icon="fa: fa-solid fa-plus"></v-icon>
+              </v-btn>
           </template>
           <v-card elevation="14" rounded="md" max-height="700" max-width="900">
             <v-card-title class="text-center">New Status Column</v-card-title>
@@ -448,7 +452,8 @@ export default {
       column_name_rule: [
         (v: string) => !!v || 'Column name is required',
         (v: string) => (v && v.length <= 20) || 'Column name must be less than 20 characters'
-      ]
+      ],
+      employeePermissions: [] as string[]
     }
   },
   methods: {
@@ -476,6 +481,9 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    checkPermission(permission: string) {
+      return this.employeePermissions.includes(permission)
     },
     onUpdate() {
       console.log('update')
@@ -802,6 +810,28 @@ export default {
       })
       console.log(this.columns[0].cards.length)
     },
+    async getEmployeePermissions() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+      axios
+        .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
+        .then((response) => {
+          console.log(response)
+          console.log(response.data.data)
+          localStorage.setItem('roleId', response.data.data.role._id)
+          this.employeePermissions = response.data.data.role.permissionSuite
+        })
+        .catch((error) => {
+          console.error('Failed to fetch employees:', error)
+        })
+    },
     async loadColumns() {
       console.log('load Column request')
 
@@ -993,6 +1023,7 @@ export default {
   },
   mounted() {
     this.loadColumns().then(() => this.loadJobs().then(() => this.loading(this.starting_cards)))
+    this.getEmployeePermissions()
   }
 }
 </script>
