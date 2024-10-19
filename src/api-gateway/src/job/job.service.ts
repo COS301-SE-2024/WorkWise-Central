@@ -1287,7 +1287,7 @@ export class JobService {
     if (status == null) throw new NotFoundException('Status not found');
     for (const protectedStatus of protectedStatuses) {
       if (ciEquals(protectedStatus, status.status)) {
-        throw new ConflictException('You cannot alter "No status" and "Archive"');
+        throw new UnauthorizedException('You cannot alter "No status" and "Archive"');
       }
     }
 
@@ -1299,9 +1299,11 @@ export class JobService {
     const noStatus = await this.getStatusByLabel(deleteStatusDto.companyId, 'No Status');
     const newStatus: Types.ObjectId = noStatus ? noStatus._id : null;
     for (const job of allJobsInCompany) {
-      await this.updateWithoutValidation(job._id, {
-        status: newStatus,
-      });
+      if (job.status._id.toString() === deleteStatusDto.statusId.toString()) {
+        this.updateWithoutValidation(job._id, {
+          status: newStatus,
+        });
+      }
     }
     return resultOfDelete;
   }
@@ -1485,6 +1487,7 @@ export class JobService {
     };
     createJobDto.assignedEmployees = new AssignedEmployees();
     createJobDto.status = job.status._id;
+    createJobDto.clientId = job.clientId;
 
     const newJob = await this.create(userId, createJobDto);
     newJob.history.push(

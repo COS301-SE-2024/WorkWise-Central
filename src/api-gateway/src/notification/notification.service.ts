@@ -72,19 +72,16 @@ export class NotificationService implements OnModuleInit {
         if (tokens.length == 0) {
           return;
         }
-        for (const token of tokens) {
-          await this.fcmNotificationService.sendNotificationToUser({
-            title: document.message.title,
-            body: document.message.body,
-            token: token.tokenString,
-          });
-        }
+        const sortedTokens = tokens.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+        this.fcmNotificationService.sendNotificationToUser({
+          title: document.message.title,
+          body: document.message.body,
+          token: sortedTokens[0].tokenString,
+        });
       } catch (e) {
         console.error(e);
       }
-      this.fcmNotificationService.sendingNotificationOneUser('rand').then((r) => {
-        console.log('message sent', r);
-      });
     });
   }
 
