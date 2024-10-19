@@ -164,20 +164,14 @@ export class InventoryController {
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
 
     const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    console.log('currentEmployee', currentEmployee);
-    if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
-      console.log('in if');
-      let data;
-      try {
-        console.log('in try');
-        data = await this.inventoryService.findAllInCompany(currentEmployee.companyId);
-      } catch (e) {
-        throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
-      }
-      return { data: data };
-    } else {
-      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
+    let data;
+    try {
+      console.log('in try');
+      data = await this.inventoryService.findAllInCompany(currentEmployee.companyId);
+    } catch (e) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
     }
+    return { data: data };
   }
 
   @UseGuards(AuthGuard)
@@ -206,14 +200,8 @@ export class InventoryController {
   ) {
     const userId = await extractUserId(this.jwtService, headers);
     await this.validateRequestWithEmployeeId(userId, currentEmployeeId);
-
-    const currentEmployee = await this.employeeService.findById(currentEmployeeId);
-    if (currentEmployee.role.permissionSuite.includes('view all inventory')) {
-      const data = await this.inventoryService.findById(id);
-      return { data: data };
-    } else {
-      throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
-    }
+    const data = await this.inventoryService.findById(id);
+    return { data: data };
   }
 
   @UseGuards(AuthGuard)
