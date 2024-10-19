@@ -403,49 +403,42 @@ export default defineComponent({
       })
     }
 
-    const endCall = () => {
-      socket.emit('leave-room', 'room-id') // Replace with actual room ID
+    const endCall = async () => {
+      try {
+        socket.emit('leave-room', 'room-id')
 
-      // Close all peer connections
-      peers.value.forEach((peer) => peer.connection.close())
-      peers.value = []
+        // Close peer connections
+        peers.value.forEach((peer) => peer.connection.close())
+        peers.value = []
 
-      // Stop the local media stream
-      if (localStream) {
-        // Stop each track of the local stream
-        localStream.getTracks().forEach((track) => {
-          track.stop() // Stop the individual track
-        })
-
-        // Optionally set localStream to null to prevent further access
-        localStream = null
-      }
-
-      // Update call state and navigate
-      inCall.value = false
-      emit('return')
-      router.push('/appointments')
-
-      // Assuming you have a video element for the local stream
-      const localVideoElement = document.getElementById('localVideo') // Replace with your actual video element ID
-      if (localVideoElement) {
-        ;(localVideoElement as HTMLVideoElement).srcObject = null // Remove the stream from the video element
-      }
-
-      navigator.mediaDevices
-        .enumerateDevices()
-        .then((devices) => {
-          devices.forEach((device) => {
-            if (device.kind === 'videoinput') {
-              console.log(`Device: ${device.label}, State: ${device.deviceId}`)
-            }
+        // Stop all media tracks and release camera
+        if (localStream) {
+          localStream.getTracks().forEach((track) => {
+            track.enabled = false // Disable the track
+            track.stop() // Stop the track completely
           })
-        })
-        .catch((error) => {
-          console.error('Error enumerating devices:', error)
-        })
-    }
+          localStream = null
+        }
 
+        // Clear video elements
+        const localVideo = document.getElementById('localVideo') as HTMLVideoElement
+        if (localVideo) {
+          localVideo.srcObject = null
+          localVideo.removeAttribute('src')
+          localVideo.load()
+        }
+
+        // Release media permissions
+        await navigator.mediaDevices.getUserMedia({ audio: false, video: false }).catch(() => {}) // Intentionally catch error
+
+        inCall.value = false
+        emit('return')
+        await router.push('/appointments')
+        window.location.reload();
+      } catch (err) {
+        console.error('Error ending call:', err)
+      }
+    }
     return {
       title,
       scheduledTime,
