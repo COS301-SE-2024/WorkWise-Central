@@ -112,9 +112,9 @@
                 <v-list-item>
                   <ViewInvoice :invoice="selectedItem" />
                 </v-list-item>
-                <!-- <v-list-item>
+                <v-list-item>
                   <EditInvoice :editedInvoice="selectedItem" :invoice_id="selectedItem._id" />
-                </v-list-item> -->
+                </v-list-item>
                 <v-list-item>
                   <DeleteInvoice :invoice_id="selectedItem._id" @InvoiceDeleted="getRequests" />
                 </v-list-item>
@@ -259,7 +259,7 @@ export default defineComponent({
       employeePermissions: []
     }
   },
-  components: { DeleteInvoice, ViewInvoice, Toast, SendInvoice },
+  components: { DeleteInvoice, ViewInvoice, Toast, SendInvoice, EditInvoice },
   methods: {
     formatDate(dateString) {
       if (!dateString) return ''
