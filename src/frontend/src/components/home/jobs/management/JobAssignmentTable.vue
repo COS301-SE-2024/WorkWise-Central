@@ -147,7 +147,9 @@
                                 checkPermission('delete jobs')
                               "
                             >
-                              <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                              <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                                mdi-dots-horizontal
+                              </v-icon>
                             </v-btn>
                           </template>
                           <v-list class="bg-background">
@@ -470,7 +472,7 @@ const headers: any[] = [
   { title: 'Job Status', key: 'status', align: 'start', value: 'status' },
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
-  { title: 'Actions', key: 'actions', align: 'end', value: 'actions' }
+  { title: '', key: 'actions', align: 'end', value: 'actions' }
 ]
 
 // Fetch data and populate the table

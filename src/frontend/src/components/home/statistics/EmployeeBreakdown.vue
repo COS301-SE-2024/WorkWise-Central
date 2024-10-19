@@ -124,7 +124,9 @@
           <v-menu max-width="500px">
             <template v-slot:activator="{ props }">
               <v-btn rounded="xl" variant="plain" v-bind="props">
-                <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                  mdi-dots-horizontal
+                </v-icon>
               </v-btn>
             </template>
 

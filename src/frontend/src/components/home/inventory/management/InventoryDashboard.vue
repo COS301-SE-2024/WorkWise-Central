@@ -72,7 +72,9 @@
                       checkPermission('delete inventory item')
                     "
                   >
-                    <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                    <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                      mdi-dots-horizontal
+                    </v-icon>
                   </v-btn>
                 </template>
                 <v-list>
@@ -97,13 +99,13 @@
                 </v-list> </v-menu
             ></template>
             <template v-slot:no-data>
-            <v-row>
-              <v-col class="text-center">
-                <v-icon large color="grey">mdi-alert-outline</v-icon>
-                <div>No inventory items available.</div>
-              </v-col>
-            </v-row>
-          </template>
+              <v-row>
+                <v-col class="text-center">
+                  <v-icon large color="grey">mdi-alert-outline</v-icon>
+                  <div>No inventory items available.</div>
+                </v-col>
+              </v-row>
+            </template>
           </v-data-table>
         </v-card-text>
       </v-card>

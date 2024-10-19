@@ -134,7 +134,9 @@
                           checkPermission('delete clients')
                         "
                       >
-                        <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                        <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                          mdi-dots-horizontal
+                        </v-icon>
                       </v-btn>
                     </template>
                     <v-list>

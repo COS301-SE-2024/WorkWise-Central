@@ -98,7 +98,12 @@
                   color="warning"
                   @click="selectInvoice(item)"
                 >
-                  <v-icon start color="primary" size="small">mdi-dots-horizontal</v-icon>
+                  <v-icon
+                    color="primary"
+                    style="font-size: 30px; padding: 8px;"
+                  >
+                    mdi-dots-horizontal
+                  </v-icon>
                 </v-btn>
               </template>
               <v-list>
