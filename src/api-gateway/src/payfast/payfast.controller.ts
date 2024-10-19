@@ -13,6 +13,8 @@ export class PayfastController {
   @Post('notify')
   async handleNotification(@Req() req: any, @Res() res: any) {
     console.log('In the payfast notify endpoint');
+    // console.log('req: ', req);
+    // console.log('res: ', res);
     const pfData = req.body;
     console.log('pfData:', pfData);
 
@@ -20,7 +22,7 @@ export class PayfastController {
     res.status(200).send('OK');
     console.log('Sent 200 OK');
 
-    await this.payfastService.handNotification(pfData, req, res);
+    await this.payfastService.handNotification(pfData, req);
 
     // //Setting the data
     // await this.payfastService.setData(new Types.ObjectId(pfData.m_payment_id));

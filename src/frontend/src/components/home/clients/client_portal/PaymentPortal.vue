@@ -1,17 +1,12 @@
 <template>
   <v-container fluid fill-height>
     <v-card class="bg-cardColor">
-      <v-card-title class="text-h6">
-          <v-col cols="12" lg="4" class="d-flex align-center">
-            <v-icon icon="fa: fa-solid fa-file"></v-icon>
-            <v-label
-              class="ms-2 h4 font-family-Nunito text-headingTextColor"
-              height="auto"
-              width="auto"
-              >Invoices </v-label
-            >
-          </v-col>
-      </v-card-title>
+      <v-col cols="12" lg="6" class="d-flex align-start">
+        <v-icon icon="fa: fa-solid fa-file"></v-icon>
+        <v-label class="ms-2 h4 font-family-Nunito text-headingTextColor" height="auto" width="auto"
+          >Invoices
+        </v-label>
+      </v-col>
       <v-divider></v-divider>
       <v-list>
         <v-list-item v-for="invoice in invoices" :key="invoice._id">
@@ -50,11 +45,11 @@
             >
               Pay Now
             </v-btn> -->
-            
+
             <v-col cols="6" md="4" class="d-flex align-center justify-end">
               <v-btn
                 class="text-none font-weight-regular hello"
-                color="primary"
+                color="success"
                 block
                 variant="elevated"
                 style="color: white !important"
@@ -63,11 +58,12 @@
                 View Invoice
               </v-btn>
             </v-col>
-            
+
             <v-col cols="6" md="4" class="d-flex align-center justify-end">
               <v-btn
+                v-if="!invoice.paid"
                 class="text-none font-weight-regular hello"
-                color="success"
+                color="primary"
                 block
                 variant="elevated"
                 @click="submitPaymentForm(invoice._id)"
@@ -75,6 +71,7 @@
                 Pay Now
               </v-btn>
             </v-col>
+
             <!-- <v-btn color="primary" dark >  </v-btn> -->
           </v-list-item-action>
           <v-dialog v-model="dialog" max-width="600">
@@ -152,9 +149,12 @@ export default defineComponent({
       merchant_id: '',
       merchant_key: '',
       passPhrase: '',
-      return_url: 'https://tuksui.sharpsoftwaresolutions.net/client-portal?cId=',
-      cancel_url: 'https://tuksui.sharpsoftwaresolutions.net/client-portal?cId=',
-      notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
+      // return_url: 'https://tuksui.sharpsoftwaresolutions.net/client-portal?cId=',
+      // cancel_url: 'https://tuksui.sharpsoftwaresolutions.net/client-portal?cId=',
+      // notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
+      return_url: ' http://localhost:5173/client-portal?cId=',
+      cancel_url: ' http://localhost:5173/client-portal?cId=',
+      notify_url: 'https://1e05-105-224-67-55.ngrok-free.app/payfast/notify',
       testingMode: true,
       pfHost: 'sandbox.payfast.co.za',
       forms: {}
