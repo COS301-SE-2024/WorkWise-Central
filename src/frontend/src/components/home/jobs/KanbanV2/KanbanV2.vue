@@ -334,7 +334,7 @@
             ></v-btn>
           </template>
           <v-card elevation="14" rounded="md" max-height="700" max-width="900">
-            <v-card-title class="text-center">New Column</v-card-title>
+            <v-card-title class="text-center">New Status Column</v-card-title>
             <v-card-text>
               <!--              <v-form ref="form" v-model="valid" @submit.prevent="validateForm">-->
               <v-col>
