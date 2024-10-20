@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-carousel height="400">
+    <v-carousel height="400" v-if="images.length">
       <v-carousel-item v-for="(image, index) in images" :key="index">
         <v-img :src="image.src" height="100%" width="100%" cover @click="openImageOverlay(index)">
           <template v-slot:placeholder>

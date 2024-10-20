@@ -31,7 +31,7 @@
   <Button
     label="Create Tag"
     icon="fa: fa-solid fa-plus"
-    class="mt-4 p-button-success"
+    class="mt-4 p-button-primary"
     @click="openCreateDialog"
   />
   <!-- Label Creation/Edit Dialog -->

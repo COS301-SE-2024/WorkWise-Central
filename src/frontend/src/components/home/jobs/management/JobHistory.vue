@@ -13,7 +13,7 @@
             @click="toggleHistory"
             label="Show History"
             :icon="showHistory ? 'fa: fa-solid fa-eye-slash' : 'fa: fa-solid fa-eye'"
-            :class="showHistory ? 'p-button-danger' : 'p-button-success'"
+            :class="showHistory ? 'p-button-danger' : 'p-button-primary'"
           >
           </Button>
         </div>

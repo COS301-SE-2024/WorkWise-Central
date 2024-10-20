@@ -48,7 +48,7 @@
                       class="d-flex justify-end"
                       v-if="checkPermission('add new jobs')"
                     >
-                      <AddJob />
+                      <AddJob @jobCreated="fetchData"/>
                     </v-col>
                   </v-row>
                 </v-card-title>
