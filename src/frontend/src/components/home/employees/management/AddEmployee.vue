@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-height="800" max-width="600" style="font-family: Nunito, sans-serif">
+  <v-dialog persistent max-height="800" max-width="600" style="font-family: Nunito, sans-serif">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -15,96 +15,113 @@
         ></v-btn>
       </v-defaults-provider>
     </template>
-    <v-card class="bg-cardColor">
-      <v-card-title class="text-center" style="font-family: Nunito, sans-serif"
-        >Add Employee</v-card-title
-      >
-      <v-card-text>
-        <v-form ref="form" v-model="valid" @submit.prevent="validate">
-          <v-col>
-            <v-row>
-              <v-col :cols="12">
-                <small
-                  class="text-caption font-weight-regular"
-                  style="font-family: Nunito, sans-serif"
-                  >Add employee using employee email
-                  <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
-                </small>
+    <template v-slot:default="{ isActive }">
+      <v-card class="bg-cardColor">
+        <v-card-title class="text-center" style="font-family: Nunito, sans-serif"
+          >Add Employee</v-card-title
+        >
+        <v-card-text>
+          <v-form ref="form" v-model="valid" @submit.prevent="validate">
+            <v-col>
+              <v-row>
+                <v-col :cols="12">
+                  <small
+                    class="text-caption font-weight-regular"
+                    style="font-family: Nunito, sans-serif"
+                    >Add employee using employee email
+                    <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
+                  </small>
 
-                <v-text-field
-                  v-model="req_obj.emailToInvite"
-                  placeholder="Employee email"
+                  <v-text-field
+                    v-model="req_obj.emailToInvite"
+                    placeholder="Employee email"
+                    rounded="md"
+                    required
+                    :rules="rules.email_rules"
+                    data-testid="username-textfield"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col :cols="12">
+                  <small
+                    class="text-caption font-weight-regular"
+                    style="font-family: Nunito, sans-serif"
+                    >Choose role
+                  </small>
+                  <v-select
+                    clearable
+                    label="Company Role"
+                    hint="Select the role you'd like to change this employee to"
+                    persistent-hint
+                    @update:modelValue="change_roles"
+                    :items="roleItems"
+                    item-value="roleId"
+                    item-title="roleName"
+                    v-model="req_obj.roleId"
+                    bg-color="background"
+                    variant="solo"
+                    data-testid="role-select"
+                  ></v-select>
+                </v-col>
+                <v-col :cols="12">
+                  <small
+                    class="text-caption font-weight-regular"
+                    style="font-family: Nunito, sans-serif"
+                    >Choose superior
+                  </small>
+                  <v-select
+                    clearable
+                    label="Superior"
+                    hint="Select the employee you'd like to be superior of this employee"
+                    persistent-hint
+                    @update:modelValue="selected_supirior"
+                    :items="subordinateItemNames"
+                    v-model="req_obj.superiorId"
+                    item-value="employeeId"
+                    item-title="name"
+                    bg-color="background"
+                    variant="solo"
+                    data-testid="superior-select"
+                  ></v-select>
+                </v-col>
+              </v-row>
+
+              <v-col cols="12" md="12" xs="3" sm="6" align="center">
+                <Toast position="top-center" />
+                <v-btn
+                  color="success"
                   rounded="md"
-                  required
-                  :rules="rules.email_rules"
-                  data-testid="username-textfield"
-                ></v-text-field>
-              </v-col>
-
-              <v-col :cols="12">
-                <small
-                  class="text-caption font-weight-regular"
+                  boarder="md"
+                  type="submit"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  :disabled="click_create_client"
+                  :loading="isDeleting"
                   style="font-family: Nunito, sans-serif"
-                  >Choose role
-                </small>
-                <v-select
-                  clearable
-                  label="Company Role"
-                  hint="Select the role you'd like to change this employee to"
-                  persistent-hint
-                  @update:modelValue="change_roles"
-                  :items="roleItems"
-                  item-value="roleId"
-                  item-title="roleName"
-                  v-model="req_obj.roleId"
-                  bg-color="background"
-                  variant="solo"
-                  data-testid="role-select"
-                ></v-select>
+                  ><v-icon icon="fa:fa-solid fa-plus" color="success" size="small" start></v-icon
+                  >Add
+                </v-btn>
               </v-col>
-              <v-col :cols="12">
-                <small
-                  class="text-caption font-weight-regular"
-                  style="font-family: Nunito, sans-serif"
-                  >Choose superior
-                </small>
-                <v-select
-                  clearable
-                  label="Superior"
-                  hint="Select the employee you'd like to be superior of this employee"
-                  persistent-hint
-                  @update:modelValue="selected_supirior"
-                  :items="subordinateItemNames"
-                  v-model="req_obj.superiorId"
-                  item-value="employeeId"
-                  item-title="name"
-                  bg-color="background"
-                  variant="solo"
-                  data-testid="superior-select"
-                ></v-select>
+              <v-col cols="12" md="12" xs="3" sm="6" align="center">
+                <v-btn
+                  :disabled="request_load"
+                  color="error"
+                  rounded="md"
+                  boarder="md"
+                  width="100%"
+                  height="35"
+                  variant="text"
+                  @click="isActive.value = false"
+                  data-testid="cancel-btn"
+                  ><v-icon icon="fa: fa-solid fa-cancel" color="error" start></v-icon>Cancel
+                </v-btn>
               </v-col>
-            </v-row>
-
-            <v-col cols="12" md="12" xs="3" sm="6" align="center">
-              <Toast position="top-center" />
-              <v-btn
-                color="success"
-                rounded="md"
-                boarder="md"
-                type="submit"
-                width="100%"
-                height="35"
-                variant="text"
-                :disabled="click_create_client"
-                :loading="isDeleting"
-                style="font-family: Nunito, sans-serif"
-                ><v-icon icon="fa:fa-solid fa-plus" color="success" size="small" start></v-icon>Add
-              </v-btn>
             </v-col>
-          </v-col>
-        </v-form>
-      </v-card-text>
-    </v-card>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </template>
   </v-dialog>
 </template>
 
@@ -206,6 +223,7 @@ export default defineComponent({
         console.error('Error fetching data:', error)
       }
     },
+
     async validateSubmit() {
       const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
       const validate = await (form as any).validate()

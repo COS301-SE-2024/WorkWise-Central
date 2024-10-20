@@ -62,7 +62,12 @@
             <v-menu max-width="500px">
               <template v-slot:activator="{ props }">
                 <v-btn rounded="xl" variant="plain" v-bind="props">
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                  <v-icon
+                    color="primary"
+                    style="font-size: 30px; padding: 8px;"
+                  >
+                    mdi-dots-horizontal
+                  </v-icon>
                 </v-btn>
               </template>
               <v-list class="bg-background">
@@ -124,7 +129,7 @@
   </v-container>
 
   <!-- Confirmation Dialog -->
-  <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0.1">
+ <v-dialog persistent v-model="deleteDialog" max-width="500px" :opacity="0.1">
     <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-delete</v-icon>
@@ -166,7 +171,7 @@
   </v-dialog>
 
   <!-- Creating the appointment  -->
-  <v-dialog v-model="showCreate" persistent max-width="800px">
+ <v-dialog persistent v-model="showCreate"  max-width="800px">
     <v-card class="bg-cardColor">
       <v-card-title>
         <span class="headline">{{ 'Create Appointment' }}</span>
@@ -278,7 +283,7 @@
   </v-dialog>
 
   <!-- Editing the appointment -->
-  <v-dialog v-model="showEdit" persistent max-width="800px">
+ <v-dialog persistent v-model="showEdit"  max-width="800px">
     <v-card class="bg-cardColor">
       <v-card-title>
         <span class="headline">{{ 'Edit Appointment' }}</span>
@@ -406,7 +411,7 @@ export default defineComponent({
         { title: 'Date', value: 'date' },
         { title: 'Start Time', value: 'startTime' },
         { title: 'End Time', value: 'endTime' },
-        { title: 'Actions', value: 'actions', sortable: false }
+        { title: '', value: 'actions', sortable: false }
       ],
       deleteDialog: false,
       isDeleting: false,
@@ -509,6 +514,7 @@ export default defineComponent({
           `${API_URL}videoCalls/forEmployee/${localStorage.getItem('employeeId')}`,
           config
         )
+        console.log(response.data.data)
         for (const appointment of response.data.data) {
           // const participants = appointment.participants.map((participant) => participant.name)
           this.appointments.push({
@@ -622,10 +628,7 @@ export default defineComponent({
     async createAppointment() {
       this.isGenerating = true
       const appointment = { ...this.newAppointment }
-      //checking if the current employee is in the participants list
-      if (this.newAppointment.participants.includes(localStorage.getItem('employeeId'))) {
-        this.appointments.push(appointment)
-      }
+      
 
       const config = {
         headers: {
@@ -647,17 +650,26 @@ export default defineComponent({
       await axios
         .post(`${API_URL}videoCalls/create`, data, config)
         .then((response) => {
+          //checking if the current employee is in the participants list
+          if (this.newAppointment.participants.includes(localStorage.getItem('employeeId'))) {
+            this.appointments.push(appointment)
+          }
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Meeting created successfully'
+            detail: 'Meeting created successfully',
+            life: 3000
           })
+          this.showCreate = false
+          this.isGenerating = false
+          this.clearFields()
         })
         .catch((error) => {
           this.$toast.add({
             severity: 'failure',
             summary: 'failure',
-            detail: 'Creating meeting failed'
+            detail: 'Creating meeting failed',
+            life: 3000
           })
           console.error(error)
         })

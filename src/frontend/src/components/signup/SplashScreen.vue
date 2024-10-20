@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-app :theme="isDarkMode ? 'dark' : 'light'">
+  <v-app :theme="isDarkMode ? 'dark' : 'light'" class="bg-background">
     <!-- Toolbar -->
     <v-app-bar class="bg-background">
       <v-toolbar-title class="d-flex justify-start">
@@ -211,7 +211,7 @@
               </v-card>
             </v-dialog>
             <!-- Forgot Password -->
-            <v-dialog :opacity="0" v-model="forgotPasswordDialog" max-width="400">
+            <v-dialog persistent :opacity="0" v-model="forgotPasswordDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -254,7 +254,7 @@
               </v-sheet>
             </v-dialog>
 
-            <v-dialog :opacity="0" v-model="OTPDialog" max-width="400">
+            <v-dialog persistent :opacity="0" v-model="OTPDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -408,6 +408,7 @@
             </v-dialog>
             <!-- Flow 2 -->
             <v-dialog
+              persistent
               :opacity="0"
               v-model="signup1Dialog"
               max-width="400"
@@ -496,6 +497,7 @@
             </v-dialog>
             <v-col xs="3" align-self="center">
               <v-dialog
+                persistent
                 :opacity="0"
                 v-model="signupUsernameDialog"
                 max-width="400"
@@ -587,6 +589,7 @@
             </v-col>
             <!-- Flow 3 -->
             <v-dialog
+              persistent
               :opacity="0"
               v-model="signup2Dialog"
               max-width="400"
@@ -696,6 +699,7 @@
             </v-dialog>
             <!-- Flow 4 -->
             <v-dialog
+              persistent
               :opacity="0"
               v-model="signupAddressDialog"
               max-width="1000"
@@ -842,6 +846,7 @@
             </v-dialog>
             <!-- Flow 5 -->
             <v-dialog
+              persistent
               :opacity="0"
               v-model="signup3Dialog"
               max-width="700"
@@ -904,13 +909,21 @@
         <ServicesSplash  />
       </div> -->
       <div>
-        <h1 :class="['splash-title', 'header-title', 'text-center']">
-          How to use <span class="text-primary">Work</span
-          ><span class="text-secondary">Wise</span> Central
-        </h1>
-        <v-row justify="end" style="height: 500px">
-          <Tutorial />
-        </v-row>
+        <MarketingSplash />
+      </div>
+
+      <div>
+        <h3 :class="['splash-title', 'header-title', 'text-center']" @click="toggleHelpSection">
+          Help
+          <v-icon class="ml-2">{{ isHelpVisible ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+        </h3>
+        <v-expand-transition>
+          <div v-if="isHelpVisible">
+            <v-row justify="end" style="height: 500px">
+              <Tutorial />
+            </v-row>
+          </div>
+        </v-expand-transition>
       </div>
 
       <v-footer> </v-footer>
@@ -925,16 +938,19 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import Tutorial from './Tutorial.vue'
 import { API_URL } from '@/main'
+import MarketingSplash from './MarketingSplash.vue'
 
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
     Toast,
-    Tutorial
+    Tutorial,
+    MarketingSplash
   },
   data: () => ({
     click_create_client: false,
+    isHelpVisible: false,
     inviteId: null,
     tabs: [
       { title: 'Client Management', icon: 'mdi-account-group' },
@@ -1472,6 +1488,9 @@ export default defineComponent({
       this.signup1Dialog = false
       this.signupUsernameDialog = true
       this.populateUsernameList()
+    },
+    toggleHelpSection() {
+      this.isHelpVisible = !this.isHelpVisible; // Toggles the help section visibility
     },
     async nextFlowUsername() {
       //this.profilePicture = await this.imageURL()

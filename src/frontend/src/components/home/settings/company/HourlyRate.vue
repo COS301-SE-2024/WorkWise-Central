@@ -49,7 +49,9 @@
             >
               <template v-slot:[`item.actions`]="{ item }">
                 <v-btn @click="openRoleDialog(item)" color="primary">
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon></v-btn
+                  <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                    mdi-dots-horizontal
+                  </v-icon></v-btn
                 >
               </template>
             </v-data-table>
@@ -59,7 +61,7 @@
     </v-tab-item>
 
     <!-- Employee Edit Dialog -->
-    <v-dialog v-model="employeeDialog" max-width="500px">
+   <v-dialog persistent v-model="employeeDialog" max-width="500px">
       <v-card class="bg-cardColor">
         <v-card-title>Edit Employee's Hourly Rate</v-card-title>
         <v-card-subtitle>
@@ -102,7 +104,7 @@
     </v-dialog>
 
     <!-- Role Edit Dialog -->
-    <v-dialog v-model="roleDialog" max-width="500px">
+   <v-dialog persistent v-model="roleDialog" max-width="500px">
       <v-card class="bg-cardColor">
         <v-card-title>Edit Role's Hourly Rate</v-card-title>
         <v-card-subtitle>
@@ -260,7 +262,7 @@ export default {
           config
         )
         console.log(response.data.data)
-        this.employees = []
+
         this.getEmployees()
         this.employeeDialog = false
         this.isEditing = false

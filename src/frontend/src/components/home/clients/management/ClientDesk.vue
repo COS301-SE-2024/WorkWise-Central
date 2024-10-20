@@ -49,8 +49,7 @@
                   <v-icon color="buttonText">mdi-account-plus</v-icon>
                 </template>
               </v-btn>
-              <v-dialog
-                v-model="addClientVisibility"
+             <v-dialog persistent                 v-model="addClientVisibility"
                 opacity="0.6"
                 max-height="800"
                 max-width="600"
@@ -134,7 +133,9 @@
                           checkPermission('delete clients')
                         "
                       >
-                        <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                        <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                          mdi-dots-horizontal
+                        </v-icon>
                       </v-btn>
                     </template>
                     <v-list>

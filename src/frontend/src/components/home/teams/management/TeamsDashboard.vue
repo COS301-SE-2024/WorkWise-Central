@@ -54,7 +54,9 @@
             :row-props="getRowProps"
             :header-props="{ class: 'bg-secondRowColor h6' }"
           >
-            <template v-slot:[`item.`]> </template>
+            <template v-slot:[`item.teamLeaderId.userInfo.displayName`] = "{ item }"
+              ><v-chip color="secondary">{{ item.teamLeaderId.userInfo.displayName }}</v-chip>
+            </template>
             <template v-slot:[`item.currentJobAssignments`]="{ item }">
               <v-chip :color="chipColor(item.currentJobAssignments.length)">
                 {{ item.currentJobAssignments.length }}
@@ -77,7 +79,9 @@
                       checkPermission('delete teams')
                     "
                   >
-                    <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                    <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                      mdi-dots-horizontal
+                    </v-icon>
                   </v-btn>
                 </template>
                 <v-list>
@@ -141,7 +145,7 @@ export default defineComponent({
         { title: 'Current Job Assignments', value: 'currentJobAssignments' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
-      teamItems: [] as Team[],
+      teamItems: [] as any[],
       teamTable: [
         {
           teamName: 'Team 1',

@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <Toast position="top-center" />
-    <v-card class="bg-cardColor">
+    <LoadingScreen :Loading="!statsShown" />
+    <v-card class="bg-cardColor" v-if="statsShown">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -54,7 +55,9 @@
                   @click="selectItem(item)"
                   :disabled="item.roleName === 'Owner' || item.roleName === 'Worker'"
                 >
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                  <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                    mdi-dots-horizontal
+                  </v-icon>
                 </v-btn>
               </template>
               <v-list>
@@ -92,7 +95,7 @@
         >
       </v-card-actions> -->
     </v-card>
-    <v-dialog v-model="dialog" persistent max-width="500px">
+   <v-dialog persistent v-model="dialog"  max-width="500px">
       <v-card class="bg-cardColor">
         <v-card-title class="text-h5"> Edit Role </v-card-title>
 
@@ -135,6 +138,7 @@ import Toast from 'primevue/toast'
 import DeleteRole from './DeleteRole.vue'
 import CreateRoles from './CreateRoles.vue'
 import { API_URL } from '@/main'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 
 export default defineComponent({
   props: {
@@ -144,12 +148,13 @@ export default defineComponent({
   components: {
     Toast,
     DeleteRole,
-
+    LoadingScreen,
     CreateRoles
   },
   data: () => ({
     dialog: false,
     items: [],
+    statsShown: false,
     isDeleting: false,
     roleNames: [],
     rolePermissions: [],
@@ -199,7 +204,9 @@ export default defineComponent({
               this.roleIds.push(data._id)
             }
           }
-
+          setTimeout(() => {
+            this.statsShown = true
+          }, 1000)
           console.log(this.roleUpdates)
           //removing the first element of the array
           // this.roleUpdates.shift();

@@ -48,7 +48,7 @@
                       class="d-flex justify-end"
                       v-if="checkPermission('add new jobs')"
                     >
-                      <AddJob />
+                      <AddJob @jobCreated="fetchData"/>
                     </v-col>
                   </v-row>
                 </v-card-title>
@@ -147,7 +147,9 @@
                                 checkPermission('delete jobs')
                               "
                             >
-                              <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                              <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                                mdi-dots-horizontal
+                              </v-icon>
                             </v-btn>
                           </template>
                           <v-list class="bg-background">
@@ -168,8 +170,7 @@
                                 ></v-icon
                                 >View
                               </v-btn>
-                              <v-dialog
-                                v-model="viewJobDialogVisible"
+                             <v-dialog persistent                                 v-model="viewJobDialogVisible"
                                 :max-height="800"
                                 :max-width="1000"
                               >
@@ -189,8 +190,7 @@
                                 ></v-icon
                                 >Edit
                               </v-btn>
-                              <v-dialog
-                                v-model="viewManagerJobCardVisible"
+                             <v-dialog persistent                                 v-model="viewManagerJobCardVisible"
                                 :max-height="800"
                                 :max-width="1000"
                               >
@@ -222,7 +222,7 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-dialog v-model="deleteDialog" :max-width="500" :opacity="0">
+     <v-dialog persistent v-model="deleteDialog" :max-width="500" :opacity="0">
         <v-card class="bg-cardColor">
           <v-card-title class="text-h6 font-weight-regular bg-red">
             <v-icon color="white">mdi-alert-circle-outline</v-icon>
@@ -470,7 +470,7 @@ const headers: any[] = [
   { title: 'Job Status', key: 'status', align: 'start', value: 'status' },
   { title: 'Start Date', key: 'startDate', align: 'start', value: 'startDate' },
   { title: 'End Date', key: 'endDate', align: 'start', value: 'endDate' },
-  { title: 'Actions', key: 'actions', align: 'end', value: 'actions' }
+  { title: '', key: 'actions', align: 'end', value: 'actions' }
 ]
 
 // Fetch data and populate the table

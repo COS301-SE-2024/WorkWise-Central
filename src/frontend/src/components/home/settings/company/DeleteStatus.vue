@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="deleteDialog" max-width="500px">
+ <v-dialog persistent v-model="deleteDialog" max-width="500px">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         class="text-none font-weight-regular hello"

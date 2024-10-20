@@ -1,7 +1,7 @@
 <template>
   <v-app :style="isDarkMode === true ? 'dark' : 'light'">
     <v-main>
-      <v-container>
+      <v-container fluid fill-height>
         <v-tabs bg-color="secondary" dark>
           <v-tab v-for="tab in tabs" :key="tab" @click="changeSection(tab)">
             {{ tab }}
@@ -22,7 +22,8 @@
   </v-app>
 </template>
 
-<script>
+
+<script lang="ts">
 import ClientJobs from './ViewJobs.vue'
 import ReviewJobs from './ReviewJob.vue'
 import Invoices from './PaymentPortal.vue'
@@ -44,11 +45,13 @@ export default defineComponent({
     return {
       section: 'Current Jobs',
       tabs: ['Current Jobs', 'Review Jobs', 'Invoices'],
-      clientID: ''
+      clientID: '',
+      isDarkMode: false,
+      activeTab: 0
     }
   },
   methods: {
-    changeSection(section) {
+    changeSection(section: string) {
       this.section = section
     },
     getCidValue() {
@@ -56,7 +59,8 @@ export default defineComponent({
       const match = url.match(/cId=([a-zA-Z0-9]+)/)
       if (match[1]) {
         sessionStorage.setItem('clientId', match[1])
-        this.clientID = sessionStorage.getItem('clientId').toString()
+        const clientId = sessionStorage.getItem('clientId')
+        this.clientID = clientId ? clientId.toString() : ''
       }
     }
   },

@@ -1,5 +1,12 @@
 ﻿<template>
-  <v-dialog close-on-back :max-height="800" opacity="0.6" :max-width="900" v-model="jobDialog">
+  <v-dialog
+    persistent
+    close-on-back
+    :max-height="800"
+    opacity="0.6"
+    :max-width="900"
+    v-model="jobDialog"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -76,6 +83,7 @@
                   ></label
                 >
                 <v-dialog
+                  persistent
                   opacity="0.6"
                   v-model="clientDialogVisibility"
                   max-height="800"
@@ -194,6 +202,24 @@
                     @update:modelValue="updateEmployee"
                     variant="solo"
                     data-testid="employee-multi-select"
+                  ></v-select></v-col
+                ><v-col :cols="12">
+                  <label style="font-size: 14px; font-weight: lighter">Assign Team</label>
+
+                  <v-select
+                    :disabled="request_load"
+                    v-model="req_obj.assignedEmployees.teamIds"
+                    :items="teamsArray"
+                    item-value="employeeId"
+                    item-title="name"
+                    label="Select some team you would like to assign to this job"
+                    chips
+                    multiple
+                    required
+                    color="primary"
+                    @update:modelValue="updateEmployee"
+                    variant="solo"
+                    data-testid="employee-multi-select"
                   ></v-select
                 ></v-col>
                 <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
@@ -289,7 +315,11 @@
                 >Job address
                 <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
               </label>
-
+              <v-checkbox
+                v-model="clientAddress"
+                label="Use client address"
+                @update:focused="updateClientAddressValues"
+              ></v-checkbox>
               <v-row>
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter"
@@ -297,7 +327,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Street"
@@ -315,7 +345,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Suburb"
@@ -333,6 +363,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-autocomplete
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Province"
@@ -363,7 +394,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="City/Town"
@@ -381,7 +412,7 @@
                     <label style="font-size: 14px; font-weight: lighter; color: red">*</label>
                   </label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Postal Code"
@@ -397,7 +428,7 @@
                 <v-col cols="12" sm="6">
                   <label style="font-size: 12px; font-weight: lighter">Complex/Building</label>
                   <v-text-field
-                    :disabled="request_load"
+                    :disabled="clientAddress"
                     density="compact"
                     color="primary"
                     placeholder="Complex"
@@ -490,6 +521,7 @@ type Job = {
   assignedBy: string
   assignedEmployees: {
     employeeIds?: string[]
+    teamIds?: string[]
   }
   status?: string
   details: JobDetails
@@ -509,6 +541,7 @@ export default defineComponent({
     const currentHour = now.getHours()
     const currentMinute = now.getMinutes()
     return {
+      clientAddress: false,
       click_create_employee: false,
       valid: false,
       selectedDate: '',
@@ -532,20 +565,22 @@ export default defineComponent({
         (v: string) =>
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
-      province_rules: [(v: string) => !!v || 'Province is required'],
-      street_rules: [(v: string) => !!v || 'Street is required'],
-      suburb_rules: [(v: string) => !!v || 'Suburb is required'],
-      city_rules: [(v: string) => !!v || 'City/Town is required'],
+      province_rules: [(v: string) => this.clientAddress || !!v || 'Province is required'] as any,
+      street_rules: [(v: string) => this.clientAddress || !!v || 'Street is required'] as any,
+      suburb_rules: [(v: string) => this.clientAddress || !!v || 'Suburb is required'] as any,
+      city_rules: [(v: string) => this.clientAddress || !!v || 'City/Town is required'] as any,
       postal_code_rules: [
-        (v: string) => !!v || 'Postal code  is required',
-        (value: string) => /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
-      ],
+        (v: string) => this.clientAddress || !!v || 'Postal code  is required',
+        (value: string) =>
+          this.clientAddress || /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
+      ] as any,
       employees_rules: [(v: string) => !!v || 'Client is required'],
       description_rules: [(v: string) => !!v || 'Description is required'],
       startDateRule: [(v: string) => !!v || 'Start date is required'],
       endDateRule: [(v: string) => !!v || 'End date is required'],
       priorityRules: [(v: string) => !!v || 'Priority tag is required'],
       employeesArray: [] as EmployeeInformation[],
+      teamsArray: [] as EmployeeInformation[],
       clientsArray: [] as ClientInformation[],
       time: '',
       startDate: null as string | null,
@@ -556,6 +591,14 @@ export default defineComponent({
       priorityOptionsArray: [] as JobPriorityTag[],
       tagOptionsArray: [] as JobTag[],
       statusOptionsArray: [] as JobStatuses[],
+      clientAddressobj: {
+        province: '',
+        street: '',
+        suburb: '',
+        city: '',
+        postalCode: '',
+        complex: ''
+      },
       req_obj: {
         companyId: localStorage['currentCompany'],
         clientId: '',
@@ -610,6 +653,25 @@ export default defineComponent({
   //   }
   // },
   methods: {
+    updateClientAddressValues() {
+      if (this.clientAddress) {
+        this.req_obj.details.address.province = this.clientAddressobj.province
+        this.req_obj.details.address.street = this.clientAddressobj.street
+        this.req_obj.details.address.suburb = this.clientAddressobj.suburb
+        this.req_obj.details.address.city = this.clientAddressobj.city
+        this.req_obj.details.address.postalCode = this.clientAddressobj.postalCode
+      } else
+        this.req_obj.details.address = {
+          province: '',
+          street: '',
+          suburb: '',
+          city: '',
+          postalCode: '',
+          complex: ''
+        }
+      console.log(this.req_obj)
+    },
+
     showAddClientModal() {
       console.log('modal event')
       this.clientDialogVisibility = true
@@ -684,6 +746,7 @@ export default defineComponent({
       this.req_obj.coverImage || delete this.req_obj.coverImage
       this.req_obj.assignedEmployees.employeeIds ||
         delete this.req_obj.assignedEmployees.employeeIds
+      this.req_obj.assignedEmployees.teamIds || delete this.req_obj.assignedEmployees.teamIds
       this.req_obj.status || delete this.req_obj.status
 
       if (validate) {
@@ -692,6 +755,7 @@ export default defineComponent({
         console.log(update)
         this.date_validation_error_alert = !update
         if (update) {
+          this.request_load = true
           await this.handleSubmission()
         }
       }
@@ -717,8 +781,6 @@ export default defineComponent({
       return `${year}-${month}-${day}`
     },
     async handleSubmission() {
-      this.request_load = true
-
       console.log(this.req_obj)
 
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -755,7 +817,8 @@ export default defineComponent({
               this.jobDialog = false
               setTimeout(() => {
                 this.request_load = false
-                window.location.reload()
+                // window.location.reload()
+                this.$emit('jobCreated')
               }, 1500)
             })
             .catch((error) => {
@@ -870,6 +933,42 @@ export default defineComponent({
         console.log('Error fetching data:', error)
       }
     },
+    async loadAssignableTeams() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+
+      try {
+        const employee_response = await axios.get(
+          API_URL + `team/all/${localStorage['currentCompany']}`,
+          config
+        )
+
+        let employee_all_data = employee_response.data.data
+
+        console.log(employee_all_data)
+
+        let company_employee_arr: EmployeeInformation[] = []
+
+        for (let i = 0; i < employee_all_data.length; i++) {
+          let company_employee: EmployeeInformation = {
+            name: employee_all_data[i].teamName,
+            employeeId: employee_all_data[i]._id
+          }
+          company_employee_arr.push(company_employee)
+        }
+        console.log(company_employee_arr)
+        this.teamsArray = company_employee_arr
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+    },
     async loadPriorities() {
       const config = {
         headers: {
@@ -925,8 +1024,28 @@ export default defineComponent({
         console.log('Error fetching data:', error)
       }
     },
-    updateClient() {
+    async updateClient() {
       console.log(this.req_obj.clientId)
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        params: {
+          currentEmployeeId: localStorage['employeeId']
+        }
+      }
+
+      try {
+        const statuses_response = await axios.get(
+          API_URL + `client/id/${this.req_obj.clientId}`,
+          config
+        )
+        console.log(statuses_response.data.data)
+        this.clientAddressobj = statuses_response.data.data.details.address
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
     },
     updateEmployee() {
       console.log(this.req_obj.priorityTag)
@@ -942,6 +1061,7 @@ export default defineComponent({
   mounted: function () {
     this.loadClients()
     this.loadAssignableEmployees()
+    this.loadAssignableTeams()
     this.loadPriorities()
     this.loadTags()
     this.loadStatues()

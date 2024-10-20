@@ -28,7 +28,7 @@ https://github.com/tomosterlund/qalendar/blob/master/development/QalendarView.vu
       </div>
     </template>
   </Qalendar>
-  <v-dialog v-model="JobCardVisibility" max-width="1000px">
+ <v-dialog persistent v-model="JobCardVisibility" max-width="1000px">
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>
@@ -1017,14 +1017,17 @@ export default {
       }
     },
     async loadJobs() {
-      const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` }, params:{
-        currentEmployeeId:localStorage['employeeId']
-        } }
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage['access_token']}` },
+        params: {
+          currentEmployeeId: localStorage['employeeId']
+        }
+      }
 
       try {
         const employee_jobs = await axios.get(
-            API_URL + `job/all/employee/${localStorage['employeeId']}`,
-            config
+          API_URL + `job/all/company/detailed/${localStorage['currentCompany']}`,
+          config
         )
 
         let jobs: Job[] = employee_jobs.data.data

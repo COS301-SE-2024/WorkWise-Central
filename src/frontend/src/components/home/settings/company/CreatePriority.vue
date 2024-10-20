@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-height="800" max-width="600" persistent :opacity="0">
+   <v-dialog persistent v-model="dialog" max-height="800" max-width="600" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -34,23 +34,16 @@
             type="number"
           ></v-text-field>
           <v-label>Priority Color</v-label>
-          <v-row>
-            <v-col
-              v-for="color in colorOptions"
-              :key="color"
-              cols="2"
-              class="d-flex justify-center"
-            >
-              <v-btn
-                :style="{ backgroundColor: color }"
-                class="ma-1"
-                @click="priority.colour = color"
-                :outlined="priority.colour !== color"
-                style="width: 40px; height: 40px; border-radius: 4px"
-              ></v-btn>
-            </v-col>
-          </v-row>
-          <span>Hex Code: {{ priority.colour }}</span>
+          <v-color-picker
+            v-model="priority.colour"
+            :hide-sliders="true"
+            :hide-canvas="true"
+            hide-inputs
+            show-swatches
+          ></v-color-picker>
+          <span
+            >Hex Code:<v-chip :color="priority.colour">{{ priority.colour }}</v-chip>
+          </span>
         </v-form>
       </v-card-text>
       <v-card-actions>

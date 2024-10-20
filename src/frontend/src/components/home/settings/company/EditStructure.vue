@@ -26,7 +26,9 @@ e
           </v-col>
         </v-row>
       </v-container>
+
       <v-card-text>
+        <LoadingScreen :Loading="!statsShown" />
         <Toast position="top-center" />
         <v-network-graph
           v-model="graph"
@@ -38,6 +40,7 @@ e
           :layouts="data.layouts"
           :configs="configs"
           :event-handlers="configs.eventsHandlers"
+          v-if="statsShown"
         >
           <template
             #override-node-label="{ scale, text, x, y, config, textAnchor, dominantBaseline }"
@@ -82,7 +85,7 @@ e
       </v-card-actions> -->
     </v-card>
 
-    <v-dialog v-model="employeeDialog" max-width="500" height="500">
+   <v-dialog persistent v-model="employeeDialog" max-width="500" height="500">
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
           rounded="md"
@@ -179,7 +182,7 @@ e
                       start
                       color="success"
                       size="small"
-                      :disabled="isDeleting"
+                    
                     ></v-icon>
                     Save
                   </v-btn>
@@ -192,8 +195,8 @@ e
                     height="35"
                     variant="text"
                     block
-                    @click="close"
-                    :loading="isDeleting"
+                    @click="employeeDialog = false"
+                    
                   >
                     <Toast position="top-center" />
                     <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
@@ -216,16 +219,18 @@ import dagre from 'dagre/dist/dagre.min.js'
 import axios from 'axios'
 import { API_URL } from '@/main'
 import Toast from 'primevue/toast'
-
-const nodeSize = 40
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
+const nodeSize = 60
 
 export default defineComponent({
   data() {
     return {
       color: 'primary',
       isLoading: false,
+      isDeleting: false,
       selectedItem: '',
       employeeDialog: false,
+      statsShown: false,
       data: {
         nodes: {},
         edges: {},
@@ -256,7 +261,7 @@ export default defineComponent({
             strokeWidth: 0,
             strokeColor: '#000000',
             strokeDasharray: '0',
-            color: '#4466cc'
+            color: '#227D9B'
           },
           label: { direction: 'south', color: '#dd2288' },
           hover: {
@@ -333,6 +338,7 @@ export default defineComponent({
     }
   },
   components: {
+    LoadingScreen,
     Toast
   },
   methods: {
@@ -433,6 +439,9 @@ export default defineComponent({
         console.log(response)
         this.data.nodes = response.data.data.nodes
         this.data.edges = response.data.data.edges
+        setTimeout(() => {
+          this.statsShown = true
+        }, 4000)
       } catch (error) {
         console.error(error)
       }
@@ -472,6 +481,7 @@ export default defineComponent({
       }
     },
     async validateEdits() {
+      this.isDeleting = true
       if (
         this.req_obj.updateEmployeeDto.roleId === '' &&
         this.req_obj.updateEmployeeDto.subordinates?.length === 0 &&
@@ -497,7 +507,7 @@ export default defineComponent({
       await this.getGraphView()
     },
     async loadSubordinates() {
-      this.loading=true
+      this.loading = true
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -637,6 +647,7 @@ export default defineComponent({
       }
     },
     close() {
+      this.isDeleting = true
       this.$toast.add({
         severity: 'success',
         summary: 'Success',
@@ -645,6 +656,7 @@ export default defineComponent({
       })
       setTimeout(() => {
         this.employeeDialog = false
+        this.isDeleting = false
         this.getGraphView()
       }, 1500)
     },

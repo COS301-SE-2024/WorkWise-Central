@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600">
+ <v-dialog persistent v-model="dialog" max-width="600">
     <v-card>
       <v-card-title>Detailed Breakdown</v-card-title>
       <v-card-text>
@@ -88,7 +88,8 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-card border="md" rounded="md" height="auto">
+  <LoadingScreen :Loading="!statsShown" />
+  <v-card border="md" rounded="md" height="auto" v-if="statsShown">
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-file-invoice-dollar mr-2"></v-icon>
       {{ currentTab }}
@@ -126,15 +127,17 @@
 <script>
 import Chart from 'primevue/chart'
 import axios from 'axios'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 import { API_URL } from '@/main'
 export default {
-  components: { Chart },
+  components: { Chart,LoadingScreen },
   data() {
     return {
       currentTab: 'Invoice Breakdown',
+      statsShown: false,
       dialog: false,
-      localUrl: 'http://localhost:3000/',
-      remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
+      // localUrl: 'http://localhost:3000/',
+      // remoteUrl: 'https://tuksapi.sharpsoftwaresolutions.net/',
       invoiceStats: {
         totalNumInvoices: 0,
         numPaid: 0,
@@ -162,18 +165,18 @@ export default {
     this.getInvoiceStats()
   },
   methods: {
-    async isLocalAvailable(localUrl) {
-      try {
-        const res = await axios.get(localUrl)
-        return res.status < 300 && res.status > 199
-      } catch (error) {
-        return false
-      }
-    },
-    async getRequestUrl() {
-      const localAvailable = await this.isLocalAvailable(this.localUrl)
-      return localAvailable ? this.localUrl : this.remoteUrl
-    },
+    // async isLocalAvailable(localUrl) {
+    //   try {
+    //     const res = await axios.get(localUrl)
+    //     return res.status < 300 && res.status > 199
+    //   } catch (error) {
+    //     return false
+    //   }
+    // },
+    // async getRequestUrl() {
+    //   const localAvailable = await this.isLocalAvailable(this.localUrl)
+    //   return localAvailable ? this.localUrl : this.remoteUrl
+    // },
     fetchRevenueForMonth(month) {
       const monthlyRevenue = this.invoiceStats.revenue
 
@@ -205,7 +208,7 @@ export default {
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      const apiURL = await this.getRequestUrl()
+      // const apiURL = await this.getRequestUrl()
       axios
         .get(`${API_URL}stats/invoiceStats/${localStorage.getItem('currentCompany')}`, config)
         .then((response) => {
@@ -224,6 +227,9 @@ export default {
 
           // Fetch revenue data for all months (replace with actual logic if needed)
           this.fetchRevenueForMonth('January')
+          setTimeout(() => {
+            this.statsShown = true
+          }, 1000)
         })
         .catch((error) => {
           console.error('Failed to fetch invoice stats:', error)

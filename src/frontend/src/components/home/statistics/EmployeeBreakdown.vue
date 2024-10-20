@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600">
+ <v-dialog persistent v-model="dialog" max-width="600">
     <v-card>
       <v-card-title>{{ selectedEmployee.userInfo.firstName }}'s Detailed Breakdown</v-card-title>
       <v-card-text>
@@ -94,7 +94,8 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-card border="md" rounded="md" height="auto">
+  <LoadingScreen :Loading="!statsShown" />
+  <v-card border="md" rounded="md" height="auto" v-if="statsShown">
     <!-- Card Title -->
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-user-friends mr-2"></v-icon>
@@ -124,7 +125,9 @@
           <v-menu max-width="500px">
             <template v-slot:activator="{ props }">
               <v-btn rounded="xl" variant="plain" v-bind="props">
-                <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                  mdi-dots-horizontal
+                </v-icon>
               </v-btn>
             </template>
 
@@ -295,14 +298,17 @@
 <script>
 import axios from 'axios'
 import Chart from 'primevue/chart'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 import { API_URL } from '@/main'
 export default {
   components: {
-    Chart
+    Chart,
+    LoadingScreen
   },
   data() {
     return {
       currentTab: 'Employee Breakdown',
+      statsShown: false,
       totalEmployees: 0,
       employees: [],
       employeeStats: '',
@@ -409,6 +415,9 @@ export default {
       } catch (error) {
         console.error('Failed to fetch employee stats:', error)
       }
+      setTimeout(() => {
+        this.statsShown = true
+      }, 1000)
     },
     async getNumEmployees() {
       const config = {

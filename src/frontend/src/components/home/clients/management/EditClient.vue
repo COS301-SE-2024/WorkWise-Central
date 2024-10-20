@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog v-model="clientDialog" max-width="600" :opacity="0">
+ <v-dialog persistent v-model="clientDialog" max-width="600" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="warning" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-pencil" start color="warning " size="small"></v-icon>Edit
@@ -91,29 +91,22 @@
           ></v-row>
 
           <v-row
-            ><v-col cols="6">
-              <small class="text-caption font-weight-bold"> Complex </small>
+            ><v-col cols="12">
+              <small class="text-caption font-weight-bold"> Complex/Building </small>
               <v-text-field
                 theme="cardColor"
-                v-model="localEditedItem.address.complex"
+                v-model="localEditedItem.address.complexOrBuilding"
                 hide-details="auto"
                 :disabled="isDeleting"
               ></v-text-field
             ></v-col>
-            <v-col cols="6">
-              <small class="text-caption font-weight-bold"> House Number </small>
-              <v-text-field
-                v-model="localEditedItem.address.houseNumber"
-                hide-details="auto"
-                :disabled="isDeleting"
-              ></v-text-field></v-col
-          ></v-row>
+          </v-row>
           <v-row>
             <v-col cols="12">
               <small class="text-caption font-weight-bold">Preferred Language</small>
               <v-select
                 :items="languages"
-                v-model="localEditedItem.preferred_Language"
+                v-model="localEditedItem.preferredLanguage"
                 variant="solo"
                 hide-details="auto"
                 :disabled="isDeleting"

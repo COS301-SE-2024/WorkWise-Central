@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <Toast position="top-center" />
-    <v-card class="bg-cardColor">
+    <LoadingScreen :Loading="!statsShown" />
+    <v-card class="bg-cardColor" v-if="statsShown">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -39,7 +40,9 @@
                   @click="selectItem(item)"
                   :disabled="item.status === 'No Status' || item.status === 'Archive'"
                 >
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                  <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                    mdi-dots-horizontal
+                  </v-icon>
                 </v-btn>
               </template>
               <v-list>
@@ -73,7 +76,7 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-    <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
+   <v-dialog persistent v-model="dialog" max-height="800" max-width="600" >
       <v-card class="bg-cardColor">
         <v-card-title> Edit Statuses</v-card-title>
         <v-card-text>
@@ -88,22 +91,13 @@
             />
 
             <v-label>Tag Color</v-label>
-            <v-row>
-              <v-col
-                v-for="color in colorOptions"
-                :key="color"
-                cols="2"
-                class="d-flex justify-center"
-              >
-                <v-btn
-                  :style="{ backgroundColor: color }"
-                  class="ma-1"
-                  @click="selectedItem.colour = color"
-                  :outlined="selectedItem.colour !== color"
-                  style="width: 40px; height: 40px; border-radius: 4px"
-                ></v-btn>
-              </v-col>
-            </v-row>
+            <v-color-picker
+              v-model="selectedItem.colour"
+              :hide-sliders="true"
+              :hide-canvas="true"
+              hide-inputs
+              show-swatches
+            ></v-color-picker>
             <span
               >Hex Code:
               <v-chip :color="selectedItem.colour">{{ selectedItem.colour }}</v-chip></span
@@ -146,6 +140,7 @@ import DeleteStatus from './DeleteStatus.vue'
 import Toast from 'primevue/toast'
 import CreateStatus from './CreateStatus.vue'
 import { API_URL } from '@/main'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 
 interface Status {
   status: string
@@ -177,6 +172,7 @@ export default defineComponent({
       companyId: localStorage.getItem('currentCompany'),
       employeeId: localStorage.getItem('employeeId')
     },
+    statsShown:false,
     formIsValid: false,
     labelRules: [(v: string) => !!v || 'This field is required'],
     colorRules: [
@@ -232,7 +228,7 @@ export default defineComponent({
   }),
   components: {
     DeleteStatus,
-
+    LoadingScreen,
     Toast,
     CreateStatus
   },
@@ -256,6 +252,9 @@ export default defineComponent({
           config
         )
         this.items = res.data.data
+        setTimeout(() => {
+            this.statsShown = true
+          }, 1000)
         console.log(res)
       } catch (error) {
         console.error(error)
