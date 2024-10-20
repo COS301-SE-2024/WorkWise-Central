@@ -222,7 +222,7 @@
             ><v-text-field
               color="secondary"
               placeholder="Complex/Building"
-              v-model="req_obj.details.address.complex"
+              v-model="req_obj.details.address.complexOrBuilding"
               type="complex"
               required
               hide-details="auto"
@@ -285,8 +285,7 @@ interface Address {
   city: string
   province: string
   postalCode: string
-  complex: string
-  houseNumber: string
+  complexOrBuilding: string
 }
 
 interface Details {
@@ -424,7 +423,7 @@ export default defineComponent({
           companyId: localStorage['currentCompany'],
           idNumber: ''
         }
-      } as RequestObject
+      } as any
     }
   },
   computed: {
@@ -579,7 +578,7 @@ export default defineComponent({
           companyId: localStorage['currentCompany'],
           idNumber: ''
         }
-      } as RequestObject
+      } as any
     }
   },
   mounted() {

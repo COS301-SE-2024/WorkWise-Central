@@ -1,6 +1,5 @@
 <template>
-  <v-dialog
-    v-model="editDialog"
+ <v-dialog persistent     v-model="editDialog"
     max-height="800"
     max-width="600"
     scrollable

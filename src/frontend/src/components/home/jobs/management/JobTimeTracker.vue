@@ -4,7 +4,7 @@
       :label="isCheckedIn ? 'Check Out' : 'Check In'"
       @click="toggleCheckIn"
       class="mr-2"
-      :class="{ 'p-button-success': !isCheckedIn, 'p-button-danger': isCheckedIn }"
+      :class="{ 'p-button-primary': !isCheckedIn, 'p-button-danger': isCheckedIn }"
     />
   </div>
   <div class="text-h6 mb-4">Total Time spent on this job: {{ formattedTime }}</div>
@@ -14,7 +14,7 @@
       @click="toggleJobRunning"
       :disabled="!isCheckedIn"
       class="mr-2"
-      :class="{ 'p-button-warning': isJobRunning, 'p-button-success': !isJobRunning }"
+      :class="{ 'p-button-warning': isJobRunning, 'p-button-primary': !isJobRunning }"
     />
     <!--    <Button-->
     <!--      label="Stop"-->

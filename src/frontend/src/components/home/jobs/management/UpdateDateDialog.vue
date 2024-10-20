@@ -1,6 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dueDateDialog"
+ <v-dialog persistent     v-model="dueDateDialog"
     max-width="400px"
     location="bottom"
     location-strategy="connected"

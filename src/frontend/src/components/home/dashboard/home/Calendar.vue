@@ -28,7 +28,7 @@ https://github.com/tomosterlund/qalendar/blob/master/development/QalendarView.vu
       </div>
     </template>
   </Qalendar>
-  <v-dialog v-model="JobCardVisibility" max-width="1000px">
+ <v-dialog persistent v-model="JobCardVisibility" max-width="1000px">
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>

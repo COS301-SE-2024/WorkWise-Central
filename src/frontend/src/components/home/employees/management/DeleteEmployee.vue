@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog v-model="clientDialog" max-width="500px" :opacity="0">
+ <v-dialog persistent v-model="clientDialog" max-width="500px" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"

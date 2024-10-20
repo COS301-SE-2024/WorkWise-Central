@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600">
+ <v-dialog persistent v-model="dialog" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular hello" color="success" v-bind="activatorProps">
         <v-icon icon="fa:fa-solid fa-eye" start color="success" size="small"></v-icon>

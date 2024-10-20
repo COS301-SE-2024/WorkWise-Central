@@ -48,7 +48,7 @@
                       class="d-flex justify-end"
                       v-if="checkPermission('add new jobs')"
                     >
-                      <AddJob />
+                      <AddJob @jobCreated="fetchData"/>
                     </v-col>
                   </v-row>
                 </v-card-title>
@@ -168,8 +168,7 @@
                                 ></v-icon
                                 >View
                               </v-btn>
-                              <v-dialog
-                                v-model="viewJobDialogVisible"
+                             <v-dialog persistent                                 v-model="viewJobDialogVisible"
                                 :max-height="800"
                                 :max-width="1000"
                               >
@@ -189,8 +188,7 @@
                                 ></v-icon
                                 >Edit
                               </v-btn>
-                              <v-dialog
-                                v-model="viewManagerJobCardVisible"
+                             <v-dialog persistent                                 v-model="viewManagerJobCardVisible"
                                 :max-height="800"
                                 :max-width="1000"
                               >
@@ -222,7 +220,7 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-dialog v-model="deleteDialog" :max-width="500" :opacity="0">
+     <v-dialog persistent v-model="deleteDialog" :max-width="500" :opacity="0">
         <v-card class="bg-cardColor">
           <v-card-title class="text-h6 font-weight-regular bg-red">
             <v-icon color="white">mdi-alert-circle-outline</v-icon>

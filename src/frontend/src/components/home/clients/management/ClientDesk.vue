@@ -49,8 +49,7 @@
                   <v-icon color="buttonText">mdi-account-plus</v-icon>
                 </template>
               </v-btn>
-              <v-dialog
-                v-model="addClientVisibility"
+             <v-dialog persistent                 v-model="addClientVisibility"
                 opacity="0.6"
                 max-height="800"
                 max-width="600"

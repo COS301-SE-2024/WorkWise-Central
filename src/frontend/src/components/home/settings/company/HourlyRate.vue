@@ -59,7 +59,7 @@
     </v-tab-item>
 
     <!-- Employee Edit Dialog -->
-    <v-dialog v-model="employeeDialog" max-width="500px">
+   <v-dialog persistent v-model="employeeDialog" max-width="500px">
       <v-card class="bg-cardColor">
         <v-card-title>Edit Employee's Hourly Rate</v-card-title>
         <v-card-subtitle>
@@ -102,7 +102,7 @@
     </v-dialog>
 
     <!-- Role Edit Dialog -->
-    <v-dialog v-model="roleDialog" max-width="500px">
+   <v-dialog persistent v-model="roleDialog" max-width="500px">
       <v-card class="bg-cardColor">
         <v-card-title>Edit Role's Hourly Rate</v-card-title>
         <v-card-subtitle>
@@ -260,7 +260,7 @@ export default {
           config
         )
         console.log(response.data.data)
-        this.employees = []
+
         this.getEmployees()
         this.employeeDialog = false
         this.isEditing = false
