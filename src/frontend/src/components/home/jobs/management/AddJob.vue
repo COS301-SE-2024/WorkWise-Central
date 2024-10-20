@@ -194,6 +194,24 @@
                     @update:modelValue="updateEmployee"
                     variant="solo"
                     data-testid="employee-multi-select"
+                  ></v-select></v-col
+                ><v-col :cols="12">
+                  <label style="font-size: 14px; font-weight: lighter">Assign Team</label>
+
+                  <v-select
+                    :disabled="request_load"
+                    v-model="req_obj.assignedEmployees.employeeIds"
+                    :items="employeesArray"
+                    item-value="employeeId"
+                    item-title="name"
+                    label="Select some employees you would like to assign to this job"
+                    chips
+                    multiple
+                    required
+                    color="primary"
+                    @update:modelValue="updateEmployee"
+                    variant="solo"
+                    data-testid="employee-multi-select"
                   ></v-select
                 ></v-col>
                 <v-col :cols="12" :sm="6" :md="6" :lg="6" :xl="6">
@@ -553,6 +571,7 @@ export default defineComponent({
       endDateRule: [(v: string) => !!v || 'End date is required'],
       priorityRules: [(v: string) => !!v || 'Priority tag is required'],
       employeesArray: [] as EmployeeInformation[],
+      teamsArray: [] as EmployeeInformation[],
       clientsArray: [] as ClientInformation[],
       time: '',
       startDate: null as string | null,
@@ -850,6 +869,61 @@ export default defineComponent({
         })
     },
     async loadAssignableEmployees() {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
+        data: {
+          currentEmployeeId: localStorage.getItem('employeeId')
+        }
+      }
+
+      try {
+        const employee_response = await axios.get(
+          API_URL + `employee/detailed/all/${localStorage['employeeId']}`,
+          config
+        )
+
+        let employee_all_data: EmployeeJoined[] = employee_response.data.data
+
+        console.log(employee_all_data)
+
+        let company_employee_arr: EmployeeInformation[] = []
+
+        for (let i = 0; i < employee_all_data.length; i++) {
+          if (employee_all_data[i].role !== undefined) {
+            let company_employee: EmployeeInformation = {
+              name:
+                employee_all_data[i].userId.personalInfo.firstName +
+                ' ' +
+                employee_all_data[i].userId.personalInfo.surname +
+                ' (' +
+                employee_all_data[i].role.roleName +
+                ')',
+              employeeId: employee_all_data[i]._id
+            }
+
+            company_employee_arr.push(company_employee)
+          } else {
+            let company_employee: EmployeeInformation = {
+              name:
+                employee_all_data[i].userId.personalInfo.firstName +
+                ' ' +
+                employee_all_data[i].userId.personalInfo.surname +
+                ' (Unassigned Role)',
+              employeeId: employee_all_data[i]._id
+            }
+            company_employee_arr.push(company_employee)
+          }
+        }
+        console.log(company_employee_arr)
+        this.employeesArray = company_employee_arr
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+    },
+    async loadAssignableTeams() {
       const config = {
         headers: {
           'Content-Type': 'application/json',
