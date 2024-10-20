@@ -913,14 +913,19 @@
       <div>
         <MarketingSplash />
       </div>
+
       <div>
-        <h1 :class="['splash-title', 'header-title', 'text-center']">
-          How to use <span class="text-primary">Work</span
-          ><span class="text-secondary">Wise</span> Central
-        </h1>
-        <v-row justify="end" style="height: 500px">
-          <Tutorial />
-        </v-row>
+        <h3 :class="['splash-title', 'header-title', 'text-center']" @click="toggleHelpSection">
+          Help
+          <v-icon class="ml-2">{{ isHelpVisible ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+        </h3>
+        <v-expand-transition>
+          <div v-if="isHelpVisible">
+            <v-row justify="end" style="height: 500px">
+              <Tutorial />
+            </v-row>
+          </div>
+        </v-expand-transition>
       </div>
 
       <v-footer> </v-footer>
@@ -947,6 +952,7 @@ export default defineComponent({
   },
   data: () => ({
     click_create_client: false,
+    isHelpVisible: false,
     inviteId: null,
     tabs: [
       { title: 'Client Management', icon: 'mdi-account-group' },
@@ -1484,6 +1490,9 @@ export default defineComponent({
       this.signup1Dialog = false
       this.signupUsernameDialog = true
       this.populateUsernameList()
+    },
+    toggleHelpSection() {
+      this.isHelpVisible = !this.isHelpVisible; // Toggles the help section visibility
     },
     async nextFlowUsername() {
       //this.profilePicture = await this.imageURL()

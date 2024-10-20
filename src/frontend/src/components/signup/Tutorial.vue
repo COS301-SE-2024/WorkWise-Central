@@ -1,19 +1,17 @@
 <template>
-  <v-expansion-panels class="my-4 " color="background" variant="accordion" >
-    <v-expansion-panel color="background"
+  <v-expansion-panels class="my-4" color="background" variant="accordion">
+    <v-expansion-panel
+      class="custom-expansion-panel"
       :title="tutorialQuestions[0]"
       :theme="isDarkMode === true ? 'dark' : 'light'"
       style="font-family: Nunito, sans-serif"
     >
       <v-expansion-panel-text class="bg-background">
-        <v-col :cols="12"
-          ><v-stepper v-model="activeSteps.stepper1" :items="items.items_login" show-actions  color="background">
-            <template #[`item.1`]>
+        <v-col :cols="12">
+          <v-stepper v-model="activeSteps.stepper1" :items="items.items_login" show-actions>
+            <template #[`item.1`]> 
               <h3 class="text-h6">Splash Page</h3>
-
-              <br />
-              <v-img :src="login.splash" />
-              <br />
+              <v-img :src="login.splash" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
                   <li>Click on the "Login" button on the splash page</li>
@@ -21,73 +19,62 @@
               </div>
             </template>
 
-            <template #[`item.2`]>
+            <template #[`item.2`]> 
               <h3 class="text-h6">Login Modal</h3>
-
-              <br />
-              <v-img :src="login.textfields" />
-              <br />
+              <v-img :src="login.textfields" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
                   <li>Enter the required user information to enter the system</li>
                 </ul>
               </div>
             </template>
-            <template #[`item.3`]>
-              <h3 class="text-h6">Login Button Click</h3>
 
-              <br />
-              <v-img :src="login.button" />
-              <br />
+            <template #[`item.3`]> 
+              <h3 class="text-h6">Login Button Click</h3>
+              <v-img :src="login.button" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
                   <li>'Click on the Login'</li>
                 </ul>
               </div>
             </template>
-          </v-stepper></v-col
-        >
+          </v-stepper>
+        </v-col>
       </v-expansion-panel-text>
     </v-expansion-panel>
-    
-    <v-expansion-panel class="bg-background"
+
+    <v-expansion-panel
+      class="custom-expansion-panel"
       :title="tutorialQuestions[1]"
       :theme="isDarkMode === true ? 'dark' : 'light'"
       style="font-family: Nunito, sans-serif"
     >
-      <v-expansion-panel-text color="background">
-        <v-col :cols="12"
-          ><v-stepper v-model="activeSteps.stepper2" :items="items.items_signup" show-actions>
-            <template #[`item.1`]>
+      <v-expansion-panel-text class="bg-background">
+        <v-col :cols="12">
+          <v-stepper v-model="activeSteps.stepper2" :items="items.items_signup" show-actions>
+            <template #[`item.1`]> 
               <h3 class="text-h6">Splash Page Click Signup Button</h3>
-
-              <br />
-              <v-img :src="signup.splash" />
-              <br />
+              <v-img :src="signup.splash" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
-                  <li>Click on the "SignUp in the splash page</li>
+                  <li>Click on the "SignUp" in the splash page</li>
                 </ul>
               </div>
             </template>
-            <template #[`item.2`]>
-              <h3 class="text-h6">Input Email & Password</h3>
 
-              <br />
-              <v-img :src="signup.email" />
-              <br />
+            <template #[`item.2`]> 
+              <h3 class="text-h6">Input Email & Password</h3>
+              <v-img :src="signup.email" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
                   <li>Enter your email and password</li>
                 </ul>
               </div>
             </template>
-            <template #[`item.3`]>
-              <h3 class="text-h6">Input Name</h3>
 
-              <br />
-              <v-img :src="signup.name" />
-              <br />
+            <template #[`item.3`]> 
+              <h3 class="text-h6">Input Name</h3>
+              <v-img :src="signup.name" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
                   <li>Enter your name and surname</li>
@@ -95,68 +82,79 @@
               </div>
             </template>
 
-            <template #[`item.4`]>
+            <template #[`item.4`]> 
               <h3 class="text-h6">Username Modal</h3>
-
-              <br />
-              <v-img :src="signup.username" />
-              <br />
+              <v-img :src="signup.username" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
-                  <li>Choose an auto generated username or enter your very own custom username</li>
+                  <li>Choose an auto-generated username or enter your own custom username</li>
                 </ul>
               </div>
             </template>
 
-            <template #[`item.5`]>
+            <template #[`item.5`]> 
               <h3 class="text-h6">Personal Details Modal</h3>
-
-              <br />
-              <v-img :src="signup.birthdate" />
-              <br />
+              <v-img :src="signup.birthdate" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
-                  <li>Enter your personal information such as birth day</li>
+                  <li>Enter your personal information such as birth date</li>
                 </ul>
               </div>
             </template>
-            <template #[`item.6`]>
-              <h3 class="text-h6">Address Modal</h3>
 
-              <br />
-              <v-img :src="signup.address" /><br />
+            <template #[`item.6`]> 
+              <h3 class="text-h6">Address Modal</h3>
+              <v-img :src="signup.address" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
                   <li>Enter your personal address</li>
                 </ul>
-              </div> </template
-            ><template #[`item.7`]>
-              <h3 class="text-h6">Register or Join Company buttons</h3>
+              </div>
+            </template>
 
-              <br />
-              <v-img :src="signup.registerjoin" /><br />
+            <template #[`item.7`]> 
+              <h3 class="text-h6">Register or Join Company buttons</h3>
+              <v-img :src="signup.registerjoin" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
                   <li>Choose whether you want to join or register your own company</li>
                 </ul>
-              </div></template
-            ><template #[`item.8`]>
-              <h3 class="text-h6">Register Company Modal</h3>
+              </div>
+            </template>
 
-              <br />
-              <v-img :src="signup.company" />
+            <template #[`item.8`]> 
+              <h3 class="text-h6">Register Company Modal</h3>
+              <v-img :src="signup.company" height="300px" /> <!-- Increased height -->
               <div>
                 <ul class="custom-list">
                   <li>Enter the company information and click create</li>
                 </ul>
               </div>
             </template>
-          </v-stepper></v-col
-        >
+          </v-stepper>
+        </v-col>
       </v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
 </template>
+
+<style scoped>
+.custom-expansion-panel {
+  min-height: 40px; /* Set a minimum height for the expansion panel when closed */
+  padding: 8px; /* Reduce overall padding */
+  margin-bottom: 8px; /* Reduce bottom margin */
+}
+
+.custom-expansion-panel .v-expansion-panel__header {
+  padding: 4px 8px; /* Reduce header padding */
+  font-size: 16px; /* Adjust font size if needed */
+}
+
+.v-expansion-panel-text {
+  padding: 16px; /* Control the padding inside the text section */
+}
+</style>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import splash_login from '@/assets/images/tutorial/login/splash_page_login_button.png'
