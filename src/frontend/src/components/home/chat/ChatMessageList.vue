@@ -73,6 +73,7 @@
               v-for="(attachment, index) in getRegularAttachments(message.attachments)"
               :key="index"
               class="attachment"
+              style="width: 100%"
             >
               <template v-if="editingMessageId === message._id">
                 <InputText
@@ -83,7 +84,11 @@
               </template>
               <template v-else>
                 <i class="pi pi-paperclip" style="font-size: 0.8rem"></i>
-                <a href="#" @click.prevent="downloadAttachment(attachment)">
+                <a
+                  :href="attachment"
+                  style="color: #0252f6"
+                  @click.prevent="downloadAttachment(attachment)"
+                >
                   {{ getFileName(attachment) }}
                 </a>
               </template>
@@ -105,7 +110,7 @@ import Carousel from 'primevue/carousel'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Image from 'primevue/image'
-
+import 'primeicons/primeicons.css'
 const confirm = useConfirm()
 const editingMessageId = ref(null)
 const editedText = ref('')
@@ -127,8 +132,14 @@ const items = ref([
 
 const getFileName = (attachment) => {
   if (attachment != null) {
-    let tempName = attachment.split('/').pop()
-    return tempName.substring(37)
+    const lastSlashIndex = attachment.lastIndexOf('/')
+    const lastDashIndex = attachment.lastIndexOf('-')
+    if (lastSlashIndex !== -1 && lastDashIndex !== -1 && lastDashIndex > lastSlashIndex) {
+      return attachment.substring(lastSlashIndex + 1, lastDashIndex)
+    } else {
+      return 'file'
+    }
+    //return tempName.substring(37)
   } else {
     return 'fileName?' //TODO: Check this is causing the error
   }
@@ -232,11 +243,15 @@ const performAction = (messageId, chatId, action) => {
 }
 
 const getImageAttachments = (attachments) => {
-  return attachments.filter((attachment) => /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(attachment))
+  return attachments.filter((attachment) =>
+    /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(getFileName(attachment))
+  )
 }
 
 const getRegularAttachments = (attachments) => {
-  return attachments.filter((attachment) => !/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(attachment))
+  return attachments.filter(
+    (attachment) => !/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(getFileName(attachment))
+  )
 }
 
 const downloadAttachment = (url) => {
@@ -246,6 +261,17 @@ const downloadAttachment = (url) => {
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
+}
+
+const downloadAttachments = (urls) => {
+  urls.forEach((url) => {
+    const link = document.createElement('a')
+    link.href = url
+    link.download = getFileName(url)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  })
 }
 </script>
 
@@ -353,10 +379,11 @@ const downloadAttachment = (url) => {
 .attachment a {
   margin-left: 5px;
   text-decoration: none;
-  white-space: nowrap;
+  white-space: normal; /* Change this line */
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
+  word-wrap: break-word;
 }
 
 .image-item {
