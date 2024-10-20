@@ -72,8 +72,8 @@ import { API_URL } from '@/main'
 
 interface Tag {
   label: string
-  colour: stringe
-  companyId: string
+  colour: string
+  companyId: any
 }
 export default defineComponent({
   data() {
