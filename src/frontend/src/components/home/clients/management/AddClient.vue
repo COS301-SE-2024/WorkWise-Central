@@ -336,15 +336,12 @@ export default defineComponent({
       ],
       first_name_rules: [
         (v: string) => !!v || 'First name is required',
-        (v: string) =>
-          /^[A-Za-z\s]+$/.test(v) || 'First name must contain only alphabetic characters and spaces'
+        (v: string) => /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters'
       ],
       surname_rules: [
         (v: string) => !!v || 'Surname is required',
-        (v: string) =>
-          /^[A-Za-z\s]+$/.test(v) || 'Surname must contain only alphabetic characters and spaces'
+        (v: string) => /^[A-Za-z]+$/.test(v) || 'Surname must be alphabetic characters'
       ],
-
       phone_number_rules: [
         (v: string) => !!v || 'Phone number is required',
         (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number'
@@ -424,7 +421,7 @@ export default defineComponent({
           companyId: localStorage['currentCompany'],
           idNumber: ''
         }
-      } as RequestObject
+      } as any
     }
   },
   computed: {
@@ -523,16 +520,13 @@ export default defineComponent({
 
       if (validate) {
         this.request_loading = true
-        await this.handleSubmission().then(() => {
-          this.request_loading = false
-        })
+        await this.handleSubmission()
       } else {
         this.emailRule
         this.phoneRule
       }
     },
     async handleSubmission() {
-      this.request_loading = true
       console.log(JSON.stringify(this.req_obj))
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       axios
@@ -547,7 +541,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.addDialog = false
-            this.request_loading = false
+            this.isDeleting = false
             this.$emit('createClient', res.data.data)
             this.resetFields()
             this.$emit('close')
@@ -582,7 +576,7 @@ export default defineComponent({
           companyId: localStorage['currentCompany'],
           idNumber: ''
         }
-      } as RequestObject
+      } as any
     }
   },
   mounted() {

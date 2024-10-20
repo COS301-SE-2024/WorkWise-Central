@@ -143,7 +143,7 @@ export default defineComponent({
         { title: 'Current Job Assignments', value: 'currentJobAssignments' },
         { title: 'Actions', value: 'actions', sortable: false }
       ],
-      teamItems: [] as Team[],
+      teamItems: [] as any[],
       teamTable: [
         {
           teamName: 'Team 1',
