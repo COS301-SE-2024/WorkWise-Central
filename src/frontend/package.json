@@ -49,6 +49,7 @@
     "mongoose": "^8.5.2",
     "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^4.0.1",
+    "primeicons": "^7.0.0",
     "primevue": "^4.0.0",
     "quill": "^2.0.2",
     "socket.io-client": "^4.8.0",

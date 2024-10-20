@@ -59,34 +59,35 @@
     >
       <div class="p-fluid pt-5 pb-5">
         <v-row>
-          <v-col>
+          <v-col cols="4">
             <label for="chatName">Chat Name<span style="color: red">*</span></label>
           </v-col>
-          <v-col>
-            <InputText id="chatName" v-model="newChatName" />
+          <v-col cols="8">
+            <InputText id="chatName" v-model="newChatName" style="width: 100%" />
           </v-col>
         </v-row>
 
         <v-row>
-          <v-col>
+          <v-col cols="4">
             <label for="participants">Participants<span style="color: red">*</span></label>
           </v-col>
-          <v-col>
+          <v-col cols="8">
             <MultiSelect
               id="participants"
               v-model="selectedParticipants"
               :options="availableUsers"
               optionLabel="systemDetails.username"
               placeholder="Select participants"
+              style="width: 100%"
             />
           </v-col>
         </v-row>
 
         <v-row>
-          <v-col>
+          <v-col cols="4">
             <label for="participants">Chat Image</label>
           </v-col>
-          <v-col>
+          <v-col cols="8">
             <FileUpload
               mode="basic"
               accept="image/*"
@@ -108,16 +109,17 @@
         <!-- File input for images -->
 
         <v-row>
-          <v-col>
+          <v-col cols="4">
             <label for="chatDescription">Chat Description</label>
           </v-col>
-          <v-col>
+          <v-col cols="8">
             <Textarea
               id="chatDescription"
               v-model="newChatDescription"
               autoResize
               rows="5"
               cols="50"
+              style="width: 100%"
             />
           </v-col>
         </v-row>
@@ -170,7 +172,7 @@ const newChatDescription = ref('')
 const selectedParticipants = ref([])
 const currentUserId = localStorage['id']
 
-const fileInput = ref(null)
+// const fileInput = ref(null)
 const selectedImage = ref(null)
 const base64Image = ref(null)
 let currentlyTyping = ref({})
@@ -247,6 +249,8 @@ const closeNewChatDialog = () => {
   newChatDialogVisible.value = false
   newChatName.value = ''
   selectedParticipants.value = []
+  selectedImage.value = null
+  newChatDescription.value = ''
 }
 
 const convertToBase64 = (f) => {
