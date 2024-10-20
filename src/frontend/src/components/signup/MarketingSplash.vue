@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <h2 :class="['splash-title', 'header-title', 'text-center']">
-      Manage your using <span class="text-primary">Work</span
+      Manage your business using <span class="text-primary">Work</span
       ><span class="text-secondary">Wise</span> Central
     </h2>
 
@@ -34,13 +34,13 @@
       <v-row class="bg-background align-center">
         <!-- Image Column (alternating sides) -->
         <v-col cols="12" md="6" :order="index % 2 === 0 ? 1 : 2">
-          <v-img :src="isDarkMode ? item.imageUrlDark : item.imageUrl" height="500px"></v-img>
+          <v-img :src="isDarkMode ? item.imageUrlDark : item.imageUrl" height="50vh"></v-img>
         </v-col>
 
         <!-- Description Column (alternating sides) -->
         <v-col cols="12" md="6" :order="index % 2 === 0 ? 2 : 1">
           <v-card flat elevation="0" class="bg-background">
-            <v-card-text>{{ item.description }}</v-card-text>
+            <v-card-text class="large-text">{{ item.description }}</v-card-text>
           </v-card>
         </v-col>
       </v-row>
@@ -60,110 +60,110 @@ export default defineComponent({
       tabs: [
         {
           title: 'Client Management',
-          icon: 'mdi-account-group',
           imageUrl: '../img/clientManagement.png',
           imageUrlDark: '../img/clientManagementDark.png',
+          description: 'Effortlessly keep track of your clients.'
+        },
+        {
+          imageUrl: '../img/clientPortalProgress.png',
+          imageUrlDark: '../img/clientPortalProgress.png',
           description:
-            'Manage your clients efficiently, track interactions, and ensure client satisfaction.'
+            'Give your clients access to a client portal, where they can keep track of the jobs they have with you.'
         },
         {
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/clientPortal.png',
-          imageUrlDark: '../img/clientPortal.png',
-          description: 'Give your clients access to a client portal, where they can keep track of the jobs they have with'
-        },
-        {
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/customerFeedback.png',
+          imageUrlDark: '../img/customerFeedback.png',
+          description: 'Receive feedback from your clients to improve your services.'
         },
         {
           title: 'Employee Management',
-          icon: 'mdi-account',
           imageUrl: '../img/employeeManagement.png',
           imageUrlDark: '../img/employeeManagementDark.png',
-          description: 'Oversee employee performance, assignments, and roles within the company.'
+          description: 'Manage your employees with ease.'
         },
         {
-          icon: 'mdi-account-multiple',
           imageUrl: '../img/teamManagement.png',
           imageUrlDark: '../img/teamManagementDark.png',
           description: 'Organize your teams, assign leaders, and manage collaborative efforts.'
         },
         {
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/structure.png',
+          imageUrlDark: '../img/structureDark.png',
+          description: 'Effectively model your company structure.'
         },
         {
           title: 'Job Management',
-          icon: 'mdi-briefcase',
           imageUrl: '../img/jobManagement.png',
           imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          description: 'Keep your jobs on track with robust job management.'
         },
         {
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/kanbanView.png',
+          imageUrlDark: '../img/kanbanViewDark.png',
+          description: 'Convenient ways to view your jobs.'
         },
         {
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/jobCard.png',
+          imageUrlDark: '../img/jobCardDark.png',
+          description: 'Job card that allow your employees to record job details effectively.'
         },
         {
           title: 'Inventory Management',
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/inventoryManagement.png',
+          imageUrlDark: '../img/inventoryManagementDark.png',
+          description: 'Inventory management has never been easier'
         },
         {
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/stockTakes.png',
+          imageUrlDark: '../img/stockTakesDark.png',
+          description: 'Stock takes keep your inventory up to date.'
         },
         {
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/stockMovements.png',
+          imageUrlDark: '../img/stockMovementsDark.png',
+          description: 'Keep track of were your stock was used and by who'
         },
         {
           title: 'Invoice Management',
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/invoiceManagemnt.png',
+          imageUrlDark: '../img/invoiceManagemntDark.png',
+          description: 'Automatically generate invoices'
+        },
+        {
+          imageUrl: '../img/clientPortal.png',
+          imageUrlDark: '../img/clientPortalDark.png',
+          description: 'Allow your clients to pay you directly from their client portal.'
         },
         {
           title: 'Company Management',
-          icon: 'mdi-domain',
-          imageUrl: '../img/companyManagement.png',
-          imageUrlDark: '../img/companyManagementDark.png',
-          description: 'Manage your company structure, roles, and priorities with ease.'
+          imageUrl: '../img/rolesSettings.png',
+          imageUrlDark: '../img/rolesSettingsDark.png',
+          description:
+            'With a flexible role based access, you have get to decide who can do what on the system.'
+        },
+        {
+          imageUrl: '../img/structureEdit.png',
+          imageUrlDark: '../img/structureEditDark.png',
+          description: 'Edit the structure and any other details of your company'
         },
         {
           title: 'Communication tools',
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/chats.png',
+          imageUrlDark: '../img/chatsDark.png',
+          description: 'Keep in touch with your employees and clients with our chat feature.'
         },
         {
-          icon: 'mdi-briefcase',
-          imageUrl: '../img/jobManagement.png',
-          imageUrlDark: '../img/jobManagementDark.png',
-          description: 'Keep your projects on track with our robust project management tools.'
+          imageUrl: '../img/meetings.png',
+          imageUrlDark: '../img/meetingsDark.png',
+          description: 'Have quick easy video calls with your employees.'
         }
       ]
     }
   }
 })
 </script>
+<style scoped>
+.large-text {
+  font-size: 30px; /* Adjust the size as needed */
+}
+</style>
