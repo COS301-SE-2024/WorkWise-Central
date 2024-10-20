@@ -32,7 +32,7 @@
             <v-col>
               <small class="text-caption">Inventory Items</small>
               <v-row
-                v-for="(item, index) in localEditedInvoice.laborItems2"
+                v-for="(item, index) in localEditedInvoice.inventoryItems2"
                 :key="index"
                 class="d-flex align-center"
               >
@@ -82,7 +82,7 @@
                 </v-col>
                 <v-col cols="5">
                   <v-text-field
-                    v-model="item.hours"
+                    v-model="item.quantity"
                     label="Hours"
                     type="number"
                     :disabled="isDeleting"
@@ -135,16 +135,6 @@ import Toast from 'primevue/toast'
 import axios from 'axios'
 import { API_URL } from '@/main'
 
-// interface Invoice {
-//   _id: string
-//   invoiceNumber: string
-//   paymentDate: Date
-//   total: number
-//   paid: boolean
-//   inventoryItems: { description: string; quantity: number }[]
-//   laborItems: { description: string; hours: number }[]
-// }
-
 export default {
   name: 'EditInvoice',
   props: {
@@ -172,8 +162,21 @@ export default {
     this.localEditedInvoice = this.deepCopy(this.editedInvoice)
     console.log(this.editedInvoice)
     this.getInventoryItems()
+    this.roundAmounts()
   },
   methods: {
+    roundAmounts() {
+      for (let i = 0; i < this.localEditedInvoice.inventoryItems2.length; i++) {
+        this.localEditedInvoice.inventoryItems2[i].total = Math.round(
+          this.localEditedInvoice.inventoryItems2[i].total * 100
+        ) / 100
+      }
+      for (let i = 0; i < this.localEditedInvoice.laborItems2.length; i++) {
+        this.localEditedInvoice.laborItems2[i].total = Math.round(
+          this.localEditedInvoice.laborItems2[i].total * 100
+        ) / 100
+      }
+    },
     updateInvoice() {
       if (!this.localEditedInvoice) {
         this.$toast.add({
@@ -189,8 +192,13 @@ export default {
       const config = {
         headers: { Authorization: `Bearer ${localStorage['access_token']}` }
       }
+      const data = {
+        invoiceNumber: this.localEditedInvoice.invoiceNumber,
+        inventoryItems: this.localEditedInvoice.inventoryItems2,
+        laborItems: this.localEditedInvoice.laborItems2
+      }
       axios
-        .patch(`${API_URL}invoice/${this.invoice_id}`, this.localEditedInvoice, config)
+        .patch(`${API_URL}invoice/${this.invoice_id}`, data, config)
         .then((response) => {
           this.$toast.add({
             severity: 'success',
