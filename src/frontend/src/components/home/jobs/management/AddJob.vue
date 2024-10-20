@@ -1,5 +1,12 @@
 ﻿<template>
- <v-dialog persistent close-on-back :max-height="800" opacity="0.6" :max-width="900" v-model="jobDialog">
+  <v-dialog
+    persistent
+    close-on-back
+    :max-height="800"
+    opacity="0.6"
+    :max-width="900"
+    v-model="jobDialog"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -75,7 +82,9 @@
                     >Add new client</label
                   ></label
                 >
-               <v-dialog persistent                   opacity="0.6"
+                <v-dialog
+                  persistent
+                  opacity="0.6"
                   v-model="clientDialogVisibility"
                   max-height="800"
                   max-width="600"
@@ -556,15 +565,15 @@ export default defineComponent({
         (v: string) =>
           /^[A-Za-z\s]+$/.test(v) || 'Job title must be alphabetic characters and spaces only'
       ],
-      province_rules: [(v: string) => this.clientAddress || !!v || 'Province is required'],
-      street_rules: [(v: string) => this.clientAddress || !!v || 'Street is required'],
-      suburb_rules: [(v: string) => this.clientAddress || !!v || 'Suburb is required'],
-      city_rules: [(v: string) => this.clientAddress || !!v || 'City/Town is required'],
+      province_rules: [(v: string) => this.clientAddress || !!v || 'Province is required'] as any,
+      street_rules: [(v: string) => this.clientAddress || !!v || 'Street is required'] as any,
+      suburb_rules: [(v: string) => this.clientAddress || !!v || 'Suburb is required'] as any,
+      city_rules: [(v: string) => this.clientAddress || !!v || 'City/Town is required'] as any,
       postal_code_rules: [
         (v: string) => this.clientAddress || !!v || 'Postal code  is required',
         (value: string) =>
           this.clientAddress || /^\d{4}$/.test(value) || 'Postal code must be 4 digits'
-      ],
+      ] as any,
       employees_rules: [(v: string) => !!v || 'Client is required'],
       description_rules: [(v: string) => !!v || 'Description is required'],
       startDateRule: [(v: string) => !!v || 'Start date is required'],

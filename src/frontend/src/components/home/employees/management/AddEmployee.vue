@@ -1,5 +1,5 @@
 <template>
- <v-dialog persistent max-height="800" max-width="600" style="font-family: Nunito, sans-serif">
+  <v-dialog persistent max-height="800" max-width="600" style="font-family: Nunito, sans-serif">
     <template v-slot:activator="{ props: activatorProps }">
       <v-defaults-provider :defaults="{ VIcon: { color: 'buttonText' } }">
         <v-btn
@@ -223,9 +223,7 @@ export default defineComponent({
         console.error('Error fetching data:', error)
       }
     },
-    close() {
-      this.jobDialog = false
-    },
+
     async validateSubmit() {
       const form = this.$refs.form as InstanceType<typeof HTMLFormElement>
       const validate = await (form as any).validate()
