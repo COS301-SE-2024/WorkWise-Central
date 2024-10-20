@@ -755,7 +755,8 @@ export default defineComponent({
               this.jobDialog = false
               setTimeout(() => {
                 this.request_load = false
-                window.location.reload()
+                // window.location.reload()
+                this.$emit('jobCreated')
               }, 1500)
             })
             .catch((error) => {

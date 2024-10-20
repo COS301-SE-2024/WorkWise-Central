@@ -79,41 +79,41 @@
             icon="fa: fa-solid fa-edit"
           >
           </v-btn>
-          <v-dialog
-              max-width="300px"
-              location="bottom"
-              location-strategy="connected"
-              opacity="0"
-              origin="top center"
-          >
-            <template v-slot:activator="{props: activatorProps}">
-              <v-btn
-                  color="error"
-                  size="small"
-                  class="mr-2"
-                  v-bind="activatorProps"
-                  icon="fa: fa-solid fa-trash"
-              >
-              </v-btn>
-            </template>
-            <template v-slot:default="{ isActive }">
-              <v-card>
-                <v-card-title class="headline">Warning</v-card-title>
-                <v-card-text>Are you sure you want to delete this inventory item?</v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="green darken-1" @click="confirmDelete(index)">
-                    <v-icon color="green darken-1">{{ 'fa: fa-solid fa-check' }}</v-icon>
-                    Yes
-                  </v-btn>
-                  <v-btn color="red darken-1" @click="isActive.value = false">
-                    <v-icon color="error">{{ 'fa: fa-solid fa-cancel' }}</v-icon>
-                    No
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </template>
-          </v-dialog>
+<!--          <v-dialog-->
+<!--              max-width="300px"-->
+<!--              location="bottom"-->
+<!--              location-strategy="connected"-->
+<!--              opacity="0"-->
+<!--              origin="top center"-->
+<!--          >-->
+<!--            <template v-slot:activator="{props: activatorProps}">-->
+<!--              <v-btn-->
+<!--                  color="error"-->
+<!--                  size="small"-->
+<!--                  class="mr-2"-->
+<!--                  v-bind="activatorProps"-->
+<!--                  icon="fa: fa-solid fa-trash"-->
+<!--              >-->
+<!--              </v-btn>-->
+<!--            </template>-->
+<!--            <template v-slot:default="{ isActive }">-->
+<!--              <v-card>-->
+<!--                <v-card-title class="headline">Warning</v-card-title>-->
+<!--                <v-card-text>Are you sure you want to delete this inventory item?</v-card-text>-->
+<!--                <v-card-actions>-->
+<!--                  <v-spacer></v-spacer>-->
+<!--                  <v-btn color="green darken-1" @click="confirmDelete(index)">-->
+<!--                    <v-icon color="green darken-1">{{ 'fa: fa-solid fa-check' }}</v-icon>-->
+<!--                    Yes-->
+<!--                  </v-btn>-->
+<!--                  <v-btn color="red darken-1" @click="isActive.value = false">-->
+<!--                    <v-icon color="error">{{ 'fa: fa-solid fa-cancel' }}</v-icon>-->
+<!--                    No-->
+<!--                  </v-btn>-->
+<!--                </v-card-actions>-->
+<!--              </v-card>-->
+<!--            </template>-->
+<!--          </v-dialog>-->
         </td>
       </tr>
     </tbody>
