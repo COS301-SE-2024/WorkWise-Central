@@ -51,19 +51,19 @@
           </v-divider>
 
           <v-row>
-            <v-col v-for="employee in props.passedInJob?.assignedEmployees?.employeeIds" :key="employee._id" cols="12">
+            <v-col v-for="employee in props.passedInJob?.assignedEmployees?.employeeIds" :key="employee?._id" cols="12">
               <v-row style="padding: 5px; align-items: center; justify-content: center;">
                 <v-col cols="auto">
                   <v-avatar color="secondary" style="width: 55px; height: 55px">
                     <img
-                        :src="employee.userInfo.displayImage"
+                        :src="employee?.userInfo?.displayImage"
                         alt="Employee Image"
                         style="width: 100%; height: 100%; object-fit: cover"
                     />
                   </v-avatar>
                 </v-col>
                 <v-col class="text-center" cols="auto">
-                  <span><strong>{{ employee.userInfo.displayName }}</strong></span>
+                  <span><strong>{{ employee?.userInfo?.displayName }}</strong></span>
                 </v-col>
               </v-row>
             </v-col>
@@ -74,10 +74,10 @@
           </v-divider>
 
           <v-row>
-            <v-col v-for="team in selectedTeams" :key="team._id" cols="12">
+            <v-col v-for="team in selectedTeams" :key="team?._id" cols="12">
               <v-row>
                 <v-col>
-                  <span>{{ team.teamName }}</span>
+                  <span>{{ team?.teamName }}</span>
                 </v-col>
               </v-row>
             </v-col>
