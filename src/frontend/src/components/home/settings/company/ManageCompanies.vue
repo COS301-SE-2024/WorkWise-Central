@@ -63,6 +63,14 @@
                     class="bg-cardColor"
                     :row-props="getRowProps"
                   >
+                    <template v-slot:[`item.name`]="{ item }">
+                      <v-chip v-if="isCurrentCompany(item.companyId)" color="primary" class="ma-1">
+                        {{ item.name }}
+                        <!-- Adjust 'name' to the correct property if needed -->
+                      </v-chip>
+                      <span v-else>{{ item.name }}</span>
+                    </template>
+
                     <template #[`item.actions`]="{ item }">
                       <v-menu max-width="500px">
                         <template v-slot:activator="{ props }">
@@ -73,22 +81,24 @@
                           </v-btn>
                         </template>
                         <v-list>
-                          <v-list-item>
+                          <!-- Conditionally render the Switch button -->
+                          <v-list-item v-if="!isCurrentCompany(item.companyId)">
                             <v-btn @click="switchCompany(item)" color="success">
                               <v-icon left color="success">{{
                                 'fa: fa-solid fa-briefcase'
                               }}</v-icon>
                               Switch to this company
-                            </v-btn></v-list-item
-                          >
+                            </v-btn>
+                          </v-list-item>
+
                           <v-list-item>
                             <v-btn @click="showConfirmLeaveDialog(item)" color="warning">
                               <v-icon left color="warning">{{
                                 'fa: fa-solid fa-door-open'
                               }}</v-icon>
                               Leave this company
-                            </v-btn></v-list-item
-                          >
+                            </v-btn>
+                          </v-list-item>
                         </v-list>
                       </v-menu>
                     </template>
@@ -124,7 +134,7 @@ import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
 import JoinCompanyModal from '@/components/signup/JoinCompanyModal.vue'
 import InvitePage from '../user/InvitePage.vue'
-import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
+// import RegisterCompanyModal from '@/components/signup/RegisterCompanyModal.vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { API_URL } from '@/main'
@@ -142,12 +152,12 @@ const search = ref('')
 const isDarkMode = localStorage.getItem('theme') === 'true'
 const tabs = ['Current Companies', 'Company Invites']
 const currentTab = ref('Current Companies')
-const newCompanyCode = ref('')
-const companyCodeRules = [(v: string) => !!v || 'Company code is required']
+// const newCompanyCode = ref('')
+// const companyCodeRules = [(v: string) => !!v || 'Company code is required']
 const joinedCompanies = ref<Company[]>([])
 const leftCompanies = ref<Company[]>([])
 const undoTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
-const joinCompanyModal = ref(false)
+// const joinCompanyModal = ref(false)
 const confirmLeaveDialog = ref(false)
 const selectedCompany = ref<Company | null>(null)
 
@@ -156,13 +166,13 @@ const companyHeaders = [
   { title: 'Company Name', value: 'name' },
   { title: 'Actions', value: 'actions', sortable: false }
 ]
-const leftCompanyHeaders = [
-  { title: 'Company Name', value: 'name' },
-  { title: 'Actions', value: 'actions', sortable: false }
-]
+// const leftCompanyHeaders = [
+//   { title: 'Company Name', value: 'name' },
+//   { title: 'Actions', value: 'actions', sortable: false }
+// ]
 
-// Table Data
-const companies = ref<Company[]>([])
+// // Table Data
+// const companies = ref<Company[]>([])
 
 const config = {
   headers: {
@@ -177,6 +187,10 @@ const getRowProps = ({ index }: any) => ({
 
 const changeTab = (tab: string) => {
   currentTab.value = tab
+}
+
+const isCurrentCompany = (companyId: string) => {
+  return localStorage.getItem('currentCompany') === companyId
 }
 
 // Company management actions
@@ -249,16 +263,16 @@ const leaveCompany = async (company: Company) => {
     leaveCompanyFailureToast(company.name)
   }
 }
-const rejoinCompany = (company: Company) => {
-  console.log('Rejoining company:', company.name)
-  companies.value.push(company)
-  leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
-}
+// const rejoinCompany = (company: Company) => {
+//   console.log('Rejoining company:', company.name)
+//   companies.value.push(company)
+//   leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
+// }
 
-const permanentlyLeaveCompany = (company: Company) => {
-  console.log('Permanently leaving company:', company.name)
-  leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
-}
+// const permanentlyLeaveCompany = (company: Company) => {
+//   console.log('Permanently leaving company:', company.name)
+//   leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
+// }
 
 // Dialog actions
 const showConfirmLeaveDialog = (company: Company) => {
@@ -273,18 +287,18 @@ const confirmLeaveCompany = () => {
   }
 }
 
-const undoLeaveCompany = (company: Company) => {
-  companies.value.push(company)
-  leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
-  if (undoTimeout.value) {
-    clearTimeout(undoTimeout.value)
-  }
-}
+// const undoLeaveCompany = (company: Company) => {
+//   companies.value.push(company)
+//   leftCompanies.value = leftCompanies.value.filter((c) => c.companyId !== company.companyId)
+//   if (undoTimeout.value) {
+//     clearTimeout(undoTimeout.value)
+//   }
+// }
 
-// Save settings
-const saveCompanySettings = () => {
-  console.log('Saving company settings:', companies)
-}
+// // Save settings
+// const saveCompanySettings = () => {
+//   console.log('Saving company settings:', companies)
+// }
 
 // Switch company
 const switchCompany = async (company: Company) => {
@@ -300,16 +314,17 @@ const switchCompany = async (company: Company) => {
   } catch (error) {
     console.log('Failed to set role:', error)
   }
+  window.location.reload()
 }
 
-// Join company
-const joinCompany = () => {
-  console.log('Joining new company with code:', newCompanyCode.value)
-}
+// // Join company
+// const joinCompany = () => {
+//   console.log('Joining new company with code:', newCompanyCode.value)
+// }
 
-const showJoinCompanyModal = () => {
-  joinCompanyModal.value = true
-}
+// const showJoinCompanyModal = () => {
+//   joinCompanyModal.value = true
+// }
 
 // Toast notifications
 const leaveCompanyToast = (companyName: string) => {
@@ -324,53 +339,53 @@ const leaveCompanyFailureToast = (companyName: string) => {
   })
 }
 
-const permanentlyLeaveCompanyToast = (companyName: string) => {
-  toast.add({
-    severity: 'warn',
-    summary: 'Company Permanently Left',
-    detail: `You have permanently left ${companyName}`
-  })
-}
+// const permanentlyLeaveCompanyToast = (companyName: string) => {
+//   toast.add({
+//     severity: 'warn',
+//     summary: 'Company Permanently Left',
+//     detail: `You have permanently left ${companyName}`
+//   })
+// }
 
-const permanentlyLeaveCompanyFailureToast = (companyName: string) => {
-  toast.add({
-    severity: 'error',
-    summary: 'Failed to Permanently Leave Company',
-    detail: `Failed to permanently leave ${companyName}`
-  })
-}
+// const permanentlyLeaveCompanyFailureToast = (companyName: string) => {
+//   toast.add({
+//     severity: 'error',
+//     summary: 'Failed to Permanently Leave Company',
+//     detail: `Failed to permanently leave ${companyName}`
+//   })
+// }
 
-const rejoinCompanyToast = (companyName: string) => {
-  toast.add({
-    severity: 'success',
-    summary: 'Company Rejoined',
-    detail: `You have rejoined ${companyName}`
-  })
-}
+// const rejoinCompanyToast = (companyName: string) => {
+//   toast.add({
+//     severity: 'success',
+//     summary: 'Company Rejoined',
+//     detail: `You have rejoined ${companyName}`
+//   })
+// }
 
-const rejoinCompanyFailureToast = (companyName: string) => {
-  toast.add({
-    severity: 'error',
-    summary: 'Failed to Rejoin Company',
-    detail: `Failed to rejoin ${companyName}`
-  })
-}
+// const rejoinCompanyFailureToast = (companyName: string) => {
+//   toast.add({
+//     severity: 'error',
+//     summary: 'Failed to Rejoin Company',
+//     detail: `Failed to rejoin ${companyName}`
+//   })
+// }
 
-const switchCompanyToast = (companyName: string) => {
-  toast.add({
-    severity: 'success',
-    summary: 'Company Switched',
-    detail: `Switched to ${companyName}`
-  })
-}
+// const switchCompanyToast = (companyName: string) => {
+//   toast.add({
+//     severity: 'success',
+//     summary: 'Company Switched',
+//     detail: `Switched to ${companyName}`
+//   })
+// }
 
-const switchCompanyFailureToast = (companyName: string) => {
-  toast.add({
-    severity: 'error',
-    summary: 'Failed to Switch Company',
-    detail: `Failed to switch to ${companyName}`
-  })
-}
+// const switchCompanyFailureToast = (companyName: string) => {
+//   toast.add({
+//     severity: 'error',
+//     summary: 'Failed to Switch Company',
+//     detail: `Failed to switch to ${companyName}`
+//   })
+// }
 
 // Lifecycle hooks
 onMounted(() => {
