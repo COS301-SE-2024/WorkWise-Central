@@ -101,11 +101,47 @@ export default defineComponent({
     logoutDialog: false,
     selected: '',
     new_notification: false,
-    employeePermissions: [] as string[]
+    employeePermissions: [] as string[],
+    teamTitle: '',
+    jobTableTitle: '',
+    employeeTitle: '',
   }),
   methods: {
     redirectToDashBoard() {
       if (this.$route.path !== '/dashboard') this.$router.push('/dashboard')
+    },
+    computeTitles(){
+      console.log(this.employeePermissions)
+      if(this.checkPermission('view all jobs')){
+        console.log('view all jobs')
+        this.jobTableTitle = 'Job Details'
+      } else if (this.checkPermission('view jobs under me')){
+        console.log('view jobs under me')
+        this.jobTableTitle = 'Jobs Under Me'
+      } else if(this.checkPermission('view jobs assigned to me')){
+        console.log('view jobs assigned to me')
+        this.jobTableTitle = 'My Jobs'
+      }
+
+      if(this.checkPermission('view all employees')){
+        console.log('view all employees')
+        this.employeeTitle = 'Employee Details'
+      } else if(this.checkPermission('view employees under me')){
+        console.log('view employees under me')
+        this.employeeTitle = 'Employees Under Me'
+      }
+
+      if(this.checkPermission('view teams')){
+        console.log('view teams')
+        this.teamTitle = 'Teams'
+      } else if(this.checkPermission('view my teams')){
+        console.log('view my teams')
+        this.teamTitle = 'My Teams'
+      }
+
+      console.log(this.jobTableTitle)
+      console.log(this.employeeTitle)
+      console.log(this.teamTitle)
     },
     redirectToArchivePage() {
       this.$router.push('/backlog/archive')
@@ -134,7 +170,7 @@ export default defineComponent({
           currentEmployeeId: localStorage.getItem('employeeId')
         }
       }
-      axios
+      await axios
         .get(`${API_URL}employee/detailed/id/${localStorage.getItem('employeeId')}`, config)
         .then((response) => {
           console.log(response)
@@ -145,6 +181,8 @@ export default defineComponent({
         .catch((error) => {
           console.error('Failed to fetch employees:', error)
         })
+
+      this.computeTitles()
     },
     checkPermission(permission: string) {
       return this.employeePermissions.includes(permission)
@@ -290,8 +328,8 @@ export default defineComponent({
           <v-list-item
             class="list-item-large"
             to="manageremployees"
-            value="Employee details"
-            title="Employee details"
+            :value="employeeTitle"
+            :title="employeeTitle"
             prepend-icon="fa: fa-solid fa-table"
             v-show="
               checkPermission('view all employees') || checkPermission('view employees under me')
@@ -300,8 +338,8 @@ export default defineComponent({
           <v-list-item
             class="list-item-large"
             to="teams"
-            value="Teams"
-            title="Teams"
+            :value="teamTitle"
+            :title= "teamTitle"
             prepend-icon="fa: fa-solid fa-people-group"
             v-show="checkPermission('view teams') || checkPermission('view my teams')"
           ></v-list-item>
@@ -325,14 +363,20 @@ export default defineComponent({
               class="list-item-large"
             ></v-list-item>
           </template>
+
           <v-list-item
-            v-for="(item, i) in jobSubItems"
-            :key="i"
-            :to="{ name: item.routeName }"
-            :value="item.title"
-            :title="item.title"
-            :prepend-icon="item.icon"
-            @click="setInbox(item.title)"
+            class="list-item-large"
+            to="jobAssignmentView"
+            :value="jobTableTitle"
+            :title= "jobTableTitle"
+            prepend-icon="fa: fa-solid fa-table"
+          ></v-list-item>
+          <v-list-item
+            class="list-item-large"
+            to="backlog"
+            value="Job Board"
+            title= "Job Board"
+            prepend-icon="fa: fa-solid fa-table-columns"
           ></v-list-item>
         </v-list-group>
       </v-list>
