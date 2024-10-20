@@ -124,8 +124,12 @@ const items = ref([
 ])
 
 const getFileName = (attachment) => {
-  let tempName = attachment.split('/').pop()
-  return tempName.substring(37)
+  if (attachment != null) {
+    let tempName = attachment.split('/').pop()
+    return tempName.substring(37)
+  } else {
+    return 'fileName?' //TODO: Check this is causing the error
+  }
 }
 
 const props = defineProps(['messages', 'users'])
@@ -259,23 +263,8 @@ const downloadAttachment = (url) => {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url('https://img.freepik.com/premium-vector/seamless-pattern-construction-tools-doodle-vector-set-repair-elements-cartoon-icons_78677-10140.jpg');
-
+  background-color: rgba(63, 122, 151, 0.3);
   position: relative;
-}
-
-.message-list::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(104, 122, 141, 0.8);
-  z-index: 1;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
 }
 
 .message-list > * {
@@ -381,5 +370,4 @@ const downloadAttachment = (url) => {
 :deep(.p-carousel .p-carousel-indicators) {
   display: none;
 }
-
 </style>
