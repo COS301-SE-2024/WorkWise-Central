@@ -403,7 +403,7 @@ import axios from 'axios'
 import { API_URL } from '@/main'
 
 const props = defineProps<{ passedInJob: any }>()
-const emits = defineEmits(['close'])
+const emits = defineEmits(['close', 'update-kanban-status'])
 
 const commentsSection = ref<HTMLElement | null>(null)
 const notesSection = ref<HTMLElement | null>(null)
