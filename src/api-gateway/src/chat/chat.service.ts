@@ -27,12 +27,18 @@ export class ChatService {
   ) {}
 
   // Create a new chat
-  async createChat(userId: Types.ObjectId, chatName: string, participants: Types.ObjectId[], chatImage?: string) {
+  async createChat(
+    userId: Types.ObjectId,
+    chatName: string,
+    participants: Types.ObjectId[],
+    chatDescription?: string,
+    chatImage?: string,
+  ) {
     const creator: Types.ObjectId = userId;
     participants = [...new Set(participants)];
-    if (chatName.length == 0) chatName = randomStringGenerator();
-    const imgUrl = chatImage ? chatImage : 'https://img.icons8.com/?size=100&id=105326&format=png&color=000000';
-    const chat = new Chat(chatName, participants, creator, imgUrl);
+    if (chatName.length == 0) chatName = 'chat' + randomStringGenerator().substring(0, 4);
+    const imgUrl = chatImage ? chatImage : 'https://cdn.pixabay.com/photo/2016/11/14/17/39/group-1824145_960_720.png';
+    const chat = new Chat(chatName, participants, creator, imgUrl, chatDescription);
     const newChat = new this.chatModel(chat);
     return (await (await newChat.save()).populate('participants')).toObject();
   }

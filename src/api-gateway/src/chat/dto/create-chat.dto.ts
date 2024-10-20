@@ -20,6 +20,41 @@ export class CreateChatDto {
   chatImage?: string;
 }
 
+export class AddChatDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsJWT()
+  jwt: string;
+
+  @IsString()
+  @IsNotEmpty()
+  chatName: string;
+
+  @IsMongoId({ each: true })
+  @IsArray()
+  @IsNotEmpty()
+  participants: Types.ObjectId[];
+
+  @IsOptional()
+  @IsString()
+  description?: string = '';
+
+  @IsOptional()
+  @IsString()
+  chatImage?: string;
+}
+
+export class AddMeDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsJWT()
+  jwt: string;
+
+  @IsMongoId()
+  @IsNotEmpty()
+  chatId: Types.ObjectId;
+}
+
 export class AddUsersToChatDto {
   @IsMongoId()
   @IsNotEmpty()
