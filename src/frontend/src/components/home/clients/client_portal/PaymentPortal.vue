@@ -1,7 +1,7 @@
 <template>
   <v-container fluid fill-height>
     <v-card class="bg-cardColor">
-      <v-col cols="12" lg="6" class="d-flex align-start">
+      <v-col cols="12" lg="12" class="d-flex align-start">
         <v-icon icon="fa: fa-solid fa-file"></v-icon>
         <v-label class="ms-2 h4 font-family-Nunito text-headingTextColor" height="auto" width="auto"
           >Invoices

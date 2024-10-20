@@ -2,15 +2,15 @@
   <v-container fluid fill-height>
     <v-card class="bg-cardColor">
       <v-card-title class="text-h6">
-          <v-col cols="12" lg="4" class="d-flex align-center">
-            <v-icon icon="fa: fa-solid fa-star-half-stroke"></v-icon>
-            <v-label
-              class="ms-2 h4 font-family-Nunito text-headingTextColor"
-              height="auto"
-              width="auto"
-              >Review Completed Jobs </v-label
-            >
-          </v-col>
+        <v-col cols="12" lg="12" class="d-flex align-start">
+          <v-icon icon="fa: fa-solid fa-star-half-stroke"></v-icon>
+          <v-label
+            class="ms-2 h4 font-family-Nunito text-headingTextColor"
+            height="auto"
+            width="auto"
+            >Review Completed Jobs
+          </v-label>
+        </v-col>
       </v-card-title>
       <v-divider></v-divider>
       <v-list>
