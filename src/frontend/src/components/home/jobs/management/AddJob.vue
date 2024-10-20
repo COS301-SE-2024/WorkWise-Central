@@ -200,11 +200,11 @@
 
                   <v-select
                     :disabled="request_load"
-                    v-model="req_obj.assignedEmployees.employeeIds"
-                    :items="employeesArray"
+                    v-model="req_obj.assignedEmployees.teamIds"
+                    :items="teamsArray"
                     item-value="employeeId"
                     item-title="name"
-                    label="Select some employees you would like to assign to this job"
+                    label="Select some team you would like to assign to this job"
                     chips
                     multiple
                     required
@@ -460,7 +460,11 @@
               <v-btn
                 color="success"
                 rounded="md"
-                @click="validateForm"
+                @click="
+                  validateForm.then(() => {
+                    this.request_load = true
+                  })
+                "
                 boarder="md"
                 width="100%"
                 :disabled="!valid || request_load"
@@ -513,6 +517,7 @@ type Job = {
   assignedBy: string
   assignedEmployees: {
     employeeIds?: string[]
+    teamIds?: string[]
   }
   status?: string
   details: JobDetails
@@ -737,6 +742,7 @@ export default defineComponent({
       this.req_obj.coverImage || delete this.req_obj.coverImage
       this.req_obj.assignedEmployees.employeeIds ||
         delete this.req_obj.assignedEmployees.employeeIds
+      this.req_obj.assignedEmployees.teamIds || delete this.req_obj.assignedEmployees.teamIds
       this.req_obj.status || delete this.req_obj.status
 
       if (validate) {
@@ -745,6 +751,7 @@ export default defineComponent({
         console.log(update)
         this.date_validation_error_alert = !update
         if (update) {
+          this.request_load = true
           await this.handleSubmission()
         }
       }
@@ -770,8 +777,6 @@ export default defineComponent({
       return `${year}-${month}-${day}`
     },
     async handleSubmission() {
-      this.request_load = true
-
       console.log(this.req_obj)
 
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
@@ -819,7 +824,6 @@ export default defineComponent({
           this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
           console.log(error)
         })
-      this.request_load = false
     },
     updateDates() {
       if (this.endDate && this.startDate && this.startTime && this.endTime) {
@@ -936,7 +940,7 @@ export default defineComponent({
 
       try {
         const employee_response = await axios.get(
-          API_URL + `employee/detailed/all/${localStorage['employeeId']}`,
+          API_URL + `team/all/${localStorage['currentCompany']}`,
           config
         )
 
@@ -947,33 +951,14 @@ export default defineComponent({
         let company_employee_arr: EmployeeInformation[] = []
 
         for (let i = 0; i < employee_all_data.length; i++) {
-          if (employee_all_data[i].role !== undefined) {
-            let company_employee: EmployeeInformation = {
-              name:
-                employee_all_data[i].userId.personalInfo.firstName +
-                ' ' +
-                employee_all_data[i].userId.personalInfo.surname +
-                ' (' +
-                employee_all_data[i].role.roleName +
-                ')',
-              employeeId: employee_all_data[i]._id
-            }
-
-            company_employee_arr.push(company_employee)
-          } else {
-            let company_employee: EmployeeInformation = {
-              name:
-                employee_all_data[i].userId.personalInfo.firstName +
-                ' ' +
-                employee_all_data[i].userId.personalInfo.surname +
-                ' (Unassigned Role)',
-              employeeId: employee_all_data[i]._id
-            }
-            company_employee_arr.push(company_employee)
+          let company_employee: EmployeeInformation = {
+            name: employee_all_data[i].teamName,
+            employeeId: employee_all_data[i]._id
           }
+          company_employee_arr.push(company_employee)
         }
         console.log(company_employee_arr)
-        this.employeesArray = company_employee_arr
+        this.teamsArray = company_employee_arr
       } catch (error) {
         console.log('Error fetching data:', error)
       }
@@ -1070,6 +1055,7 @@ export default defineComponent({
   mounted: function () {
     this.loadClients()
     this.loadAssignableEmployees()
+    this.loadAssignableTeams()
     this.loadPriorities()
     this.loadTags()
     this.loadStatues()
