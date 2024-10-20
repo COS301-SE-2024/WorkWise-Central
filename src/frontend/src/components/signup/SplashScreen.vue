@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-app :theme="isDarkMode ? 'dark' : 'light'">
+  <v-app :theme="isDarkMode ? 'dark' : 'light'" class="bg-background">
     <!-- Toolbar -->
     <v-app-bar class="bg-background">
       <v-toolbar-title class="d-flex justify-start">
@@ -99,7 +99,9 @@
           >
 
           <v-col>
-           <v-dialog persistent               :opacity="0"
+            <v-dialog
+              persistent
+              :opacity="0"
               v-model="loginDialog"
               max-width="400"
               @click:outside="resetFields"
@@ -210,7 +212,7 @@
               </v-card>
             </v-dialog>
             <!-- Forgot Password -->
-           <v-dialog persistent :opacity="0" v-model="forgotPasswordDialog" max-width="400">
+            <v-dialog persistent :opacity="0" v-model="forgotPasswordDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -253,7 +255,7 @@
               </v-sheet>
             </v-dialog>
 
-           <v-dialog persistent :opacity="0" v-model="OTPDialog" max-width="400">
+            <v-dialog persistent :opacity="0" v-model="OTPDialog" max-width="400">
               <v-sheet
                 elevation="14"
                 rounded="md"
@@ -290,7 +292,9 @@
             </v-dialog>
 
             <!-- Flow 1 -->
-           <v-dialog persistent               :opacity="0"
+            <v-dialog
+              persistent
+              :opacity="0"
               v-model="signupDialog"
               max-width="400"
               @click:outside="resetFields"
@@ -405,7 +409,9 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 2 -->
-           <v-dialog persistent               :opacity="0"
+            <v-dialog
+              persistent
+              :opacity="0"
               v-model="signup1Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -492,7 +498,9 @@
               </v-sheet>
             </v-dialog>
             <v-col xs="3" align-self="center">
-             <v-dialog persistent                 :opacity="0"
+              <v-dialog
+                persistent
+                :opacity="0"
                 v-model="signupUsernameDialog"
                 max-width="400"
                 @click:outside="resetFields"
@@ -582,7 +590,9 @@
               </v-dialog>
             </v-col>
             <!-- Flow 3 -->
-           <v-dialog persistent               :opacity="0"
+            <v-dialog
+              persistent
+              :opacity="0"
               v-model="signup2Dialog"
               max-width="400"
               @click:outside="resetFields"
@@ -690,7 +700,9 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 4 -->
-           <v-dialog persistent               :opacity="0"
+            <v-dialog
+              persistent
+              :opacity="0"
               v-model="signupAddressDialog"
               max-width="1000"
               @click:outside="resetFields"
@@ -835,7 +847,9 @@
               </v-sheet>
             </v-dialog>
             <!-- Flow 5 -->
-           <v-dialog persistent               :opacity="0"
+            <v-dialog
+              persistent
+              :opacity="0"
               v-model="signup3Dialog"
               max-width="700"
               style="height: 750px"
@@ -897,6 +911,9 @@
         <ServicesSplash  />
       </div> -->
       <div>
+        <MarketingSplash />
+      </div>
+      <div>
         <h1 :class="['splash-title', 'header-title', 'text-center']">
           How to use <span class="text-primary">Work</span
           ><span class="text-secondary">Wise</span> Central
@@ -918,13 +935,15 @@ import { defineComponent } from 'vue'
 import Toast from 'primevue/toast'
 import Tutorial from './Tutorial.vue'
 import { API_URL } from '@/main'
+import MarketingSplash from './MarketingSplash.vue'
 
 export default defineComponent({
   components: {
     RegisterCompanyModal,
     JoinCompanyModal,
     Toast,
-    Tutorial
+    Tutorial,
+    MarketingSplash
   },
   data: () => ({
     click_create_client: false,

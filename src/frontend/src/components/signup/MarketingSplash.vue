@@ -86,6 +86,12 @@ export default defineComponent({
           imageUrl: '../img/clientProjects.png',
           imageUrlDark: '../img/clientProjectsDark.png',
           description: 'Manage client-specific projects, from inception to completion, with ease.'
+        },{
+          title: 'Fleet',
+          icon: 'mdi-truck',
+          imageUrl: '../img/FleetLightMode.png',
+          imageUrlDark: '../img/FleetDarkMode.png',
+          description: 'Manage your fleet of vehicles, track maintenance, and monitor fuel consumption.'
         }
       ]
     }

@@ -3,7 +3,9 @@
 
   <v-menu v-model="companyDialog" location="right" min-width="300" :close-on-content-click="false">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="primary" class="h6" v-bind="activatorProps" >{{ companyName }}<v-icon end icon="fa: fa-solid fa-caret-down" /></v-btn>
+      <v-btn color="primary" class="h6" v-bind="activatorProps"
+        >{{ truncateString(companyName,6) }}<v-icon end icon="fa: fa-solid fa-caret-down"
+      /></v-btn>
     </template>
     <v-card class="bg-background" rounded="md">
       <h2 class="h5 font-weight-regular d-flex justify-center bg-background text-secondary">
@@ -127,6 +129,9 @@ export default defineComponent({
     closeCompanyDialog() {
       this.companyName = localStorage.getItem('currentCompanyName')
       this.companyDialog = false
+    },
+    truncateString(string, length) {
+      return string.length > length ? string.substring(0, length) + '...' : string
     },
     switchCompany(companyName) {
       this.isDeleting = true

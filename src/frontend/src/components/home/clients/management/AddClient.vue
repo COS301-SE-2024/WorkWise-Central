@@ -336,12 +336,15 @@ export default defineComponent({
       ],
       first_name_rules: [
         (v: string) => !!v || 'First name is required',
-        (v: string) => /^[A-Za-z]+$/.test(v) || 'First name must be alphabetic characters'
+        (v: string) =>
+          /^[A-Za-z\s]+$/.test(v) || 'First name must contain only alphabetic characters and spaces'
       ],
       surname_rules: [
         (v: string) => !!v || 'Surname is required',
-        (v: string) => /^[A-Za-z]+$/.test(v) || 'Surname must be alphabetic characters'
+        (v: string) =>
+          /^[A-Za-z\s]+$/.test(v) || 'Surname must contain only alphabetic characters and spaces'
       ],
+
       phone_number_rules: [
         (v: string) => !!v || 'Phone number is required',
         (v: string) => /^0\d{9}$/.test(v) || 'Phone number must be a valid South African number'

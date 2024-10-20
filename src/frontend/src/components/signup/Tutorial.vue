@@ -1,13 +1,13 @@
 <template>
-  <v-expansion-panels class="my-4" variant="accordion">
-    <v-expansion-panel
+  <v-expansion-panels class="my-4 " color="background" variant="accordion" >
+    <v-expansion-panel color="background"
       :title="tutorialQuestions[0]"
       :theme="isDarkMode === true ? 'dark' : 'light'"
       style="font-family: Nunito, sans-serif"
     >
-      <v-expansion-panel-text>
+      <v-expansion-panel-text class="bg-background">
         <v-col :cols="12"
-          ><v-stepper v-model="activeSteps.stepper1" :items="items.items_login" show-actions>
+          ><v-stepper v-model="activeSteps.stepper1" :items="items.items_login" show-actions  color="background">
             <template #[`item.1`]>
               <h3 class="text-h6">Splash Page</h3>
 
@@ -49,12 +49,13 @@
         >
       </v-expansion-panel-text>
     </v-expansion-panel>
-    <v-expansion-panel
+    
+    <v-expansion-panel class="bg-background"
       :title="tutorialQuestions[1]"
       :theme="isDarkMode === true ? 'dark' : 'light'"
       style="font-family: Nunito, sans-serif"
     >
-      <v-expansion-panel-text>
+      <v-expansion-panel-text color="background">
         <v-col :cols="12"
           ><v-stepper v-model="activeSteps.stepper2" :items="items.items_signup" show-actions>
             <template #[`item.1`]>
