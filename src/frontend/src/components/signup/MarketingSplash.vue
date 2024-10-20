@@ -24,7 +24,7 @@
     <!-- Loop through tabs -->
     <div v-for="(item, index) in tabs" :key="index">
       <!-- Heading Row with extra margin -->
-      <v-row class="bg-background" style="margin-top: 32px">
+      <v-row class="bg-background" style="margin-top: 32px" v-if="item.title">
         <v-col cols="12">
           <v-card-title class="text-h4 text-center">{{ item.title }}</v-card-title>
         </v-col>
@@ -66,7 +66,19 @@ export default defineComponent({
           description:
             'Manage your clients efficiently, track interactions, and ensure client satisfaction.'
         },
-         {
+        {
+          icon: 'mdi-briefcase',
+          imageUrl: '../img/clientPortal.png',
+          imageUrlDark: '../img/clientPortal.png',
+          description: 'Give your clients access to a client portal, where they can keep track of the jobs they have with'
+        },
+        {
+          icon: 'mdi-briefcase',
+          imageUrl: '../img/jobManagement.png',
+          imageUrlDark: '../img/jobManagementDark.png',
+          description: 'Keep your projects on track with our robust project management tools.'
+        },
+        {
           title: 'Employee Management',
           icon: 'mdi-account',
           imageUrl: '../img/employeeManagement.png',
@@ -74,11 +86,16 @@ export default defineComponent({
           description: 'Oversee employee performance, assignments, and roles within the company.'
         },
         {
-          title: 'Team Management',
           icon: 'mdi-account-multiple',
           imageUrl: '../img/teamManagement.png',
           imageUrlDark: '../img/teamManagementDark.png',
           description: 'Organize your teams, assign leaders, and manage collaborative efforts.'
+        },
+        {
+          icon: 'mdi-briefcase',
+          imageUrl: '../img/jobManagement.png',
+          imageUrlDark: '../img/jobManagementDark.png',
+          description: 'Keep your projects on track with our robust project management tools.'
         },
         {
           title: 'Job Management',
@@ -88,7 +105,31 @@ export default defineComponent({
           description: 'Keep your projects on track with our robust project management tools.'
         },
         {
+          icon: 'mdi-briefcase',
+          imageUrl: '../img/jobManagement.png',
+          imageUrlDark: '../img/jobManagementDark.png',
+          description: 'Keep your projects on track with our robust project management tools.'
+        },
+        {
+          icon: 'mdi-briefcase',
+          imageUrl: '../img/jobManagement.png',
+          imageUrlDark: '../img/jobManagementDark.png',
+          description: 'Keep your projects on track with our robust project management tools.'
+        },
+        {
           title: 'Inventory Management',
+          icon: 'mdi-briefcase',
+          imageUrl: '../img/jobManagement.png',
+          imageUrlDark: '../img/jobManagementDark.png',
+          description: 'Keep your projects on track with our robust project management tools.'
+        },
+        {
+          icon: 'mdi-briefcase',
+          imageUrl: '../img/jobManagement.png',
+          imageUrlDark: '../img/jobManagementDark.png',
+          description: 'Keep your projects on track with our robust project management tools.'
+        },
+        {
           icon: 'mdi-briefcase',
           imageUrl: '../img/jobManagement.png',
           imageUrlDark: '../img/jobManagementDark.png',
@@ -109,20 +150,18 @@ export default defineComponent({
           description: 'Manage your company structure, roles, and priorities with ease.'
         },
         {
-          title: 'Client Projects',
-          icon: 'mdi-folder',
-          imageUrl: '../img/clientProjects.png',
-          imageUrlDark: '../img/clientProjectsDark.png',
-          description: 'Manage client-specific projects, from inception to completion, with ease.'
-        },
-        {
           title: 'Communication tools',
           icon: 'mdi-briefcase',
           imageUrl: '../img/jobManagement.png',
           imageUrlDark: '../img/jobManagementDark.png',
           description: 'Keep your projects on track with our robust project management tools.'
         },
-
+        {
+          icon: 'mdi-briefcase',
+          imageUrl: '../img/jobManagement.png',
+          imageUrlDark: '../img/jobManagementDark.png',
+          description: 'Keep your projects on track with our robust project management tools.'
+        }
       ]
     }
   }
