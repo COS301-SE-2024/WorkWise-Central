@@ -460,11 +460,7 @@
               <v-btn
                 color="success"
                 rounded="md"
-                @click="
-                  validateForm.then(() => {
-                    this.request_load = true
-                  })
-                "
+                @click="validateForm"
                 boarder="md"
                 width="100%"
                 :disabled="!valid || request_load"
@@ -824,6 +820,7 @@ export default defineComponent({
           this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Job not added' })
           console.log(error)
         })
+      this.request_load = false
     },
     updateDates() {
       if (this.endDate && this.startDate && this.startTime && this.endTime) {
@@ -944,7 +941,7 @@ export default defineComponent({
           config
         )
 
-        let employee_all_data: EmployeeJoined[] = employee_response.data.data
+        let employee_all_data = employee_response.data.data
 
         console.log(employee_all_data)
 
