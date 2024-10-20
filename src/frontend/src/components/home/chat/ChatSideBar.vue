@@ -87,13 +87,22 @@
             <label for="participants">Chat Image</label>
           </v-col>
           <v-col>
-            <input
-              type="file"
+            <FileUpload
+              mode="basic"
               accept="image/*"
-              @change="handleFileChange"
-              ref="fileInput"
-              style="margin-left: 13%"
+              :maxFileSize="10000000"
+              @select="handleFileChange"
+              :auto="true"
+              :customUpload="true"
+              style="width: 100%"
             />
+            <!--            <input-->
+            <!--              type="file"-->
+            <!--              accept="image/*"-->
+            <!--              @change="handleFileChange"-->
+            <!--              ref="fileInput"-->
+            <!--              style="margin-left: 13%"-->
+            <!--            />-->
           </v-col>
         </v-row>
         <!-- File input for images -->
@@ -145,10 +154,14 @@ import MultiSelect from 'primevue/multiselect'
 //import FileUpload from 'primevue/fileupload'
 import OverlayBadge from 'primevue/overlaybadge'
 import Textarea from 'primevue/textarea'
+import { API_URL } from '@/main'
+import axios from 'axios'
+import FileUpload from 'primevue/fileupload'
+import { useToast } from 'primevue/usetoast'
 
 const props = defineProps(['chats', 'selectedChat', 'users', 'typingUsers'])
 const emit = defineEmits(['select-chat', 'create-chat'])
-
+const toast = useToast()
 const searchQuery = ref('')
 const newChatDialogVisible = ref(false)
 const newChatName = ref('')
@@ -165,11 +178,49 @@ const items = ref([
   { label: 'Search', icon: 'pi pi-search' }
 ])
 
-const handleFileChange = (event) => {
-  const files = event.target.files
-  if (files.length > 0) {
-    selectedImage.value = files[0]
-    convertToBase64(files[0])
+const handleFileChange = async (event) => {
+  const files = event.files
+  if (files && files.length > 0) {
+    const formData = new FormData()
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i])
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    }
+
+    const url = `${API_URL}chat/add/attachments`
+
+    try {
+      const response = await axios.put(url, formData, config)
+      if (response.status === 200) {
+        console.log(response)
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Files uploaded successfully',
+          life: 3000
+        })
+        console.log(response)
+        selectedImage.value = response.data.data[0]
+
+        //return response.data.data
+      }
+    } catch (error) {
+      console.error(error)
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to upload File(s)',
+        life: 3000
+      })
+      console.log(url)
+    }
   }
 }
 
@@ -224,8 +275,8 @@ const createNewChat = () => {
     emit('create-chat', {
       name: newChatName.value,
       participants: participants,
-      chatImage: base64Image,
-      chatDescription: newChatDescription
+      chatImage: selectedImage.value,
+      chatDescription: newChatDescription.value
     })
     closeNewChatDialog()
   }
