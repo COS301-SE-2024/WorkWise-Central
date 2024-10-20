@@ -6,24 +6,33 @@
       ><span class="text-secondary">Wise</span> Central
     </h2>
     <v-spacer></v-spacer>
-    <v-row style="height: 500px" class="bg-background">
-      <v-col cols="12" order="first" order-lg="last" order-md="last" order-sm="first">
-        <v-tabs v-model="tab" align-tabs="center" bg-color="secondary" stacked>
-          <v-tab v-for="(item, index) in tabs" :key="index">
-            {{ item.title }}
-            <v-icon :icon="item.icon" color="primary"></v-icon>
-          </v-tab>
-        </v-tabs>
-        <v-tabs-window v-model="tab">
-          <v-tabs-window-item v-for="(item, index) in tabs" :key="index" :value="index">
-            <v-card flat class="bg-background">
-              <v-img :src="isDarkMode ? item.imageUrlDark : item.imageUrl" height="500px"></v-img>
-              <v-card-text>{{ item.description }}</v-card-text>
-            </v-card>
-          </v-tabs-window-item>
-        </v-tabs-window>
-      </v-col>
-    </v-row>
+    
+    <!-- Loop through tabs -->
+    <div v-for="(item, index) in tabs" :key="index">
+      
+      <!-- Heading Row -->
+      <v-row class="bg-background">
+        <v-col cols="12">
+          <v-card-title class="text-h4 text-center">{{ item.title }}</v-card-title>
+        </v-col>
+      </v-row>
+      
+      <!-- Image and Description Row -->
+      <v-row class="bg-background align-center">
+        <!-- Image Column (alternating sides) -->
+        <v-col cols="12" md="6" :order="index % 2 === 0 ? 1 : 2">
+          <v-img :src="isDarkMode ? item.imageUrlDark : item.imageUrl" height="500px"></v-img>
+        </v-col>
+        
+        <!-- Description Column (alternating sides) -->
+        <v-col cols="12" md="6" :order="index % 2 === 0 ? 2 : 1">
+          <v-card flat elevation="0" class="bg-background">
+            <v-card-text>{{ item.description }}</v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      
+    </div>
   </v-app>
 </template>
 

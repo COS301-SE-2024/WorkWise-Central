@@ -551,7 +551,7 @@ export default {
           })
         setTimeout(() => {
           this.statsShown = true
-        }, 4000)
+        }, 1000)
       }
     },
     async getClients() {

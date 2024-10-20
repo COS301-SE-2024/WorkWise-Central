@@ -220,7 +220,7 @@ import axios from 'axios'
 import { API_URL } from '@/main'
 import Toast from 'primevue/toast'
 import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
-const nodeSize = 40
+const nodeSize = 60
 
 export default defineComponent({
   data() {

@@ -229,7 +229,7 @@ export default {
           this.fetchRevenueForMonth('January')
           setTimeout(() => {
             this.statsShown = true
-          }, 4000)
+          }, 1000)
         })
         .catch((error) => {
           console.error('Failed to fetch invoice stats:', error)
