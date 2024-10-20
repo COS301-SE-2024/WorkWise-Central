@@ -27,16 +27,7 @@
                 required
               ></v-text-field>
             </v-col>
-            <!-- Date of Payment -->
-            <v-col>
-              <small class="text-caption">Date of Payment</small>
-              <v-text-field
-                v-model="localEditedInvoice.paymentDate"
-                color="secondary"
-                type="date"
-                required
-              ></v-text-field>
-            </v-col>
+           
             <!-- Inventory Items -->
             <v-col>
               <small class="text-caption">Inventory Items</small>

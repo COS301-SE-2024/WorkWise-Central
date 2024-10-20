@@ -523,13 +523,16 @@ export default defineComponent({
 
       if (validate) {
         this.request_loading = true
-        await this.handleSubmission()
+        await this.handleSubmission().then(() => {
+          this.request_loading = false
+        })
       } else {
         this.emailRule
         this.phoneRule
       }
     },
     async handleSubmission() {
+      this.request_loading = true
       console.log(JSON.stringify(this.req_obj))
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       axios
@@ -544,7 +547,7 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.addDialog = false
-            this.isDeleting = false
+            this.request_loading = false
             this.$emit('createClient', res.data.data)
             this.resetFields()
             this.$emit('close')

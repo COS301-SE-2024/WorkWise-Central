@@ -509,6 +509,7 @@ export default defineComponent({
           `${API_URL}videoCalls/forEmployee/${localStorage.getItem('employeeId')}`,
           config
         )
+        console.log(response.data.data)
         for (const appointment of response.data.data) {
           // const participants = appointment.participants.map((participant) => participant.name)
           this.appointments.push({

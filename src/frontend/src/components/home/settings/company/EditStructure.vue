@@ -182,7 +182,7 @@ e
                       start
                       color="success"
                       size="small"
-                      :disabled="isDeleting"
+                    
                     ></v-icon>
                     Save
                   </v-btn>
@@ -195,8 +195,8 @@ e
                     height="35"
                     variant="text"
                     block
-                    @click="close"
-                    :loading="isDeleting"
+                    @click="employeeDialog = false"
+                    
                   >
                     <Toast position="top-center" />
                     <v-icon icon="fa:fa-solid fa-cancel" color="error" size="small" start></v-icon
@@ -261,7 +261,7 @@ export default defineComponent({
             strokeWidth: 0,
             strokeColor: '#000000',
             strokeDasharray: '0',
-            color: '#4466cc'
+            color: '#227D9B'
           },
           label: { direction: 'south', color: '#dd2288' },
           hover: {
@@ -647,7 +647,7 @@ export default defineComponent({
       }
     },
     close() {
-      this.isDeleting = false
+      this.isDeleting = true
       this.$toast.add({
         severity: 'success',
         summary: 'Success',
@@ -656,6 +656,7 @@ export default defineComponent({
       })
       setTimeout(() => {
         this.employeeDialog = false
+        this.isDeleting = false
         this.getGraphView()
       }, 1500)
     },
