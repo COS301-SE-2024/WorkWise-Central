@@ -340,7 +340,9 @@ export default defineComponent({
       ],
       surname_rules: [
         (v: string) => !!v || 'Surname is required',
-        (v: string) => /^[A-Za-z]+$/.test(v) || 'Surname must be alphabetic characters'
+        (v: string) =>
+          /^[A-Za-z]+(?:[\s-][A-Za-z]+)*$/.test(v) ||
+          'Surname must be alphabetic characters, spaces, or hyphens'
       ],
       phone_number_rules: [
         (v: string) => !!v || 'Phone number is required',

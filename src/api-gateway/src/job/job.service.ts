@@ -1299,9 +1299,10 @@ export class JobService {
     const noStatus = await this.getStatusByLabel(deleteStatusDto.companyId, 'No Status');
     const newStatus: Types.ObjectId = noStatus ? noStatus._id : null;
     for (const job of allJobsInCompany) {
-      await this.updateWithoutValidation(job._id, {
-        status: newStatus,
-      });
+      if (job.status._id.toString() === deleteStatusDto.statusId.toString())
+        this.updateWithoutValidation(job._id, {
+          status: newStatus,
+        });
     }
     return resultOfDelete;
   }
