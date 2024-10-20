@@ -1,5 +1,5 @@
 <template>
- <v-dialog persistent v-model="dialog" persistent max-width="600px">
+ <v-dialog persistent v-model="dialog"  max-width="600px">
     <template v-slot:activator="{ on, attrs }">
       <v-btn color="primary" dark v-bind="attrs" v-on="on"> Open Profile </v-btn>
     </template>
