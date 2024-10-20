@@ -36,7 +36,17 @@
     </FileUpload>
 
     <v-col cols="1">
+      <div class="spinner-container" v-if="loading">
+        <ProgressSpinner
+          style="width: 20px; height: 20px"
+          strokeWidth="5"
+          fill="transparent"
+          animationDuration=".5s"
+          aria-label="Custom ProgressSpinner"
+        />
+      </div>
       <Button
+        v-else
         icon="fa: fa-solid fa-paper-plane"
         @click="sendMessage"
         :disabled="disabled || (!message.trim() && attachments.length === 0)"
@@ -56,6 +66,7 @@ import { useToast } from 'primevue/usetoast'
 import FileUpload from 'primevue/fileupload'
 import { defineProps, defineEmits } from 'vue'
 import debounce from 'lodash/debounce'
+import ProgressSpinner from 'primevue/progressspinner'
 
 const props = defineProps({
   disabled: {
@@ -69,7 +80,7 @@ const emit = defineEmits(['send-message', 'typing'])
 const toast = useToast()
 const message = ref('')
 //const attachment = ref(null)
-
+const loading = ref(false)
 const attachments = ref([])
 //const newFile = ref(null)
 const newFiles = ref([])
@@ -98,6 +109,7 @@ const handleInput = () => {
 }
 
 const handleFileChange = async (event) => {
+  loading.value = true
   const files = event.files
   if (files && files.length > 0) {
     const formData = new FormData()
@@ -130,7 +142,7 @@ const handleFileChange = async (event) => {
           attachments.value.push(em)
           console.log('Pushed', em)
         }
-
+        loading.value = false
         return response.data.data
       }
     } catch (error) {
