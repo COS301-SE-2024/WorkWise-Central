@@ -131,7 +131,7 @@
     </v-card>
 
     <!-- Modal for Generate Invoice -->
-    <v-dialog v-model="isModalVisible" max-width="500px">
+   <v-dialog persistent v-model="isModalVisible" max-width="500px">
       <v-card>
         <v-card-title class="text-h5">Generate Invoice</v-card-title>
         <v-card-text>
@@ -255,7 +255,7 @@ export default defineComponent({
       invoiceItems: [],
       isDeleting: false,
       search: '',
-      selectedItem: {},
+      selectedItem: '',
       companyId: '',
       currentEmployee: '',
       isModalVisible: false,
@@ -292,10 +292,10 @@ export default defineComponent({
       axios
         .get(`${API_URL}employee/id/${localStorage.getItem('employeeId')}`, config1)
         .then((response) => {
-          console.log(
-            'response.data.data.role.permissionSuite: ',
-            response.data.data.role.permissionSuite
-          )
+          // console.log(
+          //   'response.data.data.role.permissionSuite: ',
+          //   response.data.data.role.permissionSuite
+          // )
           this.employeePermissions = response.data.data.role.permissionSuite
         })
         .catch((error) => {
@@ -356,22 +356,22 @@ export default defineComponent({
                 ? invoice.companyId.contactDetails.phoneNumber
                 : null,
               companyLogo: invoice.companyId?.logo ? invoice.companyId.logo : null,
-              // inventoryItems: invoice.inventoryItems ? invoice.inventoryItems : [],
-              // laborItems: invoice.laborItems ? invoice.laborItems : [],
-              inventoryItems: invoice.inventoryItems.map((obj) => [
-                obj.description,
-                obj.quantity,
-                obj.unitPrice,
-                obj.discount,
-                Number(obj.total?.toFixed(2))
-              ]),
-              laborItems: invoice.laborItems.map((obj) => [
-                obj.description,
-                Number(obj.quantity?.toFixed(2)),
-                obj.unitPrice,
-                obj.discount,
-                Number(obj.total?.toFixed(2))
-              ]),
+              inventoryItems: invoice.inventoryItems ? invoice.inventoryItems : [],
+              laborItems: invoice.laborItems ? invoice.laborItems : [],
+              // inventoryItems: invoice.inventoryItems.map((obj) => [
+              //   obj.description,
+              //   obj.quantity,
+              //   obj.unitPrice,
+              //   obj.discount,
+              //   Number(obj.total?.toFixed(2))
+              // ]),
+              // laborItems: invoice.laborItems.map((obj) => [
+              //   obj.description,
+              //   Number(obj.quantity?.toFixed(2)),
+              //   obj.unitPrice,
+              //   obj.discount,
+              //   Number(obj.total?.toFixed(2))
+              // ]),
               taxPercentage: invoice.taxPercentage ? invoice.taxPercentage : null,
               taxAmount: invoice.taxAmount ? invoice.taxAmount : null,
               subTotal: invoice.subTotal ? Number(invoice.subTotal?.toFixed(2)) : null
@@ -392,7 +392,7 @@ export default defineComponent({
           .then((response) => {
             console.log('response.data.data: ', response.data.data)
             for (const job of response.data.data) {
-              console.log('job: ', job)
+             // console.log('job: ', job)
               this.jobs.push({
                 _id: job._id,
                 name: job.details.heading
@@ -457,6 +457,7 @@ export default defineComponent({
       // Implement the view functionality
     },
     selectInvoice(invoice) {
+      console.log('Selected invoice:', invoice)
       this.selectedItem = invoice
     },
     getRowProps(index) {

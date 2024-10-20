@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <Toast position="top-center" />
-    <v-card class="bg-cardColor">
+    <LoadingScreen :Loading="!statsShown" />
+    <v-card class="bg-cardColor" v-if="statsShown">
       <v-card-title
         class="d-flex align-center pe-2 text-h5 font-weight-regular"
         height="auto"
@@ -53,7 +54,7 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-    <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
+   <v-dialog persistent v-model="dialog" max-height="800" max-width="600" >
       <v-card class="bg-cardColor">
         <v-card-title> Edit Tags</v-card-title>
         <v-card-text>
@@ -68,22 +69,13 @@
             />
 
             <v-label>Tag Color</v-label>
-            <v-row>
-              <v-col
-                v-for="color in colorOptions"
-                :key="color"
-                cols="2"
-                class="d-flex justify-center"
-              >
-                <v-btn
-                  :style="{ backgroundColor: color }"
-                  class="ma-1"
-                  @click="selectedItem.colour = color"
-                  :outlined="selectedItem.colour !== color"
-                  style="width: 40px; height: 40px; border-radius: 4px"
-                ></v-btn>
-              </v-col>
-            </v-row>
+            <v-color-picker
+              v-model="selectedItem.colour"
+              :hide-sliders="true"
+              :hide-canvas="true"
+              hide-inputs
+              show-swatches
+            ></v-color-picker>
             <span
               >Hex Code:
               <v-chip :color="selectedItem.colour">{{ selectedItem.colour }}</v-chip></span
@@ -126,6 +118,7 @@ import DeleteTags from './DeleteTags.vue'
 import CreateTags from './CreateTags.vue'
 import Toast from 'primevue/toast'
 import { API_URL } from '@/main'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 
 export default defineComponent({
   data: () => ({
@@ -204,11 +197,12 @@ export default defineComponent({
       '#66BB6A',
       '#9CCC65',
       '#FFEE58'
-    ] as string[]
+    ] as string[],
+    statsShown: false
   }),
   components: {
     DeleteTags,
-
+    LoadingScreen,
     Toast,
     CreateTags
   },
@@ -240,6 +234,9 @@ export default defineComponent({
         )
         console.log(res)
         this.items = res.data.data
+        setTimeout(() => {
+          this.statsShown = true
+        }, 1000)
       } catch (error) {
         console.error(error)
       }

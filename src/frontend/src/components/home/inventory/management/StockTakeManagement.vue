@@ -94,7 +94,7 @@
     </v-container>
 
     <!-- Chart Dialog -->
-    <v-dialog v-model="chartDialog" max-width="600px">
+   <v-dialog persistent v-model="chartDialog" max-width="600px">
       <v-card class="bg-cardColor">
         <v-card-title>Stock Levels for {{ selectedItem?.name }}</v-card-title>
         <v-card-text>
@@ -121,7 +121,7 @@
       <!-- Button to open the stock take dialog -->
 
       <!-- Stock Take Dialog -->
-      <v-dialog v-model="showDialog" max-width="500px">
+     <v-dialog persistent v-model="showDialog" max-width="500px">
         <v-card class="bg-cardColor">
           <v-card-title>Record Stock of {{ selectedItem.name }}</v-card-title>
           <v-card-text>
@@ -202,7 +202,7 @@
       </v-dialog>
       <template>
         <!-- Confirmation Dialog with PDF Preview -->
-        <v-dialog v-model="confirmDialog" max-width="800px">
+       <v-dialog persistent v-model="confirmDialog" max-width="800px">
           <v-card>
             <v-card-title class="headline">Update Inventory</v-card-title>
             <v-card-text>

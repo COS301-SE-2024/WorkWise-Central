@@ -56,7 +56,7 @@
                     </v-btn>
                   </v-list-item>
                   <v-list-item>
-                    <v-dialog :opacity="0.6" v-model="delete_all_jobs_dialog" max-width="500px">
+                   <v-dialog persistent :opacity="0.6" v-model="delete_all_jobs_dialog" max-width="500px">
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props">
                           <v-icon>{{ 'fa: fa-regular fa-trash-can' }}</v-icon>
@@ -105,8 +105,7 @@
                   <v-list-subheader v-if="column.status !== 'No Status'">Column</v-list-subheader>
 
                   <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog
-                      :opacity="0.6"
+                   <v-dialog persistent                       :opacity="0.6"
                       max-height="700"
                       max-width="500"
                       v-model="edit_column_details_dialog"
@@ -191,7 +190,7 @@
                     </v-dialog>
                   </v-list-item>
                   <v-list-item v-if="column.status !== 'No Status'">
-                    <v-dialog :opacity="0.6" v-model="delete_column_dialog" max-width="500px">
+                   <v-dialog persistent :opacity="0.6" v-model="delete_column_dialog" max-width="500px">
                       <template v-slot:activator="{ props }">
                         <v-btn :elevation="0" v-bind="props"
                           ><v-icon>{{ 'fa: fa-solid fa-clipboard-check' }}</v-icon
@@ -327,7 +326,7 @@
       </VueDraggable>
       </v-col>
       <v-col cols="auto">
-        <v-dialog :opacity="0.6" max-height="600" max-width="500" v-model="add_column_dialog">
+       <v-dialog persistent :opacity="0.6" max-height="600" max-width="500" v-model="add_column_dialog">
           <template v-slot:activator="{ props }">
             <v-btn
                 v-if="checkPermission('company settings')" 
@@ -410,7 +409,7 @@
       </v-col>
     </v-row>
   </v-container>
-  <v-dialog :opacity="0.6" v-model="JobCardVisibility" max-width="1000px">
+ <v-dialog persistent :opacity="0.6" v-model="JobCardVisibility" max-width="1000px">
     <ViewJob @close="JobCardVisibility = false" :passedInJob="SelectedEvent" />
   </v-dialog>
 </template>

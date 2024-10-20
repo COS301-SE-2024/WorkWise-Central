@@ -129,7 +129,7 @@
   </v-container>
 
   <!-- Confirmation Dialog -->
-  <v-dialog v-model="deleteDialog" max-width="500px" :opacity="0.1">
+ <v-dialog persistent v-model="deleteDialog" max-width="500px" :opacity="0.1">
     <v-card class="bg-cardColor">
       <v-card-title>
         <v-icon>mdi-delete</v-icon>
@@ -171,7 +171,7 @@
   </v-dialog>
 
   <!-- Creating the appointment  -->
-  <v-dialog v-model="showCreate" persistent max-width="800px">
+ <v-dialog persistent v-model="showCreate"  max-width="800px">
     <v-card class="bg-cardColor">
       <v-card-title>
         <span class="headline">{{ 'Create Appointment' }}</span>
@@ -283,7 +283,7 @@
   </v-dialog>
 
   <!-- Editing the appointment -->
-  <v-dialog v-model="showEdit" persistent max-width="800px">
+ <v-dialog persistent v-model="showEdit"  max-width="800px">
     <v-card class="bg-cardColor">
       <v-card-title>
         <span class="headline">{{ 'Edit Appointment' }}</span>
@@ -514,6 +514,7 @@ export default defineComponent({
           `${API_URL}videoCalls/forEmployee/${localStorage.getItem('employeeId')}`,
           config
         )
+        console.log(response.data.data)
         for (const appointment of response.data.data) {
           // const participants = appointment.participants.map((participant) => participant.name)
           this.appointments.push({

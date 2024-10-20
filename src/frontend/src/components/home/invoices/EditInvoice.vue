@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog v-model="editDialog" max-height="800" max-width="800" scrollable>
+  <v-dialog persistent v-model="editDialog" max-height="800" max-width="800" scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn class="text-none font-weight-regular" color="warning" v-bind="activatorProps">
         <v-icon start color="warning" size="small">mdi-pencil</v-icon>
@@ -27,16 +27,7 @@
                 required
               ></v-text-field>
             </v-col>
-            <!-- Date of Payment -->
-            <v-col>
-              <small class="text-caption">Date of Payment</small>
-              <v-text-field
-                v-model="localEditedInvoice.paymentDate"
-                color="secondary"
-                type="date"
-                required
-              ></v-text-field>
-            </v-col>
+           
             <!-- Inventory Items -->
             <v-col>
               <small class="text-caption">Inventory Items</small>
@@ -139,28 +130,25 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
+<script lang>
 import Toast from 'primevue/toast'
 import axios from 'axios'
 import { API_URL } from '@/main'
 
-interface Invoice {
-  _id: string
-  invoiceNumber: string
-  paymentDate: Date
-  total: number
-  paid: boolean
-  inventoryItems: { description: string; quantity: number }[]
-  laborItems: { description: string; hours: number }[]
-}
+// interface Invoice {
+//   _id: string
+//   invoiceNumber: string
+//   paymentDate: Date
+//   total: number
+//   paid: boolean
+//   inventoryItems: { description: string; quantity: number }[]
+//   laborItems: { description: string; hours: number }[]
+// }
 
 export default {
   name: 'EditInvoice',
   props: {
-    editedInvoice: {
-      type: Object as () => Invoice,
-      required: true
-    },
+    editedInvoice: Object,
     invoice_id: String
   },
   components: {
@@ -171,18 +159,18 @@ export default {
       isDeleting: false,
       localEditedInvoice: {
         ...this.editedInvoice
-      } as Invoice,
+      },
       editDialog: false,
       valid: false,
-      invoiceNumberRules: [(v: string) => !!v || 'Invoice number is required'],
-      inventoryItems: [] as any,
-      inventoryItemNames: [] as any
+      invoiceNumberRules: [(v) => !!v || 'Invoice number is required'],
+      inventoryItems: [],
+      inventoryItemNames: []
     }
   },
   created() {
     // Create a deep copy of editedInvoice
     this.localEditedInvoice = this.deepCopy(this.editedInvoice)
-    console.log(this.localEditedInvoice)
+    console.log(this.editedInvoice)
     this.getInventoryItems()
   },
   methods: {
@@ -263,16 +251,17 @@ export default {
     addInventoryItem() {
       this.localEditedInvoice.inventoryItems.push({ description: '', quantity: 0 })
     },
-    removeInventoryItem(index: number) {
+    removeInventoryItem(index) {
       this.localEditedInvoice.inventoryItems.splice(index, 1)
     },
     addLaborItem() {
       this.localEditedInvoice.laborItems.push({ description: '', hours: 0 })
     },
-    removeLaborItem(index: number) {
+    removeLaborItem(index) {
       this.localEditedInvoice.laborItems.splice(index, 1)
     },
-    deepCopy(obj: any) {
+    deepCopy(obj) {
+      console.log(JSON.parse(JSON.stringify(obj)))
       return JSON.parse(JSON.stringify(obj))
     }
   }

@@ -100,7 +100,7 @@
     </v-row>
 
     <!-- Report Dialog -->
-    <v-dialog v-model="reportDialog" max-width="800px">
+   <v-dialog persistent v-model="reportDialog" max-width="800px">
       <v-card class="bg-cardColor">
         <v-card-title>{{ selectedEmployee?.name }}'s Report</v-card-title>
         <v-divider></v-divider>

@@ -3,7 +3,9 @@
 
   <v-menu v-model="companyDialog" location="right" min-width="300" :close-on-content-click="false">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn color="primary" class="h6" v-bind="activatorProps">{{ companyName }}</v-btn>
+      <v-btn color="primary" class="h6" v-bind="activatorProps"
+        >{{ truncateString(companyName,6) }}<v-icon end icon="fa: fa-solid fa-caret-down"
+      /></v-btn>
     </template>
     <v-card class="bg-background" rounded="md">
       <h2 class="h5 font-weight-regular d-flex justify-center bg-background text-secondary">
@@ -128,6 +130,9 @@ export default defineComponent({
       this.companyName = localStorage.getItem('currentCompanyName')
       this.companyDialog = false
     },
+    truncateString(string, length) {
+      return string.length > length ? string.substring(0, length) + '...' : string
+    },
     switchCompany(companyName) {
       this.isDeleting = true
       const companyId = this.findCompany(companyName)
@@ -187,9 +192,14 @@ export default defineComponent({
           })
           const currentCompanyID = localStorage.getItem('currentCompany')
           for (let i = 0; i < this.joinedCompanies.length; i++) {
-            if (this.joinedCompaniesIds[i] === currentCompanyID) {
+            if (
+              this.joinedCompaniesIds[i] === currentCompanyID ||
+              this.joinedCompaniesNames[i] === localStorage.getItem('currentCompanyName')
+            ) {
               this.companyName = this.joinedCompaniesNames[i]
               localStorage.setItem('currentCompanyName', this.joinedCompaniesNames[i])
+              localStorage.setItem('currentCompany', this.joinedCompaniesIds[i])
+              localStorage.setItem('employeeId', this.joinedCompaniesEmployeeIds[i])
               break
             } else {
               this.companyName = 'No company selected'

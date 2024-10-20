@@ -1,14 +1,18 @@
 <template>
-  <v-overlay v-model="loading" absolute>
-    <div class="loading-content">
-      <img class="loading-logo" />
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
-    </div>
-  </v-overlay>
+  <div class="loading-content" v-if="Loading">
+    <img class="loading-logo" />
+    <v-progress-circular indeterminate size="64"></v-progress-circular>
+  </div>
 </template>
 
 <script>
 export default {
+  props: {
+    Loading: {
+      type: Boolean,
+      required: true
+    }
+  },
   data: () => ({
     loading: true
   }),
@@ -24,7 +28,6 @@ export default {
   justify-content: center;
   align-items: center;
 }
-
 .loading-content {
   display: flex;
   flex-direction: column;

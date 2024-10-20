@@ -112,7 +112,7 @@
     ></v-card>
 
     <!-- Invoice Details Modal -->
-    <v-dialog v-model="showInvoiceModal">
+   <v-dialog persistent v-model="showInvoiceModal">
       <v-card class="bg-cardColor">
         <v-card-title>Invoice Details</v-card-title>
         <v-card-text>

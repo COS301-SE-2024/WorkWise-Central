@@ -184,11 +184,8 @@
           <v-col>
             <SelectMembers :jobID="props.passedInJob?._id" />
           </v-col>
-          <!--          <v-col>-->
-          <!--            <UpdateJobStatus :passedInJob="props.passedInJob" />-->
-          <!--          </v-col>-->
           <v-col>
-            <!--              <ChangeDueDate :jobDetails="props.passedInJob?.details" :jobID="props.passedInJob?._id"  />-->
+            <AssignTeam :jobID="props.passedInJob?._id" />
           </v-col>
         </v-col>
       </v-row>
@@ -222,6 +219,7 @@
 import { defineEmits, defineProps, ref } from 'vue'
 import ChangeClient from './ChangeClientDialog.vue'
 import SelectMembers from './SelectMembers.vue'
+import AssignTeam from './AssignTeam.vue'
 import axios from 'axios'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'

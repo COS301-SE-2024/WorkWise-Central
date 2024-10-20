@@ -44,7 +44,7 @@
     </v-card>
 
     <!-- Progress Modal -->
-    <v-dialog v-model="progressDialog" max-width="500px">
+   <v-dialog persistent v-model="progressDialog" max-width="500px">
       <v-card>
         <v-card-title>Job Progress</v-card-title>
         <v-divider></v-divider>

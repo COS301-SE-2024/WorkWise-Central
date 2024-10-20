@@ -1,6 +1,5 @@
 <template>
-  <v-dialog
-    v-model="checklistDialog"
+ <v-dialog persistent     v-model="checklistDialog"
     max-width="500px"
     location="bottom"
     location-strategy="connected"

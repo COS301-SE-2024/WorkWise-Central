@@ -70,12 +70,12 @@
                   </template>
                   <v-list class="bg-background">
                     <v-list-item @click="acceptRequest(item)">
-                      <v-btn color="success"
+                      <v-btn color="success" :loading="isDeleting"
                         ><v-icon color="success" icon="fa: fa-solid fa-check"></v-icon>Accept</v-btn
                       >
                     </v-list-item>
                     <v-list-item @click="declineRequest(item)">
-                      <v-btn color="error"
+                      <v-btn color="error" :loading="isDeleting"
                         ><v-icon color="error" icon="fa: fa-solid fa-times"></v-icon>Decline</v-btn
                       >
                     </v-list-item>
@@ -111,6 +111,7 @@ export default defineComponent({
   data() {
     return {
       search: '' as string,
+      isDeleting: false,
       isDarkMode: localStorage.getItem('theme') === 'true' ? true : false,
       headers: [
         { title: 'Company Name', value: 'companyName' },
@@ -123,6 +124,7 @@ export default defineComponent({
   },
   methods: {
     async acceptRequest(request: Request) {
+      this.isDeleting = true
       console.log('Accepted:', request)
       // Add logic to handle request acceptance
       const config = {
@@ -153,9 +155,11 @@ export default defineComponent({
           })
           setTimeout(() => {
             this.getRequests()
+            this.isDeleting = false
           }, 3000)
         })
         .catch((error) => {
+          this.isDeleting = false
           console.error(error)
           this.$toast.add({
             severity: 'error',
@@ -166,6 +170,7 @@ export default defineComponent({
         })
     },
     async declineRequest(request: Request) {
+      this.isDeleting = true
       console.log('Declined:', request)
       // Add logic to handle request decline
       const config = {
@@ -194,10 +199,12 @@ export default defineComponent({
             life: 3000
           })
           setTimeout(() => {
+            this.isDeleting = false
             this.getRequests()
           }, 3000)
         })
         .catch((error) => {
+          this.isDeleting = false
           console.error(error)
           this.$toast.add({
             severity: 'error',

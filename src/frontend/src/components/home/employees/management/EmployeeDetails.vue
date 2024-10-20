@@ -1,6 +1,5 @@
 <template>
-  <v-dialog
-    v-model="clientDialog"
+ <v-dialog persistent     v-model="clientDialog"
     max-width="500"
     height="400"
     @click="console.log(EmployeeDetails)"

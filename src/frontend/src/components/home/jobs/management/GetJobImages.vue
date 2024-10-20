@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-carousel height="400">
+    <v-carousel height="400" v-if="images.length">
       <v-carousel-item v-for="(image, index) in images" :key="index">
         <v-img :src="image.src" height="100%" width="100%" cover @click="openImageOverlay(index)">
           <template v-slot:placeholder>
@@ -19,8 +19,7 @@
         >
           <v-icon class="pl-3" color="primary">{{ 'fa: fa-solid fa-ellipsis-h' }}</v-icon>
         </v-btn>
-        <v-dialog
-          v-model="image.dialog"
+       <v-dialog persistent           v-model="image.dialog"
           max-width="300px"
           location="bottom"
           location-strategy="connected"
@@ -69,7 +68,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="imageOverlay" fullscreen hide-overlay transition="dialog-bottom-transition">
+   <v-dialog persistent v-model="imageOverlay" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card class="bg-cardColor">
         <v-toolbar dark color="primary">
           <v-btn dark @click="imageOverlay = false">

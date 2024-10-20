@@ -46,6 +46,43 @@
             </p>
           </v-col>
 
+          <v-divider v-if="props.passedInJob?.assignedEmployees?.employeeIds.length">
+            <h5 ref="assignedEmployeesSection">Assigned Employees</h5>
+          </v-divider>
+
+          <v-row>
+            <v-col v-for="employee in props.passedInJob?.assignedEmployees?.employeeIds" :key="employee?._id" cols="12">
+              <v-row style="padding: 5px; align-items: center; justify-content: center;">
+                <v-col cols="auto">
+                  <v-avatar color="secondary" style="width: 55px; height: 55px">
+                    <img
+                        :src="employee?.userInfo?.displayImage"
+                        alt="Employee Image"
+                        style="width: 100%; height: 100%; object-fit: cover"
+                    />
+                  </v-avatar>
+                </v-col>
+                <v-col class="text-center" cols="auto">
+                  <span><strong>{{ employee?.userInfo?.displayName }}</strong></span>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+
+          <v-divider v-if="selectedTeams.length">
+            <h5 ref="assignedTeamsSection">Assigned Teams</h5>
+          </v-divider>
+
+          <v-row>
+            <v-col v-for="team in selectedTeams" :key="team?._id" cols="12">
+              <v-row>
+                <v-col>
+                  <span>{{ team?.teamName }}</span>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+
           <v-divider>
             <h5 ref="clientDetailsSection">Client Details</h5>
           </v-divider>
@@ -580,7 +617,29 @@ onMounted(() => {
     .catch((error) => {
       console.error('Failed to fetch employees:', error)
     })
+  getAssignedTeams()
 })
+
+
+const selectedTeams = ref<{ _id: string; teamName: string }[]>([])
+const getAssignedTeams = async () => {
+  try {
+    const response = await axios.get(`${API_URL}team/all/${localStorage.getItem('currentCompany')}`, config)
+    if (response.status > 199 && response.status < 300) {
+      const allTeams = response.data.data;
+      const assignedTeamIds = props.passedInJob?.assignedEmployees?.teamIds || [];
+
+      // Filter and map the assigned teams
+      selectedTeams.value = allTeams.filter((team: any) => assignedTeamIds.includes(team._id));
+      console.log('All Teams', allTeams)
+      console.log('Assigned Teams', selectedTeams.value);
+    } else {
+      console.log('failed');
+    }
+  } catch (error) {
+    console.error('Error fetching teams:', error);
+  }
+}
 </script>
 
 <style scoped>

@@ -114,7 +114,7 @@
         </v-col>
       </v-row>
       <Toast position="top-center" />
-      <v-dialog v-model="confirmLeaveDialog" max-width="500px">
+     <v-dialog persistent v-model="confirmLeaveDialog" max-width="500px">
         <v-card class="bg-cardColor">
           <v-card-title class="headline">Confirm Leave</v-card-title>
           <v-card-text> Are you sure you want to leave the company? </v-card-text>

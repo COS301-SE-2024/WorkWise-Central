@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog v-model="dialog" max-height="800" max-width="600" persistent>
+ <v-dialog persistent v-model="dialog" max-height="800" max-width="600" >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -27,23 +27,16 @@
             :rules="labelRules"
           />
           <v-label>Status Color</v-label>
-          <v-row>
-            <v-col
-              v-for="color in colorOptions"
-              :key="color"
-              cols="2"
-              class="d-flex justify-center"
-            >
-              <v-btn
-                :style="{ backgroundColor: color }"
-                class="ma-1"
-                @click="status.colour = color"
-                :outlined="status.colour !== color"
-                style="width: 40px; height: 40px; border-radius: 4px"
-              ></v-btn>
-            </v-col>
-          </v-row>
-          <span>Hex Code: {{ status.colour }}</span>
+          <v-color-picker
+            v-model="status.colour"
+            :hide-sliders="true"
+            :hide-canvas="true"
+            hide-inputs
+            show-swatches
+          ></v-color-picker>
+          <span
+            >Hex Code:<v-chip :color="status.colour">{{ status.colour }}</v-chip>
+          </span>
         </v-form>
       </v-card-text>
       <v-card-actions>

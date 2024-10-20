@@ -74,7 +74,7 @@
 
             <!-- <v-btn color="primary" dark >  </v-btn> -->
           </v-list-item-action>
-          <v-dialog v-model="dialog" max-width="600">
+         <v-dialog persistent v-model="dialog" max-width="600">
             <v-card class="bg-cardColor">
               <v-card-title>
                 <v-icon>mdi-file-document-outline</v-icon>

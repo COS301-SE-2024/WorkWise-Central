@@ -74,7 +74,7 @@
         <Button
           label="Comment"
           icon="mdi mdi-comment-plus"
-          class="p-button-success"
+          class="p-button-primary"
           @click="addComment"
           :disabled="isDeleting"
           :loading="isAdding"
@@ -267,3 +267,17 @@ onMounted(async () => {
   await getUserData()
 })
 </script>
+
+<style>
+ .p-button-primary {
+   background-color: #F0984D !important;
+   outline-color: #F0984D !important;
+   border: none !important; /* Add this line to remove the green outline */
+ }
+
+ .p-button-primary:hover {
+   background-color: #F0984D !important; /* Ensure hover color matches */
+   border: none !important; /* Add this line to remove the green outline */
+ }
+
+</style>

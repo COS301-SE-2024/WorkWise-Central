@@ -1,6 +1,5 @@
 <template>
-  <v-dialog
-    v-model="statusDialog"
+ <v-dialog persistent     v-model="statusDialog"
     max-width="400px"
     location="bottom"
     location-strategy="connected"

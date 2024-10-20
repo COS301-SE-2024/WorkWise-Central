@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-height="800" opacity="0.6" max-width="600">
+ <v-dialog persistent v-model="dialog" max-height="800" opacity="0.6" max-width="600">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         rounded="md"
@@ -507,7 +507,7 @@ export default {
         .post(API_URL + 'company/create', this.req_obj, config)
         .then((res) => {
           console.log(res)
-          localStorage['currentCompany'] = res.data.userId
+
           localStorage['currentCompanyName'] = res.data.data.name
           localStorage['employeeId'] = res.data.ownerId
           this.register_request_loading = false
