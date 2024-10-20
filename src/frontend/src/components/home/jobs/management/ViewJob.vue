@@ -46,11 +46,11 @@
             </p>
           </v-col>
 
-          <v-divider>
+          <v-divider v-if="props.passedInJob?.assignedEmployees?.employeeIds.length">
             <h5 ref="assignedEmployeesSection">Assigned Employees</h5>
           </v-divider>
 
-          <v-row v-if="props.passedInJob?.assignedEmployees?.employeeIds.length">
+          <v-row>
             <v-col v-for="employee in props.passedInJob?.assignedEmployees?.employeeIds" :key="employee._id" cols="12">
               <v-row style="padding: 5px; align-items: center; justify-content: center;">
                 <v-col cols="auto">
@@ -69,11 +69,11 @@
             </v-col>
           </v-row>
 
-          <v-divider>
+          <v-divider v-if="selectedTeams.length">
             <h5 ref="assignedTeamsSection">Assigned Teams</h5>
           </v-divider>
 
-          <v-row v-if="selectedTeams.length">
+          <v-row>
             <v-col v-for="team in selectedTeams" :key="team._id" cols="12">
               <v-row>
                 <v-col>

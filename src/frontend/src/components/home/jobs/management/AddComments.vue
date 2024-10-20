@@ -270,13 +270,14 @@ onMounted(async () => {
 
 <style>
  .p-button-primary {
-   background-color: #F0984D;
-   outline-color: #F0984D;
-   border: none; /* Add this line to remove the green outline */
+   background-color: #F0984D !important;
+   outline-color: #F0984D !important;
+   border: none !important; /* Add this line to remove the green outline */
  }
 
  .p-button-primary:hover {
    background-color: #F0984D !important; /* Ensure hover color matches */
    border: none !important; /* Add this line to remove the green outline */
  }
+
 </style>
