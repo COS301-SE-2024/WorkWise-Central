@@ -621,7 +621,7 @@ onMounted(() => {
 })
 
 
-const selectedTeams = ref<[]>([])
+const selectedTeams = ref<{ _id: string; teamName: string }[]>([])
 const getAssignedTeams = async () => {
   try {
     const response = await axios.get(`${API_URL}team/all/${localStorage.getItem('currentCompany')}`, config)
