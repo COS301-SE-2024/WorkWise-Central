@@ -142,6 +142,7 @@
       </template>
     </Dialog>
   </aside>
+  <Toast position="top-center" />
 </template>
 
 <script setup>
@@ -279,6 +280,13 @@ const createNewChat = () => {
       chatDescription: newChatDescription.value
     })
     closeNewChatDialog()
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please fill in all required fields',
+      life: 3000
+    })
   }
 }
 
@@ -319,6 +327,8 @@ const theKidIsNotMySon = (userId) => {
   padding: 1rem;
   height: 100%;
   overflow-y: auto;
+  scrollbar-color: #1f6a83 rgba(172, 211, 223, 0.56);
+  scrollbar-width: thin;
 }
 
 .new-chat-dialog {
