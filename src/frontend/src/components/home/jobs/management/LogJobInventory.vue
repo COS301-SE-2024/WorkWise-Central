@@ -72,12 +72,48 @@
         <td>{{ item.quantity }}</td>
         <td>
           <v-btn
-            icon="mdi-pencil"
             color="warning"
             size="small"
             class="mr-2"
             @click="editInventory(index)"
-          ></v-btn>
+            icon="fa: fa-solid fa-edit"
+          >
+          </v-btn>
+          <v-dialog
+              max-width="300px"
+              location="bottom"
+              location-strategy="connected"
+              opacity="0"
+              origin="top center"
+          >
+            <template v-slot:activator="{props: activatorProps}">
+              <v-btn
+                  color="error"
+                  size="small"
+                  class="mr-2"
+                  v-bind="activatorProps"
+                  icon="fa: fa-solid fa-trash"
+              >
+              </v-btn>
+            </template>
+            <template v-slot:default="{ isActive }">
+              <v-card>
+                <v-card-title class="headline">Warning</v-card-title>
+                <v-card-text>Are you sure you want to delete this inventory item?</v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" @click="confirmDelete(index)">
+                    <v-icon color="green darken-1">{{ 'fa: fa-solid fa-check' }}</v-icon>
+                    Yes
+                  </v-btn>
+                  <v-btn color="red darken-1" @click="isActive.value = false">
+                    <v-icon color="error">{{ 'fa: fa-solid fa-cancel' }}</v-icon>
+                    No
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
         </td>
       </tr>
     </tbody>
@@ -135,6 +171,7 @@ const itemsPerPage = ref(5)
 const page = ref(1)
 const isEditing = ref(false)
 const isLoading = ref(false)
+const isDeleting = ref(false)
 const editingIndex = ref(-1)
 
 const paginatedInventory = computed(() => {
@@ -142,6 +179,22 @@ const paginatedInventory = computed(() => {
   const end = start + itemsPerPage.value
   return inventoryList.value.slice(start, end)
 })
+
+const confirmDelete = (index: number) => {
+  const actualIndex = (page.value - 1) * itemsPerPage.value + index
+  isDeleting.value = true
+  setTimeout(() => {
+    inventoryList.value.splice(actualIndex, 1)
+    isDeleting.value = false
+  }, 1000)
+  try {
+    const itemToDelete = inventoryList.value[actualIndex]
+    console.log('Deleting item:', itemToDelete)
+    axios.delete(`${API_URL}inventory/stockUsed/${itemToDelete.inventoryUsedId}`, config)
+  } catch (error) {
+    console.error('Error deleting inventory:', error)
+  }
+}
 
 async function fetchInventoryOptions() {
   try {
