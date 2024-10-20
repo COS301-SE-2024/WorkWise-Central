@@ -37,7 +37,7 @@ export class AddChatDto {
 
   @IsOptional()
   @IsString()
-  description?: string = '';
+  chatDescription?: string = '';
 
   @IsOptional()
   @IsString()
