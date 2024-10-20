@@ -403,18 +403,42 @@ export default defineComponent({
       })
     }
 
-    const endCall = () => {
-      socket.emit('leave-room', 'room-id') // Replace with actual room ID
-      peers.value.forEach((peer) => peer.connection.close())
-      peers.value = []
-      if (localStream) {
-        localStream.getTracks().forEach((track) => track.stop())
-      }
-      inCall.value = false
-      emit('return')
-      router.push('/appointments')
-    }
+    const endCall = async () => {
+      try {
+        socket.emit('leave-room', 'room-id')
 
+        // Close peer connections
+        peers.value.forEach((peer) => peer.connection.close())
+        peers.value = []
+
+        // Stop all media tracks and release camera
+        if (localStream) {
+          localStream.getTracks().forEach((track) => {
+            track.enabled = false // Disable the track
+            track.stop() // Stop the track completely
+          })
+          localStream = null
+        }
+
+        // Clear video elements
+        const localVideo = document.getElementById('localVideo') as HTMLVideoElement
+        if (localVideo) {
+          localVideo.srcObject = null
+          localVideo.removeAttribute('src')
+          localVideo.load()
+        }
+
+        // Release media permissions
+        await navigator.mediaDevices.getUserMedia({ audio: false, video: false }).catch(() => {}) // Intentionally catch error
+
+        inCall.value = false
+        emit('return')
+        await router.push('/appointments')
+        window.location.reload();
+      } catch (err) {
+        console.error('Error ending call:', err)
+      }
+    }
     return {
       title,
       scheduledTime,

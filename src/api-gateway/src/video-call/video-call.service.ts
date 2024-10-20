@@ -7,6 +7,7 @@ import { CompanyService } from '../company/company.service';
 import { EmployeeService } from '../employee/employee.service';
 import { ValidationResult } from '../auth/entities/validationResult.entity';
 import { UpdateVideoCallDto } from './dto/update-video-call.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class VideoCallService {
@@ -69,11 +70,11 @@ export class VideoCallService {
 
   async generateRoomId() {
     //generating id using uuid
-    let id = crypto.randomUUID();
+    let id = uuidv4();
 
     //checking if the id already exists
     while (await this.roomIdExists(id)) {
-      id = crypto.randomUUID();
+      id = uuidv4();
     }
     return id;
   }

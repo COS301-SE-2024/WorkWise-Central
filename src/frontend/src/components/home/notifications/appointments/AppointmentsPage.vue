@@ -62,7 +62,12 @@
             <v-menu max-width="500px">
               <template v-slot:activator="{ props }">
                 <v-btn rounded="xl" variant="plain" v-bind="props">
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon>
+                  <v-icon
+                    color="primary"
+                    style="font-size: 30px; padding: 8px;"
+                  >
+                    mdi-dots-horizontal
+                  </v-icon>
                 </v-btn>
               </template>
               <v-list class="bg-background">
@@ -406,7 +411,7 @@ export default defineComponent({
         { title: 'Date', value: 'date' },
         { title: 'Start Time', value: 'startTime' },
         { title: 'End Time', value: 'endTime' },
-        { title: 'Actions', value: 'actions', sortable: false }
+        { title: '', value: 'actions', sortable: false }
       ],
       deleteDialog: false,
       isDeleting: false,
@@ -623,10 +628,7 @@ export default defineComponent({
     async createAppointment() {
       this.isGenerating = true
       const appointment = { ...this.newAppointment }
-      //checking if the current employee is in the participants list
-      if (this.newAppointment.participants.includes(localStorage.getItem('employeeId'))) {
-        this.appointments.push(appointment)
-      }
+      
 
       const config = {
         headers: {
@@ -648,17 +650,26 @@ export default defineComponent({
       await axios
         .post(`${API_URL}videoCalls/create`, data, config)
         .then((response) => {
+          //checking if the current employee is in the participants list
+          if (this.newAppointment.participants.includes(localStorage.getItem('employeeId'))) {
+            this.appointments.push(appointment)
+          }
           this.$toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Meeting created successfully'
+            detail: 'Meeting created successfully',
+            life: 3000
           })
+          this.showCreate = false
+          this.isGenerating = false
+          this.clearFields()
         })
         .catch((error) => {
           this.$toast.add({
             severity: 'failure',
             summary: 'failure',
-            detail: 'Creating meeting failed'
+            detail: 'Creating meeting failed',
+            life: 3000
           })
           console.error(error)
         })

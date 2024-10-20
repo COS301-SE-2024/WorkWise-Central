@@ -100,7 +100,6 @@
 
           <v-col>
             <v-dialog
-              persistent
               :opacity="0"
               v-model="loginDialog"
               max-width="400"
@@ -293,7 +292,6 @@
 
             <!-- Flow 1 -->
             <v-dialog
-              persistent
               :opacity="0"
               v-model="signupDialog"
               max-width="400"

@@ -239,18 +239,11 @@ export class InvoiceService {
   }
 
   async update(id: Types.ObjectId, updateInvoiceDto: UpdateInvoiceDto) {
-    // if (updateInvoiceDto.sent && !updateInvoiceDto.sentDate) {
-    //   updateInvoiceDto.sentDate = new Date();
-    // }
-    // if (updateInvoiceDto.paid && !updateInvoiceDto.receiptOfPaymentDate) {
-    //   updateInvoiceDto.receiptOfPaymentDate = new Date();
-    // }
-    // return await this.invoiceRepository.update(id, updateInvoiceDto);
-
+    console.log('updateInvoiceDto: ', updateInvoiceDto);
     //Using the updated labor and inventory items to update the invoice
     const invoice = await this.findById(id);
     const dto = new UpdateInvoiceDto();
-    if(updateInvoiceDto.inventoryItems && updateInvoiceDto.inventoryItems.length!=0){
+    if (updateInvoiceDto.inventoryItems && updateInvoiceDto.inventoryItems.length != 0) {
       dto.inventoryItems = [];
       for (const item of updateInvoiceDto.inventoryItems) {
         dto.inventoryItems.push({
@@ -262,7 +255,7 @@ export class InvoiceService {
         });
       }
     }
-    if(updateInvoiceDto.laborItems && updateInvoiceDto.laborItems.length!=0){
+    if (updateInvoiceDto.laborItems && updateInvoiceDto.laborItems.length != 0) {
       dto.laborItems = [];
       for (const item of updateInvoiceDto.laborItems) {
         dto.laborItems.push({
@@ -283,27 +276,36 @@ export class InvoiceService {
     dto.paid = invoice.paid;
     dto.taxPercentage = invoice.taxPercentage;
 
-    if(dto.inventoryItems || dto.laborItems){
-    //Calculating the subtotal
-    let totalTemp = 0;
-    if(dto.inventoryItems){
-    for (const item of dto.inventoryItems) {
-      totalTemp = totalTemp + item.total;
-    }}
-    if(dto.laborItems){
-      for (const item of dto.laborItems) {
-        totalTemp = totalTemp + item.total;
+    if (dto.inventoryItems || dto.laborItems) {
+      //Calculating the subtotal
+      let totalTemp = 0;
+      if (dto.inventoryItems) {
+        for (const item of dto.inventoryItems) {
+          totalTemp = totalTemp + item.total;
+        }
       }
-    }
-    dto.total = totalTemp;
-    dto.taxAmount = totalTemp * (15 / 115);
-    dto.subTotal = totalTemp - dto.taxAmount;
+      if (dto.laborItems) {
+        for (const item of dto.laborItems) {
+          totalTemp = totalTemp + item.total;
+        }
+      }
+      dto.total = totalTemp;
+      dto.taxAmount = totalTemp * (15 / 115);
+      dto.subTotal = totalTemp - dto.taxAmount;
     }
 
-    if(updateInvoiceDto.sent){
+    if (updateInvoiceDto.sent) {
       dto.sent = updateInvoiceDto.sent;
       dto.sentDate = updateInvoiceDto.sentDate;
     }
+    console.log('dto: ', dto);
+    return await this.invoiceRepository.update(id, dto);
+  }
+
+  async paid(id: Types.ObjectId, date: Date) {
+    const dto = new UpdateInvoiceDto();
+    dto.paid = true;
+    dto.receiptOfPaymentDate = date;
     return await this.invoiceRepository.update(id, dto);
   }
 

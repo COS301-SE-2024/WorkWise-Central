@@ -45,7 +45,7 @@
               @click="showGenerateInvoice"
             >
               <v-icon icon="fa: fa-solid fa-plus" color="white"></v-icon>
-              generate invoice
+              Generate Invoice
             </v-btn>
           </v-col>
         </v-row>
@@ -75,9 +75,19 @@
 
           <template v-slot:[`item.paidDate`]="{ item }">{{ formatDate(item.paidDate) }}</template>
 
-          <template v-slot:[`item.paid`]="{ item }">{{ formatStatus(item.paid) }}</template>
+          <template v-slot:[`item.paid`]="{ item }">
+            <v-chip :color="item.paid ? 'green' : 'red'" dark small outlined>
+              {{ item.paid ? 'Paid' : 'Unpaid' }}
+            </v-chip>
+          </template>
 
-          <template v-slot:[`item.sent`]="{ item }">{{ formatSend(item.sent) }}</template>
+          <template v-slot:[`item.sent`]="{ item }">
+            <v-chip :color="item.sent ? 'secondary' : 'primary'" dark small outlined>
+              {{ item.sent ? 'Sent' : 'Unsent' }}
+            </v-chip>
+          </template>
+
+          <!-- <template v-slot:[`item.sent`]="{ item }">{{ formatSend(item.sent) }}</template> -->
 
           <template v-slot:[`item.actions`]="{ item }">
             <v-menu max-width="500px">
@@ -88,7 +98,12 @@
                   color="warning"
                   @click="selectInvoice(item)"
                 >
-                  <v-icon start color="primary" size="small">mdi-dots-horizontal</v-icon>
+                  <v-icon
+                    color="primary"
+                    style="font-size: 30px; padding: 8px;"
+                  >
+                    mdi-dots-horizontal
+                  </v-icon>
                 </v-btn>
               </template>
               <v-list>
@@ -102,9 +117,9 @@
                 <v-list-item>
                   <ViewInvoice :invoice="selectedItem" />
                 </v-list-item>
-                <v-list-item>
+                <!-- <v-list-item>
                   <EditInvoice :editedInvoice="selectedItem" :invoice_id="selectedItem._id" />
-                </v-list-item>
+                </v-list-item> -->
                 <v-list-item>
                   <DeleteInvoice :invoice_id="selectedItem._id" @InvoiceDeleted="getRequests" />
                 </v-list-item>
@@ -157,7 +172,7 @@
                     color="success"
                     size="small"
                   ></v-icon>
-                  generate invoice
+                  Generate Invoice
                 </v-btn>
               </v-col>
               <v-col cols="12" lg="6" order="last" order-lg="first">
@@ -249,7 +264,7 @@ export default defineComponent({
       employeePermissions: []
     }
   },
-  components: { DeleteInvoice, ViewInvoice, Toast, SendInvoice, EditInvoice },
+  components: { DeleteInvoice, ViewInvoice, Toast, SendInvoice },
   methods: {
     formatDate(dateString) {
       if (!dateString) return ''
@@ -341,22 +356,22 @@ export default defineComponent({
                 ? invoice.companyId.contactDetails.phoneNumber
                 : null,
               companyLogo: invoice.companyId?.logo ? invoice.companyId.logo : null,
-              inventoryItems: invoice.inventoryItems ? invoice.inventoryItems : [],
-              laborItems: invoice.laborItems ? invoice.laborItems : [],
-              // inventoryItems: invoice.inventoryItems.map((obj) => [
-              //   obj.description,
-              //   obj.quantity,
-              //   obj.unitPrice,
-              //   obj.discount,
-              //   Number(obj.total?.toFixed(2))
-              // ]),
-              // laborItems: invoice.laborItems.map((obj) => [
-              //   obj.description,
-              //   Number(obj.quantity?.toFixed(2)),
-              //   obj.unitPrice,
-              //   obj.discount,
-              //   Number(obj.total?.toFixed(2))
-              // ]),
+              inventoryItems2: invoice.inventoryItems ? invoice.inventoryItems : [],
+              laborItems2: invoice.laborItems ? invoice.laborItems : [],
+              inventoryItems: invoice.inventoryItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.unitPrice,
+                obj.discount,
+                Number(obj.total?.toFixed(2))
+              ]),
+              laborItems: invoice.laborItems.map((obj) => [
+                obj.description,
+                Number(obj.quantity?.toFixed(2)),
+                obj.unitPrice,
+                obj.discount,
+                Number(obj.total?.toFixed(2))
+              ]),
               taxPercentage: invoice.taxPercentage ? invoice.taxPercentage : null,
               taxAmount: invoice.taxAmount ? invoice.taxAmount : null,
               subTotal: invoice.subTotal ? Number(invoice.subTotal?.toFixed(2)) : null

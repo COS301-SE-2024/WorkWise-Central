@@ -206,16 +206,16 @@
           <v-card>
             <v-card-title class="headline">Update Inventory</v-card-title>
             <v-card-text>
+              <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="400px"></iframe>
               <p class="pt-5 pb-5">
                 Do you want to update the inventory table based on this stock take?
               </p>
-              <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="400px"></iframe>
             </v-card-text>
             <v-card-actions>
               <v-container>
                 <v-row>
                   <v-col cols="12" lg="6" order="last" order-lg="first">
-                    <v-btn @click="confirmUpdate(false)" block color="red darken-1" text
+                    <v-btn @click="confirmUpdate(false)" block color="red darken-1" text :loading="isNotUpdating"
                       ><v-icon icon="fa: fa-solid fa-cancel" color="red darken-1"></v-icon>No</v-btn
                     >
                   </v-col>
@@ -254,6 +254,7 @@ export default {
       isDeleting: false,
       currentDate: new Date().toISOString().substr(0, 10),
       isUpdating: false,
+      isNotUpdating: false,
       searchQuery: '',
       sortOrder: '',
       stockTakeDate: new Date(),
@@ -440,8 +441,12 @@ export default {
       this.pdfUrl = URL.createObjectURL(pdfBlob)
     },
     async confirmUpdate(update) {
+      if(update) {
+        this.isUpdating = true
+      }else {
+        this.isNotUpdating = true
+      }
       this.updateInventory = update
-      this.isUpdating = true
 
       const config = {
         headers: {
@@ -475,6 +480,7 @@ export default {
         setTimeout(() => {
           this.confirmDialog = false
           this.isUpdating = false
+          this.isNotUpdating = false
           this.getInventoryItems()
         }, 3000)
       } catch (error) {

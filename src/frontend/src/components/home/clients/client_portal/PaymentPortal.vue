@@ -1,17 +1,26 @@
 <template>
-  <v-container>
+  <v-container fluid fill-height>
     <v-card class="bg-cardColor">
-      <v-card-title class="text-h5">Invoices</v-card-title>
+      <v-col cols="12" lg="12" class="d-flex align-start">
+        <v-icon icon="fa: fa-solid fa-file"></v-icon>
+        <v-label class="ms-2 h4 font-family-Nunito text-headingTextColor" height="auto" width="auto"
+          >Invoices
+        </v-label>
+      </v-col>
       <v-divider></v-divider>
       <v-list>
         <v-list-item v-for="invoice in invoices" :key="invoice._id">
           <v-list-item-content>
             <v-list-item-title>Invoice #{{ invoice.invoiceNumber }}</v-list-item-title>
             <v-list-item-subtitle>Payment date: {{ invoice.paymentDate }}</v-list-item-subtitle>
-            <v-list-item-subtitle>Amount: {{ invoice.total }}</v-list-item-subtitle>
-            <v-list-item-subtitle
-              >Status: {{ invoice.paid ? 'Paid' : 'Awaiting payment' }}</v-list-item-subtitle
-            >
+            <v-list-item-subtitle>
+              Amount: <strong>R{{ invoice.total }}</strong>
+            </v-list-item-subtitle>
+            <v-list-item-subtitle>
+              <v-chip :color="invoice.paid ? 'success' : 'error'" dark small outlined>
+                {{ invoice.paid ? 'Paid' : 'Awaiting payment' }}
+              </v-chip>
+            </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
             <form :id="'paymentForm' + invoice._id" :action="pfHost" method="post">
@@ -28,13 +37,42 @@
               <input name="item_name" type="hidden" :value="invoice.invoiceNumber" />
               <input name="signature" type="hidden" :value="generateSignature(invoice)" />
             </form>
-            <v-btn
+            <!-- <v-btn
               color="success"
-              @click="submitPaymentForm(invoice._id)"
+              dark
+              
               :disabled="invoice.paid === 'Paid'"
             >
-              Pay Now </v-btn
-            ><v-btn color="primary" @click="formatPdfData(invoice)"> View Invoice </v-btn>
+              Pay Now
+            </v-btn> -->
+
+            <v-col cols="6" md="4" class="d-flex align-center justify-end">
+              <v-btn
+                class="text-none font-weight-regular hello"
+                color="success"
+                block
+                variant="elevated"
+                style="color: white !important"
+                @click="formatPdfData(invoice)"
+              >
+                View Invoice
+              </v-btn>
+            </v-col>
+
+            <v-col cols="6" md="4" class="d-flex align-center justify-end">
+              <v-btn
+                v-if="!invoice.paid"
+                class="text-none font-weight-regular hello"
+                color="primary"
+                block
+                variant="elevated"
+                @click="submitPaymentForm(invoice._id)"
+              >
+                Pay Now
+              </v-btn>
+            </v-col>
+
+            <!-- <v-btn color="primary" dark >  </v-btn> -->
           </v-list-item-action>
          <v-dialog persistent v-model="dialog" max-width="600">
             <v-card class="bg-cardColor">
@@ -114,6 +152,9 @@ export default defineComponent({
       return_url: 'https://tuksui.sharpsoftwaresolutions.net/client-portal?cId=',
       cancel_url: 'https://tuksui.sharpsoftwaresolutions.net/client-portal?cId=',
       notify_url: 'https://tuksapi.sharpsoftwaresolutions.net/payfast/notify',
+      // return_url: ' http://localhost:5173/client-portal?cId=',
+      // cancel_url: ' http://localhost:5173/client-portal?cId=',
+      // notify_url: 'https://1e05-105-224-67-55.ngrok-free.app/payfast/notify',
       testingMode: true,
       pfHost: 'sandbox.payfast.co.za',
       forms: {}
@@ -330,12 +371,10 @@ export default defineComponent({
     async getRequests() {
       if (localStorage.getItem('clientId') !== null) {
         this.clientId = localStorage.getItem('clientId')
-
       }
 
       this.return_url = this.return_url + this.clientId
       this.cancel_url = this.cancel_url + this.clientId
-
 
       console.log('this.return_url: ', this.return_url)
       console.log('this.cancel_url: ', this.cancel_url)

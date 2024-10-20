@@ -49,7 +49,9 @@
             >
               <template v-slot:[`item.actions`]="{ item }">
                 <v-btn @click="openRoleDialog(item)" color="primary">
-                  <v-icon color="primary">mdi-dots-horizontal</v-icon></v-btn
+                  <v-icon color="primary" style="font-size: 25px; padding: 8px">
+                    mdi-dots-horizontal
+                  </v-icon></v-btn
                 >
               </template>
             </v-data-table>
