@@ -96,6 +96,14 @@
                   </v-list-item>
                 </v-list> </v-menu
             ></template>
+            <template v-slot:no-data>
+            <v-row>
+              <v-col class="text-center">
+                <v-icon large color="grey">mdi-alert-outline</v-icon>
+                <div>No inventory items available.</div>
+              </v-col>
+            </v-row>
+          </template>
           </v-data-table>
         </v-card-text>
       </v-card>

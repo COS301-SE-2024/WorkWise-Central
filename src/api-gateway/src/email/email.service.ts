@@ -188,7 +188,7 @@ export class EmailService {
     companyName: string,
     jobTitle: string,
   ) {
-    const url = `${this.globalConfig.frontendUrl}/client-portal?cId=${encodeURIComponent(clientId.toString())}`;
+    const url = `${this.globalConfig.frontendUrl}client-portal?cId=${encodeURIComponent(clientId.toString())}`;
     const ourEmail = '<support@workwise.com>';
 
     const result = await this.mailerService.sendMail({
