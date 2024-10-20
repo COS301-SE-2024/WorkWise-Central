@@ -1,8 +1,8 @@
 <div align="center">
 
-# Boolean Hooligans - WorkWise Central
+# Boolean Hooligans - [WorkWise Central](https://tuksui.sharpsoftwaresolutions.net/)
 
-![WorkWise Central Logo](/res/img/logo/WorkWiseLogo.png)
+<img src="/res/img/logo/WorkWiseLogo.png" alt="WorkWise Central Logo" height="200">
 
 [![codecov](https://codecov.io/github/COS301-SE-2024/WorkWise-Central/branch/develop/graph/badge.svg?token=MI68R6WWPD)](https://codecov.io/github/COS301-SE-2024/WorkWise-Central)&ensp;
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/WorkWise-Central/build.yml)&ensp;
@@ -23,22 +23,28 @@
 </div>
 
 ## Project Description
+<details>
+  <summary><b>Project Description</b></summary>
 
-**Boolean Hooligans - WorkWise Central - Project Description**:
+**WorkWise Central** is a cutting-edge Progressive Web App (PWA) designed to transform service-based industries such as building, plumbing, and electrical services. This all-in-one solution streamlines operations for service delivery businesses.
 
-WorkWise Central is a cutting-edge Progressive Web App (PWA) designed to revolutionize service-based industries like building, plumbing, electrical, and installation services. Built on a robust technology stack including Vuejs, NestJS, Node.js, Typecript, OAuth, MongoDB and Docker. WorkWise Central empowers companies to streamline operations, optimize resource utilization, and enhance customer satisfaction.
+### Key Features:
+- **Client Management**: Includes a client-facing portal with an integrated payment gateway.
+- **Employee Management**: Allows you to define employee roles and map them to your company’s organizational structure.
+- **Job Tracking**: Offers advanced tracking of jobs, including time management and inventory usage.
+- **Inventory System**: Seamlessly integrated with other system components for efficient stock management.
+- **Auto-Generated Invoices**: Automatically creates invoices that can be sent directly to clients.
+- **In-App Communication**: Built-in messaging channels for real-time team collaboration.
+- **Flexible Role-Based Access**: Highly customizable permissions tailored to your team’s needs.
 
-Key features include:
 
-- Efficient client appointment management <br>
-- Real-time task assignment and job progress tracking <br>
-- Seamless communication between employees and clients <br>
-- User-friendly interface for accessing job details and status updates <br>
-- Advanced functionalities like push notifications, SMS alerts, and location tracking <br>
+[Click here](https://tuksui.sharpsoftwaresolutions.net/) to view the system.
 
-By harnessing modern technology, WorkWise Central transforms business operations, ensuring exceptional service and exceeding customer expectations. Join us in revolutionizing the future of service-based industries with WorkWise Central.
+</details>
 
 ## Demo Video
+<details>
+  <summary><b>Demo videos</b></summary>
 
 [Watch our demo video - Boolean Hooligans Demo1](https://drive.google.com/drive/folders/1Cqqlc6tD-U0kXEPxzeeYuRkkoLvfFiU9)
 
@@ -46,15 +52,26 @@ By harnessing modern technology, WorkWise Central transforms business operations
 
 [Watch our demo video - Boolean Hooligans Demo3](https://drive.google.com/file/d/1rWXOmel3e3uGDIRimC8dW93tZXijGoxv/view?usp=drive_link)
 
+[Watch our demo video - Boolean Hooligans Demo4](https://drive.google.com/file/d/1Za2r4HNahltB8Nfu0D2yE-FDdg8JtELx/view?usp=sharing)
+
+</details>
+
 ## Documentation 
 
 [Read the full documentation for this project](https://work-wise-central-2-d2hpre8of-jessbloems-projects.vercel.app/)
+
+## User testing 
+
+[Read the full user testing report](https://drive.google.com/file/d/1rHGpE1zzxzwqzZgDNtvdGF5mwKDhdquf/view?usp=sharing)
 
 ## GitHub Project Board
 
 [View our GitHub Project Board](https://github.com/orgs/COS301-SE-2024/projects/59)
 
 ## Team Members
+
+<details>
+  <summary><b>Team Members</b></summary>
 
 <table style="border: 1px solid #ddd; width: 100%; font-family: Arial, sans-serif; border-collapse: collapse;">
   <!-- First Row -->
@@ -132,4 +149,6 @@ By harnessing modern technology, WorkWise Central transforms business operations
       <a href="https://github.com/BlockchainDlamini"><img src="https://img.shields.io/badge/GitHub-333?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
     </td>
 <table style="border: 1px solid #ddd; width: 100%; font-family: Arial, sans-serif; border-collapse: collapse;">
+
+</details>
 
