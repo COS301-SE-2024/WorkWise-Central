@@ -32,7 +32,7 @@
             <v-col>
               <small class="text-caption">Inventory Items</small>
               <v-row
-                v-for="(item, index) in localEditedInvoice.inventoryItems"
+                v-for="(item, index) in localEditedInvoice.laborItems2"
                 :key="index"
                 class="d-flex align-center"
               >
@@ -68,7 +68,7 @@
             <v-col>
               <small class="text-caption">Labor Items</small>
               <v-row
-                v-for="(item, index) in localEditedInvoice.laborItems"
+                v-for="(item, index) in localEditedInvoice.laborItems2"
                 :key="index"
                 class="d-flex align-center"
               >

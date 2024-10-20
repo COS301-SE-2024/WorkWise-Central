@@ -356,22 +356,22 @@ export default defineComponent({
                 ? invoice.companyId.contactDetails.phoneNumber
                 : null,
               companyLogo: invoice.companyId?.logo ? invoice.companyId.logo : null,
-              inventoryItems: invoice.inventoryItems ? invoice.inventoryItems : [],
-              laborItems: invoice.laborItems ? invoice.laborItems : [],
-              // inventoryItems: invoice.inventoryItems.map((obj) => [
-              //   obj.description,
-              //   obj.quantity,
-              //   obj.unitPrice,
-              //   obj.discount,
-              //   Number(obj.total?.toFixed(2))
-              // ]),
-              // laborItems: invoice.laborItems.map((obj) => [
-              //   obj.description,
-              //   Number(obj.quantity?.toFixed(2)),
-              //   obj.unitPrice,
-              //   obj.discount,
-              //   Number(obj.total?.toFixed(2))
-              // ]),
+              inventoryItems2: invoice.inventoryItems ? invoice.inventoryItems : [],
+              laborItems2: invoice.laborItems ? invoice.laborItems : [],
+              inventoryItems: invoice.inventoryItems.map((obj) => [
+                obj.description,
+                obj.quantity,
+                obj.unitPrice,
+                obj.discount,
+                Number(obj.total?.toFixed(2))
+              ]),
+              laborItems: invoice.laborItems.map((obj) => [
+                obj.description,
+                Number(obj.quantity?.toFixed(2)),
+                obj.unitPrice,
+                obj.discount,
+                Number(obj.total?.toFixed(2))
+              ]),
               taxPercentage: invoice.taxPercentage ? invoice.taxPercentage : null,
               taxAmount: invoice.taxAmount ? invoice.taxAmount : null,
               subTotal: invoice.subTotal ? Number(invoice.subTotal?.toFixed(2)) : null
