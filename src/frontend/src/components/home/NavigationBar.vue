@@ -403,14 +403,15 @@ export default defineComponent({
         </v-list-group>
       </v-list>
 
-      <v-list-item
-        class="list-item-large"
-        to="map"
-        value="Fleet"
-        title="Fleet"
-        prepend-icon="fa: fa-solid fa-truck"
-        v-show="checkPermission('view fleet')"
-      ></v-list-item>
+      <!-- TODO: Finish this later-->
+      <!--      <v-list-item-->
+      <!--        class="list-item-large"-->
+      <!--        to="map"-->
+      <!--        value="Fleet"-->
+      <!--        title="Fleet"-->
+      <!--        prepend-icon="fa: fa-solid fa-truck"-->
+      <!--        v-show="checkPermission('view fleet')"-->
+      <!--      ></v-list-item>-->
 
       <v-list v-model:open="open">
         <v-list-group fluid value="Communication">
