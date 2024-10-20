@@ -5,21 +5,21 @@
       <i class="fa: fa-solid fa-search" />
       <InputText v-model="searchQuery" placeholder="Search chats" class="w-full" />
     </span>
-
     <Button
       label="Create New Chat"
       icon="fa: fa-solid fa-plus"
       @click="showNewChatDialog"
       class="custom-button"
-      style="padding-right: 27.8%"
+      style="padding-right: 27.8%; margin-bottom: 5%"
     />
-
+    <hr />
     <ul class="chat-list">
       <li
         v-for="chat in filteredChats"
         :key="chat._id"
         @click="selectChat(chat)"
         :class="{ selected: selectedChat && chat._id === selectedChat._id }"
+        style="margin-bottom: 3%"
       >
         <Avatar
           :image="
@@ -48,6 +48,7 @@
           ></v-row
         >
       </li>
+      <hr />
     </ul>
 
     <Dialog
@@ -266,6 +267,7 @@ const theKidIsNotMySon = (userId) => {
   width: 300px;
   padding: 1rem;
   height: 100%;
+  overflow-y: auto;
 }
 
 .new-chat-dialog {
