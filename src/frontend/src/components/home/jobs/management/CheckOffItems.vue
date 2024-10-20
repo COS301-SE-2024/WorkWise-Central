@@ -9,7 +9,7 @@
         label="Create New Task List"
         icon="fa: fa-solid fa-plus"
         @click="createNewTask"
-        class="p-button-success"
+        class="p-button-primary"
       />
     </v-row>
 
@@ -205,7 +205,7 @@
                 label="Add Item"
                 icon="fa: fa-solid fa-plus"
                 @click="addItem(taskIndex)"
-                class="p-button-success"
+                class="p-button-primary"
               />
             </v-col>
           </v-row>

@@ -52,10 +52,18 @@
 
           <v-row v-if="props.passedInJob?.assignedEmployees?.employeeIds.length">
             <v-col v-for="employee in props.passedInJob?.assignedEmployees?.employeeIds" :key="employee._id" cols="12">
-              <v-row>
-                <v-col>
-                  <v-avatar :src="employee.userInfo.displayImage"></v-avatar>
-                  <span>{{ employee.userInfo.displayName }}</span>
+              <v-row style="padding: 5px; align-items: center; justify-content: center;">
+                <v-col cols="auto">
+                  <v-avatar color="secondary" style="width: 55px; height: 55px">
+                    <img
+                        :src="employee.userInfo.displayImage"
+                        alt="Employee Image"
+                        style="width: 100%; height: 100%; object-fit: cover"
+                    />
+                  </v-avatar>
+                </v-col>
+                <v-col class="text-center" cols="auto">
+                  <span><strong>{{ employee.userInfo.displayName }}</strong></span>
                 </v-col>
               </v-row>
             </v-col>

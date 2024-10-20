@@ -34,7 +34,7 @@
       :disabled="!formValid || isLoading"
       label="Add Inventory"
       icon="fa: fa-solid fa-plus"
-      class="mb-3 p-button-success"
+      class="mb-3 p-button-primary"
       v-if="!isEditing && !isLoading"
     />
 
@@ -43,7 +43,7 @@
       :disabled="!formValid || isLoading"
       label="Update Inventory"
       icon="fa: fa-solid fa-plus"
-      class="mb-3 p-button-success"
+      class="mb-3 p-button-primary"
       v-if="isEditing && !isLoading"
     />
 
