@@ -53,7 +53,9 @@
             >
               <template #item="slotProps">
                 <div class="image-item">
+                  <!--TODO: fix-->
                   <Image
+                    v-if="getFileName(slotProps.data) !== 'fileName?'"
                     :src="slotProps.data"
                     :alt="getFileName(slotProps.data)"
                     style="width: 100px; height: 100px; object-fit: fill"

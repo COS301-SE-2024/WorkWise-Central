@@ -17,7 +17,7 @@ import { CompanyService } from '../company/company.service';
 import { UsersService } from '../users/users.service';
 import { Types } from 'mongoose';
 import { DeleteChatDto } from './dto/delete-chat.dto';
-import { MarkChatAsReadDto, TypingDto, UpdateChatDto } from './dto/create-chat.dto';
+import { AddChatDto, AddMeDto, MarkChatAsReadDto, TypingDto, UpdateChatDto } from './dto/create-chat.dto';
 //import { AsyncApiSub } from 'nestjs-asyncapi';
 
 //TODO: Check JWT expiration
@@ -61,24 +61,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async initChat(@ConnectedSocket() client: Socket, @MessageBody() payload: GetUserIdDto) {
     const decodedJwtAccessToken = this.jwtService.decode(payload.jwt);
     const allChatsWithUser = await this.chatService.getUserChats(decodedJwtAccessToken.sub);
-    console.log('All Chats with User', allChatsWithUser);
+    //console.log('All Chats with User', allChatsWithUser);
     const chatIds = [];
     for (const chat of allChatsWithUser) {
       chatIds.push(chat._id.toString());
     }
     client.join(chatIds);
-    client.emit('init-chat', { chatIds: chatIds });
+    const chats = [];
+    for (const chat of allChatsWithUser) {
+      chats.push(await this.chatService.getChat(chat._id));
+    }
+    chats.sort((a, b) => b.updatedAt - a.updatedAt);
+    client.emit('init-chat', { chatIds: chatIds, chats: chats });
     return { success: true };
   }
 
-  /*  @AsyncApiSub({
-    channel: 'new-message',
-    message: {
-      payload: AddMessageDto,
-    },
-    summary: 'Listen for new messages that are targeted to you as a user',
-    description: `Used in order to receive new messages in real-time`,
-  })*/
   @SubscribeMessage('new-message')
   async handleNewMessage(@ConnectedSocket() client: Socket, @MessageBody(new ValidationPipe()) payload: AddMessageDto) {
     console.log(payload);
@@ -93,6 +90,40 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const result = await this.chatService.sendMessage(userId, payload);
     this.server.to(payload.chatId.toString()).emit('new-message', result);
     return { success: true };
+  }
+
+  @SubscribeMessage('new-chat')
+  async handleNewChat(@ConnectedSocket() client: Socket, @MessageBody(new ValidationPipe()) payload: AddChatDto) {
+    console.log(payload);
+    const userId = this.jwtService.decode(payload.jwt).sub;
+    this.logger.log(`Creating new chat: ${userId} - ${payload.chatName}\n${payload.chatDescription}`);
+    const chat = await this.chatService.createChat(
+      userId,
+      payload.chatName,
+      payload.participants,
+      payload.chatDescription,
+      payload.chatImage,
+    );
+    if (!chat) {
+      client.emit('new-chat', { Error: 'Chat could not be created' });
+      console.log('Error');
+      return;
+    }
+    console.log({ chat: chat });
+    this.server.emit('new-chat', { chat: chat });
+  }
+
+  @SubscribeMessage('add-me')
+  async handleAddToChat(@ConnectedSocket() client: Socket, @MessageBody(new ValidationPipe()) payload: AddMeDto) {
+    const userId = this.jwtService.decode(payload.jwt).sub;
+    if (!userId) {
+      client.emit('add-me', { Error: 'User not found' });
+      console.log('Error');
+      return;
+    }
+    client.join(payload.chatId.toString());
+    console.log("You're in");
+    return { success: true, message: "You're in" };
   }
 
   /*  @AsyncApiSub({
@@ -143,6 +174,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     const result = await this.chatService.deleteChat(userId, payload);
     this.server.to(payload.chatId.toString()).emit('delete-chat', result);
+    return { success: true, chat: result };
   }
 
   /*  @AsyncApiSub({
