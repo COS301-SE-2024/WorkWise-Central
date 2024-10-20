@@ -1,15 +1,13 @@
 <template>
   <v-container>
-    <!-- Button to create a new task -->
+    <!-- Paginated Create Task Button -->
     <v-row class="justify-center mb-4">
-      <!--      <v-btn color="primary" @click="createNewTask" prepend-icon="mdi-plus"-->
-      <!--        >Create New Task List</v-btn-->
-      <!--      >-->
       <Button
-        label="Create New Task List"
-        icon="fa: fa-solid fa-plus"
-        @click="createNewTask"
-        class="p-button-success"
+          v-if="canCreateNewTask"
+          label="Create New Task List"
+          icon="fa: fa-solid fa-plus"
+          @click="goToNewTaskPage"
+          class="p-button-primary"
       />
     </v-row>
 
@@ -19,31 +17,28 @@
         <!-- Task Title -->
         <v-row>
           <v-textarea
-            v-model="task.title"
-            label="Task Title"
-            clearable
-            auto-grow
-            variant="solo"
-            hint="Enter your task title"
-            hide-details
-            prepend-icon="fa: fa-solid fa-tasks"
-            rows="1"
-            class="mb-4"
+              v-model="task.title"
+              label="Task Title"
+              clearable
+              auto-grow
+              variant="solo"
+              hint="Enter your task title"
+              hide-details
+              prepend-icon="fa: fa-solid fa-tasks"
+              rows="1"
+              class="mb-4"
           ></v-textarea>
           <template v-if="task.title.trim() !== ''">
-            <!--            <v-btn color="error" outlined class="pl-10 pt-5" @click="deleteTask(taskIndex)">-->
-            <!--              <v-icon color="error">{{ 'fa: fa-solid fa-trash' }}</v-icon>-->
-            <!--            </v-btn>-->
             <v-col cols="1">
               <Button
-                icon="fa: fa-solid fa-trash"
-                @click="deleteTask(taskIndex)"
-                class="p-button-danger"
+                  icon="fa: fa-solid fa-trash"
+                  @click="deleteTask(taskIndex)"
+                  class="p-button-danger"
+                  :loading="isDeletingTask"
               />
             </v-col>
           </template>
         </v-row>
-
         <!-- Only show the rest of the components if the title is set -->
         <template v-if="task.title.trim() !== ''">
           <v-row>
@@ -84,6 +79,7 @@
                   location-strategy="connected"
                   opacity="0"
                   origin="top center"
+                  v-model="itemDialog"
                 >
                   <template v-slot:activator="{ props: activatorProps }">
                     <v-btn
@@ -154,6 +150,7 @@
                             color="success"
                             class="mb-2"
                             @click="convertCard(taskIndex, itemIndex)"
+                            :loading="isConverting"
                           >
                             <v-icon>{{ 'fa: fa-solid fa-exchange-alt' }}</v-icon>
                             Convert Card
@@ -164,6 +161,7 @@
                             color="error"
                             @click="deleteItem(taskIndex, itemIndex)"
                             class="mb-2"
+                            :loading="isDeleting"
                           >
                             <v-icon>{{ 'fa: fa-solid fa-trash' }}</v-icon>
                             Delete
@@ -205,7 +203,7 @@
                 label="Add Item"
                 icon="fa: fa-solid fa-plus"
                 @click="addItem(taskIndex)"
-                class="p-button-success"
+                class="p-button-primary"
               />
             </v-col>
           </v-row>
@@ -225,7 +223,7 @@
                 label="Save Task"
                 icon="fa: fa-solid fa-save"
                 @click="handleSaveTask(taskIndex)"
-                class="p-button-success"
+                class="p-button-primary"
               />
             </v-row>
           </v-defaults-provider>
@@ -234,14 +232,14 @@
     </v-row>
 
     <!-- Pagination -->
-    <v-row class="justify-center mt-4">
-      <v-pagination
-        v-model:page="currentPage"
-        :length="pageCount"
-        total-visible="5"
-        color="primary"
-      ></v-pagination>
-    </v-row>
+<!--    <v-row class="justify-center mt-4">-->
+<!--      <v-pagination-->
+<!--          v-model:page="currentPage"-->
+<!--          :length="pageCount"-->
+<!--          total-visible="5"-->
+<!--          color="primary"-->
+<!--      ></v-pagination>-->
+<!--    </v-row>-->
   </v-container>
 </template>
 
@@ -277,6 +275,10 @@ const selectedMembers = ref<Member[]>([])
 const members = ref<Member[]>([]) // Populate with your states data
 const originalSelectedMembers = ref<Member[]>([])
 const isSaveButtonVisible = ref(true)
+const isDeleting = ref(false)
+const isDeletingTask = ref(false)
+const isConverting = ref(false)
+const itemDialog = ref(false)
 
 function handleSaveTask(taskIndex: number) {
   saveTask(taskIndex)
@@ -291,23 +293,31 @@ const config = {
   }
 }
 
-// Utility functions
+// Computed properties
 const paginatedTasks = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value
   return taskList.value.slice(start, start + itemsPerPage.value)
 })
 
 const pageCount = computed(() => {
-  return Math.ceil(taskList.value.length / itemsPerPage.value)
+  return Math.max(Math.ceil(taskList.value.length / itemsPerPage.value), 1)
 })
 
 const canCreateNewTask = computed(() => {
   return taskList.value.length < itemsPerPage.value * pageCount.value
 })
 
+// Functions
+function goToNewTaskPage() {
+  currentPage.value = pageCount.value
+  createNewTask()
+}
+
 function createNewTask() {
   taskList.value.push({ title: '', items: [], newItemText: '', isSaveVisible: false, _id: '' })
+  currentPage.value = pageCount.value
 }
+
 
 function getTaskProgress(task: Task) {
   const completedItems = task.items.filter((item) => item.done).length
@@ -423,6 +433,7 @@ const saveTask = async (taskIndex: number) => {
 }
 
 const convertCard = async (taskIndex: number, itemIndex: number) => {
+  isConverting.value = true
   try {
     const body = {
       currentEmployeeId: localStorage.getItem('employeeId') || '',
@@ -440,6 +451,8 @@ const convertCard = async (taskIndex: number, itemIndex: number) => {
     console.log('Error converting card', error)
   }
   assignDialog.value = false
+  isConverting.value = false
+  itemDialog.value = false
 }
 
 const handleCheckboxChange = async (taskIndex: number, itemIndex: number) => {
@@ -595,6 +608,7 @@ const getMembersFullName = (item: Member) => {
 }
 
 async function deleteItem(taskIndex: number, itemIndex: number) {
+  isDeleting.value = true
   const task = taskList.value[taskIndex]
   const item = task.items[itemIndex]
   const params = {
@@ -618,12 +632,14 @@ async function deleteItem(taskIndex: number, itemIndex: number) {
   } catch (error) {
     console.error('Error deleting item', error)
   }
+  isDeleting.value = false
 }
 function openCheckActionsDialog(itemIndex: number) {
   // Handle dialog actions
 }
 
 const deleteTask = async (taskIndex: number) => {
+  isDeletingTask.value = true
   try {
     const body = {
       employeeId: localStorage.getItem('employeeId') || '',
@@ -641,6 +657,7 @@ const deleteTask = async (taskIndex: number) => {
   } catch (error) {
     console.log(error)
   }
+  isDeletingTask.value = false
 }
 
 onMounted(() => {

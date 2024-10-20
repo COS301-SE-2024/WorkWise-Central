@@ -6,7 +6,7 @@
       @click="generatePdf"
       label="Generate PDF Invoice"
       icon="fa: fa-solid fa-file-pdf"
-      class="p-button-success"
+      class="p-button-primary"
     />
     <!-- Confirmation Dialog with PDF Preview -->
     <v-dialog v-model="viewDialog" max-width="800px">
