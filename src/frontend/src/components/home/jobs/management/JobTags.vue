@@ -35,7 +35,7 @@
     @click="openCreateDialog"
   />
   <!-- Label Creation/Edit Dialog -->
-  <v-dialog v-model="dialog" max-width="400px">
+ <v-dialog persistent v-model="dialog" max-width="400px">
     <v-card class="bg-cardColor">
       <v-card-title>{{ dialogTitle }}</v-card-title>
 

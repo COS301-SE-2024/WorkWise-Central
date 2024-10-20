@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600">
+ <v-dialog persistent v-model="dialog" max-width="600">
     <v-card>
       <v-card-title>{{ selectedClient.firstName }}'s Detailed Breakdown</v-card-title>
       <v-card-text>
@@ -113,8 +113,8 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-
-  <v-card border="" rounded="md" height="auto">
+  <LoadingScreen :Loading="!statsShown" />
+  <v-card border="" rounded="md" height="auto" v-if="statsShown">
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-briefcase mr-2"></v-icon>
       Client Breakdown
@@ -327,15 +327,17 @@
 
 <script>
 import Chart from 'primevue/chart'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 import axios from 'axios'
 import { API_URL } from '@/main'
 export default {
-  components: { Chart },
+  components: { Chart, LoadingScreen },
   data() {
     return {
       totalClients: 0, // Example data, replace with actual
       isloading: false,
       selectedItemId: '',
+      statsShown: false,
       search: '',
       dialog: false,
       clientStats: '',
@@ -494,6 +496,9 @@ export default {
       }
     },
     async getClientStats(id) {
+      if (this.statsShown === true) {
+        this.statsShown = false
+      }
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -544,6 +549,9 @@ export default {
           .catch((error) => {
             console.error('Failed to fetch clients:', error)
           })
+        setTimeout(() => {
+          this.statsShown = true
+        }, 1000)
       }
     },
     async getClients() {

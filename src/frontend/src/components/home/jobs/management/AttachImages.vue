@@ -1,6 +1,5 @@
 <template>
-  <v-dialog
-    v-model="fileDialog"
+ <v-dialog persistent     v-model="fileDialog"
     max-width="500px"
     location="bottom"
     location-strategy="connected"

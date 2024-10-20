@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600">
+ <v-dialog persistent v-model="dialog" max-width="600">
     <v-card>
       <v-card-title>Detailed Breakdown</v-card-title>
       <v-card-text>
@@ -80,7 +80,8 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-card border="md" rounded="md" height="auto">
+  <LoadingScreen :Loading="!statsShown" />
+  <v-card border="md" rounded="md" height="auto" v-if="statsShown">
     <!-- Items to Reorder Section -->
     <v-card-title>
       <v-icon icon="fa: fa-solid fa-exclamation-circle mr-2" color="red"></v-icon>
@@ -159,13 +160,14 @@
 import Chart from 'primevue/chart'
 import axios from 'axios'
 import { API_URL } from '@/main'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 export default {
-  components: { Chart },
+  components: { Chart, LoadingScreen },
   data() {
     return {
       currentTab: 'Inventory Breakdown',
       totalItems: 0,
-
+      statsShown: false,
       itemsToReorder: [],
       itemUsage: [],
       stockLost: [],
@@ -248,6 +250,9 @@ export default {
           console.log(this.inventoryStats)
           // Update chart data
           this.updateCharts()
+          setTimeout(() => {
+            this.statsShown = true
+          }, 1000)
         })
         .catch((error) => {
           console.error('Failed to fetch inventory stats:', error)

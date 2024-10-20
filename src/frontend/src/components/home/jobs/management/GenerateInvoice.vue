@@ -9,7 +9,7 @@
       class="p-button-primary"
     />
     <!-- Confirmation Dialog with PDF Preview -->
-    <v-dialog v-model="viewDialog" max-width="800px">
+   <v-dialog persistent v-model="viewDialog" max-width="800px">
       <v-card>
         <v-card-title class="headline">View Job Invoice</v-card-title>
         <v-card-text>

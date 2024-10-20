@@ -1,6 +1,6 @@
 <template>
   <Toast position="top-center" />
-  <v-dialog v-model="clientDialog" max-width="500px" :opacity="0">
+ <v-dialog persistent v-model="clientDialog" max-width="500px" :opacity="0">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="error" v-bind="activatorProps"
         ><v-icon icon="fa:fa-solid fa-trash" start color="error" size="small"></v-icon>Delete

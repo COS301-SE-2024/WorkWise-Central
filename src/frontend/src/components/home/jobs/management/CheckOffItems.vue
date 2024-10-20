@@ -73,8 +73,7 @@
             </v-col>
             <v-col md="2" cols="2">
               <v-row>
-                <v-dialog
-                  max-width="300px"
+               <v-dialog persistent                   max-width="300px"
                   location="bottom"
                   location-strategy="connected"
                   opacity="0"
@@ -103,7 +102,7 @@
                             Assign
                           </v-btn>
                         </v-defaults-provider>
-                        <v-dialog v-model="assignDialog" max-width="400px">
+                       <v-dialog persistent v-model="assignDialog" max-width="400px">
                           <v-card class="bg-cardColor">
                             <v-card-title class="text-h5">Assign Employees</v-card-title>
                             <v-card-text class="text-center">

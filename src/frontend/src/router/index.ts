@@ -21,7 +21,7 @@ import EditCompany from '@/components/home/settings/company/EditCompany.vue'
 import EditRoles from '@/components/home/settings/company/EditRoles.vue'
 import EditStructure from '@/components/home/settings/company/EditStructure.vue'
 import CompanySettingsView from '../views/settings/CompanySettings.vue'
-import LoadingScreen from '@/components/misc/LoadingScreen.vue'
+import LoadingScreen from '@/components/home/misc/LoadingScreen.vue'
 import StatisticsDashboard from '@/components/home/statistics/StatisticsDashboard.vue'
 import StatisticView from '@/views/home/dashboard/StatisticView.vue'
 import InventoryView from '@/views/home/inventory/InventoryView.vue'
@@ -51,7 +51,7 @@ import SetupPaymentGateway from '@/components/home/settings/company/SetupPayment
 import SuccessfulPayment from '@/components/home/clients/client_portal/SuccessfulPayment.vue'
 import VideoMeetings from '@/views/notfications/VideoMeetings.vue'
 import GoogleMapsView from '@/views/home/map/GoogleMapsView.vue'
-import NoAccess from '@/components/misc/NoAccess.vue'
+import NoAccess from '@/components/home/misc/NoAccess.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -425,7 +425,7 @@ router.beforeEach((to, from, next) => {
   const currentCompanyId = localStorage.getItem('currentCompany')
 
   // Check if access token is available and if trying to access a protected route
-  if (to.name !== 'splash' && !accessToken && to.name !== 'new-password') {
+  if (to.name !== 'splash' && !accessToken && to.name !== 'new-password' && to.name !== 'client-portal' && to.name !== 'successful-payment') {
     return next({ name: 'splash' }) // Redirect to splash page if no access_token
   }
 
