@@ -80,6 +80,7 @@ export default {
       console.log(response)
     },
     startTimer() {
+      console.log('START TIMER')
       this.isRunning = true
       this.timerId = setInterval(() => {
         this.timeElapsed++
@@ -136,7 +137,7 @@ export default {
 
         if (response.status === 200) {
           console.log('Total time spent:', response.data.data)
-          this.timeElapsed = response.data.data.timeWorked
+          this.timeElapsed = response.data.data.timeWorked * 60
         } else {
           console.error('Failed to get total time spent:', response.status)
         }
