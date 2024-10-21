@@ -4,7 +4,7 @@
   <v-menu v-model="companyDialog" location="right" min-width="300" :close-on-content-click="false">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn color="primary" class="h6" v-bind="activatorProps"
-        >{{ truncateString(companyName,6) }}<v-icon end icon="fa: fa-solid fa-caret-down"
+        >{{ truncateString(companyName, 15) }}<v-icon end icon="fa: fa-solid fa-caret-down"
       /></v-btn>
     </template>
     <v-card class="bg-background" rounded="md">

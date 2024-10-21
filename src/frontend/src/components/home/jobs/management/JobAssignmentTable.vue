@@ -48,7 +48,7 @@
                       class="d-flex justify-end"
                       v-if="checkPermission('add new jobs')"
                     >
-                      <AddJob @jobCreated="fetchData"/>
+                      <AddJob @jobCreated="fetchData" />
                     </v-col>
                   </v-row>
                 </v-card-title>
@@ -154,7 +154,6 @@
                           </template>
                           <v-list class="bg-background">
                             <v-list-item
-                              class="pl-0"
                               v-show="
                                 checkPermission('view all jobs') ||
                                 checkPermission('view jobs under me') ||
@@ -170,7 +169,9 @@
                                 ></v-icon
                                 >View
                               </v-btn>
-                             <v-dialog persistent                                 v-model="viewJobDialogVisible"
+                              <v-dialog
+                                persistent
+                                v-model="viewJobDialogVisible"
                                 :max-height="800"
                                 :max-width="1000"
                               >
@@ -180,8 +181,8 @@
                                 ></ViewJob>
                               </v-dialog>
                             </v-list-item>
-                            <v-list-item class="pl-0" v-show="checkPermission('edit jobs')">
-                              <v-btn color="warning" width="100%" @click.stop="openJobCardDialog()">
+                            <v-list-item v-show="checkPermission('edit jobs')">
+                              <v-btn width="100%" color="warning" @click.stop="openJobCardDialog()">
                                 <v-icon
                                   icon="fa:fa-solid fa-pencil"
                                   start
@@ -190,7 +191,9 @@
                                 ></v-icon
                                 >Edit
                               </v-btn>
-                             <v-dialog persistent                                 v-model="viewManagerJobCardVisible"
+                              <v-dialog
+                                persistent
+                                v-model="viewManagerJobCardVisible"
                                 :max-height="800"
                                 :max-width="1000"
                               >
@@ -222,7 +225,7 @@
           </v-row>
         </v-col>
       </v-row>
-     <v-dialog persistent v-model="deleteDialog" :max-width="500" :opacity="0">
+      <v-dialog persistent v-model="deleteDialog" :max-width="500" :opacity="0">
         <v-card class="bg-cardColor">
           <v-card-title class="text-h6 font-weight-regular bg-red">
             <v-icon color="white">mdi-alert-circle-outline</v-icon>

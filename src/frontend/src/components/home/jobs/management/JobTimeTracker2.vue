@@ -7,18 +7,26 @@
 
     <div class="timer">{{ formattedTime }}</div>
 
-    <button v-if="!isCheckedIn" @click="checkIn">Check In</button>
-    <button v-else-if="isCheckedIn" @click="checkOut">Check Out</button>
+    <Button v-if="!isCheckedIn" @click="checkIn" severity="success" label="Check In" />
+    <Button v-else-if="isCheckedIn" @click="checkOut" severity="danger" label="Check Out" />
 
-    <button v-if="isCheckedIn" @click="toggleTimer">
-      {{ isRunning ? 'Pause' : 'Resume' }}
-    </button>
+    <Button
+      v-if="isCheckedIn"
+      @click="toggleTimer"
+      :label="isRunning ? 'Pause' : 'Resume'"
+      :severity="isRunning ? 'warn' : 'success'"
+    />
+
+    <!--    <button v-if="isCheckedIn" @click="toggleTimer" >-->
+    <!--      {{ isRunning ? 'Pause' : 'Resume' }}-->
+    <!--    </button>-->
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import { API_URL } from '@/main'
+import Button from 'primevue/button'
 
 function getEmployeeId() {
   return localStorage.getItem('employeeId')
@@ -26,6 +34,10 @@ function getEmployeeId() {
 
 export default {
   props: { jobID: String },
+  components: {
+    // eslint-disable-next-line vue/no-reserved-component-names
+    Button
+  },
   data() {
     return {
       isCheckedIn: false,
@@ -80,6 +92,7 @@ export default {
       console.log(response)
     },
     startTimer() {
+      console.log('START TIMER')
       this.isRunning = true
       this.timerId = setInterval(() => {
         this.timeElapsed++
@@ -136,7 +149,7 @@ export default {
 
         if (response.status === 200) {
           console.log('Total time spent:', response.data.data)
-          this.timeElapsed = response.data.data.timeWorked
+          this.timeElapsed = response.data.data.timeWorked * 60
         } else {
           console.error('Failed to get total time spent:', response.status)
         }

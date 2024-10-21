@@ -51,19 +51,25 @@
           </v-divider>
 
           <v-row>
-            <v-col v-for="employee in props.passedInJob?.assignedEmployees?.employeeIds" :key="employee?._id" cols="12">
-              <v-row style="padding: 5px; align-items: center; justify-content: center;">
+            <v-col
+              v-for="employee in props.passedInJob?.assignedEmployees?.employeeIds"
+              :key="employee?._id"
+              cols="12"
+            >
+              <v-row style="padding: 5px; align-items: center; justify-content: center">
                 <v-col cols="auto">
                   <v-avatar color="secondary" style="width: 55px; height: 55px">
                     <img
-                        :src="employee?.userInfo?.displayImage"
-                        alt="Employee Image"
-                        style="width: 100%; height: 100%; object-fit: cover"
+                      :src="employee?.userInfo?.displayImage"
+                      alt="Employee Image"
+                      style="width: 100%; height: 100%; object-fit: cover"
                     />
                   </v-avatar>
                 </v-col>
                 <v-col class="text-center" cols="auto">
-                  <span><strong>{{ employee?.userInfo?.displayName }}</strong></span>
+                  <span
+                    ><strong>{{ employee?.userInfo?.displayName }}</strong></span
+                  >
                 </v-col>
               </v-row>
             </v-col>
@@ -229,8 +235,8 @@
             <v-divider>
               <h5 ref="jobTimeTrackerSection">Time tracking</h5>
             </v-divider>
-            <v-col>
-              <JobTimeTracker :jobID="props.passedInJob?._id" />
+            <v-col class="d-flex justify-center">
+              <JobTimeTracker2 :jobID="props.passedInJob?._id" />
             </v-col>
             <v-divider>
               <h5 ref="historySection">View Job History</h5>
@@ -387,7 +393,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, type Ref, defineEmits, onMounted, computed } from 'vue'
+import { defineProps, ref, defineEmits, onMounted, computed } from 'vue'
 import AddComment from './AddComments.vue'
 // import JobNotes from './JobNotes.vue'
 import CheckOffItems from './CheckOffItems.vue'
@@ -397,10 +403,11 @@ import JobHistory from './JobHistory.vue'
 import JobStatus from './JobStatus.vue'
 import LogJobInventory from './LogJobInventory.vue'
 import GenerateInvoice from './GenerateInvoice.vue'
-import JobTimeTracker from './JobTimeTracker.vue'
+// import JobTimeTracker from './JobTimeTracker.vue'
 import ColorThief from 'colorthief'
 import axios from 'axios'
 import { API_URL } from '@/main'
+import JobTimeTracker2 from '@/components/home/jobs/management/JobTimeTracker2.vue'
 
 const props = defineProps<{ passedInJob: any }>()
 const emits = defineEmits(['close', 'update-kanban-status'])
@@ -620,24 +627,26 @@ onMounted(() => {
   getAssignedTeams()
 })
 
-
 const selectedTeams = ref<{ _id: string; teamName: string }[]>([])
 const getAssignedTeams = async () => {
   try {
-    const response = await axios.get(`${API_URL}team/all/${localStorage.getItem('currentCompany')}`, config)
+    const response = await axios.get(
+      `${API_URL}team/all/${localStorage.getItem('currentCompany')}`,
+      config
+    )
     if (response.status > 199 && response.status < 300) {
-      const allTeams = response.data.data;
-      const assignedTeamIds = props.passedInJob?.assignedEmployees?.teamIds || [];
+      const allTeams = response.data.data
+      const assignedTeamIds = props.passedInJob?.assignedEmployees?.teamIds || []
 
       // Filter and map the assigned teams
-      selectedTeams.value = allTeams.filter((team: any) => assignedTeamIds.includes(team._id));
+      selectedTeams.value = allTeams.filter((team: any) => assignedTeamIds.includes(team._id))
       console.log('All Teams', allTeams)
-      console.log('Assigned Teams', selectedTeams.value);
+      console.log('Assigned Teams', selectedTeams.value)
     } else {
-      console.log('failed');
+      console.log('failed')
     }
   } catch (error) {
-    console.error('Error fetching teams:', error);
+    console.error('Error fetching teams:', error)
   }
 }
 </script>

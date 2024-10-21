@@ -104,37 +104,37 @@ export default defineComponent({
     employeePermissions: [] as string[],
     teamTitle: '',
     jobTableTitle: '',
-    employeeTitle: '',
+    employeeTitle: ''
   }),
   methods: {
     redirectToDashBoard() {
       if (this.$route.path !== '/dashboard') this.$router.push('/dashboard')
     },
-    computeTitles(){
+    computeTitles() {
       console.log(this.employeePermissions)
-      if(this.checkPermission('view all jobs')){
+      if (this.checkPermission('view all jobs')) {
         console.log('view all jobs')
         this.jobTableTitle = 'Job Details'
-      } else if (this.checkPermission('view jobs under me')){
+      } else if (this.checkPermission('view jobs under me')) {
         console.log('view jobs under me')
         this.jobTableTitle = 'Jobs Under Me'
-      } else if(this.checkPermission('view jobs assigned to me')){
+      } else if (this.checkPermission('view jobs assigned to me')) {
         console.log('view jobs assigned to me')
         this.jobTableTitle = 'My Jobs'
       }
 
-      if(this.checkPermission('view all employees')){
+      if (this.checkPermission('view all employees')) {
         console.log('view all employees')
         this.employeeTitle = 'Employee Details'
-      } else if(this.checkPermission('view employees under me')){
+      } else if (this.checkPermission('view employees under me')) {
         console.log('view employees under me')
         this.employeeTitle = 'Employees Under Me'
       }
 
-      if(this.checkPermission('view teams')){
+      if (this.checkPermission('view teams')) {
         console.log('view teams')
         this.teamTitle = 'Teams'
-      } else if(this.checkPermission('view my teams')){
+      } else if (this.checkPermission('view my teams')) {
         console.log('view my teams')
         this.teamTitle = 'My Teams'
       }
@@ -215,29 +215,36 @@ export default defineComponent({
 <template>
   <v-app :theme="isdarkmode ? 'dark' : 'light'">
     <v-app-bar :theme="isdarkmode ? 'dark' : 'light'" app class="bg-background">
-      <v-app-bar-nav-icon @click="isVisible = !isVisible">
-        <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
-      </v-app-bar-nav-icon>
-      <CompanyMain />
-      <v-spacer></v-spacer>
+      <div class="d-flex align-center w-100 position-relative">
+        <!-- Left side -->
+        <div class="d-flex align-center">
+          <v-app-bar-nav-icon @click="isVisible = !isVisible">
+            <v-icon>{{ isVisible ? 'fa: fa-solid fa-bars' : 'fa: fa-solid fa-bars' }}</v-icon>
+          </v-app-bar-nav-icon>
+          <CompanyMain />
+        </div>
 
-      <v-toolbar-title class="d-flex justify-center" @click="redirectToDashBoard">
-        <v-label class="text-primary h4">Work</v-label>
-        <v-label class="text-secondary h4">Wise</v-label>
-      </v-toolbar-title>
+        <!-- Centered title -->
+        <v-toolbar-title
+          class="position-absolute translate-x-center cursor-pointer"
+          @click="redirectToDashBoard"
+        >
+          <v-label class="text-primary h4">Work</v-label>
+          <v-label class="text-secondary h4">Wise</v-label>
+        </v-toolbar-title>
 
-      <v-spacer class="d-none d-sm-flex"></v-spacer>
-
-      <div class="d-flex align-center">
-        <v-btn size="small" @click="redirectToArchivePage" v-if="$route.path === '/backlog'">
-          <v-icon size="x-large">{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
-        </v-btn>
-        <UserAvatar />
-        <v-icon
-          class="icon-padding mr-5"
-          @click="toggleDarkMode"
-          :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
-        ></v-icon>
+        <!-- Right side -->
+        <div class="d-flex align-center ms-auto">
+          <v-btn size="small" @click="redirectToArchivePage" v-if="$route.path === '/backlog'">
+            <v-icon size="x-large">{{ 'fa: fa-solid fa-box-archive' }}</v-icon>
+          </v-btn>
+          <UserAvatar />
+          <v-icon
+            class="icon-padding mr-5"
+            @click="toggleDarkMode"
+            :icon="isdarkmode ? 'fa: fa-solid fa-sun' : 'fa: fa-solid fa-moon'"
+          ></v-icon>
+        </div>
       </div>
     </v-app-bar>
     <v-navigation-drawer
@@ -339,7 +346,7 @@ export default defineComponent({
             class="list-item-large"
             to="teams"
             :value="teamTitle"
-            :title= "teamTitle"
+            :title="teamTitle"
             prepend-icon="fa: fa-solid fa-people-group"
             v-show="checkPermission('view teams') || checkPermission('view my teams')"
           ></v-list-item>
@@ -368,14 +375,14 @@ export default defineComponent({
             class="list-item-large"
             to="jobAssignmentView"
             :value="jobTableTitle"
-            :title= "jobTableTitle"
+            :title="jobTableTitle"
             prepend-icon="fa: fa-solid fa-table"
           ></v-list-item>
           <v-list-item
             class="list-item-large"
             to="backlog"
             value="Job Board"
-            title= "Job Board"
+            title="Job Board"
             prepend-icon="fa: fa-solid fa-table-columns"
           ></v-list-item>
         </v-list-group>
@@ -554,5 +561,14 @@ export default defineComponent({
 
 .list-item-small {
   height: 40px;
+}
+
+.translate-x-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
