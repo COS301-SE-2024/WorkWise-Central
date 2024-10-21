@@ -31,7 +31,10 @@
         :disabled="!selectedChat"
         v-if="selectedChat"
       />
-      <div v-else class="no-chat-selected">
+      <div class="spinner-container" v-if="loading">
+        <ProgressSpinner strokeWidth="2" fill="transparent" animationDuration=".5s" />
+      </div>
+      <div v-if="!selectedChat && !loading" class="no-chat-selected">
         <img src="@/assets/images/background/WorkWiseChat.png" alt="Chat Icon" class="chat-icon" />
         <h1>WorkWise Chat</h1>
         <p>Select a chat or create a new one to start messaging</p>
@@ -49,6 +52,7 @@ import { io } from 'socket.io-client'
 import { API_URL } from '@/main'
 import ChatHeader from '@/components/home/chat/ChatHeader.vue'
 import { ref } from 'vue'
+import ProgressSpinner from 'primevue/progressspinner'
 
 const socket = io(`${API_URL}chat-space`, {
   autoConnect: true,
@@ -60,7 +64,8 @@ export default {
     ChatSidebar,
     ChatHeader,
     ChatMessageList,
-    ChatInput
+    ChatInput,
+    ProgressSpinner
   },
   data() {
     return {
@@ -75,7 +80,8 @@ export default {
       messages: ref([]),
       server_url: API_URL,
       unreadCount: [],
-      intervalId: null
+      intervalId: null,
+      loading: true
     }
   },
   computed: {
@@ -84,7 +90,7 @@ export default {
     }
   },
   mounted() {
-    this.getUserChats()
+    /*    this.getUserChats()
       .then(() => {
         console.log('User chats', this.chats)
         for (const chat of this.chats) {
@@ -94,7 +100,7 @@ export default {
       })
       .then(() => {
         console.log('All messages fetched')
-      })
+      })*/
     this.getAllUsers()
 
     socket.connect()
@@ -108,8 +114,40 @@ export default {
       console.log('Socket disconnected')
     })
 
-    socket.on('init-chat', (data) => {
-      console.log('User Joined rooms', data)
+    socket.on('init-chat', async (data) => {
+      //console.log('User Joined rooms', data)
+      this.chats.push(...data.chats)
+
+      const fetchPromises = data.chats.map((chat) => this.getMessagesInChat(chat._id))
+      Promise.all(fetchPromises)
+    })
+
+    socket.on('new-chat', async (c) => {
+      //console.log('User Joined rooms', data)
+      console.log('NEW CHAT: ' + c.chat.name)
+      let isPart = false
+      for (const participant of c.chat.participants) {
+        console.log('Participant: ' + participant)
+        if (participant._id === localStorage['id']) {
+          isPart = true
+        }
+      }
+      if (isPart) {
+        socket
+          .emitWithAck('add-me', {
+            jwt: localStorage['access_token'],
+            chatId: c.chat._id
+          })
+          .then((data) => {
+            console.log('Added to chat', data)
+            this.messages[c.chat._id] = []
+            //this.chats.push(c.chat)
+            this.chats = [c.chat, ...this.chats]
+            this.getMessagesInChat(c.chat._id)
+          })
+      } else {
+        console.log('Ignore')
+      }
     })
 
     socket.on('new-message', (data) => {
@@ -175,12 +213,20 @@ export default {
       socket.emit('reading-chat', { jwt: localStorage['access_token'], chatId: chat._id })
     },
     createChat(newChat) {
-      this.createNewChatHelper(
-        newChat.name,
-        newChat.participants,
-        newChat.chatImage,
-        newChat.chatDescription
-      )
+      console.log('Creating chat in UI', newChat)
+      socket.emit('new-chat', {
+        jwt: localStorage['access_token'],
+        chatName: newChat.name,
+        participants: newChat.participants,
+        chatImage: newChat.chatImage,
+        chatDescription: newChat.chatDescription
+      })
+      // this.createNewChatHelper(
+      //   newChat.name,
+      //   newChat.participants,
+      //   newChat.chatImage,
+      //   newChat.chatDescription
+      // )
     },
     async createNewChatHelper(chatName, userIdsForChat, chatImage, chatDescription) {
       console.log(chatImage)
@@ -196,6 +242,8 @@ export default {
       }
       if (chatDescription != null) {
         spreadElements.description = chatDescription.value
+      } else {
+        spreadElements.description = ''
       }
 
       const result = await axios.post(
@@ -294,12 +342,12 @@ export default {
       }
     },
     async getMessagesInChat(chatId) {
-      console.log('chatId is', chatId)
+      //console.log('chatId is', chatId)
       const config = { headers: { Authorization: `Bearer ${localStorage['access_token']}` } }
       const result = await axios.get(`${this.server_url}chat/chat-messages/${chatId}`, config)
-      console.log('Result of FetchMessages', result)
+      //console.log('Result of FetchMessages', result)
       if (result.status >= 200 && result.status < 300) {
-        console.log('Fetching Messages', result.data.data)
+        //console.log('Fetching Messages', result.data.data)
         if (result.data.data) {
           const messages = result.data.data
           for (const message of messages) {
@@ -343,8 +391,9 @@ export default {
     // async sendMessageHelper(content, attachments) {}
     async setupSockets() {
       console.log('Init chat')
-      socket.emitWithAck('init-chat', { jwt: localStorage['access_token'] }).then((data) => {
-        console.log('Init chat data', data)
+      this.chats = []
+      socket.emitWithAck('init-chat', { jwt: localStorage['access_token'] }).then((d) => {
+        this.loading = false
       })
     },
     handleNewMessage(data) {
@@ -395,6 +444,7 @@ export default {
       if (index !== -1) {
         this.chats.splice(index, 1)
       }
+      this.selectedChat = null
     },
     handleUpdateChat(data) {
       console.log('Update chat received', data)
@@ -476,7 +526,15 @@ export default {
         .then((data) => {
           console.log('Delete chat success', data)
           this.chats = this.chats.filter((chat) => chat._id !== updatedChatData._id)
-          this.selectedChat = null
+          if (this.selectedChat && this.selectedChat._id === updatedChatData._id) {
+            this.selectedChat = null
+          }
+          console.log('Deleted Chat')
+          //this.selectedChat = null
+          /*          if (this.chats.length > 0) {
+            console.log('Changing chat to ', this.chats[0])
+            this.selectChat(this.chats[0])
+          }*/
         })
         .catch((error) => {
           console.error('Delete chat error', error)
@@ -512,7 +570,7 @@ export default {
       }
     },
     handleUnreadMessages(data) {
-      console.log('unread-messages', data)
+      //console.log('unread-messages', data)
       for (const datum of data.data) {
         this.chatMessageCount[datum.chatId] = datum.unreadCount
         this.chats['unreadCount'] = datum.unreadCount
@@ -588,5 +646,12 @@ export default {
 
 .no-chat-selected p {
   font-size: 1rem;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Adjust as needed */
 }
 </style>

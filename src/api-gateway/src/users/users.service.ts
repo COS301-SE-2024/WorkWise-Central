@@ -89,7 +89,7 @@ export class UsersService {
   }
 
   async createUserConfirmation(newUser: User) {
-    console.log('createUserConfirmation', newUser);
+    //console.log('createUserConfirmation', newUser);
     const userConfirmation: UserConfirmation = {
       name: newUser.personalInfo.firstName,
       surname: newUser.personalInfo.surname,
@@ -99,7 +99,7 @@ export class UsersService {
     const confirmation = await this.userConfirmationModel.create(userConfirmation);
     await confirmation.save();
     //console.log(result);
-    await this.emailService.sendUserConfirmation(userConfirmation);
+    this.emailService.sendUserConfirmation(userConfirmation);
   }
 
   async verifyUser(email: string) {

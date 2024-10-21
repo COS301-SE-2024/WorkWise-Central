@@ -5,21 +5,21 @@
       <i class="fa: fa-solid fa-search" />
       <InputText v-model="searchQuery" placeholder="Search chats" class="w-full" />
     </span>
-
     <Button
       label="Create New Chat"
       icon="fa: fa-solid fa-plus"
       @click="showNewChatDialog"
       class="custom-button"
-      style="padding-right: 27.8%"
+      style="padding-right: 27.8%; margin-bottom: 5%"
     />
-
+    <hr />
     <ul class="chat-list">
       <li
         v-for="chat in filteredChats"
         :key="chat._id"
         @click="selectChat(chat)"
         :class="{ selected: selectedChat && chat._id === selectedChat._id }"
+        style="margin-bottom: 3%"
       >
         <Avatar
           :image="
@@ -48,6 +48,7 @@
           ></v-row
         >
       </li>
+      <hr />
     </ul>
 
     <Dialog
@@ -58,56 +59,67 @@
     >
       <div class="p-fluid pt-5 pb-5">
         <v-row>
-          <v-col>
+          <v-col cols="4">
             <label for="chatName">Chat Name<span style="color: red">*</span></label>
           </v-col>
-          <v-col>
-            <InputText id="chatName" v-model="newChatName" />
+          <v-col cols="8">
+            <InputText id="chatName" v-model="newChatName" style="width: 100%" />
           </v-col>
         </v-row>
 
         <v-row>
-          <v-col>
+          <v-col cols="4">
             <label for="participants">Participants<span style="color: red">*</span></label>
           </v-col>
-          <v-col>
+          <v-col cols="8">
             <MultiSelect
               id="participants"
               v-model="selectedParticipants"
               :options="availableUsers"
               optionLabel="systemDetails.username"
               placeholder="Select participants"
+              style="width: 100%"
             />
           </v-col>
         </v-row>
 
         <v-row>
-          <v-col>
+          <v-col cols="4">
             <label for="participants">Chat Image</label>
           </v-col>
-          <v-col>
-            <input
-              type="file"
+          <v-col cols="8">
+            <FileUpload
+              mode="basic"
               accept="image/*"
-              @change="handleFileChange"
-              ref="fileInput"
-              style="margin-left: 13%"
+              :maxFileSize="10000000"
+              @select="handleFileChange"
+              :auto="true"
+              :customUpload="true"
+              style="width: 100%"
             />
+            <!--            <input-->
+            <!--              type="file"-->
+            <!--              accept="image/*"-->
+            <!--              @change="handleFileChange"-->
+            <!--              ref="fileInput"-->
+            <!--              style="margin-left: 13%"-->
+            <!--            />-->
           </v-col>
         </v-row>
         <!-- File input for images -->
 
         <v-row>
-          <v-col>
+          <v-col cols="4">
             <label for="chatDescription">Chat Description</label>
           </v-col>
-          <v-col>
+          <v-col cols="8">
             <Textarea
               id="chatDescription"
               v-model="newChatDescription"
               autoResize
               rows="5"
               cols="50"
+              style="width: 100%"
             />
           </v-col>
         </v-row>
@@ -132,6 +144,7 @@
       </template>
     </Dialog>
   </aside>
+  <Toast position="top-center" />
 </template>
 
 <script setup>
@@ -144,10 +157,14 @@ import MultiSelect from 'primevue/multiselect'
 //import FileUpload from 'primevue/fileupload'
 import OverlayBadge from 'primevue/overlaybadge'
 import Textarea from 'primevue/textarea'
+import { API_URL } from '@/main'
+import axios from 'axios'
+import FileUpload from 'primevue/fileupload'
+import { useToast } from 'primevue/usetoast'
 
 const props = defineProps(['chats', 'selectedChat', 'users', 'typingUsers'])
 const emit = defineEmits(['select-chat', 'create-chat'])
-
+const toast = useToast()
 const searchQuery = ref('')
 const newChatDialogVisible = ref(false)
 const newChatName = ref('')
@@ -155,7 +172,7 @@ const newChatDescription = ref('')
 const selectedParticipants = ref([])
 const currentUserId = localStorage['id']
 
-const fileInput = ref(null)
+// const fileInput = ref(null)
 const selectedImage = ref(null)
 const base64Image = ref(null)
 let currentlyTyping = ref({})
@@ -164,11 +181,49 @@ const items = ref([
   { label: 'Search', icon: 'pi pi-search' }
 ])
 
-const handleFileChange = (event) => {
-  const files = event.target.files
-  if (files.length > 0) {
-    selectedImage.value = files[0]
-    convertToBase64(files[0])
+const handleFileChange = async (event) => {
+  const files = event.files
+  if (files && files.length > 0) {
+    const formData = new FormData()
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i])
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    }
+
+    const url = `${API_URL}chat/add/attachments`
+
+    try {
+      const response = await axios.put(url, formData, config)
+      if (response.status === 200) {
+        console.log(response)
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Files uploaded successfully',
+          life: 3000
+        })
+        console.log(response)
+        selectedImage.value = response.data.data[0]
+
+        //return response.data.data
+      }
+    } catch (error) {
+      console.error(error)
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to upload File(s)',
+        life: 3000
+      })
+      console.log(url)
+    }
   }
 }
 
@@ -194,6 +249,8 @@ const closeNewChatDialog = () => {
   newChatDialogVisible.value = false
   newChatName.value = ''
   selectedParticipants.value = []
+  selectedImage.value = null
+  newChatDescription.value = ''
 }
 
 const convertToBase64 = (f) => {
@@ -223,10 +280,17 @@ const createNewChat = () => {
     emit('create-chat', {
       name: newChatName.value,
       participants: participants,
-      chatImage: base64Image,
-      chatDescription: newChatDescription
+      chatImage: selectedImage.value,
+      chatDescription: newChatDescription.value
     })
     closeNewChatDialog()
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please fill in all required fields',
+      life: 3000
+    })
   }
 }
 
@@ -266,6 +330,9 @@ const theKidIsNotMySon = (userId) => {
   width: 300px;
   padding: 1rem;
   height: 100%;
+  overflow-y: auto;
+  scrollbar-color: #1f6a83 rgba(172, 211, 223, 0.56);
+  scrollbar-width: thin;
 }
 
 .new-chat-dialog {

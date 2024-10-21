@@ -5,8 +5,9 @@
       ref="op"
       :style="{
         backgroundColor: 'var(--card-color)',
-        maxWidth: '800px',
-        maxHeight: '800px',
+        maxWidth: '40%',
+        width: '30%',
+        maxHeight: '50%',
         overflowY: 'auto'
       }"
     >
@@ -116,30 +117,36 @@
 
                 <!-- Chat Name -->
                 <v-row>
-                  <v-col>
+                  <v-col cols="5">
                     <label for="chatName" class="block text-sm font-medium text-gray-700 mb-1"
                       >Chat Name</label
                     >
                   </v-col>
-                  <v-col>
-                    <InputText id="chatName" v-model="editedChat.name" class="w-full" />
+                  <v-col cols="7">
+                    <InputText
+                      id="chatName"
+                      v-model="editedChat.name"
+                      class="w-full"
+                      style="width: 100%"
+                    />
                   </v-col>
                 </v-row>
 
                 <!-- Chat Description -->
                 <v-row>
-                  <v-col>
+                  <v-col cols="5">
                     <label
                       for="chatDescription"
                       class="block text-sm font-medium text-gray-700 mb-1"
                       >Description</label
                     >
                   </v-col>
-                  <v-col>
+                  <v-col cols="7">
                     <Textarea
                       id="chatDescription"
                       v-model="editedChat.description"
-                      rows="3"
+                      rows="4"
+                      style="width: 100%"
                       class="w-full"
                     />
                   </v-col>
@@ -147,12 +154,12 @@
 
                 <!-- Chat Logo -->
                 <v-row>
-                  <v-col cols="12">
+                  <v-col cols="5">
                     <label for="chatLogo" class="block text-sm font-medium text-gray-700 mb-1"
                       >Chat Logo</label
                     >
                   </v-col>
-                  <v-col>
+                  <v-col cols="7">
                     <FileUpload
                       mode="basic"
                       accept="image/*"
@@ -160,6 +167,7 @@
                       @select="handleFileChange"
                       :auto="true"
                       :customUpload="true"
+                      style="width: 100%"
                     />
                   </v-col>
                 </v-row>
@@ -168,8 +176,8 @@
                 <v-row>
                   <v-col>
                     <label for="chatAdmin" class="block text-sm font-medium text-gray-700 mb-1"
-                      >Chat Admin</label
-                    >
+                      >Chat Admin
+                    </label>
                   </v-col>
                   <v-col cols="12">
                     <Listbox

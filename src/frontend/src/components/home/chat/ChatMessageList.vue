@@ -53,7 +53,9 @@
             >
               <template #item="slotProps">
                 <div class="image-item">
+                  <!--TODO: fix-->
                   <Image
+                    v-if="getFileName(slotProps.data) !== 'fileName?'"
                     :src="slotProps.data"
                     :alt="getFileName(slotProps.data)"
                     style="width: 100px; height: 100px; object-fit: fill"
@@ -71,6 +73,7 @@
               v-for="(attachment, index) in getRegularAttachments(message.attachments)"
               :key="index"
               class="attachment"
+              style="width: 100%"
             >
               <template v-if="editingMessageId === message._id">
                 <InputText
@@ -81,7 +84,11 @@
               </template>
               <template v-else>
                 <i class="pi pi-paperclip" style="font-size: 0.8rem"></i>
-                <a href="#" @click.prevent="downloadAttachment(attachment)">
+                <a
+                  :href="attachment"
+                  style="color: #0252f6"
+                  @click.prevent="downloadAttachment(attachment)"
+                >
                   {{ getFileName(attachment) }}
                 </a>
               </template>
@@ -103,7 +110,7 @@ import Carousel from 'primevue/carousel'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Image from 'primevue/image'
-
+import 'primeicons/primeicons.css'
 const confirm = useConfirm()
 const editingMessageId = ref(null)
 const editedText = ref('')
@@ -124,8 +131,18 @@ const items = ref([
 ])
 
 const getFileName = (attachment) => {
-  let tempName = attachment.split('/').pop()
-  return tempName.substring(37)
+  if (attachment != null) {
+    const lastSlashIndex = attachment.lastIndexOf('/')
+    const lastDashIndex = attachment.lastIndexOf('-')
+    if (lastSlashIndex !== -1 && lastDashIndex !== -1 && lastDashIndex > lastSlashIndex) {
+      return attachment.substring(lastSlashIndex + 1, lastDashIndex)
+    } else {
+      return 'file'
+    }
+    //return tempName.substring(37)
+  } else {
+    return 'fileName?' //TODO: Check this is causing the error
+  }
 }
 
 const props = defineProps(['messages', 'users'])
@@ -226,11 +243,15 @@ const performAction = (messageId, chatId, action) => {
 }
 
 const getImageAttachments = (attachments) => {
-  return attachments.filter((attachment) => /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(attachment))
+  return attachments.filter((attachment) =>
+    /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(getFileName(attachment))
+  )
 }
 
 const getRegularAttachments = (attachments) => {
-  return attachments.filter((attachment) => !/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(attachment))
+  return attachments.filter(
+    (attachment) => !/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(getFileName(attachment))
+  )
 }
 
 const downloadAttachment = (url) => {
@@ -240,6 +261,17 @@ const downloadAttachment = (url) => {
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
+}
+
+const downloadAttachments = (urls) => {
+  urls.forEach((url) => {
+    const link = document.createElement('a')
+    link.href = url
+    link.download = getFileName(url)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  })
 }
 </script>
 
@@ -259,23 +291,8 @@ const downloadAttachment = (url) => {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url('https://img.freepik.com/premium-vector/seamless-pattern-construction-tools-doodle-vector-set-repair-elements-cartoon-icons_78677-10140.jpg');
-
+  background-color: rgba(63, 122, 151, 0.3);
   position: relative;
-}
-
-.message-list::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(104, 122, 141, 0.8);
-  z-index: 1;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
 }
 
 .message-list > * {
@@ -362,10 +379,11 @@ const downloadAttachment = (url) => {
 .attachment a {
   margin-left: 5px;
   text-decoration: none;
-  white-space: nowrap;
+  white-space: normal; /* Change this line */
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
+  word-wrap: break-word;
 }
 
 .image-item {
@@ -381,5 +399,4 @@ const downloadAttachment = (url) => {
 :deep(.p-carousel .p-carousel-indicators) {
   display: none;
 }
-
 </style>

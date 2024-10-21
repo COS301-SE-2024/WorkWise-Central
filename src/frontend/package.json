@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "pwa": "vite preview",
-    "build": " run-p type-check \"build-only {@}\" --",
+    "build": "run-p type-check \"build-only {@}\" --",
     "serve": "PORT=4433 serve dist",
     "preview": "vite preview",
     "test:e2e": "start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
@@ -49,6 +49,7 @@
     "mongoose": "^8.5.2",
     "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^4.0.1",
+    "primeicons": "^7.0.0",
     "primevue": "^4.0.0",
     "quill": "^2.0.2",
     "socket.io-client": "^4.8.0",

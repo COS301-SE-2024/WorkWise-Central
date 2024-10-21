@@ -27,7 +27,7 @@ export class UsersRepository {
         .populate(fieldsToPopulate)
         .lean()
         .exec();
-      console.log(`Retrieving All users` /*, result*/);
+      //console.log(`Retrieving All users` /*, result*/);
       return result;
     }
 
@@ -37,7 +37,7 @@ export class UsersRepository {
       .populate(userJoinedCompaniesField)*/
       .lean()
       .exec();
-    console.log(`Retrieving All users` /*, result*/);
+    //console.log(`Retrieving All users` /*, result*/);
     return result;
   }
 
@@ -51,7 +51,7 @@ export class UsersRepository {
       ],
     };
     const result = await this.userModel.find(filter).lean().exec();
-    console.log(`Retrieving All users` /*, result*/);
+    //console.log(`Retrieving All users` /*, result*/);
     return result;
   }
 
